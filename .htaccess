@@ -1,0 +1,6 @@
+DirectoryIndex index.html
+AddType application/octet-stream .mp3 
+AddType application/octet-stream .m4a
+AddType application/octet-stream .flac
+
+
