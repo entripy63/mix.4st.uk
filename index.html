@@ -43,7 +43,7 @@
         margin: 0 auto 40px;
         box-shadow: 0 0 30px rgba(0,0,0,0.5);
         position: relative;
-        animation: spin 8s linear infinite;
+        animation: spin 1.82s linear infinite; /* 33rpm */
       }
       
       .vinyl::before {
@@ -69,6 +69,69 @@
         height: 8px;
         background: #333;
         border-radius: 50%;
+      }
+      
+      .scratch {
+        position: absolute;
+        background: rgba(255,255,255,0.08);
+        border-radius: 50%;
+      }
+      
+      .scratch-1 {
+        width: 2px;
+        height: 35px;
+        top: 8px;
+        left: 74px;
+        transform: rotate(15deg);
+      }
+      
+      .scratch-2 {
+        width: 1px;
+        height: 25px;
+        top: 100px;
+        left: 40px;
+        transform: rotate(-30deg);
+      }
+      
+      .scratch-3 {
+        width: 3px;
+        height: 3px;
+        top: 45px;
+        left: 115px;
+      }
+      
+      .scratch-4 {
+        width: 2px;
+        height: 2px;
+        top: 85px;
+        left: 25px;
+      }
+      
+      .dust {
+        position: absolute;
+        background: rgba(255,255,255,0.12);
+        border-radius: 50%;
+      }
+      
+      .dust-1 {
+        width: 4px;
+        height: 4px;
+        top: 30px;
+        left: 95px;
+      }
+      
+      .dust-2 {
+        width: 2px;
+        height: 2px;
+        top: 110px;
+        left: 70px;
+      }
+      
+      .dust-3 {
+        width: 3px;
+        height: 3px;
+        top: 60px;
+        left: 20px;
       }
       
       @keyframes spin {
@@ -109,7 +172,15 @@
 
   <body>
     <div class="container">
-      <div class="vinyl"></div>
+      <div class="vinyl">
+        <div class="scratch scratch-1"></div>
+        <div class="scratch scratch-2"></div>
+        <div class="scratch scratch-3"></div>
+        <div class="scratch scratch-4"></div>
+        <div class="dust dust-1"></div>
+        <div class="dust dust-2"></div>
+        <div class="dust dust-3"></div>
+      </div>
       <h1>Mixes you might like</h1>
       <ul class="dj-list">
         <li><a href="trip/index.html">trip-</a></li>
