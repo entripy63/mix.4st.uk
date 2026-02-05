@@ -43,6 +43,9 @@ font-weight: bold;
 .audioPlayer {
   display: inline;
   border-radius: 20px;
-  margin:0 auto;
+  margin: 0 auto;
   width: 500px;
+  position: sticky;
+  top: 10px;
+  z-index: 100;
 }
