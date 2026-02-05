@@ -26,8 +26,8 @@
       }
       
       .vinyl {
-        width: 150px;
-        height: 150px;
+        width: 225px;
+        height: 225px;
         background: radial-gradient(circle at 50% 50%, 
           #333 0%, #333 15%, 
           #1a1a1a 15%, #1a1a1a 30%,
@@ -46,17 +46,94 @@
         animation: spin 1.82s linear infinite; /* 33rpm */
       }
       
-      .vinyl::before {
-        content: '';
+      .vinyl-label {
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 40px;
-        height: 40px;
+        width: 66px;
+        height: 66px;
         background: radial-gradient(circle, #990000 0%, #660000 100%);
         border-radius: 50%;
         box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding-top: 9px;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+      
+      .label-text {
+        color: #ffffff;
+        font-family: Helvetica, Arial, sans-serif;
+        text-transform: uppercase;
+        text-align: center;
+        line-height: 1;
+      }
+      
+      .label-title {
+        font-size: 6px;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+        margin-bottom: 1.5px;
+      }
+      
+      .label-artist {
+        font-size: 4.5px;
+        font-weight: normal;
+        letter-spacing: 0.3px;
+        margin-bottom: 3px;
+      }
+      
+      .label-info {
+        font-size: 3.5px;
+        font-weight: normal;
+        opacity: 0.8;
+      }
+      
+      .label-side {
+        position: absolute;
+        left: 10px;
+        top: 30px;
+        color: #ffffff;
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 10px;
+        font-weight: bold;
+      }
+      
+      .label-promo {
+        position: absolute;
+        bottom: 22px;
+        color: #ffffff;
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 3.5px;
+        text-transform: uppercase;
+        opacity: 0.8;
+      }
+      
+      .label-nfr {
+        position: absolute;
+        bottom: 16px;
+        color: #ffffff;
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 3.5px;
+        text-transform: uppercase;
+        opacity: 0.8;
+      }
+      
+      .label-copyright {
+        position: absolute;
+        bottom: 8px;
+        color: #ffffff;
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 4px;
+        opacity: 0.8;
+      }
+      
+      .vinyl::before {
+        content: none;
       }
       
       .vinyl::after {
@@ -65,8 +142,8 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 8px;
-        height: 8px;
+        width: 12px;
+        height: 12px;
         background: #333;
         border-radius: 50%;
       }
@@ -77,34 +154,26 @@
         border-radius: 50%;
       }
       
-      .scratch-1 {
-        width: 2px;
-        height: 35px;
-        top: 8px;
-        left: 74px;
-        transform: rotate(15deg);
-      }
-      
       .scratch-2 {
-        width: 1px;
-        height: 25px;
-        top: 100px;
-        left: 40px;
+        width: 1.5px;
+        height: 37px;
+        top: 150px;
+        left: 60px;
         transform: rotate(-30deg);
       }
       
       .scratch-3 {
-        width: 3px;
-        height: 3px;
-        top: 45px;
-        left: 115px;
+        width: 4px;
+        height: 4px;
+        top: 67px;
+        left: 172px;
       }
       
       .scratch-4 {
-        width: 2px;
-        height: 2px;
-        top: 85px;
-        left: 25px;
+        width: 3px;
+        height: 3px;
+        top: 127px;
+        left: 37px;
       }
       
       .dust {
@@ -114,24 +183,24 @@
       }
       
       .dust-1 {
-        width: 4px;
-        height: 4px;
-        top: 30px;
-        left: 95px;
+        width: 6px;
+        height: 6px;
+        top: 45px;
+        left: 142px;
       }
       
       .dust-2 {
-        width: 2px;
-        height: 2px;
-        top: 110px;
-        left: 70px;
+        width: 3px;
+        height: 3px;
+        top: 165px;
+        left: 105px;
       }
       
       .dust-3 {
-        width: 3px;
-        height: 3px;
-        top: 60px;
-        left: 20px;
+        width: 4px;
+        height: 4px;
+        top: 90px;
+        left: 30px;
       }
       
       @keyframes spin {
@@ -173,7 +242,15 @@
   <body>
     <div class="container">
       <div class="vinyl">
-        <div class="scratch scratch-1"></div>
+        <div class="vinyl-label">
+          <span class="label-text label-title">Mix</span>
+          <span class="label-text label-artist">4st.uk</span>
+          <span class="label-text label-info">33 RPM · Stereo</span>
+          <span class="label-side">1</span>
+          <span class="label-promo">Promo Copy</span>
+          <span class="label-nfr">Not For Resale</span>
+          <span class="label-copyright">© 2026</span>
+        </div>
         <div class="scratch scratch-2"></div>
         <div class="scratch scratch-3"></div>
         <div class="scratch scratch-4"></div>
