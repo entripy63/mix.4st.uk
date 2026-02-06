@@ -7,7 +7,7 @@
   </head>
 
   <body>
-    <audio class="audioPlayer" controls src="MK181207.mp3"></audio>
+    <audio id="audioPlayer" class="audioPlayer" controls src="MK181207.mp3"></audio>
     
     <h1>Downloads</h1>
     <a class="download-link" href="MK181207.mp3" download>MP3</a>
@@ -119,7 +119,9 @@
         <td>MK</td>
       </tr>
     </table>
-    <p><a class="nav-link" href="Tech181213.html">Previous Mix</a> <a class="nav-link" href="index.html">All Mixes</a> <a class="nav-link" href="D09181202.html">Next Mix</a></p>
-  </body>
+    <p><a id="laterMix" class="nav-link" href="Tech181213.html">Later Mix</a> <a class="nav-link" href="index.html">Mix List</a> <a class="nav-link" href="D09181202.html">Earlier Mix</a></p>
+    <p><input type="checkbox" id="autoAdvance" disabled><label for="autoAdvance"> Automatically Advance to Later Mixes</label></p>
+<script src="../mix.js"></script>
+</body>
 
 </html>

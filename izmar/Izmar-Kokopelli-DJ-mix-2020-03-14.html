@@ -7,7 +7,7 @@
   </head>
 
   <body>
-    <audio class="audioPlayer" controls src="Izmar-Kokopelli-DJ-mix-2020-03-14.mp3"></audio>
+    <audio id="audioPlayer" class="audioPlayer" controls src="Izmar-Kokopelli-DJ-mix-2020-03-14.mp3"></audio>
 
     <h1>Downloads</h1>
     <a class="download-link" href="Izmar-Kokopelli-DJ-mix-2020-03-14.mp3" download>MP3</a>
@@ -350,7 +350,9 @@
         <td>Shigeto</td>
       </tr>
     </table>
-    <p><a class="nav-link" href="Izmar_Kokopelli_10_August_2019.html">Previous Mix</a> <a class="nav-link" href="index.html">All Mixes</a> <a class="nav-link" href="Izmar_Kokopelli_19_January_2020.html">Next Mix</a></p>
-  </body>
+    <p><a id="laterMix" class="nav-link" href="Izmar_Kokopelli_10_August_2019.html">Later Mix</a> <a class="nav-link" href="index.html">Mix List</a> <a class="nav-link" href="Izmar_Kokopelli_19_January_2020.html">Earlier Mix</a></p>
+    <p><input type="checkbox" id="autoAdvance" disabled><label for="autoAdvance"> Automatically Advance to Later Mixes</label></p>
+<script src="../mix.js"></script>
+</body>
 
 </html>
