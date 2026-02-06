@@ -37,6 +37,10 @@ font-weight: bold;
   margin-right: 15px;
 }
 
+.nav-link {
+  margin: 0 15px;
+}
+
 /* the audio player loses volume control if src duration is longer than 60 minutes
  * on Firefox so we increase the width which also makes the scrubber much longer which is good
  * for long duration sources */
