@@ -1,19 +1,31 @@
 body { margin: 10px; }
 
 .container {
-  display: flex;
+  display: grid;
   gap: 20px;
 }
 
 .left-column {
   width: 520px;
-  flex-shrink: 0;
 }
 
-.right-column {
-  flex: 1;
-  min-width: 200px;
+/* Wide: 3 columns */
+@media (min-width: 1200px) {
+  .container {
+    grid-template-columns: 520px 1fr 1fr;
+  }
 }
+
+/* Narrow: 2 columns, queue stacks above browser */
+@media (max-width: 1199px) {
+  .container {
+    grid-template-columns: 520px 1fr;
+  }
+  .middle-column, .right-column {
+    grid-column: 2;
+  }
+}
+
 body, th, td, p, div, li {
 font-family: Verdana, Arial, Helvetica, sans-serif;
 font-size: 12px;
