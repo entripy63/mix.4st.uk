@@ -117,7 +117,7 @@ function displayMixList(mixes) {
     `<div class="mix-item">
       <button class="icon-btn" onclick="addToQueue('${mix.htmlPath}')" title="Add to queue">+</button>
       <button class="icon-btn" onclick="playNow('${mix.htmlPath}')" title="Play now">▶</button>
-      <span class="mix-name">${mix.name}</span>
+      <span class="mix-name">${mix.name} <span class="mix-duration">(${mix.duration})</span></span>
     </div>`
   ).join('');
 }
