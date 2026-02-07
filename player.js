@@ -165,11 +165,17 @@ let draggedIndex = null;
 function displayQueue() {
   const queueDiv = document.getElementById('queue');
   const totalDuration = calculateTotalDuration();
+  const durationText = totalDuration ? ` · ${totalDuration}` : '';
   const queueInfo = queue.length > 0 
-    ? `<div class="queue-info">${currentQueueIndex >= 0 ? `Playing ${currentQueueIndex + 1} of ${queue.length}` : `${queue.length} mixes`} · ${totalDuration}</div>` 
+    ? `<div class="queue-info">${currentQueueIndex >= 0 ? `Playing ${currentQueueIndex + 1} of ${queue.length}` : `${queue.length} mixes`}${durationText}</div>` 
     : '';
   const header = queue.length > 0 
-    ? `<div class="queue-header"><button onclick="clearQueue()">Clear Queue</button><button onclick="shuffleQueue()">Shuffle</button></div>` 
+    ? `<div class="queue-header">
+        <button onclick="clearQueue()">Clear</button>
+        <button onclick="shuffleQueue()">Shuffle</button>
+        <button onclick="skipPrev()" title="Previous in queue">↑ Prev</button>
+        <button onclick="skipNext()" title="Next in queue">↓ Next</button>
+      </div>` 
     : '';
   queueDiv.innerHTML = queueInfo + header + queue.map((mix, i) => 
     `<div class="queue-item${i === currentQueueIndex ? ' current' : ''}" 
@@ -241,12 +247,15 @@ function shuffleQueue() {
 
 function calculateTotalDuration() {
   let totalMinutes = 0;
+  let hasDuration = false;
   queue.forEach(mix => {
-    if (mix.duration) {
+    if (mix.duration && mix.duration !== '0:00:00') {
       const parts = mix.duration.split(':');
       totalMinutes += parseInt(parts[0]) * 60 + parseInt(parts[1]);
+      hasDuration = true;
     }
   });
+  if (!hasDuration) return '';
   const hours = Math.floor(totalMinutes / 60);
   const mins = totalMinutes % 60;
   return `${hours}:${mins.toString().padStart(2, '0')}:00`;
