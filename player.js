@@ -51,8 +51,14 @@ let queue = JSON.parse(localStorage.getItem('queue') || '[]');
 let currentQueueIndex = parseInt(localStorage.getItem('currentQueueIndex') || '-1');
 
 function saveQueue() {
-  localStorage.setItem('queue', JSON.stringify(queue));
-  localStorage.setItem('currentQueueIndex', currentQueueIndex.toString());
+  const persistableQueue = queue.filter(mix => !mix.isLocal);
+  localStorage.setItem('queue', JSON.stringify(persistableQueue));
+  // Recalculate index for persistable queue
+  const currentMix = queue[currentQueueIndex];
+  const persistedIndex = currentMix && !currentMix.isLocal 
+    ? persistableQueue.findIndex(m => m.htmlPath === currentMix.htmlPath)
+    : -1;
+  localStorage.setItem('currentQueueIndex', persistedIndex.toString());
 }
 
 async function loadDJ(djPath) {
