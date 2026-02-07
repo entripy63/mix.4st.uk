@@ -123,7 +123,7 @@ function displayMixList(mixes) {
 }
 
 function addAllToQueue() {
-  displayedMixes.forEach(mix => {
+  [...displayedMixes].reverse().forEach(mix => {
     if (!queue.some(q => q.htmlPath === mix.htmlPath)) {
       queue.push(mix);
     }
