@@ -8,16 +8,27 @@ async function fetchDJMixes(djPath) {
   const rows = doc.querySelectorAll('table.border tr');
   
   rows.forEach(row => {
+    const cells = row.querySelectorAll('td');
     const link = row.querySelector('td a');
-    if (link) {
+    if (link && cells.length >= 2) {
+      const durationRaw = cells[0].textContent.trim();
       mixes.push({
         name: link.textContent,
-        htmlPath: `${djPath}/${link.getAttribute('href')}`
+        htmlPath: `${djPath}/${link.getAttribute('href')}`,
+        duration: formatDuration(durationRaw)
       });
     }
   });
   
   return mixes;
+}
+
+function formatDuration(raw) {
+  const hMatch = raw.match(/(\d+)h/);
+  const mMatch = raw.match(/(\d+)m/);
+  const hours = hMatch ? parseInt(hMatch[1]) : 0;
+  const minutes = mMatch ? parseInt(mMatch[1]) : 0;
+  return `${hours}:${minutes.toString().padStart(2, '0')}:00`;
 }
 
 function detectGroups(mixes) {
