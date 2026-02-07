@@ -1,9 +1,9 @@
 let aud = document.getElementById("audioPlayer");
 
-// Restore volume from localStorage
-if (localStorage.getItem('playerVolume') !== null) {
-  aud.volume = parseFloat(localStorage.getItem('playerVolume'));
-}
+// Restore volume from localStorage, default to 50%
+aud.volume = localStorage.getItem('playerVolume') !== null 
+  ? parseFloat(localStorage.getItem('playerVolume')) 
+  : 0.5;
 
 // Save volume on change
 aud.addEventListener("volumechange", function () {
