@@ -154,15 +154,57 @@ function displayTrackList(heading, table) {
   trackListDiv.innerHTML = heading + table;
 }
 
+let draggedIndex = null;
+
 function displayQueue() {
   const queueDiv = document.getElementById('queue');
   const header = queue.length > 0 ? `<div class="queue-header"><button onclick="clearQueue()">Clear Queue</button></div>` : '';
   queueDiv.innerHTML = header + queue.map((mix, i) => 
-    `<div class="queue-item${i === currentQueueIndex ? ' current' : ''}">
+    `<div class="queue-item${i === currentQueueIndex ? ' current' : ''}" 
+          draggable="true" 
+          ondragstart="onDragStart(event, ${i})" 
+          ondragover="onDragOver(event)" 
+          ondrop="onDrop(event, ${i})"
+          ondragend="onDragEnd()">
+      <span class="drag-handle">☰</span>
       <span class="mix-name" onclick="playFromQueue(${i})">${mix.name}</span>
       ${i !== currentQueueIndex ? `<button class="remove-btn" onclick="removeFromQueue(${i})">✕</button>` : ''}
     </div>`
   ).join('');
+}
+
+function onDragStart(e, index) {
+  draggedIndex = index;
+  e.currentTarget.classList.add('dragging');
+}
+
+function onDragOver(e) {
+  e.preventDefault();
+}
+
+function onDrop(e, dropIndex) {
+  e.preventDefault();
+  if (draggedIndex === null || draggedIndex === dropIndex) return;
+  
+  const draggedItem = queue.splice(draggedIndex, 1)[0];
+  queue.splice(dropIndex, 0, draggedItem);
+  
+  // Update currentQueueIndex to follow the currently playing item
+  if (currentQueueIndex === draggedIndex) {
+    currentQueueIndex = dropIndex;
+  } else if (draggedIndex < currentQueueIndex && dropIndex >= currentQueueIndex) {
+    currentQueueIndex--;
+  } else if (draggedIndex > currentQueueIndex && dropIndex <= currentQueueIndex) {
+    currentQueueIndex++;
+  }
+  
+  saveQueue();
+  displayQueue();
+}
+
+function onDragEnd() {
+  draggedIndex = null;
+  document.querySelectorAll('.queue-item').forEach(el => el.classList.remove('dragging'));
 }
 
 function clearQueue() {
