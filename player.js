@@ -51,7 +51,7 @@ async function loadDJ(djPath) {
 
 function updateDJButtons() {
   document.querySelectorAll('#djButtons button').forEach(btn => {
-    btn.classList.toggle('active', btn.textContent.replace('-', '') === currentDJ);
+    btn.classList.toggle('active', btn.textContent.replace('-', '').toLowerCase() === currentDJ);
   });
 }
 
