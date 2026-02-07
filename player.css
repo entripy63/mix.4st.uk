@@ -30,8 +30,20 @@ body { margin: 10px; }
   margin-bottom: 10px;
 }
 
+#djButtons button.active,
+#groupFilters button.active {
+  background: #336;
+  color: #fff;
+}
+
+.icon-btn {
+  padding: 2px 8px;
+  margin-left: 5px;
+}
+
 .mix-item, .queue-item {
-  padding: 3px 0;
+  padding: 4px 0;
+  font-size: 14px;
 }
 
 .queue-item.current {
