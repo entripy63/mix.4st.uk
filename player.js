@@ -37,13 +37,6 @@ function nextMix() {
   return null;
 }
 
-let urls = [
-  "trip/D201223.flac",
-  "trip/D201223.mp3",
-];
-
-load(urls[0]);
-
 let currentMixes = [];
 let currentDJ = '';
 let queue = [];
