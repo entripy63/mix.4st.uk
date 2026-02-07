@@ -19,3 +19,29 @@ async function fetchDJMixes(djPath) {
   
   return mixes;
 }
+
+function detectGroups(mixes) {
+  const prefixCounts = {};
+  
+  mixes.forEach(mix => {
+    const words = mix.name.split(' ');
+    let prefix = words[0];
+    if (words.length > 1 && words[0] === 'Around' && words[1] === 'The') {
+      prefix = 'Around The Houses';
+    }
+    prefixCounts[prefix] = (prefixCounts[prefix] || 0) + 1;
+  });
+  
+  const groups = Object.keys(prefixCounts).filter(p => prefixCounts[p] >= 2);
+  return groups.sort();
+}
+
+function filterMixes(mixes, group) {
+  if (!group) return mixes;
+  return mixes.filter(mix => {
+    if (group === 'Around The Houses') {
+      return mix.name.startsWith('Around The Houses');
+    }
+    return mix.name.startsWith(group + ' ');
+  });
+}
