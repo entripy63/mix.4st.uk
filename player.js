@@ -26,16 +26,10 @@ window.addEventListener("beforeunload", function () {
 });
 
 aud.addEventListener("ended", async function () {
-  const nextPath = nextMix();
-  if (nextPath) {
+  if (currentQueueIndex >= 0 && currentQueueIndex < queue.length - 1) {
     currentQueueIndex++;
     saveQueue();
-    const details = await fetchMixDetails(nextPath);
-    if (details.audioSrc) {
-      play(details.audioSrc);
-      displayTrackList(details.trackListHeading, details.trackListTable);
-    }
-    displayQueue();
+    await playFromQueue(currentQueueIndex);
   }
 });
 
@@ -49,12 +43,7 @@ function play(url) {
   aud.play();
 }
 
-function nextMix() {
-  if (currentQueueIndex >= 0 && currentQueueIndex < queue.length - 1) {
-    return queue[currentQueueIndex + 1].htmlPath;
-  }
-  return null;
-}
+
 
 let currentMixes = [];
 let currentDJ = '';
@@ -187,12 +176,20 @@ async function playFromQueue(index) {
   currentQueueIndex = index;
   saveQueue();
   const mix = queue[index];
-  currentlyPlayingPath = mix.htmlPath;
-  localStorage.setItem('currentMixPath', mix.htmlPath);
-  const details = await fetchMixDetails(mix.htmlPath);
-  if (details.audioSrc) {
-    play(details.audioSrc);
-    displayTrackList(details.trackListHeading, details.trackListTable);
+  
+  if (mix.isLocal) {
+    currentlyPlayingPath = null;
+    localStorage.removeItem('currentMixPath');
+    play(mix.audioSrc);
+    displayTrackList('', '');
+  } else {
+    currentlyPlayingPath = mix.htmlPath;
+    localStorage.setItem('currentMixPath', mix.htmlPath);
+    const details = await fetchMixDetails(mix.htmlPath);
+    if (details.audioSrc) {
+      play(details.audioSrc);
+      displayTrackList(details.trackListHeading, details.trackListTable);
+    }
   }
   displayQueue();
 }
@@ -207,6 +204,22 @@ function removeFromQueue(index) {
 }
 
 displayQueue();
+
+// Handle local file selection
+document.getElementById('fileInput').addEventListener('change', function(e) {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    const audioSrc = URL.createObjectURL(file);
+    queue.push({
+      name: file.name.replace(/\.[^/.]+$/, ''),
+      audioSrc: audioSrc,
+      isLocal: true
+    });
+  });
+  saveQueue();
+  displayQueue();
+  e.target.value = '';
+});
 
 // Restore last playing mix on page load
 (async function restorePlayer() {
