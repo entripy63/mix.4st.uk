@@ -45,22 +45,40 @@ let currentQueueIndex = -1;
 async function loadDJ(djPath) {
   currentDJ = djPath;
   currentMixes = await fetchDJMixes(djPath);
+  updateDJButtons();
   displayGroupFilters(currentMixes);
   displayMixList(currentMixes);
 }
 
+function updateDJButtons() {
+  document.querySelectorAll('#djButtons button').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.replace('-', '') === currentDJ);
+  });
+}
+
+let currentFilter = '';
+
 function displayGroupFilters(mixes) {
+  currentFilter = '';
   const filterDiv = document.getElementById('groupFilters');
   if (currentDJ !== 'trip') {
     filterDiv.innerHTML = '';
     return;
   }
   const groups = detectGroups(mixes);
-  filterDiv.innerHTML = `<button onclick="applyFilter('')">All</button> ` +
+  filterDiv.innerHTML = `<button class="active" onclick="applyFilter('')">All</button> ` +
     groups.map(g => `<button onclick="applyFilter('${g}')">${g}</button>`).join(' ');
 }
 
+function updateFilterButtons() {
+  document.querySelectorAll('#groupFilters button').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent === (currentFilter || 'All'));
+  });
+}
+
 function applyFilter(group) {
+  currentFilter = group;
+  updateFilterButtons();
   const filtered = filterMixes(currentMixes, group);
   displayMixList(filtered);
 }
@@ -70,8 +88,8 @@ function displayMixList(mixes) {
   mixList.innerHTML = mixes.map((mix, i) => 
     `<div class="mix-item">
       <span class="mix-name">${mix.name}</span>
-      <button onclick="addToQueue('${mix.htmlPath}')">+Queue</button>
-      <button onclick="playNow('${mix.htmlPath}')">Play</button>
+      <button class="icon-btn" onclick="addToQueue('${mix.htmlPath}')" title="Add to queue">+</button>
+      <button class="icon-btn" onclick="playNow('${mix.htmlPath}')" title="Play now">▶</button>
     </div>`
   ).join('');
 }
