@@ -1,4 +1,19 @@
 body { margin: 10px; }
+
+.container {
+  display: flex;
+  gap: 20px;
+}
+
+.left-column {
+  width: 520px;
+  flex-shrink: 0;
+}
+
+.right-column {
+  flex: 1;
+  min-width: 200px;
+}
 body, th, td, p, div, li {
 font-family: Verdana, Arial, Helvetica, sans-serif;
 font-size: 12px;
