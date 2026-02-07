@@ -45,3 +45,25 @@ function filterMixes(mixes, group) {
     return mix.name.startsWith(group + ' ');
   });
 }
+
+async function fetchMixDetails(htmlPath) {
+  const response = await fetch(htmlPath);
+  const html = await response.text();
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  
+  const audio = doc.querySelector('audio');
+  const audioSrc = audio ? audio.getAttribute('src') : null;
+  
+  const h1 = doc.querySelector('h1[id], h1:not(:first-of-type)') || 
+             Array.from(doc.querySelectorAll('h1')).find(h => h.textContent.includes('Track List'));
+  const trackListHeading = h1 ? h1.outerHTML : '';
+  
+  const table = doc.querySelector('table.border');
+  const trackListTable = table ? table.outerHTML : '';
+  
+  const dir = htmlPath.substring(0, htmlPath.lastIndexOf('/') + 1);
+  const fullAudioSrc = audioSrc ? dir + audioSrc : null;
+  
+  return { audioSrc: fullAudioSrc, trackListHeading, trackListTable };
+}

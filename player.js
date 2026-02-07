@@ -4,9 +4,18 @@ let autoAdvance = document.getElementById("autoAdvance");
 if (autoAdvance) {
   autoAdvance.disabled = false;
 
-  aud.addEventListener("ended", function () {
+  aud.addEventListener("ended", async function () {
     if (autoAdvance.checked) {
-      play(nextMix());
+      const nextPath = nextMix();
+      if (nextPath) {
+        currentQueueIndex++;
+        const details = await fetchMixDetails(nextPath);
+        if (details.audioSrc) {
+          play(details.audioSrc);
+          displayTrackList(details.trackListHeading, details.trackListTable);
+        }
+        displayQueue();
+      }
     }
   });
 }
@@ -22,7 +31,10 @@ function play(url) {
 }
 
 function nextMix() {
-  return urls[1];
+  if (currentQueueIndex >= 0 && currentQueueIndex < queue.length - 1) {
+    return queue[currentQueueIndex + 1].htmlPath;
+  }
+  return null;
 }
 
 let urls = [
@@ -79,19 +91,43 @@ function addToQueue(htmlPath) {
   }
 }
 
-function playNow(htmlPath) {
-  // Step 6: will fetch audio src and play directly, bypassing queue
-  console.log('Play:', htmlPath);
+let currentlyPlayingPath = null;
+
+async function playNow(htmlPath) {
+  currentlyPlayingPath = htmlPath;
+  currentQueueIndex = -1;
+  const details = await fetchMixDetails(htmlPath);
+  if (details.audioSrc) {
+    play(details.audioSrc);
+    displayTrackList(details.trackListHeading, details.trackListTable);
+  }
+  displayQueue();
+}
+
+function displayTrackList(heading, table) {
+  const trackListDiv = document.getElementById('trackList');
+  trackListDiv.innerHTML = heading + table;
 }
 
 function displayQueue() {
   const queueDiv = document.getElementById('queue');
   queueDiv.innerHTML = queue.map((mix, i) => 
     `<div class="queue-item${i === currentQueueIndex ? ' current' : ''}">
-      <span class="mix-name">${mix.name}</span>
+      <span class="mix-name" onclick="playFromQueue(${i})">${mix.name}</span>
       ${i !== currentQueueIndex ? `<button class="remove-btn" onclick="removeFromQueue(${i})">✕</button>` : ''}
     </div>`
   ).join('');
+}
+
+async function playFromQueue(index) {
+  currentQueueIndex = index;
+  const mix = queue[index];
+  const details = await fetchMixDetails(mix.htmlPath);
+  if (details.audioSrc) {
+    play(details.audioSrc);
+    displayTrackList(details.trackListHeading, details.trackListTable);
+  }
+  displayQueue();
 }
 
 function removeFromQueue(index) {
