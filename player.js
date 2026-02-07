@@ -31,3 +31,17 @@ let urls = [
 ];
 
 load(urls[0]);
+
+let currentMixes = [];
+
+async function loadDJ(djPath) {
+  currentMixes = await fetchDJMixes(djPath);
+  displayMixList(currentMixes);
+}
+
+function displayMixList(mixes) {
+  const mixList = document.getElementById('mixList');
+  mixList.innerHTML = mixes.map(mix => 
+    `<div class="mix-item">${mix.name}</div>`
+  ).join('');
+}

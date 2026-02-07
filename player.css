@@ -26,6 +26,14 @@ body { margin: 10px; }
   }
 }
 
+#djButtons {
+  margin-bottom: 10px;
+}
+
+.mix-item {
+  padding: 3px 0;
+}
+
 body, th, td, p, div, li {
 font-family: Verdana, Arial, Helvetica, sans-serif;
 font-size: 12px;
