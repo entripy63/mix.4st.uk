@@ -78,6 +78,20 @@ button:active {
 
 .mix-list-header, .queue-header {
   margin-bottom: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+#playerControls {
+  margin: 10px 0;
+  display: flex;
+  gap: 8px;
+}
+
+.queue-info {
+  color: #aaa;
+  font-size: 13px;
+  margin-bottom: 10px;
 }
 
 #localFiles {
@@ -161,8 +175,9 @@ font-size: 12px;
 overflow: visible;
 }
 h1 {
-font-size: 18px;
-font-weight: bold;
+  font-size: 18px;
+  font-weight: bold;
+  color: #e0e0e0;
 }
 table.border {
   border-collapse: separate;
