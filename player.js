@@ -164,8 +164,14 @@ let draggedIndex = null;
 
 function displayQueue() {
   const queueDiv = document.getElementById('queue');
-  const header = queue.length > 0 ? `<div class="queue-header"><button onclick="clearQueue()">Clear Queue</button></div>` : '';
-  queueDiv.innerHTML = header + queue.map((mix, i) => 
+  const totalDuration = calculateTotalDuration();
+  const queueInfo = queue.length > 0 
+    ? `<div class="queue-info">${currentQueueIndex >= 0 ? `Playing ${currentQueueIndex + 1} of ${queue.length}` : `${queue.length} mixes`} · ${totalDuration}</div>` 
+    : '';
+  const header = queue.length > 0 
+    ? `<div class="queue-header"><button onclick="clearQueue()">Clear Queue</button><button onclick="shuffleQueue()">Shuffle</button></div>` 
+    : '';
+  queueDiv.innerHTML = queueInfo + header + queue.map((mix, i) => 
     `<div class="queue-item${i === currentQueueIndex ? ' current' : ''}" 
           draggable="true" 
           ondragstart="onDragStart(event, ${i})" 
@@ -220,10 +226,50 @@ function clearQueue() {
   displayQueue();
 }
 
+function shuffleQueue() {
+  const currentMix = currentQueueIndex >= 0 ? queue[currentQueueIndex] : null;
+  for (let i = queue.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [queue[i], queue[j]] = [queue[j], queue[i]];
+  }
+  if (currentMix) {
+    currentQueueIndex = queue.findIndex(m => m.htmlPath === currentMix.htmlPath);
+  }
+  saveQueue();
+  displayQueue();
+}
+
+function calculateTotalDuration() {
+  let totalMinutes = 0;
+  queue.forEach(mix => {
+    if (mix.duration) {
+      const parts = mix.duration.split(':');
+      totalMinutes += parseInt(parts[0]) * 60 + parseInt(parts[1]);
+    }
+  });
+  const hours = Math.floor(totalMinutes / 60);
+  const mins = totalMinutes % 60;
+  return `${hours}:${mins.toString().padStart(2, '0')}:00`;
+}
+
+function skipNext() {
+  if (currentQueueIndex >= 0 && currentQueueIndex < queue.length - 1) {
+    playFromQueue(currentQueueIndex + 1);
+  }
+}
+
+function skipPrev() {
+  if (currentQueueIndex > 0) {
+    playFromQueue(currentQueueIndex - 1);
+  }
+}
+
 async function playFromQueue(index) {
   currentQueueIndex = index;
   saveQueue();
   const mix = queue[index];
+  
+  document.title = `▶ ${mix.name} - Player`;
   
   if (mix.isLocal) {
     currentlyPlayingPath = null;
@@ -252,6 +298,23 @@ function removeFromQueue(index) {
 }
 
 displayQueue();
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.code === 'Space') {
+    e.preventDefault();
+    if (aud.paused) {
+      aud.play();
+    } else {
+      aud.pause();
+    }
+  } else if (e.code === 'ArrowRight' && e.ctrlKey) {
+    skipNext();
+  } else if (e.code === 'ArrowLeft' && e.ctrlKey) {
+    skipPrev();
+  }
+});
 
 // Handle local file selection
 document.getElementById('fileInput').addEventListener('change', function(e) {
