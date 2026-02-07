@@ -58,16 +58,20 @@ function updateDJButtons() {
 
 let currentFilter = '';
 
+let currentGroups = [];
+
 function displayGroupFilters(mixes) {
   currentFilter = '';
   const filterDiv = document.getElementById('groupFilters');
   if (currentDJ !== 'trip') {
     filterDiv.innerHTML = '';
+    currentGroups = [];
     return;
   }
-  const groups = detectGroups(mixes);
+  currentGroups = detectGroups(mixes);
   filterDiv.innerHTML = `<button class="active" onclick="applyFilter('')">All</button> ` +
-    groups.map(g => `<button onclick="applyFilter('${g}')">${g}</button>`).join(' ');
+    currentGroups.map(g => `<button onclick="applyFilter('${g}')">${g}</button>`).join(' ') +
+    ` <button onclick="applyFilter('Other')">Other</button>`;
 }
 
 function updateFilterButtons() {
@@ -79,7 +83,7 @@ function updateFilterButtons() {
 function applyFilter(group) {
   currentFilter = group;
   updateFilterButtons();
-  const filtered = filterMixes(currentMixes, group);
+  const filtered = filterMixes(currentMixes, group, currentGroups);
   displayMixList(filtered);
 }
 
