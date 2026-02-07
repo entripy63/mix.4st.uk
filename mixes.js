@@ -36,8 +36,18 @@ function detectGroups(mixes) {
   return groups.sort();
 }
 
-function filterMixes(mixes, group) {
+function filterMixes(mixes, group, allGroups) {
   if (!group) return mixes;
+  if (group === 'Other') {
+    return mixes.filter(mix => {
+      return !allGroups.some(g => {
+        if (g === 'Around The Houses') {
+          return mix.name.startsWith('Around The Houses');
+        }
+        return mix.name.startsWith(g + ' ');
+      });
+    });
+  }
   return mixes.filter(mix => {
     if (group === 'Around The Houses') {
       return mix.name.startsWith('Around The Houses');
