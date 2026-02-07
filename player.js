@@ -91,7 +91,8 @@ let displayedMixes = [];
 function displayMixList(mixes) {
   displayedMixes = mixes;
   const mixList = document.getElementById('mixList');
-  mixList.innerHTML = `<div class="mix-list-header"><button onclick="addAllToQueue()">Add All to Queue</button></div>` +
+  const header = mixes.length > 1 ? `<div class="mix-list-header"><button onclick="addAllToQueue()">Add All to Queue</button></div>` : '';
+  mixList.innerHTML = header +
     mixes.map((mix, i) => 
     `<div class="mix-item">
       <button class="icon-btn" onclick="addToQueue('${mix.htmlPath}')" title="Add to queue">+</button>
