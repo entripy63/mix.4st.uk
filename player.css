@@ -23,6 +23,7 @@ body { margin: 10px; }
   }
   .middle-column, .right-column {
     grid-column: 2;
+    align-self: start;
   }
 }
 
