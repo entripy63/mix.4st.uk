@@ -42,7 +42,7 @@ body { margin: 10px; }
   margin-right: 3px;
 }
 
-.mix-list-header {
+.mix-list-header, .queue-header {
   margin-bottom: 10px;
 }
 
