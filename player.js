@@ -87,9 +87,9 @@ function displayMixList(mixes) {
   const mixList = document.getElementById('mixList');
   mixList.innerHTML = mixes.map((mix, i) => 
     `<div class="mix-item">
-      <span class="mix-name">${mix.name}</span>
       <button class="icon-btn" onclick="addToQueue('${mix.htmlPath}')" title="Add to queue">+</button>
       <button class="icon-btn" onclick="playNow('${mix.htmlPath}')" title="Play now">▶</button>
+      <span class="mix-name">${mix.name}</span>
     </div>`
   ).join('');
 }
