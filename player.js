@@ -1,25 +1,18 @@
 let aud = document.getElementById("audioPlayer");
-let autoAdvance = document.getElementById("autoAdvance");
 
-if (autoAdvance) {
-  autoAdvance.disabled = false;
-
-  aud.addEventListener("ended", async function () {
-    if (autoAdvance.checked) {
-      const nextPath = nextMix();
-      if (nextPath) {
-        currentQueueIndex++;
-        saveQueue();
-        const details = await fetchMixDetails(nextPath);
-        if (details.audioSrc) {
-          play(details.audioSrc);
-          displayTrackList(details.trackListHeading, details.trackListTable);
-        }
-        displayQueue();
-      }
+aud.addEventListener("ended", async function () {
+  const nextPath = nextMix();
+  if (nextPath) {
+    currentQueueIndex++;
+    saveQueue();
+    const details = await fetchMixDetails(nextPath);
+    if (details.audioSrc) {
+      play(details.audioSrc);
+      displayTrackList(details.trackListHeading, details.trackListTable);
     }
-  });
-}
+    displayQueue();
+  }
+});
 
 function load(url) {
   aud.src = url;
