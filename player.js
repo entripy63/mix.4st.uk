@@ -1,5 +1,30 @@
 let aud = document.getElementById("audioPlayer");
 
+// Restore volume from localStorage
+if (localStorage.getItem('playerVolume') !== null) {
+  aud.volume = parseFloat(localStorage.getItem('playerVolume'));
+}
+
+// Save volume on change
+aud.addEventListener("volumechange", function () {
+  localStorage.setItem('playerVolume', aud.volume);
+});
+
+// Save position periodically
+setInterval(function () {
+  if (aud.src && !aud.paused) {
+    localStorage.setItem('playerTime', aud.currentTime);
+  }
+}, 5000);
+
+// Save position on pause and before unload
+aud.addEventListener("pause", function () {
+  localStorage.setItem('playerTime', aud.currentTime);
+});
+window.addEventListener("beforeunload", function () {
+  localStorage.setItem('playerTime', aud.currentTime);
+});
+
 aud.addEventListener("ended", async function () {
   const nextPath = nextMix();
   if (nextPath) {
@@ -125,6 +150,7 @@ let currentlyPlayingPath = null;
 
 async function playNow(htmlPath) {
   currentlyPlayingPath = htmlPath;
+  localStorage.setItem('currentMixPath', htmlPath);
   currentQueueIndex = -1;
   const details = await fetchMixDetails(htmlPath);
   if (details.audioSrc) {
@@ -161,6 +187,8 @@ async function playFromQueue(index) {
   currentQueueIndex = index;
   saveQueue();
   const mix = queue[index];
+  currentlyPlayingPath = mix.htmlPath;
+  localStorage.setItem('currentMixPath', mix.htmlPath);
   const details = await fetchMixDetails(mix.htmlPath);
   if (details.audioSrc) {
     play(details.audioSrc);
@@ -179,3 +207,18 @@ function removeFromQueue(index) {
 }
 
 displayQueue();
+
+// Restore last playing mix on page load
+(async function restorePlayer() {
+  const savedPath = localStorage.getItem('currentMixPath');
+  if (savedPath) {
+    currentlyPlayingPath = savedPath;
+    const details = await fetchMixDetails(savedPath);
+    if (details.audioSrc) {
+      load(details.audioSrc);
+      const savedTime = parseFloat(localStorage.getItem('playerTime') || '0');
+      aud.currentTime = savedTime;
+      displayTrackList(details.trackListHeading, details.trackListTable);
+    }
+  }
+})();
