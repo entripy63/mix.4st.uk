@@ -140,12 +140,20 @@ function displayTrackList(heading, table) {
 
 function displayQueue() {
   const queueDiv = document.getElementById('queue');
-  queueDiv.innerHTML = queue.map((mix, i) => 
+  const header = queue.length > 0 ? `<div class="queue-header"><button onclick="clearQueue()">Clear Queue</button></div>` : '';
+  queueDiv.innerHTML = header + queue.map((mix, i) => 
     `<div class="queue-item${i === currentQueueIndex ? ' current' : ''}">
       <span class="mix-name" onclick="playFromQueue(${i})">${mix.name}</span>
       ${i !== currentQueueIndex ? `<button class="remove-btn" onclick="removeFromQueue(${i})">✕</button>` : ''}
     </div>`
   ).join('');
+}
+
+function clearQueue() {
+  queue = [];
+  currentQueueIndex = -1;
+  saveQueue();
+  displayQueue();
 }
 
 async function playFromQueue(index) {
