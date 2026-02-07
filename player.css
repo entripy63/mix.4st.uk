@@ -30,8 +30,23 @@ body { margin: 10px; }
   margin-bottom: 10px;
 }
 
-.mix-item {
+.mix-item, .queue-item {
   padding: 3px 0;
+}
+
+.queue-item.current {
+  background: #336;
+  color: #fff;
+  padding: 3px 5px;
+}
+
+.remove-btn {
+  color: #c00;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 10px;
 }
 
 body, th, td, p, div, li {

@@ -34,6 +34,8 @@ load(urls[0]);
 
 let currentMixes = [];
 let currentDJ = '';
+let queue = [];
+let currentQueueIndex = -1;
 
 async function loadDJ(djPath) {
   currentDJ = djPath;
@@ -60,7 +62,42 @@ function applyFilter(group) {
 
 function displayMixList(mixes) {
   const mixList = document.getElementById('mixList');
-  mixList.innerHTML = mixes.map(mix => 
-    `<div class="mix-item">${mix.name}</div>`
+  mixList.innerHTML = mixes.map((mix, i) => 
+    `<div class="mix-item">
+      <span class="mix-name">${mix.name}</span>
+      <button onclick="addToQueue('${mix.htmlPath}')">+Queue</button>
+      <button onclick="playNow('${mix.htmlPath}')">Play</button>
+    </div>`
   ).join('');
+}
+
+function addToQueue(htmlPath) {
+  const mix = currentMixes.find(m => m.htmlPath === htmlPath);
+  if (mix && !queue.some(q => q.htmlPath === htmlPath)) {
+    queue.push(mix);
+    displayQueue();
+  }
+}
+
+function playNow(htmlPath) {
+  // Step 6: will fetch audio src and play directly, bypassing queue
+  console.log('Play:', htmlPath);
+}
+
+function displayQueue() {
+  const queueDiv = document.getElementById('queue');
+  queueDiv.innerHTML = queue.map((mix, i) => 
+    `<div class="queue-item${i === currentQueueIndex ? ' current' : ''}">
+      <span class="mix-name">${mix.name}</span>
+      ${i !== currentQueueIndex ? `<button class="remove-btn" onclick="removeFromQueue(${i})">✕</button>` : ''}
+    </div>`
+  ).join('');
+}
+
+function removeFromQueue(index) {
+  if (index !== currentQueueIndex) {
+    queue.splice(index, 1);
+    if (index < currentQueueIndex) currentQueueIndex--;
+    displayQueue();
+  }
 }
