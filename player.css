@@ -89,11 +89,11 @@ button:active {
 }
 
 .mix-item, .queue-item {
-  padding: 10px 12px;
+  padding: 5px 10px;
   font-size: 14px;
   background: #252542;
   border-radius: 6px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   transition: background 0.2s;
 }
 
