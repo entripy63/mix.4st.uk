@@ -9,6 +9,7 @@ if (autoAdvance) {
       const nextPath = nextMix();
       if (nextPath) {
         currentQueueIndex++;
+        saveQueue();
         const details = await fetchMixDetails(nextPath);
         if (details.audioSrc) {
           play(details.audioSrc);
@@ -39,8 +40,13 @@ function nextMix() {
 
 let currentMixes = [];
 let currentDJ = '';
-let queue = [];
-let currentQueueIndex = -1;
+let queue = JSON.parse(localStorage.getItem('queue') || '[]');
+let currentQueueIndex = parseInt(localStorage.getItem('currentQueueIndex') || '-1');
+
+function saveQueue() {
+  localStorage.setItem('queue', JSON.stringify(queue));
+  localStorage.setItem('currentQueueIndex', currentQueueIndex.toString());
+}
 
 async function loadDJ(djPath) {
   currentDJ = djPath;
@@ -87,9 +93,13 @@ function applyFilter(group) {
   displayMixList(filtered);
 }
 
+let displayedMixes = [];
+
 function displayMixList(mixes) {
+  displayedMixes = mixes;
   const mixList = document.getElementById('mixList');
-  mixList.innerHTML = mixes.map((mix, i) => 
+  mixList.innerHTML = `<div class="mix-list-header"><button onclick="addAllToQueue()">Add All to Queue</button></div>` +
+    mixes.map((mix, i) => 
     `<div class="mix-item">
       <button class="icon-btn" onclick="addToQueue('${mix.htmlPath}')" title="Add to queue">+</button>
       <button class="icon-btn" onclick="playNow('${mix.htmlPath}')" title="Play now">▶</button>
@@ -98,10 +108,21 @@ function displayMixList(mixes) {
   ).join('');
 }
 
+function addAllToQueue() {
+  displayedMixes.forEach(mix => {
+    if (!queue.some(q => q.htmlPath === mix.htmlPath)) {
+      queue.push(mix);
+    }
+  });
+  saveQueue();
+  displayQueue();
+}
+
 function addToQueue(htmlPath) {
   const mix = currentMixes.find(m => m.htmlPath === htmlPath);
   if (mix && !queue.some(q => q.htmlPath === htmlPath)) {
     queue.push(mix);
+    saveQueue();
     displayQueue();
   }
 }
@@ -136,6 +157,7 @@ function displayQueue() {
 
 async function playFromQueue(index) {
   currentQueueIndex = index;
+  saveQueue();
   const mix = queue[index];
   const details = await fetchMixDetails(mix.htmlPath);
   if (details.audioSrc) {
@@ -149,6 +171,9 @@ function removeFromQueue(index) {
   if (index !== currentQueueIndex) {
     queue.splice(index, 1);
     if (index < currentQueueIndex) currentQueueIndex--;
+    saveQueue();
     displayQueue();
   }
 }
+
+displayQueue();

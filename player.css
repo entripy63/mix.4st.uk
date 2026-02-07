@@ -41,6 +41,10 @@ body { margin: 10px; }
   margin-right: 3px;
 }
 
+.mix-list-header {
+  margin-bottom: 10px;
+}
+
 .mix-item, .queue-item {
   padding: 4px 0;
   font-size: 14px;
