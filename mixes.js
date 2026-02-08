@@ -86,5 +86,20 @@ async function fetchMixDetails(htmlPath) {
   const dir = htmlPath.substring(0, htmlPath.lastIndexOf('/') + 1);
   const fullAudioSrc = audioSrc ? dir + audioSrc : null;
   
-  return { audioSrc: fullAudioSrc, trackListHeading, trackListTable };
+  // Try to load peaks file
+  let peaks = null;
+  if (audioSrc) {
+    const peaksPath = dir + audioSrc.replace(/\.[^/.]+$/, '.peaks.json');
+    try {
+      const peaksResponse = await fetch(peaksPath);
+      if (peaksResponse.ok) {
+        const peaksData = await peaksResponse.json();
+        peaks = peaksData.peaks;
+      }
+    } catch (e) {
+      // Peaks file doesn't exist, that's fine
+    }
+  }
+  
+  return { audioSrc: fullAudioSrc, trackListHeading, trackListTable, peaks };
 }
