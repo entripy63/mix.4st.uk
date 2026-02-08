@@ -20,29 +20,31 @@ def get_audio_peaks(audio_path, num_peaks=SAMPLES_PER_PEAK):
     """Extract peaks from audio file using ffmpeg."""
     
     # Get duration first
-    result = subprocess.run([
+    proc = subprocess.Popen([
         'ffprobe', '-v', 'quiet', '-show_entries', 'format=duration',
         '-of', 'default=noprint_wrappers=1:nokey=1', audio_path
-    ], capture_output=True, text=True)
+    ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, _ = proc.communicate()
     
-    duration = float(result.stdout.strip())
+    duration = float(stdout.decode().strip())
     
     # Calculate samples needed (low sample rate for efficiency)
     sample_rate = max(100, int(num_peaks / duration * 10))
     
     # Extract raw audio samples using ffmpeg
-    result = subprocess.run([
+    proc = subprocess.Popen([
         'ffmpeg', '-i', audio_path,
         '-ac', '1',  # mono
         '-ar', str(sample_rate),  # low sample rate
         '-f', 's16le',  # 16-bit signed little-endian
         '-v', 'quiet',
         '-'
-    ], capture_output=True)
+    ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, _ = proc.communicate()
     
     # Parse samples
     samples = []
-    data = result.stdout
+    data = stdout
     for i in range(0, len(data) - 1, 2):
         sample = struct.unpack('<h', data[i:i+2])[0]
         samples.append(abs(sample) / 32768.0)  # Normalize to 0-1
