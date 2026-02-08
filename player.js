@@ -222,13 +222,13 @@ async function playNow(htmlPath) {
   const details = await fetchMixDetails(htmlPath);
   if (details.audioSrc) {
     play(details.audioSrc);
-    displayTrackList(details.trackListHeading, details.trackListTable, details.downloadLinks);
+    displayTrackList(details.trackListHeading, details.trackListTable, details.downloadLinks, htmlPath);
     loadPeaks(details.peaks);
   }
   displayQueue();
 }
 
-function displayTrackList(heading, table, downloadLinks) {
+function displayTrackList(heading, table, downloadLinks, htmlPath) {
   const trackListDiv = document.getElementById('trackList');
   let downloads = '';
   if (downloadLinks && downloadLinks.length > 0) {
@@ -237,10 +237,23 @@ function displayTrackList(heading, table, downloadLinks) {
       ${downloadLinks.map(d => `<a class="download-btn" href="${d.href}" download>${d.label}</a>`).join('')}
     </div>`;
   }
-  trackListDiv.innerHTML = heading + table + downloads;
+  // Append DJ name to heading
+  let modifiedHeading = heading;
+  if (heading && htmlPath) {
+    const djName = getDJName(htmlPath);
+    modifiedHeading = heading.replace('</h1>', ` by ${djName}</h1>`);
+  }
+  trackListDiv.innerHTML = modifiedHeading + table + downloads;
 }
 
 let draggedIndex = null;
+
+function getDJName(htmlPath) {
+  if (!htmlPath) return '';
+  const dir = htmlPath.split('/')[0];
+  const djNames = { 'trip': 'trip-', 'izmar': 'Izmar', 'aboo': 'Aboo' };
+  return djNames[dir] || dir;
+}
 
 function displayQueue() {
   const queueDiv = document.getElementById('queue');
@@ -257,18 +270,19 @@ function displayQueue() {
         <button onclick="skipNext()" title="Next in queue">↓ Next</button>
       </div>` 
     : '';
-  queueDiv.innerHTML = queueInfo + header + queue.map((mix, i) => 
-    `<div class="queue-item${i === currentQueueIndex ? ' current' : ''}" 
+  queueDiv.innerHTML = queueInfo + header + queue.map((mix, i) => {
+    const djSuffix = mix.isLocal ? '' : ` - ${getDJName(mix.htmlPath)}`;
+    return `<div class="queue-item${i === currentQueueIndex ? ' current' : ''}" 
           draggable="true" 
           ondragstart="onDragStart(event, ${i})" 
           ondragover="onDragOver(event)" 
           ondrop="onDrop(event, ${i})"
           ondragend="onDragEnd()">
       <span class="drag-handle">☰</span>
-      <span class="mix-name" onclick="playFromQueue(${i})">${mix.name}</span>
+      <span class="mix-name" onclick="playFromQueue(${i})">${mix.name}${djSuffix}</span>
       ${i !== currentQueueIndex ? `<button class="remove-btn" onclick="removeFromQueue(${i})">✕</button>` : ''}
-    </div>`
-  ).join('');
+    </div>`;
+  }).join('');
 }
 
 function onDragStart(e, index) {
@@ -364,7 +378,7 @@ async function playFromQueue(index) {
     currentlyPlayingPath = null;
     localStorage.removeItem('currentMixPath');
     play(mix.audioSrc);
-    displayTrackList('', '', []);
+    displayTrackList('', '', [], null);
     loadPeaks(null);
   } else {
     currentlyPlayingPath = mix.htmlPath;
@@ -372,7 +386,7 @@ async function playFromQueue(index) {
     const details = await fetchMixDetails(mix.htmlPath);
     if (details.audioSrc) {
       play(details.audioSrc);
-      displayTrackList(details.trackListHeading, details.trackListTable, details.downloadLinks);
+      displayTrackList(details.trackListHeading, details.trackListTable, details.downloadLinks, mix.htmlPath);
       loadPeaks(details.peaks);
     }
   }
@@ -433,7 +447,7 @@ document.getElementById('fileInput').addEventListener('change', function(e) {
       load(details.audioSrc);
       const savedTime = parseFloat(localStorage.getItem('playerTime') || '0');
       aud.currentTime = savedTime;
-      displayTrackList(details.trackListHeading, details.trackListTable, details.downloadLinks);
+      displayTrackList(details.trackListHeading, details.trackListTable, details.downloadLinks, savedPath);
       loadPeaks(details.peaks);
     }
   }
