@@ -1,7 +1,47 @@
-let aud = document.getElementById("audioPlayer");
-let waveformCanvas = document.getElementById("waveform");
-let waveformCtx = waveformCanvas.getContext("2d");
-let currentPeaks = null;
+const storage = {
+  get(key, defaultVal = null) {
+    const val = localStorage.getItem(key);
+    return val !== null ? val : defaultVal;
+  },
+  getNum(key, defaultVal = 0) {
+    const val = localStorage.getItem(key);
+    return val !== null ? parseFloat(val) : defaultVal;
+  },
+  getJSON(key, defaultVal = null) {
+    try {
+      const val = localStorage.getItem(key);
+      return val !== null ? JSON.parse(val) : defaultVal;
+    } catch { return defaultVal; }
+  },
+  getBool(key, defaultVal = false) {
+    return localStorage.getItem(key) === 'true' || (localStorage.getItem(key) === null && defaultVal);
+  },
+  set(key, val) {
+    localStorage.setItem(key, typeof val === 'object' ? JSON.stringify(val) : val);
+  },
+  remove(key) {
+    localStorage.removeItem(key);
+  }
+};
+
+const aud = document.getElementById("audioPlayer");
+const waveformCanvas = document.getElementById("waveform");
+const waveformCtx = waveformCanvas.getContext("2d");
+
+const state = {
+  currentPeaks: null,
+  isResizing: false,
+  currentMixes: [],
+  currentDJ: '',
+  currentFilter: '',
+  currentGroups: [],
+  displayedMixes: [],
+  draggedIndex: null,
+  queue: storage.getJSON('queue', []),
+  currentQueueIndex: storage.getNum('currentQueueIndex', -1),
+  loopQueue: storage.getBool('loopQueue'),
+  queueIdCounter: storage.getNum('queueIdCounter', 0)
+};
 
 // Set canvas resolution to match CSS size
 waveformCanvas.width = waveformCanvas.offsetWidth;
@@ -38,9 +78,9 @@ function drawWaveform(peaks, progress = 0) {
 }
 
 function updateWaveformCursor() {
-  if (currentPeaks && aud.duration) {
+  if (state.currentPeaks && aud.duration) {
     const progress = aud.currentTime / aud.duration;
-    drawWaveform(currentPeaks, progress);
+    drawWaveform(state.currentPeaks, progress);
   }
 }
 
@@ -59,51 +99,100 @@ waveformCanvas.addEventListener('click', function(e) {
 });
 
 // Initialize with empty waveform
-currentPeaks = null;
+state.currentPeaks = null;
 drawWaveform([], 0);
+
+// Waveform resize handling
+const resizeHandle = document.getElementById('waveformResizeHandle');
+
+// Restore saved height
+const savedHeight = storage.getNum('waveformHeight', 0);
+if (savedHeight) {
+  waveformCanvas.style.height = savedHeight + 'px';
+  waveformCanvas.height = savedHeight;
+}
+
+resizeHandle.addEventListener('mousedown', startResize);
+resizeHandle.addEventListener('touchstart', startResize, { passive: false });
+
+function startResize(e) {
+  e.preventDefault();
+  state.isResizing = true;
+  document.addEventListener('mousemove', doResize);
+  document.addEventListener('mouseup', stopResize);
+  document.addEventListener('touchmove', doResize, { passive: false });
+  document.addEventListener('touchend', stopResize);
+}
+
+function doResize(e) {
+  if (!state.isResizing) return;
+  e.preventDefault();
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  const rect = waveformCanvas.getBoundingClientRect();
+  let newHeight = clientY - rect.top;
+  newHeight = Math.max(30, Math.min(200, newHeight));
+  waveformCanvas.style.height = newHeight + 'px';
+  waveformCanvas.height = newHeight;
+  if (state.currentPeaks) drawWaveform(state.currentPeaks, aud.currentTime / aud.duration || 0);
+}
+
+function stopResize() {
+  if (!state.isResizing) return;
+  state.isResizing = false;
+  document.removeEventListener('mousemove', doResize);
+  document.removeEventListener('mouseup', stopResize);
+  document.removeEventListener('touchmove', doResize);
+  document.removeEventListener('touchend', stopResize);
+  storage.set('waveformHeight', waveformCanvas.height);
+}
 
 function loadPeaks(peaks) {
   if (peaks && peaks.length > 0) {
-    currentPeaks = peaks;
-    drawWaveform(currentPeaks, 0);
+    state.currentPeaks = peaks;
+    drawWaveform(state.currentPeaks, 0);
   } else {
-    currentPeaks = null;
+    state.currentPeaks = null;
     waveformCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
   }
 }
 
 // Restore volume from localStorage, default to 50%
-aud.volume = localStorage.getItem('playerVolume') !== null 
-  ? parseFloat(localStorage.getItem('playerVolume')) 
-  : 0.5;
+aud.volume = storage.getNum('playerVolume', 0.5);
 
 // Save volume on change
 aud.addEventListener("volumechange", function () {
-  localStorage.setItem('playerVolume', aud.volume);
+  storage.set('playerVolume', aud.volume);
 });
 
 // Save position periodically
 setInterval(function () {
   if (aud.src && !aud.paused) {
-    localStorage.setItem('playerTime', aud.currentTime);
+    storage.set('playerTime', aud.currentTime);
   }
 }, 5000);
 
 // Save position on pause and before unload
 aud.addEventListener("pause", function () {
-  localStorage.setItem('playerTime', aud.currentTime);
+  storage.set('playerTime', aud.currentTime);
 });
 window.addEventListener("beforeunload", function () {
-  localStorage.setItem('playerTime', aud.currentTime);
+  storage.set('playerTime', aud.currentTime);
 });
 
 aud.addEventListener("ended", async function () {
-  if (currentQueueIndex >= 0 && currentQueueIndex < queue.length - 1) {
-    currentQueueIndex++;
+  if (state.currentQueueIndex >= 0 && state.currentQueueIndex < state.queue.length - 1) {
+    state.currentQueueIndex++;
     saveQueue();
-    await playFromQueue(currentQueueIndex);
+    await playFromQueue(state.currentQueueIndex);
+  } else if (state.loopQueue && state.queue.length > 0) {
+    state.currentQueueIndex = 0;
+    saveQueue();
+    await playFromQueue(state.currentQueueIndex);
   }
 });
+
+aud.addEventListener("play", updateQueueInfo);
+aud.addEventListener("pause", updateQueueInfo);
 
 function load(url) {
   aud.src = url;
@@ -117,115 +206,140 @@ function play(url) {
 
 
 
-let currentMixes = [];
-let currentDJ = '';
-let queue = JSON.parse(localStorage.getItem('queue') || '[]');
-let currentQueueIndex = parseInt(localStorage.getItem('currentQueueIndex') || '-1');
+function generateQueueId() {
+  state.queueIdCounter++;
+  storage.set('queueIdCounter', state.queueIdCounter);
+  return state.queueIdCounter;
+}
+
+// Ensure existing queue items have IDs
+state.queue.forEach(item => {
+  if (!item.queueId) item.queueId = generateQueueId();
+});
+
+function showToast(message) {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
 
 function saveQueue() {
-  const persistableQueue = queue.filter(mix => !mix.isLocal);
-  localStorage.setItem('queue', JSON.stringify(persistableQueue));
+  const persistableQueue = state.queue.filter(mix => !mix.isLocal);
+  storage.set('queue', persistableQueue);
   // Recalculate index for persistable queue
-  const currentMix = queue[currentQueueIndex];
+  const currentMix = state.queue[state.currentQueueIndex];
   const persistedIndex = currentMix && !currentMix.isLocal 
-    ? persistableQueue.findIndex(m => m.htmlPath === currentMix.htmlPath)
+    ? persistableQueue.findIndex(m => getMixId(m) === getMixId(currentMix))
     : -1;
-  localStorage.setItem('currentQueueIndex', persistedIndex.toString());
+  storage.set('currentQueueIndex', persistedIndex);
 }
 
 async function loadDJ(djPath) {
-  currentDJ = djPath;
-  currentMixes = await fetchDJMixes(djPath);
+  state.currentDJ = djPath;
+  state.currentMixes = await fetchDJMixes(djPath);
   updateDJButtons();
-  displayGroupFilters(currentMixes);
-  displayMixList(currentMixes);
+  displayGroupFilters(state.currentMixes);
+  displayMixList(state.currentMixes);
 }
 
 function updateDJButtons() {
   document.querySelectorAll('#djButtons button').forEach(btn => {
-    btn.classList.toggle('active', btn.textContent.replace('-', '').toLowerCase() === currentDJ);
+    btn.classList.toggle('active', btn.textContent.replace('-', '').toLowerCase() === state.currentDJ);
   });
 }
 
-let currentFilter = '';
-
-let currentGroups = [];
-
 function displayGroupFilters(mixes) {
-  currentFilter = '';
+  state.currentFilter = '';
   const filterDiv = document.getElementById('groupFilters');
-  if (currentDJ !== 'trip') {
+  state.currentGroups = detectGroups(mixes);
+  if (state.currentGroups.length === 0) {
     filterDiv.innerHTML = '';
-    currentGroups = [];
     return;
   }
-  currentGroups = detectGroups(mixes);
   filterDiv.innerHTML = `<button class="active" onclick="applyFilter('')">All</button> ` +
-    currentGroups.map(g => `<button onclick="applyFilter('${g}')">${g}</button>`).join(' ') +
+    state.currentGroups.map(g => `<button onclick="applyFilter('${g}')">${g}</button>`).join(' ') +
     ` <button onclick="applyFilter('Other')">Other</button>`;
 }
 
 function updateFilterButtons() {
   document.querySelectorAll('#groupFilters button').forEach(btn => {
-    btn.classList.toggle('active', btn.textContent === (currentFilter || 'All'));
+    btn.classList.toggle('active', btn.textContent === (state.currentFilter || 'All'));
   });
 }
 
 function applyFilter(group) {
-  currentFilter = group;
+  state.currentFilter = group;
   updateFilterButtons();
-  const filtered = filterMixes(currentMixes, group, currentGroups);
+  const filtered = filterMixes(state.currentMixes, group, state.currentGroups);
   displayMixList(filtered);
 }
 
-let displayedMixes = [];
+function getMixId(mix) {
+  return mix.htmlPath || `${mix.djPath}/${mix.file}`;
+}
 
 function displayMixList(mixes) {
-  displayedMixes = mixes;
+  state.displayedMixes = mixes;
   const mixList = document.getElementById('mixList');
   const header = mixes.length > 1 ? `<div class="mix-list-header"><button onclick="addAllToQueue()">Add All to Queue</button></div>` : '';
   mixList.innerHTML = header +
-    mixes.map((mix, i) => 
-    `<div class="mix-item">
-      <button class="icon-btn" onclick="addToQueue('${mix.htmlPath}')" title="Add to queue">+</button>
-      <button class="icon-btn" onclick="playNow('${mix.htmlPath}')" title="Play now">▶</button>
+    mixes.map((mix, i) => {
+      const mixId = getMixId(mix);
+      return `<div class="mix-item">
+      <button class="icon-btn" onclick="addToQueue('${mixId}')" title="Add to queue">+</button>
+      <button class="icon-btn" onclick="playNow('${mixId}')" title="Play now">▶</button>
       <span class="mix-name">${mix.name} <span class="mix-duration">(${mix.duration})</span></span>
-    </div>`
-  ).join('');
+    </div>`;
+    }).join('');
 }
 
 function addAllToQueue() {
-  [...displayedMixes].reverse().forEach(mix => {
-    if (!queue.some(q => q.htmlPath === mix.htmlPath)) {
-      queue.push(mix);
-    }
+  state.displayedMixes.forEach(mix => {
+    state.queue.push({ ...mix, queueId: generateQueueId() });
   });
   saveQueue();
   displayQueue();
 }
 
-function addToQueue(htmlPath) {
-  const mix = currentMixes.find(m => m.htmlPath === htmlPath);
-  if (mix && !queue.some(q => q.htmlPath === htmlPath)) {
-    queue.push(mix);
+function addToQueue(mixId) {
+  const mix = state.currentMixes.find(m => getMixId(m) === mixId);
+  if (mix) {
+    state.queue.push({ ...mix, queueId: generateQueueId() });
     saveQueue();
     displayQueue();
   }
 }
 
-let currentlyPlayingPath = null;
-
-async function playNow(htmlPath) {
-  currentlyPlayingPath = htmlPath;
-  localStorage.setItem('currentMixPath', htmlPath);
-  currentQueueIndex = -1;
-  const details = await fetchMixDetails(htmlPath);
-  if (details.audioSrc) {
-    play(details.audioSrc);
-    displayTrackList(details.trackListHeading, details.trackListTable, details.downloadLinks, htmlPath);
-    loadPeaks(details.peaks);
+async function playMix(mix) {
+  document.title = `${mix.name} - Player`;
+  
+  if (mix.isLocal) {
+    storage.remove('currentMixPath');
+    play(mix.audioSrc);
+    displayTrackList('', '', [], null);
+    loadPeaks(null);
+  } else {
+    // Store mix identifier for restore (works with both manifest and HTML-based mixes)
+    const mixId = mix.htmlPath || `${mix.djPath}/${mix.file}`;
+    storage.set('currentMixPath', mixId);
+    const details = await fetchMixDetails(mix);
+    if (details.audioSrc) {
+      play(details.audioSrc);
+      displayTrackList(details.trackListHeading, details.trackListTable, details.downloadLinks, mixId);
+      loadPeaks(details.peaks);
+    }
   }
   displayQueue();
+}
+
+async function playNow(mixId) {
+  state.currentQueueIndex = -1;
+  const mix = state.currentMixes.find(m => getMixId(m) === mixId);
+  await playMix(mix || { name: mixId.split('/').pop(), htmlPath: mixId });
 }
 
 function displayTrackList(heading, table, downloadLinks, htmlPath) {
@@ -246,8 +360,6 @@ function displayTrackList(heading, table, downloadLinks, htmlPath) {
   trackListDiv.innerHTML = modifiedHeading + table + downloads;
 }
 
-let draggedIndex = null;
-
 function getDJName(htmlPath) {
   if (!htmlPath) return '';
   const dir = htmlPath.split('/')[0];
@@ -255,24 +367,40 @@ function getDJName(htmlPath) {
   return djNames[dir] || dir;
 }
 
+function updateQueueInfo() {
+  const infoDiv = document.querySelector('.queue-info');
+  if (!infoDiv || state.queue.length === 0) return;
+  
+  const totalDuration = calculateTotalDuration();
+  const durationText = totalDuration ? ` · ${totalDuration}` : '';
+  const playState = aud.paused ? 'Stopped' : 'Playing';
+  
+  infoDiv.textContent = state.currentQueueIndex >= 0 
+    ? `${playState} ${state.currentQueueIndex + 1} of ${state.queue.length}${durationText}`
+    : `${state.queue.length} mixes${durationText}`;
+}
+
 function displayQueue() {
   const queueDiv = document.getElementById('queue');
   const totalDuration = calculateTotalDuration();
   const durationText = totalDuration ? ` · ${totalDuration}` : '';
-  const queueInfo = queue.length > 0 
-    ? `<div class="queue-info">${currentQueueIndex >= 0 ? `Playing ${currentQueueIndex + 1} of ${queue.length}` : `${queue.length} mixes`}${durationText}</div>` 
+  const playState = aud.paused ? 'Stopped' : 'Playing';
+  const queueInfo = state.queue.length > 0 
+    ? `<div class="queue-info">${state.currentQueueIndex >= 0 ? `${playState} ${state.currentQueueIndex + 1} of ${state.queue.length}` : `${state.queue.length} mixes`}${durationText}</div>` 
     : '';
-  const header = queue.length > 0 
+  const header = state.queue.length > 0 
     ? `<div class="queue-header">
         <button onclick="clearQueue()">Clear</button>
         <button onclick="shuffleQueue()">Shuffle</button>
+        <button class="loop-btn${state.loopQueue ? ' active' : ''}" onclick="toggleLoop()">Loop</button>
         <button onclick="skipPrev()" title="Previous in queue">↑ Prev</button>
         <button onclick="skipNext()" title="Next in queue">↓ Next</button>
       </div>` 
     : '';
-  queueDiv.innerHTML = queueInfo + header + queue.map((mix, i) => {
-    const djSuffix = mix.isLocal ? '' : ` - ${getDJName(mix.htmlPath)}`;
-    return `<div class="queue-item${i === currentQueueIndex ? ' current' : ''}" 
+  queueDiv.innerHTML = queueInfo + header + state.queue.map((mix, i) => {
+    const djName = mix.artist || getDJName(mix.htmlPath || mix.djPath);
+    const djSuffix = mix.isLocal ? '' : ` - ${djName}`;
+    return `<div class="queue-item${i === state.currentQueueIndex ? ' current' : ''}" 
           draggable="true" 
           ondragstart="onDragStart(event, ${i})" 
           ondragover="onDragOver(event)" 
@@ -280,13 +408,13 @@ function displayQueue() {
           ondragend="onDragEnd()">
       <span class="drag-handle">☰</span>
       <span class="mix-name" onclick="playFromQueue(${i})">${mix.name}${djSuffix}</span>
-      ${i !== currentQueueIndex ? `<button class="remove-btn" onclick="removeFromQueue(${i})">✕</button>` : ''}
+      ${i !== state.currentQueueIndex ? `<button class="remove-btn" onclick="removeFromQueue(${i})">✕</button>` : ''}
     </div>`;
   }).join('');
 }
 
 function onDragStart(e, index) {
-  draggedIndex = index;
+  state.draggedIndex = index;
   e.currentTarget.classList.add('dragging');
 }
 
@@ -296,18 +424,18 @@ function onDragOver(e) {
 
 function onDrop(e, dropIndex) {
   e.preventDefault();
-  if (draggedIndex === null || draggedIndex === dropIndex) return;
+  if (state.draggedIndex === null || state.draggedIndex === dropIndex) return;
   
-  const draggedItem = queue.splice(draggedIndex, 1)[0];
-  queue.splice(dropIndex, 0, draggedItem);
+  const draggedItem = state.queue.splice(state.draggedIndex, 1)[0];
+  state.queue.splice(dropIndex, 0, draggedItem);
   
   // Update currentQueueIndex to follow the currently playing item
-  if (currentQueueIndex === draggedIndex) {
-    currentQueueIndex = dropIndex;
-  } else if (draggedIndex < currentQueueIndex && dropIndex >= currentQueueIndex) {
-    currentQueueIndex--;
-  } else if (draggedIndex > currentQueueIndex && dropIndex <= currentQueueIndex) {
-    currentQueueIndex++;
+  if (state.currentQueueIndex === state.draggedIndex) {
+    state.currentQueueIndex = dropIndex;
+  } else if (state.draggedIndex < state.currentQueueIndex && dropIndex >= state.currentQueueIndex) {
+    state.currentQueueIndex--;
+  } else if (state.draggedIndex > state.currentQueueIndex && dropIndex <= state.currentQueueIndex) {
+    state.currentQueueIndex++;
   }
   
   saveQueue();
@@ -315,34 +443,40 @@ function onDrop(e, dropIndex) {
 }
 
 function onDragEnd() {
-  draggedIndex = null;
+  state.draggedIndex = null;
   document.querySelectorAll('.queue-item').forEach(el => el.classList.remove('dragging'));
 }
 
 function clearQueue() {
-  queue = [];
-  currentQueueIndex = -1;
+  state.queue = [];
+  state.currentQueueIndex = -1;
   saveQueue();
   displayQueue();
 }
 
 function shuffleQueue() {
-  const currentMix = currentQueueIndex >= 0 ? queue[currentQueueIndex] : null;
-  for (let i = queue.length - 1; i > 0; i--) {
+  const currentMix = state.currentQueueIndex >= 0 ? state.queue[state.currentQueueIndex] : null;
+  for (let i = state.queue.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [queue[i], queue[j]] = [queue[j], queue[i]];
+    [state.queue[i], state.queue[j]] = [state.queue[j], state.queue[i]];
   }
   if (currentMix) {
-    currentQueueIndex = queue.findIndex(m => m.htmlPath === currentMix.htmlPath);
+    state.currentQueueIndex = state.queue.findIndex(m => m.queueId === currentMix.queueId);
   }
   saveQueue();
+  displayQueue();
+}
+
+function toggleLoop() {
+  state.loopQueue = !state.loopQueue;
+  storage.set('loopQueue', state.loopQueue);
   displayQueue();
 }
 
 function calculateTotalDuration() {
   let totalMinutes = 0;
   let hasDuration = false;
-  queue.forEach(mix => {
+  state.queue.forEach(mix => {
     if (mix.duration && mix.duration !== '0:00:00') {
       const parts = mix.duration.split(':');
       totalMinutes += parseInt(parts[0]) * 60 + parseInt(parts[1]);
@@ -356,47 +490,27 @@ function calculateTotalDuration() {
 }
 
 function skipNext() {
-  if (currentQueueIndex >= 0 && currentQueueIndex < queue.length - 1) {
-    playFromQueue(currentQueueIndex + 1);
+  if (state.currentQueueIndex >= 0 && state.currentQueueIndex < state.queue.length - 1) {
+    playFromQueue(state.currentQueueIndex + 1);
   }
 }
 
 function skipPrev() {
-  if (currentQueueIndex > 0) {
-    playFromQueue(currentQueueIndex - 1);
+  if (state.currentQueueIndex > 0) {
+    playFromQueue(state.currentQueueIndex - 1);
   }
 }
 
 async function playFromQueue(index) {
-  currentQueueIndex = index;
+  state.currentQueueIndex = index;
   saveQueue();
-  const mix = queue[index];
-  
-  document.title = `▶ ${mix.name} - Player`;
-  
-  if (mix.isLocal) {
-    currentlyPlayingPath = null;
-    localStorage.removeItem('currentMixPath');
-    play(mix.audioSrc);
-    displayTrackList('', '', [], null);
-    loadPeaks(null);
-  } else {
-    currentlyPlayingPath = mix.htmlPath;
-    localStorage.setItem('currentMixPath', mix.htmlPath);
-    const details = await fetchMixDetails(mix.htmlPath);
-    if (details.audioSrc) {
-      play(details.audioSrc);
-      displayTrackList(details.trackListHeading, details.trackListTable, details.downloadLinks, mix.htmlPath);
-      loadPeaks(details.peaks);
-    }
-  }
-  displayQueue();
+  await playMix(state.queue[index]);
 }
 
 function removeFromQueue(index) {
-  if (index !== currentQueueIndex) {
-    queue.splice(index, 1);
-    if (index < currentQueueIndex) currentQueueIndex--;
+  if (index !== state.currentQueueIndex) {
+    state.queue.splice(index, 1);
+    if (index < state.currentQueueIndex) state.currentQueueIndex--;
     saveQueue();
     displayQueue();
   }
@@ -422,33 +536,121 @@ document.addEventListener('keydown', function(e) {
 });
 
 // Handle local file selection
-document.getElementById('fileInput').addEventListener('change', function(e) {
+document.getElementById('fileInput').addEventListener('change', async function(e) {
   const files = Array.from(e.target.files);
-  files.forEach(file => {
+  let rejected = 0;
+  
+  for (const file of files) {
+    const canPlay = await checkAudioSupport(file);
+    if (canPlay === '') {
+      rejected++;
+      continue;
+    }
+    if (canPlay === 'maybe') {
+      showToast(`Warning: ${file.name} may not play correctly`);
+    }
     const audioSrc = URL.createObjectURL(file);
-    queue.push({
+    state.queue.push({
       name: file.name.replace(/\.[^/.]+$/, ''),
       audioSrc: audioSrc,
-      isLocal: true
+      isLocal: true,
+      queueId: generateQueueId()
     });
-  });
+  }
+  
+  if (rejected > 0) {
+    showToast(`${rejected} file(s) not supported by this browser`);
+  }
+  
   saveQueue();
   displayQueue();
   e.target.value = '';
 });
 
+async function checkAudioSupport(file) {
+  const mimeType = file.type || guessMimeType(file.name);
+  if (!mimeType) return 'maybe';
+  
+  const testAudio = document.createElement('audio');
+  let result = testAudio.canPlayType(mimeType);
+  
+  // For M4A, try to detect codec by probing playback
+  if (mimeType.includes('m4a') || mimeType.includes('mp4')) {
+    result = await probeAudioPlayback(file);
+  }
+  
+  return result;
+}
+
+function guessMimeType(filename) {
+  const ext = filename.split('.').pop().toLowerCase();
+  const types = {
+    'mp3': 'audio/mpeg',
+    'm4a': 'audio/mp4',
+    'ogg': 'audio/ogg',
+    'wav': 'audio/wav',
+    'flac': 'audio/flac',
+    'webm': 'audio/webm'
+  };
+  return types[ext] || '';
+}
+
+function probeAudioPlayback(file) {
+  return new Promise(resolve => {
+    const testAudio = document.createElement('audio');
+    const url = URL.createObjectURL(file);
+    
+    const cleanup = () => {
+      testAudio.src = '';
+      URL.revokeObjectURL(url);
+    };
+    
+    testAudio.addEventListener('canplay', () => {
+      cleanup();
+      resolve('probably');
+    }, { once: true });
+    
+    testAudio.addEventListener('error', () => {
+      cleanup();
+      resolve('');
+    }, { once: true });
+    
+    setTimeout(() => {
+      cleanup();
+      resolve('maybe');
+    }, 3000);
+    
+    testAudio.src = url;
+    testAudio.load();
+  });
+}
+
 // Restore last playing mix on page load
 (async function restorePlayer() {
-  const savedPath = localStorage.getItem('currentMixPath');
-  if (savedPath) {
-    currentlyPlayingPath = savedPath;
-    const details = await fetchMixDetails(savedPath);
-    if (details.audioSrc) {
-      load(details.audioSrc);
-      const savedTime = parseFloat(localStorage.getItem('playerTime') || '0');
-      aud.currentTime = savedTime;
-      displayTrackList(details.trackListHeading, details.trackListTable, details.downloadLinks, savedPath);
-      loadPeaks(details.peaks);
+  try {
+    const savedPath = storage.get('currentMixPath');
+    if (savedPath) {
+      // Build a mix-like object for fetchMixDetails
+      // savedPath could be "dj/file.html" (legacy) or "dj/file" (manifest)
+      const isLegacy = savedPath.endsWith('.html');
+      let mix;
+      if (isLegacy) {
+        mix = { htmlPath: savedPath };
+      } else {
+        const parts = savedPath.split('/');
+        const file = parts.pop();
+        const djPath = parts.join('/');
+        mix = { djPath, file, audioFile: `${file}.mp3` };
+      }
+      const details = await fetchMixDetails(mix);
+      if (details.audioSrc) {
+        load(details.audioSrc);
+        aud.currentTime = storage.getNum('playerTime', 0);
+        displayTrackList(details.trackListHeading, details.trackListTable, details.downloadLinks, savedPath);
+        loadPeaks(details.peaks);
+      }
     }
+  } catch (e) {
+    console.error('Error restoring player:', e);
   }
 })();

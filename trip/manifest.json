@@ -1,0 +1,332 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "1812xx",
+      "file": "1812xx",
+      "audioFile": "1812xx.mp3",
+      "duration": 3811.343673,
+      "durationFormatted": "1:03:31",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "1812xx.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "1812xx.peaks.json"
+    },
+    {
+      "name": "Around The Houses 170923",
+      "file": "ATH170923",
+      "audioFile": "ATH170923.mp3",
+      "duration": 5626.801633,
+      "durationFormatted": "1:33:46",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "ATH170923.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "ATH170923.peaks.json"
+    },
+    {
+      "name": "Around The Houses 171004",
+      "file": "ATH171004",
+      "audioFile": "ATH171004.mp3",
+      "duration": 6985.848163,
+      "durationFormatted": "1:56:25",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "ATH171004.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "ATH171004.peaks.json"
+    },
+    {
+      "name": "Around The Houses 171008",
+      "file": "ATH171008",
+      "audioFile": "ATH171008.mp3",
+      "duration": 5151.738776,
+      "durationFormatted": "1:25:51",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "ATH171008.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "ATH171008.peaks.json"
+    },
+    {
+      "name": "Around The Houses 171012",
+      "file": "ATH171012",
+      "audioFile": "ATH171012.mp3",
+      "duration": 4021.185306,
+      "durationFormatted": "1:07:01",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "ATH171012.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "ATH171012.peaks.json"
+    },
+    {
+      "name": "Around The Houses 171018",
+      "file": "ATH171018",
+      "audioFile": "ATH171018.mp3",
+      "duration": 5711.830204,
+      "durationFormatted": "1:35:11",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "ATH171018.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "ATH171018.peaks.json"
+    },
+    {
+      "name": "Around The Houses 171028",
+      "file": "ATH171028",
+      "audioFile": "ATH171028.mp3",
+      "duration": 4802.089796,
+      "durationFormatted": "1:20:02",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "ATH171028.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "ATH171028.peaks.json"
+    },
+    {
+      "name": "Around The Houses 180331",
+      "file": "ATH180331",
+      "audioFile": "ATH180331.mp3",
+      "duration": 4998.896327,
+      "durationFormatted": "1:23:18",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "ATH180331.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "ATH180331.peaks.json"
+    },
+    {
+      "name": "Around The Houses 210127",
+      "file": "ATH210127",
+      "audioFile": "ATH210127.mp3",
+      "duration": 8376.432,
+      "durationFormatted": "2:19:36",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "ATH210127.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "ATH210127.peaks.json"
+    },
+    {
+      "name": "Deep 190303",
+      "file": "D190303",
+      "audioFile": "D190303.mp3",
+      "duration": 7922.233469,
+      "durationFormatted": "2:12:02",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "D190303.flac",
+          "label": "FLAC"
+        },
+        {
+          "file": "D190303.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "D190303.peaks.json"
+    },
+    {
+      "name": "Deep 201223",
+      "file": "D201223",
+      "audioFile": "D201223.mp3",
+      "duration": 6797.270204,
+      "durationFormatted": "1:53:17",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "D201223.flac",
+          "label": "FLAC"
+        },
+        {
+          "file": "D201223.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "D201223.peaks.json"
+    },
+    {
+      "name": "Deep 210117",
+      "file": "D210117",
+      "audioFile": "D210117.mp3",
+      "duration": 7896.36,
+      "durationFormatted": "2:11:36",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "D210117.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "D210117.peaks.json"
+    },
+    {
+      "name": "Deep09 181202",
+      "file": "D09181202",
+      "audioFile": "D09181202.flac",
+      "duration": 13931.072472,
+      "durationFormatted": "3:52:11",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "D09181202.flac",
+          "label": "FLAC"
+        }
+      ],
+      "peaksFile": "D09181202.peaks.json"
+    },
+    {
+      "name": "MK 181207",
+      "file": "MK181207",
+      "audioFile": "MK181207.mp3",
+      "duration": 7205.773061,
+      "durationFormatted": "2:00:05",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "MK181207.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "MK181207.peaks.json"
+    },
+    {
+      "name": "Pop 180529",
+      "file": "Pop180529",
+      "audioFile": "Pop180529.mp3",
+      "duration": 2222.994286,
+      "durationFormatted": "0:37:02",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "Pop180529.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Pop180529.peaks.json"
+    },
+    {
+      "name": "Ron Trent 171023",
+      "file": "RonTrent171023",
+      "audioFile": "RonTrent171023.mp3",
+      "duration": 9996.538776,
+      "durationFormatted": "2:46:36",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "RonTrent171023.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "RonTrent171023.peaks.json"
+    },
+    {
+      "name": "ST 201210",
+      "file": "ST201210",
+      "audioFile": "ST201210.mp3",
+      "duration": 11621.720816,
+      "durationFormatted": "3:13:41",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "ST201210.flac",
+          "label": "FLAC"
+        },
+        {
+          "file": "ST201210.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "ST201210.peaks.json"
+    },
+    {
+      "name": "Tech 170929",
+      "file": "Tech170929",
+      "audioFile": "Tech170929.mp3",
+      "duration": 3085.139592,
+      "durationFormatted": "0:51:25",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "Tech170929.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Tech170929.peaks.json"
+    },
+    {
+      "name": "Tech 180712",
+      "file": "Tech180712",
+      "audioFile": "Tech180712.mp3",
+      "duration": 9648.117551,
+      "durationFormatted": "2:40:48",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "Tech180712.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Tech180712.peaks.json"
+    },
+    {
+      "name": "Tech 181213",
+      "file": "Tech181213",
+      "audioFile": "Tech181213.flac",
+      "duration": 11189.603832,
+      "durationFormatted": "3:06:29",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "Tech181213.flac",
+          "label": "FLAC"
+        }
+      ],
+      "peaksFile": "Tech181213.peaks.json"
+    },
+    {
+      "name": "Tech 201226",
+      "file": "Tech201226",
+      "audioFile": "Tech201226.mp3",
+      "duration": 6684.16,
+      "durationFormatted": "1:51:24",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "Tech201226.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Tech201226.peaks.json"
+    }
+  ]
+}

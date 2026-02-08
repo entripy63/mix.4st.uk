@@ -1,0 +1,20 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "Hardcore Mix",
+      "file": "DJAboo",
+      "audioFile": "DJAboo.mp3",
+      "duration": 4695.954286,
+      "durationFormatted": "1:18:15",
+      "artist": "DJAboo",
+      "downloads": [
+        {
+          "file": "DJAboo.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "DJAboo.peaks.json"
+    }
+  ]
+}

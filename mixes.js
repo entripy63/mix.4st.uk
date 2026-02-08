@@ -1,4 +1,26 @@
 async function fetchDJMixes(djPath) {
+  // Try manifest.json first (new metadata-based approach)
+  try {
+    const response = await fetch(`${djPath}/manifest.json`);
+    if (response.ok) {
+      const manifest = await response.json();
+      return manifest.mixes.map(mix => ({
+        name: mix.name,
+        file: mix.file,
+        audioFile: mix.audioFile,
+        duration: mix.durationFormatted,
+        durationSeconds: mix.duration,
+        artist: mix.artist,
+        downloads: mix.downloads,
+        peaksFile: mix.peaksFile,
+        djPath: djPath
+      }));
+    }
+  } catch (e) {
+    // Fall back to HTML parsing
+  }
+  
+  // Fallback: parse legacy index.html
   const response = await fetch(`${djPath}/index.html`);
   const html = await response.text();
   const parser = new DOMParser();
@@ -15,7 +37,8 @@ async function fetchDJMixes(djPath) {
       mixes.push({
         name: link.textContent,
         htmlPath: `${djPath}/${link.getAttribute('href')}`,
-        duration: formatDuration(durationRaw)
+        duration: formatDuration(durationRaw),
+        djPath: djPath
       });
     }
   });
@@ -32,42 +55,107 @@ function formatDuration(raw) {
 }
 
 function detectGroups(mixes) {
-  const prefixCounts = {};
+  const names = mixes.map(m => m.name);
+  const groups = [];
   
-  mixes.forEach(mix => {
-    const words = mix.name.split(' ');
-    let prefix = words[0];
-    if (words.length > 1 && words[0] === 'Around' && words[1] === 'The') {
-      prefix = 'Around The Houses';
+  // Find longest common prefixes shared by 2+ mixes
+  for (let i = 0; i < names.length; i++) {
+    for (let j = i + 1; j < names.length; j++) {
+      const prefix = longestCommonPrefix(names[i], names[j]);
+      if (prefix && prefix.length >= 3) {
+        // Trim to word boundary
+        const trimmed = prefix.replace(/\s+\S*$/, '').trim();
+        if (trimmed && !groups.includes(trimmed)) {
+          // Verify at least 2 mixes match this prefix
+          const count = names.filter(n => n.startsWith(trimmed + ' ') || n === trimmed).length;
+          if (count >= 2) groups.push(trimmed);
+        }
+      }
     }
-    prefixCounts[prefix] = (prefixCounts[prefix] || 0) + 1;
-  });
+  }
   
-  const groups = Object.keys(prefixCounts).filter(p => prefixCounts[p] >= 2);
-  return groups.sort();
+  // Remove groups that are substrings of other groups
+  const filtered = groups.filter(g => 
+    !groups.some(other => other !== g && other.startsWith(g + ' '))
+  );
+  
+  return filtered.sort();
+}
+
+function longestCommonPrefix(a, b) {
+  let i = 0;
+  while (i < a.length && i < b.length && a[i] === b[i]) i++;
+  return a.substring(0, i);
 }
 
 function filterMixes(mixes, group, allGroups) {
   if (!group) return mixes;
   if (group === 'Other') {
-    return mixes.filter(mix => {
-      return !allGroups.some(g => {
-        if (g === 'Around The Houses') {
-          return mix.name.startsWith('Around The Houses');
-        }
-        return mix.name.startsWith(g + ' ');
-      });
-    });
+    return mixes.filter(mix => 
+      !allGroups.some(g => mix.name.startsWith(g + ' ') || mix.name === g)
+    );
   }
-  return mixes.filter(mix => {
-    if (group === 'Around The Houses') {
-      return mix.name.startsWith('Around The Houses');
-    }
-    return mix.name.startsWith(group + ' ');
-  });
+  return mixes.filter(mix => mix.name.startsWith(group + ' ') || mix.name === group);
 }
 
-async function fetchMixDetails(htmlPath) {
+async function fetchMixDetails(mix) {
+  // If mix came from manifest, we already have most details
+  if (mix.audioFile) {
+    const dir = `${mix.djPath}/`;
+    
+    // Load peaks if available
+    let peaks = null;
+    if (mix.peaksFile) {
+      try {
+        const peaksResponse = await fetch(dir + mix.peaksFile);
+        if (peaksResponse.ok) {
+          const peaksData = await peaksResponse.json();
+          peaks = peaksData.peaks;
+        }
+      } catch (e) {
+        // Peaks file doesn't exist, that's fine
+      }
+    }
+    
+    // Build download links
+    const downloadLinks = (mix.downloads || []).map(d => ({
+      href: dir + d.file,
+      label: d.label
+    }));
+    
+    // Try to load track list from HTML file if it exists
+    let trackListHeading = '';
+    let trackListTable = '';
+    const htmlPath = `${dir}${mix.file}.html`;
+    try {
+      const htmlResponse = await fetch(htmlPath);
+      if (htmlResponse.ok) {
+        const html = await htmlResponse.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        const h1 = doc.querySelector('h1[id], h1:not(:first-of-type)') || 
+                   Array.from(doc.querySelectorAll('h1')).find(h => h.textContent.includes('Track List'));
+        trackListHeading = h1 ? h1.outerHTML : '';
+        
+        const table = doc.querySelector('table.border');
+        trackListTable = table ? table.outerHTML : '';
+      }
+    } catch (e) {
+      // No HTML file, that's fine
+    }
+    
+    return {
+      audioSrc: dir + mix.audioFile,
+      trackListHeading,
+      trackListTable,
+      peaks,
+      downloadLinks
+    };
+  }
+  
+  // Fallback: legacy HTML-based approach
+  const htmlPath = mix.htmlPath;
   const response = await fetch(htmlPath);
   const html = await response.text();
   const parser = new DOMParser();
