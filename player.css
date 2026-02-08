@@ -13,6 +13,16 @@ body {
   width: 520px;
 }
 
+#waveform {
+  display: block;
+  width: 500px;
+  height: 60px;
+  background: #1a1a2e;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
 /* Wide: 3 columns */
 @media (min-width: 1200px) {
   .container {
