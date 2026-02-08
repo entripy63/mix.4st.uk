@@ -84,6 +84,12 @@ async function fetchMixDetails(htmlPath) {
   const trackListTable = table ? table.outerHTML : '';
   
   const dir = htmlPath.substring(0, htmlPath.lastIndexOf('/') + 1);
+  
+  // Extract download links
+  const downloadLinks = Array.from(doc.querySelectorAll('a.download-link')).map(a => ({
+    href: dir + a.getAttribute('href'),
+    label: a.textContent
+  }));
   const fullAudioSrc = audioSrc ? dir + audioSrc : null;
   
   // Try to load peaks file
@@ -101,5 +107,5 @@ async function fetchMixDetails(htmlPath) {
     }
   }
   
-  return { audioSrc: fullAudioSrc, trackListHeading, trackListTable, peaks };
+  return { audioSrc: fullAudioSrc, trackListHeading, trackListTable, peaks, downloadLinks };
 }
