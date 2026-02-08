@@ -230,15 +230,22 @@ async function playNow(htmlPath) {
   const details = await fetchMixDetails(htmlPath);
   if (details.audioSrc) {
     play(details.audioSrc);
-    displayTrackList(details.trackListHeading, details.trackListTable);
+    displayTrackList(details.trackListHeading, details.trackListTable, details.downloadLinks);
     loadPeaks(details.peaks);
   }
   displayQueue();
 }
 
-function displayTrackList(heading, table) {
+function displayTrackList(heading, table, downloadLinks) {
   const trackListDiv = document.getElementById('trackList');
-  trackListDiv.innerHTML = heading + table;
+  let downloads = '';
+  if (downloadLinks && downloadLinks.length > 0) {
+    downloads = `<div class="downloads">
+      <h2>Downloads</h2>
+      ${downloadLinks.map(d => `<a class="download-btn" href="${d.href}" download>${d.label}</a>`).join('')}
+    </div>`;
+  }
+  trackListDiv.innerHTML = heading + table + downloads;
 }
 
 let draggedIndex = null;
@@ -365,7 +372,7 @@ async function playFromQueue(index) {
     currentlyPlayingPath = null;
     localStorage.removeItem('currentMixPath');
     play(mix.audioSrc);
-    displayTrackList('', '');
+    displayTrackList('', '', []);
     loadPeaks(null);
   } else {
     currentlyPlayingPath = mix.htmlPath;
@@ -373,7 +380,7 @@ async function playFromQueue(index) {
     const details = await fetchMixDetails(mix.htmlPath);
     if (details.audioSrc) {
       play(details.audioSrc);
-      displayTrackList(details.trackListHeading, details.trackListTable);
+      displayTrackList(details.trackListHeading, details.trackListTable, details.downloadLinks);
       loadPeaks(details.peaks);
     }
   }
@@ -434,7 +441,7 @@ document.getElementById('fileInput').addEventListener('change', function(e) {
       load(details.audioSrc);
       const savedTime = parseFloat(localStorage.getItem('playerTime') || '0');
       aud.currentTime = savedTime;
-      displayTrackList(details.trackListHeading, details.trackListTable);
+      displayTrackList(details.trackListHeading, details.trackListTable, details.downloadLinks);
       loadPeaks(details.peaks);
     }
   }

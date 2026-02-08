@@ -183,6 +183,34 @@ h1 {
   font-weight: bold;
   color: #e0e0e0;
 }
+
+h2 {
+  font-size: 16px;
+  font-weight: bold;
+  color: #e0e0e0;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.downloads {
+  margin-top: 20px;
+}
+
+.download-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  margin-right: 10px;
+  margin-bottom: 8px;
+  background: #2d2d44;
+  color: #e0e0e0;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.download-btn:hover {
+  background: #5c6bc0;
+}
 table.border {
   border-collapse: separate;
   border-spacing: 0 4px;
