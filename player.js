@@ -3,6 +3,10 @@ let waveformCanvas = document.getElementById("waveform");
 let waveformCtx = waveformCanvas.getContext("2d");
 let currentPeaks = null;
 
+// Set canvas resolution to match CSS size
+waveformCanvas.width = waveformCanvas.offsetWidth;
+waveformCanvas.height = waveformCanvas.offsetHeight;
+
 // Generate fake waveform data for testing
 function generateFakePeaks(count) {
   const peaks = [];
