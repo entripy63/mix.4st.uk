@@ -65,9 +65,20 @@ waveformCanvas.addEventListener('click', function(e) {
   }
 });
 
-// Load fake peaks for testing
-currentPeaks = generateFakePeaks(200);
-drawWaveform(currentPeaks, 0);
+// Initialize with empty waveform
+currentPeaks = null;
+drawWaveform([], 0);
+
+function loadPeaks(peaks) {
+  if (peaks && peaks.length > 0) {
+    currentPeaks = peaks;
+    drawWaveform(currentPeaks, 0);
+  } else {
+    // Fallback to fake peaks if no real data
+    currentPeaks = generateFakePeaks(200);
+    drawWaveform(currentPeaks, 0);
+  }
+}
 
 // Restore volume from localStorage, default to 50%
 aud.volume = localStorage.getItem('playerVolume') !== null 
@@ -220,6 +231,7 @@ async function playNow(htmlPath) {
   if (details.audioSrc) {
     play(details.audioSrc);
     displayTrackList(details.trackListHeading, details.trackListTable);
+    loadPeaks(details.peaks);
   }
   displayQueue();
 }
@@ -354,6 +366,7 @@ async function playFromQueue(index) {
     localStorage.removeItem('currentMixPath');
     play(mix.audioSrc);
     displayTrackList('', '');
+    loadPeaks(null);
   } else {
     currentlyPlayingPath = mix.htmlPath;
     localStorage.setItem('currentMixPath', mix.htmlPath);
@@ -361,6 +374,7 @@ async function playFromQueue(index) {
     if (details.audioSrc) {
       play(details.audioSrc);
       displayTrackList(details.trackListHeading, details.trackListTable);
+      loadPeaks(details.peaks);
     }
   }
   displayQueue();
@@ -421,6 +435,7 @@ document.getElementById('fileInput').addEventListener('change', function(e) {
       const savedTime = parseFloat(localStorage.getItem('playerTime') || '0');
       aud.currentTime = savedTime;
       displayTrackList(details.trackListHeading, details.trackListTable);
+      loadPeaks(details.peaks);
     }
   }
 })();
