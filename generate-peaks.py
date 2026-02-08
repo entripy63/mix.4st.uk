@@ -97,10 +97,13 @@ def process_directory(directory):
 
 if __name__ == '__main__':
     directory = sys.argv[1] if len(sys.argv) > 1 else '.'
+    extensions = ('.mp3', '.flac', '.m4a', '.wav')
     
-    # Process subdirectories too
-    for subdir in ['trip', 'izmar', 'aboo']:
-        path = os.path.join(directory, subdir)
-        if os.path.isdir(path):
-            print(f"\n=== {subdir} ===")
-            process_directory(path)
+    # Process all subdirectories that contain audio files
+    for entry in sorted(os.listdir(directory)):
+        path = os.path.join(directory, entry)
+        if os.path.isdir(path) and not entry.startswith('.'):
+            has_audio = any(f.lower().endswith(extensions) for f in os.listdir(path))
+            if has_audio:
+                print(f"\n=== {entry} ===")
+                process_directory(path)

@@ -1,0 +1,22 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "paradoxicalisticus",
+      "file": "paradoxicalisticus",
+      "audioFile": "paradoxicalisticus.mp3",
+      "duration": 5630.3735,
+      "durationFormatted": "1:33:50",
+      "artist": "_gmanual_",
+      "downloads": [
+        {
+          "file": "paradoxicalisticus.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Electronic",
+      "date": "2008",
+      "comment": "RIPPINGYRARTOUT"
+    }
+  ]
+}
