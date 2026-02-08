@@ -7,17 +7,6 @@ let currentPeaks = null;
 waveformCanvas.width = waveformCanvas.offsetWidth;
 waveformCanvas.height = waveformCanvas.offsetHeight;
 
-// Generate fake waveform data for testing
-function generateFakePeaks(count) {
-  const peaks = [];
-  for (let i = 0; i < count; i++) {
-    const base = 0.3 + Math.sin(i * 0.02) * 0.2;
-    const noise = Math.random() * 0.4;
-    peaks.push(Math.min(1, base + noise));
-  }
-  return peaks;
-}
-
 function drawWaveform(peaks, progress = 0) {
   const w = waveformCanvas.width;
   const h = waveformCanvas.height;
@@ -78,9 +67,8 @@ function loadPeaks(peaks) {
     currentPeaks = peaks;
     drawWaveform(currentPeaks, 0);
   } else {
-    // Fallback to fake peaks if no real data
-    currentPeaks = generateFakePeaks(200);
-    drawWaveform(currentPeaks, 0);
+    currentPeaks = null;
+    waveformCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
   }
 }
 
