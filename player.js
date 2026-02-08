@@ -1,4 +1,73 @@
 let aud = document.getElementById("audioPlayer");
+let waveformCanvas = document.getElementById("waveform");
+let waveformCtx = waveformCanvas.getContext("2d");
+let currentPeaks = null;
+
+// Generate fake waveform data for testing
+function generateFakePeaks(count) {
+  const peaks = [];
+  for (let i = 0; i < count; i++) {
+    const base = 0.3 + Math.sin(i * 0.02) * 0.2;
+    const noise = Math.random() * 0.4;
+    peaks.push(Math.min(1, base + noise));
+  }
+  return peaks;
+}
+
+function drawWaveform(peaks, progress = 0) {
+  const w = waveformCanvas.width;
+  const h = waveformCanvas.height;
+  const barWidth = w / peaks.length;
+  
+  waveformCtx.clearRect(0, 0, w, h);
+  
+  peaks.forEach((peak, i) => {
+    const x = i * barWidth;
+    const barHeight = peak * h * 0.9;
+    const y = (h - barHeight) / 2;
+    
+    // Played portion in accent color, unplayed in muted
+    const playedX = w * progress;
+    waveformCtx.fillStyle = x < playedX ? '#5c6bc0' : '#3d3d5c';
+    waveformCtx.fillRect(x, y, Math.max(1, barWidth - 1), barHeight);
+  });
+  
+  // Draw cursor line
+  if (progress > 0) {
+    const cursorX = w * progress;
+    waveformCtx.strokeStyle = '#fff';
+    waveformCtx.lineWidth = 2;
+    waveformCtx.beginPath();
+    waveformCtx.moveTo(cursorX, 0);
+    waveformCtx.lineTo(cursorX, h);
+    waveformCtx.stroke();
+  }
+}
+
+function updateWaveformCursor() {
+  if (currentPeaks && aud.duration) {
+    const progress = aud.currentTime / aud.duration;
+    drawWaveform(currentPeaks, progress);
+  }
+}
+
+// Update waveform cursor during playback
+setInterval(updateWaveformCursor, 100);
+
+// Click on waveform to seek
+waveformCanvas.addEventListener('click', function(e) {
+  if (aud.duration) {
+    const rect = waveformCanvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const progress = x / waveformCanvas.width;
+    aud.currentTime = progress * aud.duration;
+    updateWaveformCursor();
+  }
+});
+
+// Load fake peaks for testing
+currentPeaks = generateFakePeaks(200);
+drawWaveform(currentPeaks, 0);
 
 // Restore volume from localStorage, default to 50%
 aud.volume = localStorage.getItem('playerVolume') !== null 
