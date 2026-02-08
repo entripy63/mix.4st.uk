@@ -30,11 +30,17 @@ def get_audio_metadata(audio_path):
         # Handle case-insensitive tag names
         title = tags.get('title') or tags.get('TITLE') or ''
         artist = tags.get('artist') or tags.get('ARTIST') or ''
+        genre = tags.get('genre') or tags.get('GENRE') or ''
+        date = tags.get('date') or tags.get('DATE') or ''
+        comment = tags.get('comment') or tags.get('COMMENT') or ''
         duration = float(fmt.get('duration', 0))
         
         return {
             'title': title,
             'artist': artist,
+            'genre': genre,
+            'date': date,
+            'comment': comment,
             'duration': duration
         }
     except Exception as e:
@@ -119,6 +125,12 @@ def process_directory(directory):
             'downloads': downloads
         }
         
+        if meta.get('genre'):
+            mix_entry['genre'] = meta['genre']
+        if meta.get('date'):
+            mix_entry['date'] = meta['date']
+        if meta.get('comment'):
+            mix_entry['comment'] = meta['comment']
         if has_peaks:
             mix_entry['peaksFile'] = f"{base_name}.peaks.json"
         

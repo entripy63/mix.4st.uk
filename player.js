@@ -289,12 +289,24 @@ function displayMixList(mixes) {
   mixList.innerHTML = header +
     mixes.map((mix, i) => {
       const mixId = getMixId(mix);
+      const genre = mix.genre ? ` · ${mix.genre}` : '';
+      const hasExtra = mix.date || mix.comment;
+      const extraBtn = hasExtra ? `<button class="icon-btn info-btn" onclick="event.stopPropagation(); toggleMixInfo(this)" title="More info">ⓘ</button>` : '';
+      const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.date ? `<div><strong>Date:</strong> ${mix.date}</div>` : ''}${mix.comment ? `<div><strong>Notes:</strong> ${mix.comment}</div>` : ''}</div>` : '';
       return `<div class="mix-item">
       <button class="icon-btn" onclick="addToQueue('${mixId}')" title="Add to queue">+</button>
       <button class="icon-btn" onclick="playNow('${mixId}')" title="Play now">▶</button>
-      <span class="mix-name">${mix.name} <span class="mix-duration">(${mix.duration})</span></span>
+      <span class="mix-name">${mix.name} <span class="mix-duration">(${mix.duration}${genre})</span></span>
+      ${extraBtn}${extraInfo}
     </div>`;
     }).join('');
+}
+
+function toggleMixInfo(btn) {
+  const info = btn.parentElement.querySelector('.mix-extra-info');
+  if (info) {
+    info.style.display = info.style.display === 'none' ? 'block' : 'none';
+  }
 }
 
 function addAllToQueue() {

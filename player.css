@@ -17,10 +17,24 @@ body {
   display: block;
   width: 500px;
   height: 60px;
+  min-height: 30px;
+  max-height: 200px;
   background: #1a1a2e;
-  border-radius: 6px;
-  margin-bottom: 8px;
+  border-radius: 6px 6px 0 0;
   cursor: pointer;
+}
+
+#waveformResizeHandle {
+  width: 500px;
+  height: 6px;
+  background: #2d2d44;
+  border-radius: 0 0 6px 6px;
+  cursor: ns-resize;
+  margin-bottom: 8px;
+}
+
+#waveformResizeHandle:hover {
+  background: #3d3d5c;
 }
 
 /* Wide: 3 columns */
@@ -34,9 +48,19 @@ body {
 @media (max-width: 1199px) {
   .container {
     grid-template-columns: 520px 1fr;
+    grid-template-rows: auto;
   }
-  .middle-column, .right-column {
+  .left-column {
+    grid-row: 1 / 3;
+  }
+  .middle-column {
     grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+  }
+  .right-column {
+    grid-column: 2;
+    grid-row: 2;
     align-self: start;
   }
 }
@@ -115,8 +139,38 @@ button:active {
   transition: background 0.2s;
 }
 
+.mix-item {
+  position: relative;
+}
+
 .mix-item:hover {
   background: #2d2d50;
+}
+
+.mix-extra-info {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: #1a1a2e;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.mix-extra-info div {
+  margin-bottom: 4px;
+}
+
+.mix-extra-info div:last-child {
+  margin-bottom: 0;
+}
+
+.info-btn {
+  margin-left: 6px;
+  opacity: 0.6;
+}
+
+.info-btn:hover {
+  opacity: 1;
 }
 
 .queue-item {
@@ -171,6 +225,31 @@ button:active {
 .remove-btn:hover {
   background: rgba(255, 107, 107, 0.2);
   transform: none;
+}
+
+.loop-btn.active {
+  background: #5c6bc0;
+  color: #fff;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ff6b6b;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 6px;
+  z-index: 1000;
+  animation: fadeInOut 3s ease-in-out forwards;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
 }
 
 body, th, td, p, div, li {

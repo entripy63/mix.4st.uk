@@ -187,6 +187,7 @@
           "label": "MP3"
         }
       ],
+      "genre": "Deep",
       "peaksFile": "D210117.peaks.json"
     },
     {
@@ -217,6 +218,7 @@
           "label": "MP3"
         }
       ],
+      "comment": "Mixed tracks from MK, Marc Kinchen",
       "peaksFile": "MK181207.peaks.json"
     },
     {
@@ -281,6 +283,8 @@
           "label": "MP3"
         }
       ],
+      "genre": "Tech House",
+      "date": "2017",
       "peaksFile": "Tech170929.peaks.json"
     },
     {
@@ -296,6 +300,7 @@
           "label": "MP3"
         }
       ],
+      "comment": "techtronica house\nhouse and tech, deep, melodic, afro and other",
       "peaksFile": "Tech180712.peaks.json"
     },
     {

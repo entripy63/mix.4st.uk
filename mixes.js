@@ -11,6 +11,9 @@ async function fetchDJMixes(djPath) {
         duration: mix.durationFormatted,
         durationSeconds: mix.duration,
         artist: mix.artist,
+        genre: mix.genre,
+        date: mix.date,
+        comment: mix.comment,
         downloads: mix.downloads,
         peaksFile: mix.peaksFile,
         djPath: djPath
