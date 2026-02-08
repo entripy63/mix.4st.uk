@@ -1,0 +1,52 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "indian summer mix",
+      "file": "jx3p-indian_summer_mix",
+      "audioFile": "jx3p-indian_summer_mix.mp3",
+      "duration": 4565.44825,
+      "durationFormatted": "1:16:05",
+      "artist": "jx3p",
+      "downloads": [
+        {
+          "file": "jx3p-indian_summer_mix.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "drum & bass",
+      "date": "2007"
+    },
+    {
+      "name": "jupiter fields mix",
+      "file": "jx3p-jupiter_fields_mix",
+      "audioFile": "jx3p-jupiter_fields_mix.mp3",
+      "duration": 7308.120816,
+      "durationFormatted": "2:01:48",
+      "artist": "jx3p",
+      "downloads": [
+        {
+          "file": "jx3p-jupiter_fields_mix.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "drum & bass",
+      "date": "2003",
+      "comment": "06"
+    },
+    {
+      "name": "suburban fields mix",
+      "file": "jx3p-suburban_fields_mix",
+      "audioFile": "jx3p-suburban_fields_mix.flac",
+      "duration": 5398.714172,
+      "durationFormatted": "1:29:58",
+      "artist": "jx3p",
+      "downloads": [
+        {
+          "file": "jx3p-suburban_fields_mix.flac",
+          "label": "FLAC"
+        }
+      ]
+    }
+  ]
+}
