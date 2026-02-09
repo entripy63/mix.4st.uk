@@ -134,6 +134,119 @@ button:active {
   transform: translateY(0);
 }
 
+#browserModeSelector {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #3d3d5c;
+}
+
+.mode-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: #888;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.mode-btn:hover {
+  background: rgba(92, 107, 192, 0.2);
+  color: #e0e0e0;
+  transform: none;
+}
+
+.mode-btn.active {
+  background: #5c6bc0;
+  color: #fff;
+  border-color: #5c6bc0;
+}
+
+.mode-icon {
+  font-size: 14px;
+}
+
+.mode-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#djDropdown {
+  margin-bottom: 12px;
+}
+
+#djSelect {
+  width: 100%;
+  padding: 10px 12px;
+  background: #2d2d44;
+  color: #e0e0e0;
+  border: 1px solid #3d3d5c;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+#djSelect:hover {
+  border-color: #5c6bc0;
+}
+
+#djSelect:focus {
+  outline: none;
+  border-color: #5c6bc0;
+  box-shadow: 0 0 0 2px rgba(92, 107, 192, 0.3);
+}
+
+#djSelect option {
+  background: #2d2d44;
+  color: #e0e0e0;
+  padding: 8px;
+}
+
+#searchBox {
+  margin-bottom: 12px;
+}
+
+#searchInput {
+  width: 100%;
+  padding: 10px 12px;
+  background: #2d2d44;
+  color: #e0e0e0;
+  border: 1px solid #3d3d5c;
+  border-radius: 6px;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+#searchInput:hover {
+  border-color: #5c6bc0;
+}
+
+#searchInput:focus {
+  outline: none;
+  border-color: #5c6bc0;
+  box-shadow: 0 0 0 2px rgba(92, 107, 192, 0.3);
+}
+
+#searchInput::placeholder {
+  color: #666;
+}
+
+#searchInfo {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #888;
+}
+
 #djButtons, #groupFilters {
   margin-bottom: 12px;
   display: flex;
@@ -257,6 +370,18 @@ button:active {
 .mix-duration {
   color: #888;
   font-size: 12px;
+}
+
+.dj-badge {
+  display: inline-block;
+  background: #3d3d5c;
+  color: #aaa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  text-transform: uppercase;
+  margin-right: 6px;
+  vertical-align: middle;
 }
 
 .remove-btn {

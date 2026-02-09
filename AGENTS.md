@@ -32,6 +32,7 @@
 - `generate-covers.py` - Run after adding audio files to extract embedded cover art images
 - `generate-manifest.py` - Run after adding/updating audio files to regenerate `manifest.json` in each DJ folder
 - `generate-peaks.py` - Run after adding audio files to generate `.peaks.json` waveform data
+- `generate-search-index.py` - Run after manifest changes to regenerate `search-index.json` for search mode
 
 ## Code Style
 - HTML: HTML5 doctype, UTF-8, 2-space indent, external stylesheet  

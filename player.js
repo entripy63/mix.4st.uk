@@ -554,6 +554,226 @@ function removeFromQueue(index) {
 
 displayQueue();
 
+// Search index cache
+const searchIndex = {
+  data: null,
+  loading: false,
+  
+  async load() {
+    if (this.data) return this.data;
+    if (this.loading) {
+      // Wait for existing load to complete
+      while (this.loading) await new Promise(r => setTimeout(r, 50));
+      return this.data;
+    }
+    
+    this.loading = true;
+    try {
+      const response = await fetch('search-index.json');
+      this.data = await response.json();
+    } catch (e) {
+      console.error('Failed to load search index:', e);
+      this.data = [];
+    }
+    this.loading = false;
+    return this.data;
+  },
+  
+  search(query) {
+    if (!this.data || !query.trim()) return [];
+    const terms = query.toLowerCase().split(/\s+/).filter(t => t.length > 0);
+    
+    return this.data.filter(mix => {
+      const searchable = `${mix.name} ${mix.artist} ${mix.genre} ${mix.comment} ${mix.dj}`.toLowerCase();
+      return terms.every(term => searchable.includes(term));
+    });
+  }
+};
+
+// Browser mode switching
+const browserModes = {
+  current: 'dj',
+  
+  switch(mode) {
+    if (mode === this.current) return;
+    this.current = mode;
+    
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.mode === mode);
+    });
+    
+    const djButtons = document.getElementById('djButtons');
+    const djDropdown = document.getElementById('djDropdown');
+    const searchBox = document.getElementById('searchBox');
+    const groupFilters = document.getElementById('groupFilters');
+    const mixList = document.getElementById('mixList');
+    
+    if (mode === 'dj') {
+      djButtons.style.display = 'flex';
+      djDropdown.style.display = 'none';
+      searchBox.style.display = 'none';
+      // Clear search results, show empty until DJ is selected
+      groupFilters.innerHTML = '';
+      mixList.innerHTML = '';
+    } else if (mode === 'all') {
+      djButtons.style.display = 'none';
+      djDropdown.style.display = 'block';
+      searchBox.style.display = 'none';
+      // Clear current selection, user must pick from dropdown
+      groupFilters.innerHTML = '';
+      mixList.innerHTML = '';
+      document.getElementById('djSelect').value = '';
+    } else if (mode === 'search') {
+      djButtons.style.display = 'none';
+      djDropdown.style.display = 'none';
+      searchBox.style.display = 'block';
+      groupFilters.innerHTML = '';
+      
+      const searchInput = document.getElementById('searchInput');
+      const existingQuery = searchInput.value;
+      
+      if (searchIndex.data) {
+        // Index already loaded, re-run search if there's a query
+        if (existingQuery.trim()) {
+          const results = searchIndex.search(existingQuery);
+          displaySearchResults(results, existingQuery);
+        } else {
+          mixList.innerHTML = '';
+          document.getElementById('searchInfo').textContent = `${searchIndex.data.length} mixes available`;
+        }
+        searchInput.focus();
+      } else {
+        // First time loading search index
+        mixList.innerHTML = '';
+        document.getElementById('searchInfo').textContent = 'Loading search index...';
+        searchIndex.load().then(() => {
+          document.getElementById('searchInfo').textContent = `${searchIndex.data.length} mixes available`;
+          searchInput.focus();
+        });
+      }
+    }
+  }
+};
+
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => browserModes.switch(btn.dataset.mode));
+});
+
+// DJ dropdown selection handler
+document.getElementById('djSelect').addEventListener('change', function() {
+  if (this.value) {
+    loadDJ(this.value);
+  }
+});
+
+// Search input handler
+let searchTimeout = null;
+document.getElementById('searchInput').addEventListener('input', function() {
+  clearTimeout(searchTimeout);
+  const query = this.value;
+  
+  // Debounce search for 150ms
+  searchTimeout = setTimeout(() => {
+    const results = searchIndex.search(query);
+    displaySearchResults(results, query);
+  }, 150);
+});
+
+function displaySearchResults(results, query) {
+  const mixList = document.getElementById('mixList');
+  const searchInfo = document.getElementById('searchInfo');
+  
+  if (!query.trim()) {
+    mixList.innerHTML = '';
+    searchInfo.textContent = `${searchIndex.data?.length || 0} mixes available`;
+    return;
+  }
+  
+  searchInfo.textContent = `${results.length} result${results.length !== 1 ? 's' : ''} for "${query}"`;
+  
+  if (results.length === 0) {
+    mixList.innerHTML = '<div style="color: #888; padding: 20px;">No mixes found</div>';
+    return;
+  }
+  
+  // Convert search results to mix format expected by displayMixList
+  const mixes = results.map(r => ({
+    name: r.name,
+    file: r.file,
+    audioFile: r.audioFile,
+    duration: r.duration,
+    artist: r.artist,
+    genre: r.genre,
+    comment: r.comment,
+    peaksFile: r.peaksFile,
+    coverFile: r.coverFile,
+    downloads: r.downloads,
+    djPath: r.dj,
+    djLabel: r.dj  // Extra field to show DJ in results
+  }));
+  
+  displayMixListWithDJ(mixes);
+}
+
+function displayMixListWithDJ(mixes) {
+  // Store mixes globally for onclick handlers
+  window.currentSearchMixes = mixes;
+  
+  const mixList = document.getElementById('mixList');
+  const header = mixes.length > 1 ? `<div class="mix-list-header"><button onclick="addAllSearchResultsToQueue()">Add All to Queue</button></div>` : '';
+  
+  mixList.innerHTML = header + mixes.map((mix, i) => {
+    const djBadge = mix.djLabel ? `<span class="dj-badge">${escapeHtml(mix.djLabel)}</span> ` : '';
+    const genre = mix.genre ? ` · ${escapeHtml(mix.genre)}` : '';
+    const duration = mix.duration ? `(${mix.duration}${genre})` : '';
+    const hasExtra = mix.comment;
+    const extraBtn = hasExtra ? `<button class="icon-btn info-btn" onclick="event.stopPropagation(); toggleSearchMixInfo(this)" title="More info">ⓘ</button>` : '';
+    const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
+    
+    return `<div class="mix-item">
+      <button class="icon-btn" onclick="addSearchResultToQueue(${i})" title="Add to queue">+</button>
+      <button class="icon-btn" onclick="playSearchResult(${i})" title="Play now">▶</button>
+      <span class="mix-name">${djBadge}${escapeHtml(mix.name)} <span class="mix-duration">${duration}</span></span>
+      ${extraBtn}${extraInfo}
+    </div>`;
+  }).join('');
+}
+
+function toggleSearchMixInfo(btn) {
+  const info = btn.parentElement.querySelector('.mix-extra-info');
+  if (info) {
+    info.style.display = info.style.display === 'none' ? 'block' : 'none';
+  }
+}
+
+function addSearchResultToQueue(index) {
+  const mix = window.currentSearchMixes[index];
+  if (mix) {
+    state.queue.push({ ...mix, queueId: generateQueueId() });
+    saveQueue();
+    displayQueue();
+  }
+}
+
+function addAllSearchResultsToQueue() {
+  window.currentSearchMixes.forEach(mix => {
+    state.queue.push({ ...mix, queueId: generateQueueId() });
+  });
+  saveQueue();
+  displayQueue();
+}
+
+async function playSearchResult(index) {
+  const mix = window.currentSearchMixes[index];
+  if (mix) {
+    state.queue.push({ ...mix, queueId: generateQueueId() });
+    state.currentQueueIndex = state.queue.length - 1;
+    saveQueue();
+    displayQueue();
+    await playMix(mix);
+  }
+}
+
 // Keyboard shortcuts
 document.addEventListener('keydown', function(e) {
   if (e.target.tagName === 'INPUT') return;
@@ -568,6 +788,15 @@ document.addEventListener('keydown', function(e) {
     skipNext();
   } else if (e.code === 'ArrowLeft' && e.ctrlKey) {
     skipPrev();
+  } else if (e.code === 'KeyD' && e.ctrlKey) {
+    e.preventDefault();
+    browserModes.switch('dj');
+  } else if (e.code === 'KeyA' && e.ctrlKey) {
+    e.preventDefault();
+    browserModes.switch('all');
+  } else if (e.code === 'KeyF' && e.ctrlKey) {
+    e.preventDefault();
+    browserModes.switch('search');
   }
 });
 

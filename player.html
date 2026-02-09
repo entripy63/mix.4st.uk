@@ -27,6 +27,20 @@
     </div>
     <div class="right-column">
       <div id="mixBrowser">
+        <div id="browserModeSelector">
+          <button class="mode-btn active" data-mode="dj" title="Browse by DJ (Ctrl+D)">
+            <span class="mode-icon">👤</span>
+            <span class="mode-label">DJ</span>
+          </button>
+          <button class="mode-btn" data-mode="all" title="All DJs (Ctrl+A)">
+            <span class="mode-icon">📋</span>
+            <span class="mode-label">All</span>
+          </button>
+          <button class="mode-btn" data-mode="search" title="Search (Ctrl+F)">
+            <span class="mode-icon">🔍</span>
+            <span class="mode-label">Search</span>
+          </button>
+        </div>
         <div id="djButtons">
           <button onclick="loadDJ('trip')">trip-</button>
           <button onclick="loadDJ('izmar')">Izmar</button>
@@ -35,6 +49,22 @@
           <button onclick="loadDJ('jx3p')">jx3p</button>
           <button onclick="loadDJ('gmanual')">gmanual</button>
           <button onclick="loadDJ('aboo')">Aboo</button>
+        </div>
+        <div id="djDropdown" style="display: none;">
+          <select id="djSelect">
+            <option value="">Select a DJ...</option>
+            <option value="trip">trip-</option>
+            <option value="izmar">Izmar</option>
+            <option value="haze">haze</option>
+            <option value="rpfr">rpfr</option>
+            <option value="jx3p">jx3p</option>
+            <option value="gmanual">gmanual</option>
+            <option value="aboo">Aboo</option>
+          </select>
+        </div>
+        <div id="searchBox" style="display: none;">
+          <input type="text" id="searchInput" placeholder="Search mixes..." autocomplete="off">
+          <div id="searchInfo"></div>
         </div>
         <div id="groupFilters"></div>
         <div id="mixList"></div>
