@@ -666,7 +666,6 @@ function probeAudioPlayback(file) {
   try {
     const savedPath = storage.get('currentMixPath');
     if (savedPath) {
-      // Build a mix-like object for fetchMixDetails
       // savedPath could be "dj/file.html" (legacy) or "dj/file" (manifest)
       const isLegacy = savedPath.endsWith('.html');
       let mix;
@@ -676,7 +675,16 @@ function probeAudioPlayback(file) {
         const parts = savedPath.split('/');
         const file = parts.pop();
         const djPath = parts.join('/');
-        mix = { djPath, file, audioFile: `${file}.mp3`, peaksFile: `${file}.peaks.json`, name: file };
+        // Try to get full mix data from manifest
+        try {
+          const mixes = await fetchDJMixes(djPath);
+          mix = mixes.find(m => m.file === file);
+        } catch (e) {
+          // Manifest not available, build minimal object
+        }
+        if (!mix) {
+          mix = { djPath, file, audioFile: `${file}.mp3`, peaksFile: `${file}.peaks.json`, name: file };
+        }
       }
       const details = await fetchMixDetails(mix);
       if (details.audioSrc) {
