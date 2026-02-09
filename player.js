@@ -333,11 +333,12 @@ function addToQueue(mixId) {
 
 async function playMix(mix) {
   document.title = `${mix.name} - Player`;
+  state.currentMix = mix;
   
   if (mix.isLocal) {
     storage.remove('currentMixPath');
     play(mix.audioSrc);
-    displayTrackList('', '', [], null);
+    displayTrackList(mix, '', [], null);
     loadPeaks(null);
   } else {
     // Store mix identifier for restore (works with both manifest and HTML-based mixes)
@@ -346,7 +347,7 @@ async function playMix(mix) {
     const details = await fetchMixDetails(mix);
     if (details.audioSrc) {
       play(details.audioSrc);
-      displayTrackList(details.trackListHeading, details.trackListTable, details.downloadLinks, mixId);
+      displayTrackList(mix, details.trackListTable, details.downloadLinks);
       loadPeaks(details.peaks);
     }
   }
@@ -359,7 +360,7 @@ async function playNow(mixId) {
   await playMix(mix || { name: mixId.split('/').pop(), htmlPath: mixId });
 }
 
-function displayTrackList(heading, table, downloadLinks, htmlPath) {
+function displayTrackList(mix, table, downloadLinks) {
   const trackListDiv = document.getElementById('trackList');
   let downloads = '';
   if (downloadLinks && downloadLinks.length > 0) {
@@ -368,13 +369,12 @@ function displayTrackList(heading, table, downloadLinks, htmlPath) {
       ${downloadLinks.map(d => `<a class="download-btn" href="${d.href}" download>${d.label}</a>`).join('')}
     </div>`;
   }
-  // Append DJ name to heading
-  let modifiedHeading = heading;
-  if (heading && htmlPath) {
-    const djName = getDJName(htmlPath);
-    modifiedHeading = heading.replace('</h1>', ` by ${djName}</h1>`);
-  }
-  trackListDiv.innerHTML = modifiedHeading + table + downloads;
+  // Always show mix name and artist
+  const mixName = mix ? escapeHtml(mix.name) : '';
+  const djName = mix ? escapeHtml(mix.artist || getDJName(mix.htmlPath || mix.djPath)) : '';
+  const heading = mixName ? `<h1>${mixName} by ${djName}</h1>` : '';
+  const trackListSection = table ? `<h2>Track List</h2>${table}` : '';
+  trackListDiv.innerHTML = heading + trackListSection + downloads;
 }
 
 function getDJName(htmlPath) {
@@ -652,18 +652,19 @@ function probeAudioPlayback(file) {
       const isLegacy = savedPath.endsWith('.html');
       let mix;
       if (isLegacy) {
-        mix = { htmlPath: savedPath };
+        mix = { htmlPath: savedPath, name: savedPath.split('/').pop().replace('.html', '') };
       } else {
         const parts = savedPath.split('/');
         const file = parts.pop();
         const djPath = parts.join('/');
-        mix = { djPath, file, audioFile: `${file}.mp3` };
+        mix = { djPath, file, audioFile: `${file}.mp3`, name: file };
       }
       const details = await fetchMixDetails(mix);
       if (details.audioSrc) {
         load(details.audioSrc);
         aud.currentTime = storage.getNum('playerTime', 0);
-        displayTrackList(details.trackListHeading, details.trackListTable, details.downloadLinks, savedPath);
+        state.currentMix = mix;
+        displayTrackList(mix, details.trackListTable, details.downloadLinks);
         loadPeaks(details.peaks);
       }
     }

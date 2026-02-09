@@ -64,6 +64,11 @@ def get_audio_peaks(audio_path, num_peaks=SAMPLES_PER_PEAK):
     if len(peaks) > num_peaks:
         peaks = peaks[:num_peaks]
     
+    # Normalize to 0-1 range based on max peak
+    max_peak = max(peaks) if peaks else 1
+    if max_peak > 0:
+        peaks = [p / max_peak for p in peaks]
+    
     return peaks, duration
 
 def process_directory(directory):

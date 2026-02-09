@@ -1,0 +1,25 @@
+# Track list for suburban fields mix
+# Format: time,title,artist (time is optional)
+# Lines starting with # are comments
+
+,Ananas Symphony,Kraftwerk
+,Aegian Sea,Aphrodite's Child
+,Essence,Cocteau Twins
+,Mr. No,John Fox
+,Distant Dreams (part 2),Throbbing Gristle
+,Frosty Nights,Moral
+,In Love with a German Film Star,The Passions
+,Rain,Tones on Tail
+,Procession,New Order
+,On Another Day,Sad Lovers & Giants
+,2000 Light Years from Home,Danse Society
+,Loa,Hair & Skin Trade Co.
+,The Death of Peter X,Artery
+,As We Go,Wire
+,Flight,A Certain Ratio
+,European Female,The Stranglers
+,Blues in Drag,The Glove
+,Memory Gongs,The Moon & The Melodies
+,The Paris Match,Style Council
+,Get Duffy,Primal Scream
+

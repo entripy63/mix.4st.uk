@@ -2,7 +2,7 @@
 
 ## Build/Test Commands
 - No build system - static HTML/CSS website
-- DON'T USE `python3 -m http.server 8000` to test locally, it's flakey
+- DON'T USE `python3 -m http.server 8000` to test locally, too flakey
 
 ## Architecture
 - Static website for DJ mixes at mix.4st.uk
@@ -26,6 +26,10 @@
 - `jx3p/` - jx3p's mixes (3)
 - `gmanual/` - gmanual's mix (1)
 - `haze/` - haze's mixes (58)
+
+## Python Scripts
+- `generate-manifest.py` - Run after adding/updating audio files to regenerate `manifest.json` in each DJ folder
+- `generate-peaks.py` - Run after adding audio files to generate `.peaks.json` waveform data
 
 ## Code Style
 - HTML: HTML5 doctype, UTF-8, 2-space indent, external stylesheet  
