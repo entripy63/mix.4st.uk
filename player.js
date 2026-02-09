@@ -49,8 +49,18 @@ const state = {
 };
 
 // Set canvas resolution to match CSS size
-waveformCanvas.width = waveformCanvas.offsetWidth;
-waveformCanvas.height = waveformCanvas.offsetHeight;
+function resizeWaveformCanvas() {
+  const w = waveformCanvas.offsetWidth || 500;
+  const h = waveformCanvas.offsetHeight || 60;
+  if (waveformCanvas.width !== w) waveformCanvas.width = w;
+  if (waveformCanvas.height !== h) waveformCanvas.height = h;
+  if (state.currentPeaks) {
+    const progress = aud.duration ? aud.currentTime / aud.duration : 0;
+    drawWaveform(state.currentPeaks, progress);
+  }
+}
+resizeWaveformCanvas();
+window.addEventListener('load', resizeWaveformCanvas);
 
 function drawWaveform(peaks, progress = 0) {
   const w = waveformCanvas.width;
@@ -657,7 +667,7 @@ function probeAudioPlayback(file) {
         const parts = savedPath.split('/');
         const file = parts.pop();
         const djPath = parts.join('/');
-        mix = { djPath, file, audioFile: `${file}.mp3`, name: file };
+        mix = { djPath, file, audioFile: `${file}.mp3`, peaksFile: `${file}.peaks.json`, name: file };
       }
       const details = await fetchMixDetails(mix);
       if (details.audioSrc) {
@@ -666,6 +676,8 @@ function probeAudioPlayback(file) {
         state.currentMix = mix;
         displayTrackList(mix, details.trackListTable, details.downloadLinks);
         loadPeaks(details.peaks);
+        // Ensure waveform draws after layout is ready
+        requestAnimationFrame(resizeWaveformCanvas);
       }
     }
   } catch (e) {
