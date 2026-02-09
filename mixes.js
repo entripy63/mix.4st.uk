@@ -16,6 +16,7 @@ async function fetchDJMixes(djPath) {
         comment: mix.comment,
         downloads: mix.downloads,
         peaksFile: mix.peaksFile,
+        coverFile: mix.coverFile,
         djPath: djPath
       }));
     }
