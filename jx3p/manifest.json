@@ -15,7 +15,8 @@
         }
       ],
       "genre": "drum & bass",
-      "date": "2007"
+      "date": "2007",
+      "peaksFile": "jx3p-indian_summer_mix.peaks.json"
     },
     {
       "name": "jupiter fields mix",
@@ -32,7 +33,8 @@
       ],
       "genre": "drum & bass",
       "date": "2003",
-      "comment": "06"
+      "comment": "06",
+      "peaksFile": "jx3p-jupiter_fields_mix.peaks.json"
     },
     {
       "name": "suburban fields mix",
@@ -46,7 +48,8 @@
           "file": "jx3p-suburban_fields_mix.flac",
           "label": "FLAC"
         }
-      ]
+      ],
+      "peaksFile": "jx3p-suburban_fields_mix.peaks.json"
     }
   ]
 }

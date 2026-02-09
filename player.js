@@ -1,3 +1,8 @@
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 const storage = {
   get(key, defaultVal = null) {
     const val = localStorage.getItem(key);
@@ -289,14 +294,14 @@ function displayMixList(mixes) {
   mixList.innerHTML = header +
     mixes.map((mix, i) => {
       const mixId = getMixId(mix);
-      const genre = mix.genre ? ` · ${mix.genre}` : '';
+      const genre = mix.genre ? ` · ${escapeHtml(mix.genre)}` : '';
       const hasExtra = mix.date || mix.comment;
       const extraBtn = hasExtra ? `<button class="icon-btn info-btn" onclick="event.stopPropagation(); toggleMixInfo(this)" title="More info">ⓘ</button>` : '';
-      const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.date ? `<div><strong>Date:</strong> ${mix.date}</div>` : ''}${mix.comment ? `<div><strong>Notes:</strong> ${mix.comment}</div>` : ''}</div>` : '';
+      const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.date ? `<div><strong>Date:</strong> ${escapeHtml(mix.date)}</div>` : ''}${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
       return `<div class="mix-item">
       <button class="icon-btn" onclick="addToQueue('${mixId}')" title="Add to queue">+</button>
       <button class="icon-btn" onclick="playNow('${mixId}')" title="Play now">▶</button>
-      <span class="mix-name">${mix.name} <span class="mix-duration">(${mix.duration}${genre})</span></span>
+      <span class="mix-name">${escapeHtml(mix.name)} <span class="mix-duration">(${mix.duration}${genre})</span></span>
       ${extraBtn}${extraInfo}
     </div>`;
     }).join('');
@@ -411,7 +416,7 @@ function displayQueue() {
     : '';
   queueDiv.innerHTML = queueInfo + header + state.queue.map((mix, i) => {
     const djName = mix.artist || getDJName(mix.htmlPath || mix.djPath);
-    const djSuffix = mix.isLocal ? '' : ` - ${djName}`;
+    const djSuffix = mix.isLocal ? '' : ` - ${escapeHtml(djName)}`;
     return `<div class="queue-item${i === state.currentQueueIndex ? ' current' : ''}" 
           draggable="true" 
           ondragstart="onDragStart(event, ${i})" 
@@ -419,7 +424,7 @@ function displayQueue() {
           ondrop="onDrop(event, ${i})"
           ondragend="onDragEnd()">
       <span class="drag-handle">☰</span>
-      <span class="mix-name" onclick="playFromQueue(${i})">${mix.name}${djSuffix}</span>
+      <span class="mix-name" onclick="playFromQueue(${i})">${escapeHtml(mix.name)}${djSuffix}</span>
       ${i !== state.currentQueueIndex ? `<button class="remove-btn" onclick="removeFromQueue(${i})">✕</button>` : ''}
     </div>`;
   }).join('');
