@@ -26,8 +26,10 @@
 - `jx3p/` - jx3p's mixes (3)
 - `gmanual/` - gmanual's mix (1)
 - `haze/` - haze's mixes (58)
+- `rpfr/` - rpfr's mixes (34)
 
 ## Python Scripts
+- `generate-covers.py` - Run after adding audio files to extract embedded cover art images
 - `generate-manifest.py` - Run after adding/updating audio files to regenerate `manifest.json` in each DJ folder
 - `generate-peaks.py` - Run after adding audio files to generate `.peaks.json` waveform data
 

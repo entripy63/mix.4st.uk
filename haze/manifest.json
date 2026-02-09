@@ -34,7 +34,8 @@
       "genre": "ambient",
       "date": "2013\n\n",
       "comment": "mixed by Sy Haze for Terminal Radio transmission 12.",
-      "peaksFile": "LMS A Momentary Lapse of Sanity.peaks.json"
+      "peaksFile": "LMS A Momentary Lapse of Sanity.peaks.json",
+      "coverFile": "LMS A Momentary Lapse of Sanity.png"
     },
     {
       "name": "April 2011 House mix",
@@ -86,7 +87,8 @@
       "genre": "Acid House / Hardcore",
       "date": "2007",
       "comment": "recorded live at the 2007 Sanctuary Festival in the Fantazia arena",
-      "peaksFile": "Haze-Fantazia-SanctuaryFestival07.peaks.json"
+      "peaksFile": "Haze-Fantazia-SanctuaryFestival07.peaks.json",
+      "coverFile": "Haze-Fantazia-SanctuaryFestival07.png"
     },
     {
       "name": "DJ Haze presents After Seltzer",
@@ -103,7 +105,8 @@
       ],
       "genre": "Drum & Bass",
       "comment": " 00000148 00000201 00001725 0000295D 0016203E 0016203E 00005523 0000671F 00147277 0021DFF7",
-      "peaksFile": "Haze-AfterSelter.peaks.json"
+      "peaksFile": "Haze-AfterSelter.peaks.json",
+      "coverFile": "Haze-AfterSelter.png"
     },
     {
       "name": "DJHaze presents Cryonix free cd mix",
@@ -120,7 +123,8 @@
       ],
       "genre": "Breaks",
       "date": "2005",
-      "peaksFile": "Haze-Cryonix-freecd.peaks.json"
+      "peaksFile": "Haze-Cryonix-freecd.peaks.json",
+      "coverFile": "Haze-Cryonix-freecd.jpg"
     },
     {
       "name": "DJHaze presents Sideways World",
@@ -138,7 +142,8 @@
       "genre": "Breaks",
       "date": "2000",
       "comment": " 000001CC 00000252 0000171E 00002003 00155D05 003E8FE5 00007844 00007BE1 003ABF10 003ABF10",
-      "peaksFile": "Haze-Sideways-World.peaks.json"
+      "peaksFile": "Haze-Sideways-World.peaks.json",
+      "coverFile": "Haze-Sideways-World.png"
     },
     {
       "name": "December 2019 Transmission",
@@ -190,7 +195,8 @@
       ],
       "genre": "Acid",
       "date": "2021",
-      "peaksFile": "Sherman Heath - Does My Bass Look Big In This_.peaks.json"
+      "peaksFile": "Sherman Heath - Does My Bass Look Big In This_.peaks.json",
+      "coverFile": "Sherman Heath - Does My Bass Look Big In This_.png"
     },
     {
       "name": "Doing a breakbeat - 25Feb17",
@@ -242,7 +248,8 @@
       ],
       "genre": "Dub & Ambient",
       "date": "2020",
-      "peaksFile": "LMS Feb 2020 Transmission.peaks.json"
+      "peaksFile": "LMS Feb 2020 Transmission.peaks.json",
+      "coverFile": "LMS Feb 2020 Transmission.png"
     },
     {
       "name": "Haze-Fantazia-SanctuaryFestival08",
@@ -292,7 +299,8 @@
       "genre": "House",
       "date": "2006",
       "comment": " 000002D6 000002DE 000020C7 00001D6C 001E84C5 001E84C5 000070BE 00006F72 000AD59E 0016E38E",
-      "peaksFile": "Haze-Sounds_for_a_New_Millenium_pt2.peaks.json"
+      "peaksFile": "Haze-Sounds_for_a_New_Millenium_pt2.peaks.json",
+      "coverFile": "Haze-Sounds_for_a_New_Millenium_pt2.png"
     },
     {
       "name": "Jan 2019 Transmission",
@@ -342,7 +350,8 @@
       ],
       "genre": "DJ Mix - World",
       "date": "2020",
-      "peaksFile": "LMS July 2020 - part 1.peaks.json"
+      "peaksFile": "LMS July 2020 - part 1.peaks.json",
+      "coverFile": "LMS July 2020 - part 1.png"
     },
     {
       "name": "July 2020 Transmission Part 2",
@@ -359,7 +368,8 @@
       ],
       "genre": "DJ Mix - Electronic",
       "date": "2020",
-      "peaksFile": "LMS July 2020 - part 2.peaks.json"
+      "peaksFile": "LMS July 2020 - part 2.peaks.json",
+      "coverFile": "LMS July 2020 - part 2.png"
     },
     {
       "name": "LMS Coffee & Jazz Session 29AUG2020",
@@ -443,7 +453,8 @@
         }
       ],
       "date": "2021",
-      "peaksFile": "LMS January 2021 Transmission.peaks.json"
+      "peaksFile": "LMS January 2021 Transmission.peaks.json",
+      "coverFile": "LMS January 2021 Transmission.png"
     },
     {
       "name": "LMS Transmission 29SEP18",
@@ -460,7 +471,8 @@
       ],
       "genre": "DJ Mix - Electronic",
       "date": "2018",
-      "peaksFile": "LMSTransmission29SEP2018.peaks.json"
+      "peaksFile": "LMSTransmission29SEP2018.peaks.json",
+      "coverFile": "LMSTransmission29SEP2018.png"
     },
     {
       "name": "March 2020 Transmission",
@@ -476,7 +488,8 @@
         }
       ],
       "date": "2020",
-      "peaksFile": "LMS-March2020TransmissionFULL.peaks.json"
+      "peaksFile": "LMS-March2020TransmissionFULL.peaks.json",
+      "coverFile": "LMS-March2020TransmissionFULL.png"
     },
     {
       "name": "March 2020 Transmission",
@@ -493,7 +506,8 @@
       ],
       "date": "2020",
       "comment": "Stay Home Stay Safe Stay Weird",
-      "peaksFile": "LMSTransmission April 2020.peaks.json"
+      "peaksFile": "LMSTransmission April 2020.peaks.json",
+      "coverFile": "LMSTransmission April 2020.png"
     },
     {
       "name": "May 2020 Transmission",
@@ -511,7 +525,8 @@
       "genre": "DJ Mix - Chillout",
       "date": "2020",
       "comment": "Recorded 06/05/2020, 23:00:29 BST",
-      "peaksFile": "LMS May 2020 Transmission.peaks.json"
+      "peaksFile": "LMS May 2020 Transmission.peaks.json",
+      "coverFile": "LMS May 2020 Transmission.png"
     },
     {
       "name": "May DNB mix",
@@ -561,7 +576,8 @@
       ],
       "genre": "DJ mix - Chillout/Eclectic",
       "date": "2017\n\n",
-      "peaksFile": "LMS 20NOV17.peaks.json"
+      "peaksFile": "LMS 20NOV17.peaks.json",
+      "coverFile": "LMS 20NOV17.png"
     },
     {
       "name": "November 2019",
@@ -610,7 +626,8 @@
       ],
       "genre": "Progressive House",
       "comment": "08Dec2015",
-      "peaksFile": "ProgressiveHouseMixDecember2015.peaks.json"
+      "peaksFile": "ProgressiveHouseMixDecember2015.peaks.json",
+      "coverFile": "ProgressiveHouseMixDecember2015.jpg"
     },
     {
       "name": "Random Broadcast 001 (11-12-13)",
@@ -628,7 +645,8 @@
       "genre": "DJ mix - Eclectic",
       "date": "2013",
       "comment": "00:00 Ginger Baker - Ariwo\n03:36 Mulatu Astatke - Yekermo Sew (A man of experience and wisdom)\n14:38 Antibalas Afrobeat Orchestra - Beaten Metal\n18:54 Cumbia Moderna De Soledad - Shacalao\n22:41 Brinkley & Parker - Pander Man (instrumental)\n25:42 El Michel",
-      "peaksFile": "Meezoid & Haze - Random Broadcast 001 (11-12-13).peaks.json"
+      "peaksFile": "Meezoid & Haze - Random Broadcast 001 (11-12-13).peaks.json",
+      "coverFile": "Meezoid & Haze - Random Broadcast 001 (11-12-13).jpg"
     },
     {
       "name": "Random Broadcast 002 (27-12-13)",
@@ -766,7 +784,8 @@
       "genre": "DJ mix - Psychadelic",
       "date": "2014",
       "comment": "recorded for Terminal Radio - a transmission from the Future Sound Of Lond board. ",
-      "peaksFile": "There are children laughing in my head.peaks.json"
+      "peaksFile": "There are children laughing in my head.peaks.json",
+      "coverFile": "There are children laughing in my head.jpg"
     },
     {
       "name": "Transmission #13",
@@ -798,7 +817,8 @@
         }
       ],
       "date": "2016",
-      "peaksFile": "LMSTransmission30OCT2016.peaks.json"
+      "peaksFile": "LMSTransmission30OCT2016.peaks.json",
+      "coverFile": "LMSTransmission30OCT2016.png"
     },
     {
       "name": "Transmission 12DEC2017 part 1",
@@ -848,7 +868,8 @@
         }
       ],
       "date": "2016",
-      "peaksFile": "LMS Transmission 12SEPT2016.peaks.json"
+      "peaksFile": "LMS Transmission 12SEPT2016.peaks.json",
+      "coverFile": "LMS Transmission 12SEPT2016.png"
     },
     {
       "name": "Transmission 23SEP17",
@@ -896,7 +917,8 @@
         }
       ],
       "date": "2015\n",
-      "peaksFile": "LMS Transmission Station #76 24NOV2015.peaks.json"
+      "peaksFile": "LMS Transmission Station #76 24NOV2015.peaks.json",
+      "coverFile": "LMS Transmission Station #76 24NOV2015.jpg"
     },
     {
       "name": "Transmission Station #76 25thMay2016",
@@ -929,7 +951,8 @@
       "genre": "ACID",
       "date": "2021",
       "comment": "Recorded 24/11/2021, 22:02:16 GMT",
-      "peaksFile": "c0ma club thanksgiving21 acid.peaks.json"
+      "peaksFile": "c0ma club thanksgiving21 acid.peaks.json",
+      "coverFile": "c0ma club thanksgiving21 acid.png"
     },
     {
       "name": "fsol radio mix take 3\n",

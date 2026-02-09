@@ -225,11 +225,15 @@ async function fetchMixDetails(mix) {
       }
     }
     
+    // Cover art URL
+    const coverSrc = mix.coverFile ? dir + mix.coverFile : null;
+    
     return {
       audioSrc: dir + mix.audioFile,
       trackListTable,
       peaks,
-      downloadLinks
+      downloadLinks,
+      coverSrc
     };
   }
   

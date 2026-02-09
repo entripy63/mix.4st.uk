@@ -357,7 +357,7 @@ async function playMix(mix) {
     const details = await fetchMixDetails(mix);
     if (details.audioSrc) {
       play(details.audioSrc);
-      displayTrackList(mix, details.trackListTable, details.downloadLinks);
+      displayTrackList(mix, details.trackListTable, details.downloadLinks, details.coverSrc);
       loadPeaks(details.peaks);
     }
   }
@@ -370,8 +370,10 @@ async function playNow(mixId) {
   await playMix(mix || { name: mixId.split('/').pop(), htmlPath: mixId });
 }
 
-function displayTrackList(mix, table, downloadLinks) {
+function displayTrackList(mix, table, downloadLinks, coverSrc) {
   const trackListDiv = document.getElementById('trackList');
+  const coverArtDiv = document.getElementById('coverArt');
+  
   let downloads = '';
   if (downloadLinks && downloadLinks.length > 0) {
     downloads = `<div class="downloads">
@@ -385,6 +387,13 @@ function displayTrackList(mix, table, downloadLinks) {
   const heading = mixName ? `<h1>${mixName} by ${djName}</h1>` : '';
   const trackListSection = table ? `<h2>Track List</h2>${table}` : '';
   trackListDiv.innerHTML = heading + trackListSection + downloads;
+  
+  // Show cover art only if there's no track list (track list takes precedence)
+  if (coverSrc && !table) {
+    coverArtDiv.innerHTML = `<img src="${coverSrc}" alt="Cover art">`;
+  } else {
+    coverArtDiv.innerHTML = '';
+  }
 }
 
 function getDJName(htmlPath) {
@@ -674,7 +683,7 @@ function probeAudioPlayback(file) {
         load(details.audioSrc);
         aud.currentTime = storage.getNum('playerTime', 0);
         state.currentMix = mix;
-        displayTrackList(mix, details.trackListTable, details.downloadLinks);
+        displayTrackList(mix, details.trackListTable, details.downloadLinks, details.coverSrc);
         loadPeaks(details.peaks);
         // Ensure waveform draws after layout is ready
         requestAnimationFrame(resizeWaveformCanvas);

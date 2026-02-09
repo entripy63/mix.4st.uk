@@ -109,6 +109,14 @@ def process_directory(directory):
         peaks_file = directory / f"{base_name}.peaks.json"
         has_peaks = peaks_file.exists()
         
+        # Check for cover art file
+        cover_file = None
+        for ext in ['.jpg', '.png', '.gif']:
+            potential = directory / f"{base_name}{ext}"
+            if potential.exists():
+                cover_file = f"{base_name}{ext}"
+                break
+        
         # Find available download formats
         downloads = find_download_files(directory, base_name)
         
@@ -133,6 +141,8 @@ def process_directory(directory):
             mix_entry['comment'] = meta['comment']
         if has_peaks:
             mix_entry['peaksFile'] = f"{base_name}.peaks.json"
+        if cover_file:
+            mix_entry['coverFile'] = cover_file
         
         mixes.append(mix_entry)
         print(f"  {base_name}: \"{title}\" ({format_duration(meta['duration'])})")
