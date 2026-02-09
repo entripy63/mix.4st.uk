@@ -168,6 +168,11 @@ function filterMixes(mixes, group, allGroups) {
   return mixes.filter(mix => mix.name.toLowerCase().includes(group.toLowerCase()));
 }
 
+// Encode filename for URL (handles # and other special chars)
+function encodeFilename(filename) {
+  return filename.split('/').map(part => encodeURIComponent(part)).join('/');
+}
+
 async function fetchMixDetails(mix) {
   // If mix came from manifest, we already have most details
   if (mix.audioFile) {
@@ -177,7 +182,7 @@ async function fetchMixDetails(mix) {
     let peaks = null;
     if (mix.peaksFile) {
       try {
-        const peaksResponse = await fetch(dir + mix.peaksFile);
+        const peaksResponse = await fetch(dir + encodeFilename(mix.peaksFile));
         if (peaksResponse.ok) {
           const peaksData = await peaksResponse.json();
           peaks = peaksData.peaks;
@@ -189,14 +194,14 @@ async function fetchMixDetails(mix) {
     
     // Build download links
     const downloadLinks = (mix.downloads || []).map(d => ({
-      href: dir + d.file,
+      href: dir + encodeFilename(d.file),
       label: d.label
     }));
     
     // Try to load track list from .tracks.txt (CSV) or .html file
     let trackListTable = '';
-    const txtPath = `${dir}${mix.file}.tracks.txt`;
-    const htmlPath = `${dir}${mix.file}.html`;
+    const txtPath = `${dir}${encodeFilename(mix.file)}.tracks.txt`;
+    const htmlPath = `${dir}${encodeFilename(mix.file)}.html`;
     
     // Try CSV track list first
     try {
@@ -226,10 +231,10 @@ async function fetchMixDetails(mix) {
     }
     
     // Cover art URL
-    const coverSrc = mix.coverFile ? dir + mix.coverFile : null;
+    const coverSrc = mix.coverFile ? dir + encodeFilename(mix.coverFile) : null;
     
     return {
-      audioSrc: dir + mix.audioFile,
+      audioSrc: dir + encodeFilename(mix.audioFile),
       trackListTable,
       peaks,
       downloadLinks,
