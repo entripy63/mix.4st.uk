@@ -36,6 +36,22 @@
       "peaksFile": "Ronny_Pries - tape discoveries1b.peaks.json"
     },
     {
+      "name": "Back in the days again",
+      "file": "Ronny_Pries--back_in_the_days_again",
+      "audioFile": "Ronny_Pries--back_in_the_days_again.mp3",
+      "duration": 4493.557551,
+      "durationFormatted": "1:14:53",
+      "artist": "Ronny Pries",
+      "downloads": [
+        {
+          "file": "Ronny_Pries--back_in_the_days_again.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2005",
+      "peaksFile": "Ronny_Pries--back_in_the_days_again.peaks.json"
+    },
+    {
       "name": "Biomechanics Podcast #6",
       "file": "Ronny_Pries--Biomechanics Podcast #6",
       "audioFile": "Ronny_Pries--Biomechanics Podcast #6.mp3",
@@ -90,6 +106,24 @@
       "coverFile": "Ronny_Pries--fuck_off_2008.jpg"
     },
     {
+      "name": "Interstellar Disco Express - Station 1",
+      "file": "Ronny_Pries--interstellar_disco_express-station_1",
+      "audioFile": "Ronny_Pries--interstellar_disco_express-station_1.mp3",
+      "duration": 4023.301224,
+      "durationFormatted": "1:07:03",
+      "artist": "Ronny Pries",
+      "downloads": [
+        {
+          "file": "Ronny_Pries--interstellar_disco_express-station_1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Disco",
+      "date": "2008",
+      "peaksFile": "Ronny_Pries--interstellar_disco_express-station_1.peaks.json",
+      "coverFile": "Ronny_Pries--interstellar_disco_express-station_1.jpg"
+    },
+    {
       "name": "It's House! (april 2012)",
       "file": "Ronny_Pries--traktorized-its_house-april_2012",
       "audioFile": "Ronny_Pries--traktorized-its_house-april_2012.mp3",
@@ -126,6 +160,23 @@
       "comment": "Downloaded from http://official.fm/tracks/325506\n\n A special 46 tracks, 2 hours excursion into Acid-House recorded for Todd Jackin E's \"Jackin' Planets\" radioshow on shouted.fm, broadcasted in august 2006.",
       "peaksFile": "Ronny_Pries--Jackin_Planets_10.peaks.json",
       "coverFile": "Ronny_Pries--Jackin_Planets_10.jpg"
+    },
+    {
+      "name": "Live at Betalounge 12-11-10",
+      "file": "rktic live at Betalounge",
+      "audioFile": "rktic live at Betalounge.mp3",
+      "duration": 17763.648,
+      "durationFormatted": "4:56:03",
+      "artist": "rktic",
+      "downloads": [
+        {
+          "file": "rktic live at Betalounge.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Dubtechno",
+      "peaksFile": "rktic live at Betalounge.peaks.json",
+      "coverFile": "rktic live at Betalounge.jpg"
     },
     {
       "name": "Mixotic 080 - e=4/4",
@@ -218,73 +269,6 @@
       "peaksFile": "Ronny_Pries--live_at_Alpha_Box_Jan08_pt1.peaks.json"
     },
     {
-      "name": "Ronny_Pries--back_in_the_days_again",
-      "file": "Ronny_Pries--back_in_the_days_again",
-      "audioFile": "Ronny_Pries--back_in_the_days_again.mp3",
-      "duration": 4493.557551,
-      "durationFormatted": "1:14:53",
-      "artist": "Ronny Pries",
-      "downloads": [
-        {
-          "file": "Ronny_Pries--back_in_the_days_again.mp3",
-          "label": "MP3"
-        }
-      ],
-      "date": "2005",
-      "peaksFile": "Ronny_Pries--back_in_the_days_again.peaks.json"
-    },
-    {
-      "name": "Ronny_Pries--interstellar_disco_express-station_1",
-      "file": "Ronny_Pries--interstellar_disco_express-station_1",
-      "audioFile": "Ronny_Pries--interstellar_disco_express-station_1.mp3",
-      "duration": 4023.301224,
-      "durationFormatted": "1:07:03",
-      "artist": "Ronny Pries",
-      "downloads": [
-        {
-          "file": "Ronny_Pries--interstellar_disco_express-station_1.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Disco",
-      "date": "2008",
-      "peaksFile": "Ronny_Pries--interstellar_disco_express-station_1.peaks.json",
-      "coverFile": "Ronny_Pries--interstellar_disco_express-station_1.jpg"
-    },
-    {
-      "name": "Ronny_Pries--live_at_Alpha_Box_Jan08_pt2",
-      "file": "Ronny_Pries--live_at_Alpha_Box_Jan08_pt2",
-      "audioFile": "Ronny_Pries--live_at_Alpha_Box_Jan08_pt2.mp3",
-      "duration": 6462.798367,
-      "durationFormatted": "1:47:42",
-      "artist": "Ronny Pries",
-      "downloads": [
-        {
-          "file": "Ronny_Pries--live_at_Alpha_Box_Jan08_pt2.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Techno",
-      "date": "2008",
-      "peaksFile": "Ronny_Pries--live_at_Alpha_Box_Jan08_pt2.peaks.json"
-    },
-    {
-      "name": "Ronny_Pries--reboot_07",
-      "file": "Ronny_Pries--reboot_07",
-      "audioFile": "Ronny_Pries--reboot_07.mp3",
-      "duration": 7282.337959,
-      "durationFormatted": "2:01:22",
-      "artist": "Ronny Pries",
-      "downloads": [
-        {
-          "file": "Ronny_Pries--reboot_07.mp3",
-          "label": "MP3"
-        }
-      ],
-      "date": "2007",
-      "peaksFile": "Ronny_Pries--reboot_07.peaks.json"
-    },
-    {
       "name": "Spring's House",
       "file": "Ronny_Pries--springs_house",
       "audioFile": "Ronny_Pries--springs_house.mp3",
@@ -316,6 +300,22 @@
       ],
       "comment": "01 Trackhead Steve - Gone Madd\r\n02 DJ Hyperactive - Chicago\r\n03 DJ Sneak - Special K\r\n04 Lester Fitzpatrick - Frequency Response\r\n05 Paul Johnson - Just Whistle\r\n06 Wax Master Maurice - Freak\r\n07 Dee Jay Nephets - Lay It Down\r\n08 DJ Deeon - Spacktikus\r\n09 Dj Skitzo - Burn out\r\n10 Green Velvet - Pegal\r\n11 Jammin The House Gerald - Party Hyp (Rx)\r\n12 Markey - Transmission\r\n13 Robert Armani - Clockwork\r\n14 Tyree - Of Love Mystery\r\n15 Traxmen Presents Eric Martin - Fire Alarm\r\n16 Paul Johnson - Who's Pussy Is This\r\n17 Joe Durel - What A Bang\r\n18 S.B. Project - Track 16\r\n19 Paul Johnson - The Set Up\r\n20 DJ Deeon - House Quake\r\n21 DJ Funk #1 - Bitches!!!!!\r\n22 DJ Sneak - Message Of Love\r\n23 Green Velvet - Conniption\r\n24 GU - Smok'en Indo\r\n25 Playground Productionz - Vertigo\r\n26 DJ Deeon - And I Sexxx\r\n27 Ghetto Funk - 96 U Got 2\r\n28 Jammin The House Gerald - G. Invasion\r\n29 Joe Lewis - Liquid Liquid\r\n30 DJ Funk - Run\r\n31 DJ Skull - Serial Killer\r\n32 Lester Fitzpatrick - Warp\r\n33 Trackhead Steve - Crazy Wild Track\r\n34 Tyree Cooper - Da Butt 95\r\n35 Robert Armani - Moon Lights\r\n36 Jelly Bean - Drop Dead Zone\r\n37 Paul Johnson - Suck My Candy Cane\r\n38 Fast Eddie Feat.Funky J - Big'ol Bass Mix\r\n39 Green Velvet - War On The Saints\r\n40 DJ Bam Bam - This (Feat Alex Peace)\r\n41 DJ Assault - Let Me C U Pop\r\n42 Jammin The House Gerald - Hold Up\r\n43 DJ Kurtis Vutton - 2 Much Booty\r\n44 DJ Deeon - Freak Like Me ",
       "peaksFile": "Ronny_Pries--traktorized091106.peaks.json"
+    },
+    {
+      "name": "Traktorized - Reboot '07 (07-01-04)",
+      "file": "Ronny_Pries--reboot_07",
+      "audioFile": "Ronny_Pries--reboot_07.mp3",
+      "duration": 7282.337959,
+      "durationFormatted": "2:01:22",
+      "artist": "Ronny Pries",
+      "downloads": [
+        {
+          "file": "Ronny_Pries--reboot_07.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2007",
+      "peaksFile": "Ronny_Pries--reboot_07.peaks.json"
     },
     {
       "name": "Traktorized warmup session",
@@ -501,6 +501,23 @@
       "coverFile": "Ronny_Pries--wnur-89_3_mix.jpg"
     },
     {
+      "name": "live @ Alpha Box Jan'08 Pt.2",
+      "file": "Ronny_Pries--live_at_Alpha_Box_Jan08_pt2",
+      "audioFile": "Ronny_Pries--live_at_Alpha_Box_Jan08_pt2.mp3",
+      "duration": 6462.798367,
+      "durationFormatted": "1:47:42",
+      "artist": "Ronny Pries",
+      "downloads": [
+        {
+          "file": "Ronny_Pries--live_at_Alpha_Box_Jan08_pt2.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Techno",
+      "date": "2008",
+      "peaksFile": "Ronny_Pries--live_at_Alpha_Box_Jan08_pt2.peaks.json"
+    },
+    {
       "name": "live at Technologic Stories",
       "file": "Ronny_Pries--live_at_Technologic_Stories",
       "audioFile": "Ronny_Pries--live_at_Technologic_Stories.mp3",
@@ -536,23 +553,6 @@
       "comment": "www.realaudio.ch - This MP3 file is licensed to the public via http://creativecommons.org/licenses/by-nd-nc/2.0/",
       "peaksFile": "Ronny_Pries--mnmlsm118.peaks.json",
       "coverFile": "Ronny_Pries--mnmlsm118.jpg"
-    },
-    {
-      "name": "rktic live at Betalounge",
-      "file": "rktic live at Betalounge",
-      "audioFile": "rktic live at Betalounge.mp3",
-      "duration": 17763.648,
-      "durationFormatted": "4:56:03",
-      "artist": "rktic",
-      "downloads": [
-        {
-          "file": "rktic live at Betalounge.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Dubtechno",
-      "peaksFile": "rktic live at Betalounge.peaks.json",
-      "coverFile": "rktic live at Betalounge.jpg"
     },
     {
       "name": "strobelight session I",

@@ -27,8 +27,8 @@ def get_audio_metadata(audio_path):
         fmt = data.get('format', {})
         tags = fmt.get('tags', {})
         
-        # Handle case-insensitive tag names
-        title = tags.get('title') or tags.get('TITLE') or ''
+        # Handle case-insensitive tag names, fall back to album if no title
+        title = tags.get('title') or tags.get('TITLE') or tags.get('album') or tags.get('ALBUM') or ''
         artist = tags.get('artist') or tags.get('ARTIST') or ''
         genre = tags.get('genre') or tags.get('GENRE') or ''
         date = tags.get('date') or tags.get('DATE') or ''
