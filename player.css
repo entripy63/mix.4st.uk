@@ -256,6 +256,11 @@ kbd {
   border-color: #5c6bc0;
 }
 
+.mode-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .mode-icon {
   font-size: 14px;
 }

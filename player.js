@@ -56,6 +56,7 @@ const mixFlags = {
   
   isFavourite(mixId) { return this._favourites.has(mixId); },
   isHidden(mixId) { return this._hidden.has(mixId); },
+  hasFavourites() { return this._favourites.size > 0; },
   
   toggleFavourite(mixId) {
     if (this._favourites.has(mixId)) {
@@ -84,8 +85,14 @@ const mixFlags = {
   _save() {
     storage.set('mixFavourites', [...this._favourites]);
     storage.set('mixHidden', [...this._hidden]);
+    updateFavouritesButton();
   }
 };
+
+function updateFavouritesButton() {
+  const btn = document.querySelector('.mode-btn[data-mode="favourites"]');
+  if (btn) btn.disabled = !mixFlags.hasFavourites();
+}
 
 // Set canvas resolution to match CSS size
 function resizeWaveformCanvas() {
@@ -1083,6 +1090,9 @@ function probeAudioPlayback(file) {
 }
 
 // Restore last playing mix on page load
+// Initialize favourites button state
+updateFavouritesButton();
+
 (async function restorePlayer() {
   try {
     const savedPath = storage.get('currentMixPath');
