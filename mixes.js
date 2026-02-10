@@ -58,30 +58,44 @@ function formatDuration(raw) {
   return `${hours}:${minutes.toString().padStart(2, '0')}:00`;
 }
 
+// Universal selection phrases (DJ-agnostic common terms)
+const UNIVERSAL_SELECTIONS = ['guest mix'];
+
 function detectGroups(mixes) {
   const names = mixes.map(m => m.name.toLowerCase());
   const originalNames = mixes.map(m => m.name);
+  const djName = mixes[0]?.dj?.toLowerCase() || '';
   const candidates = new Map(); // keyword -> count
+  
+  // Check for universal selection phrases first
+  for (const phrase of UNIVERSAL_SELECTIONS) {
+    const count = names.filter(n => n.includes(phrase)).length;
+    if (count >= 3) {
+      candidates.set(phrase, count);
+    }
+  }
   
   // Extract potential group keywords from each name
   for (const name of names) {
     // Split into words (letters only, 3+ chars)
     const words = name.match(/[a-z]{3,}/g) || [];
     
-    // Single words (4+ chars) as candidates
+    // Single words (4+ chars) as candidates, excluding DJ name
     for (const word of words) {
-      if (word.length >= 4) {
+      if (word.length >= 4 && word !== djName) {
         candidates.set(word, (candidates.get(word) || 0) + 1);
       }
     }
     
     // Multi-word phrases as candidates (2-4 words)
-    // First and last words must be 4+ chars, middle words can be shorter (e.g., "the", "of")
+    // First word must be 4+ chars, last word must be 4+ chars OR "mix"
+    // Middle words can be shorter (e.g., "the", "of")
+    // Exclude phrases that start with the DJ name
     for (let i = 0; i < words.length - 1; i++) {
-      if (words[i].length >= 4) {
+      if (words[i].length >= 4 && words[i] !== djName) {
         for (let len = 2; len <= 4 && i + len <= words.length; len++) {
           const lastWord = words[i + len - 1];
-          if (lastWord.length >= 4) {
+          if (lastWord.length >= 4 || lastWord === 'mix') {
             const phrase = words.slice(i, i + len).join(' ');
             candidates.set(phrase, (candidates.get(phrase) || 0) + 1);
           }
@@ -96,10 +110,16 @@ function detectGroups(mixes) {
     .sort((a, b) => b[1] - a[1])
     .map(([keyword, count]) => ({ keyword, count }));
   
-  // Remove redundant groups
+  // Remove redundant groups (but preserve universal selections)
   const getMatches = (kw) => new Set(names.filter(n => n.includes(kw)));
   const kept = [];
   for (const g of groups) {
+    // Universal selections are always kept
+    if (UNIVERSAL_SELECTIONS.includes(g.keyword)) {
+      kept.push(g);
+      continue;
+    }
+    
     const myMatches = getMatches(g.keyword);
     let dominated = false;
     
@@ -140,14 +160,21 @@ function detectGroups(mixes) {
   groups = groups.slice(0, 5);
   
   // Find canonical capitalization from original names, keep sorted by count
+  // Use Title Case as fallback if not found or all lowercase
+  const toTitleCase = (str) => str.replace(/\b\w/g, c => c.toUpperCase());
   const result = groups.map(g => {
     for (const orig of originalNames) {
       const idx = orig.toLowerCase().indexOf(g.keyword);
       if (idx >= 0) {
-        return orig.substring(idx, idx + g.keyword.length);
+        const found = orig.substring(idx, idx + g.keyword.length);
+        // If found text is all lowercase, use Title Case instead
+        if (found === found.toLowerCase()) {
+          return toTitleCase(found);
+        }
+        return found;
       }
     }
-    return g.keyword;
+    return toTitleCase(g.keyword);
   });
   
   return result; // Already sorted by count descending

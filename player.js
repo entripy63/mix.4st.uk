@@ -442,11 +442,13 @@ function displayTrackList(mix, table, downloadLinks, coverSrc) {
     if (canFlag) {
       const isFav = mixFlags.isFavourite(mixId);
       const isHidden = mixFlags.isHidden(mixId);
+      const hideDisabled = isFav ? ' disabled' : '';
+      const hideTitle = isFav ? 'Cannot hide favourited mix' : (isHidden ? 'Unhide mix' : 'Hide mix');
       flagBtns = `
         <button class="action-btn fav-btn${isFav ? ' active' : ''}" onclick="toggleCurrentFavourite()" title="${isFav ? 'Remove from favourites' : 'Add to favourites'}">
           <span class="action-icon">${isFav ? '❤️' : '🤍'}</span>Fav
         </button>
-        <button class="action-btn hide-btn${isHidden ? ' active' : ''}" onclick="toggleCurrentHidden()" title="${isHidden ? 'Unhide mix' : 'Hide mix'}">
+        <button class="action-btn hide-btn${isHidden ? ' active' : ''}"${hideDisabled} onclick="toggleCurrentHidden()" title="${hideTitle}">
           <span class="action-icon">${isHidden ? '👁️' : '🚫'}</span>Hide
         </button>`;
     }
