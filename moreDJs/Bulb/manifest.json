@@ -1,0 +1,369 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "Bulb - Into the deep 001",
+      "file": "Bulb - Into the deep 001",
+      "audioFile": "Bulb - Into the deep 001.mp3",
+      "duration": 3339.4187,
+      "durationFormatted": "0:55:39",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Bulb - Into the deep 001.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Blues",
+      "peaksFile": "Bulb - Into the deep 001.peaks.json"
+    },
+    {
+      "name": "Into the deep 002",
+      "file": "Bulb - Into the deep 002",
+      "audioFile": "Bulb - Into the deep 002.mp3",
+      "duration": 4202.426056,
+      "durationFormatted": "1:10:02",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb - Into the deep 002.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Drum & Bass",
+      "date": "2010",
+      "comment": "http://soundcloud.com/bulb\r\nhttp://www.mixcloud.com/bulb/",
+      "peaksFile": "Bulb - Into the deep 002.peaks.json",
+      "coverFile": "Bulb - Into the deep 002.jpg"
+    },
+    {
+      "name": "Into the deep 003",
+      "file": "Bulb - Into the deep 003",
+      "audioFile": "Bulb - Into the deep 003.mp3",
+      "duration": 3268.7836,
+      "durationFormatted": "0:54:28",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb - Into the deep 003.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Drum & Bass",
+      "date": "2010",
+      "comment": "http://soundcloud.com/bulb\r\nhttp://www.mixcloud.com/bulb/",
+      "peaksFile": "Bulb - Into the deep 003.peaks.json",
+      "coverFile": "Bulb - Into the deep 003.png"
+    },
+    {
+      "name": "Into the deep 004",
+      "file": "Bulb - Into the deep 004",
+      "audioFile": "Bulb - Into the deep 004.mp3",
+      "duration": 3093.1885,
+      "durationFormatted": "0:51:33",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb - Into the deep 004.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Drum & Bass",
+      "date": "2010",
+      "comment": "http://soundcloud.com/bulb\r\nhttp://www.mixcloud.com/bulb/",
+      "peaksFile": "Bulb - Into the deep 004.peaks.json",
+      "coverFile": "Bulb - Into the deep 004.png"
+    },
+    {
+      "name": "Into the deep 005",
+      "file": "Bulb - Into the deep 005",
+      "audioFile": "Bulb - Into the deep 005.mp3",
+      "duration": 2926.1093,
+      "durationFormatted": "0:48:46",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb - Into the deep 005.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2010",
+      "comment": "into-the-deep.rpod.ru",
+      "peaksFile": "Bulb - Into the deep 005.peaks.json"
+    },
+    {
+      "name": "Into the deep 007",
+      "file": "Bulb - Into the deep 007",
+      "audioFile": "Bulb - Into the deep 007.mp3",
+      "duration": 3331.55585,
+      "durationFormatted": "0:55:31",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb - Into the deep 007.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other",
+      "date": "2010",
+      "comment": "?aim: ezbulb\r\nhttp://soundcloud.com/bulb",
+      "peaksFile": "Bulb - Into the deep 007.peaks.json"
+    },
+    {
+      "name": "Into the deep 008",
+      "file": "Bulb - Into the deep 008",
+      "audioFile": "Bulb - Into the deep 008.mp3",
+      "duration": 3261.051356,
+      "durationFormatted": "0:54:21",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb - Into the deep 008.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Drum & Bass",
+      "date": "2010",
+      "comment": "aim=ezbulb",
+      "peaksFile": "Bulb - Into the deep 008.peaks.json",
+      "coverFile": "Bulb - Into the deep 008.png"
+    },
+    {
+      "name": "Into the deep 009",
+      "file": "Bulb - Into the deep 009",
+      "audioFile": "Bulb - Into the deep 009.mp3",
+      "duration": 3309.247278,
+      "durationFormatted": "0:55:09",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb - Into the deep 009.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Drum & Bass",
+      "date": "2011",
+      "comment": "aim=ezbulb",
+      "peaksFile": "Bulb - Into the deep 009.peaks.json",
+      "coverFile": "Bulb - Into the deep 009.png"
+    },
+    {
+      "name": "Into the deep 010",
+      "file": "Bulb - Into the deep 010",
+      "audioFile": "Bulb - Into the deep 010.mp3",
+      "duration": 3399.604825,
+      "durationFormatted": "0:56:39",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb - Into the deep 010.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2011",
+      "comment": "into-the-deep.rpod.ru",
+      "peaksFile": "Bulb - Into the deep 010.peaks.json"
+    },
+    {
+      "name": "Into the deep 011",
+      "file": "Bulb - Into the deep 011",
+      "audioFile": "Bulb - Into the deep 011.mp3",
+      "duration": 3173.697875,
+      "durationFormatted": "0:52:53",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb - Into the deep 011.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2011",
+      "comment": "into-the-deep.rpod.ru",
+      "peaksFile": "Bulb - Into the deep 011.peaks.json"
+    },
+    {
+      "name": "Into the deep 012",
+      "file": "Bulb - Into the deep 012",
+      "audioFile": "Bulb - Into the deep 012.mp3",
+      "duration": 3385.211356,
+      "durationFormatted": "0:56:25",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb - Into the deep 012.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Drum & Bass",
+      "date": "2011",
+      "comment": "aim=ezbulb\r\nbulb.book@gmail.com",
+      "peaksFile": "Bulb - Into the deep 012.peaks.json",
+      "coverFile": "Bulb - Into the deep 012.png"
+    },
+    {
+      "name": "Into the deep 013",
+      "file": "Bulb - Into the deep 013",
+      "audioFile": "Bulb - Into the deep 013.mp3",
+      "duration": 3410.2889,
+      "durationFormatted": "0:56:50",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb - Into the deep 013.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Drum & Bass",
+      "date": "2011",
+      "comment": "aim=ezbulb",
+      "peaksFile": "Bulb - Into the deep 013.peaks.json",
+      "coverFile": "Bulb - Into the deep 013.png"
+    },
+    {
+      "name": "Into the deep 014",
+      "file": "Bulb - Into the deep 014",
+      "audioFile": "Bulb - Into the deep 014.mp3",
+      "duration": 3792.6432,
+      "durationFormatted": "1:03:12",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb - Into the deep 014.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Drum & Bass",
+      "date": "2011",
+      "comment": "http://soundcloud.com/bulb",
+      "peaksFile": "Bulb - Into the deep 014.peaks.json",
+      "coverFile": "Bulb - Into the deep 014.png"
+    },
+    {
+      "name": "Into the deep 015",
+      "file": "Bulb - Into the deep 015",
+      "audioFile": "Bulb - Into the deep 015.mp3",
+      "duration": 3878.246456,
+      "durationFormatted": "1:04:38",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb - Into the deep 015.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2011",
+      "comment": "soundcloud.com/bulb",
+      "peaksFile": "Bulb - Into the deep 015.peaks.json",
+      "coverFile": "Bulb - Into the deep 015.png"
+    },
+    {
+      "name": "Into the deep 016",
+      "file": "Bulb - Into the deep 016",
+      "audioFile": "Bulb - Into the deep 016.mp3",
+      "duration": 3636.561556,
+      "durationFormatted": "1:00:36",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb - Into the deep 016.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Drum & Bass",
+      "date": "2012",
+      "comment": "http://soundcloud.com/bulb\r\nhttps://www.facebook.com/bulb.dnb",
+      "peaksFile": "Bulb - Into the deep 016.peaks.json",
+      "coverFile": "Bulb - Into the deep 016.png"
+    },
+    {
+      "name": "Into the deep 017",
+      "file": "Bulb - Into the deep 017",
+      "audioFile": "Bulb - Into the deep 017.mp3",
+      "duration": 3542.207278,
+      "durationFormatted": "0:59:02",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb - Into the deep 017.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Drum & Bass",
+      "date": "2012",
+      "comment": "http://soundcloud.com/bulb\r\nhttps://www.facebook.com/bulb.dnb\r\n\r\n01. K\u00fara - Anchor (Aebeloe Remix) [Rekompileret]\r\n02. Boxcutter - Mossy [Planet Mu]\r\n03. Sean Byrd - Over Here [Plastic Sound Supply]\r\n04. Supervitesse - Mahogany (Ulrich Schnauss Remix) [Rocket Girl]\r\n05. Sam KDC - A Prelude To Winter (James' Song) [free]\r\n06. Interface, Minus & J Wilcox - Delicious [Gutterfunk / free]\r\n07. Bass'Flo - Poseidon (Physical Illusion Remix) [SoulRed]\r\n08. Ital Tek - Days Illusion [Atom River]\r\n09. Nuage - Moonlakes [Interactive]\r\n10. TwoThirds - Fade & Return [dub]\r\n11. Mineral - Everytime You Are Near [Mastik / free]\r\n12. Electrosoul System - Midnight Showers [Kosmos Music dub]\r\n13. Hidden Element - Get Ready! [dub]\r\n14. Bulb - Please Recreate Myself [Silk dub]\r\n15. Hors - Ssafe [Polaron / free]\r\n16. Beastie Respond & MC Alvarado - I Fly Close To The Ground [free]\r\n17. Mauoq - Intruders [Absys]\r\n18. First Aid - Homecoming [dub]\r\n19. Jack Dixon - You Won't Let Me (Synkro Remix) [Apollo / free]",
+      "peaksFile": "Bulb - Into the deep 017.peaks.json",
+      "coverFile": "Bulb - Into the deep 017.jpg"
+    },
+    {
+      "name": "Into the deep 018",
+      "file": "Bulb_-_Into_the_deep_018",
+      "audioFile": "Bulb_-_Into_the_deep_018.mp3",
+      "duration": 3665.29625,
+      "durationFormatted": "1:01:05",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb_-_Into_the_deep_018.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2012",
+      "comment": "into-the-deep.rpod.ru",
+      "peaksFile": "Bulb_-_Into_the_deep_018.peaks.json"
+    },
+    {
+      "name": "Into the deep 019",
+      "file": "Bulb_-_Into_the_deep_019",
+      "audioFile": "Bulb_-_Into_the_deep_019.mp3",
+      "duration": 2901.6587,
+      "durationFormatted": "0:48:21",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb_-_Into_the_deep_019.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2013",
+      "comment": "into-the-deep.rpod.ru",
+      "peaksFile": "Bulb_-_Into_the_deep_019.peaks.json",
+      "coverFile": "Bulb_-_Into_the_deep_019.jpg"
+    },
+    {
+      "name": "Into the deep 2.0",
+      "file": "Bulb_-_Into_the_deep_2.0",
+      "audioFile": "Bulb_-_Into_the_deep_2.0.mp3",
+      "duration": 2946.197478,
+      "durationFormatted": "0:49:06",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb_-_Into_the_deep_2.0.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2013",
+      "comment": "into-the-deep.rpod.ru",
+      "peaksFile": "Bulb_-_Into_the_deep_2.0.peaks.json",
+      "coverFile": "Bulb_-_Into_the_deep_2.0.jpg"
+    },
+    {
+      "name": "Into the deep 2.1",
+      "file": "Bulb_-_Into_the_deep_2.1",
+      "audioFile": "Bulb_-_Into_the_deep_2.1.mp3",
+      "duration": 3557.5934,
+      "durationFormatted": "0:59:17",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb_-_Into_the_deep_2.1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2013",
+      "comment": "into-the-deep.rpod.ru",
+      "peaksFile": "Bulb_-_Into_the_deep_2.1.peaks.json",
+      "coverFile": "Bulb_-_Into_the_deep_2.1.jpg"
+    }
+  ]
+}

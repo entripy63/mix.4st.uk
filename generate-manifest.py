@@ -162,26 +162,48 @@ def process_directory(directory):
     
     print(f"  Wrote manifest.json ({len(mixes)} mixes)")
 
+def find_dj_directories(base_directory):
+    """Find all directories containing audio files, including nested ones in moreDJs/."""
+    dj_dirs = []
+    extensions = {'.mp3', '.flac', '.m4a'}
+    
+    for entry in base_directory.iterdir():
+        if entry.is_dir() and not entry.name.startswith('.'):
+            if entry.name == 'moreDJs':
+                # Scan subdirectories within moreDJs
+                for subentry in entry.iterdir():
+                    if subentry.is_dir():
+                        has_audio = any(f.suffix.lower() in extensions for f in subentry.iterdir() if f.is_file())
+                        if has_audio:
+                            dj_dirs.append(subentry)
+            else:
+                # Check root-level directories
+                has_audio = any(f.suffix.lower() in extensions for f in entry.iterdir() if f.is_file())
+                if has_audio:
+                    dj_dirs.append(entry)
+    
+    return sorted(dj_dirs, key=lambda p: p.name.lower())
+
 def main():
     base_directory = Path(sys.argv[1]) if len(sys.argv) > 1 else Path('.')
     
-    # Process known DJ subdirectories
-    dj_dirs = ['trip', 'izmar', 'aboo']
+    # If a specific directory is given, process just that one
+    if len(sys.argv) > 1 and (base_directory / 'manifest.json').parent != base_directory.parent:
+        # Check if it's a DJ directory (has audio files)
+        extensions = {'.mp3', '.flac', '.m4a'}
+        has_audio = any(f.suffix.lower() in extensions for f in base_directory.iterdir() if f.is_file())
+        if has_audio:
+            print(f"\n=== {base_directory.name} ===")
+            process_directory(base_directory)
+            return
     
-    for subdir in dj_dirs:
-        path = base_directory / subdir
-        if path.is_dir():
-            print(f"\n=== {subdir} ===")
-            process_directory(path)
+    # Otherwise, find and process all DJ directories
+    dj_dirs = find_dj_directories(base_directory)
     
-    # Also check for any other directories with audio files
-    for entry in base_directory.iterdir():
-        if entry.is_dir() and entry.name not in dj_dirs and not entry.name.startswith('.'):
-            # Check if it has audio files
-            has_audio = any(f.suffix.lower() in {'.mp3', '.flac', '.m4a'} for f in entry.iterdir() if f.is_file())
-            if has_audio:
-                print(f"\n=== {entry.name} ===")
-                process_directory(entry)
+    for dj_dir in dj_dirs:
+        relative = dj_dir.relative_to(base_directory)
+        print(f"\n=== {relative} ===")
+        process_directory(dj_dir)
 
 if __name__ == '__main__':
     main()

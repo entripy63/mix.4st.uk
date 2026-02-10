@@ -371,8 +371,14 @@ async function playNow(mixId) {
 }
 
 function displayTrackList(mix, table, downloadLinks, coverSrc) {
+  const nowPlayingDiv = document.getElementById('nowPlaying');
   const trackListDiv = document.getElementById('trackList');
   const coverArtDiv = document.getElementById('coverArt');
+  
+  // Show mix name and artist immediately below player
+  const mixName = mix ? escapeHtml(mix.name) : '';
+  const djName = mix ? escapeHtml(mix.artist || getDJName(mix.htmlPath || mix.djPath)) : '';
+  nowPlayingDiv.innerHTML = mixName ? `<h1>${mixName} by ${djName}</h1>` : '';
   
   let downloads = '';
   if (downloadLinks && downloadLinks.length > 0) {
@@ -381,12 +387,8 @@ function displayTrackList(mix, table, downloadLinks, coverSrc) {
       ${downloadLinks.map(d => `<a class="download-btn" href="${d.href}" download>${d.label}</a>`).join('')}
     </div>`;
   }
-  // Always show mix name and artist
-  const mixName = mix ? escapeHtml(mix.name) : '';
-  const djName = mix ? escapeHtml(mix.artist || getDJName(mix.htmlPath || mix.djPath)) : '';
-  const heading = mixName ? `<h1>${mixName} by ${djName}</h1>` : '';
   const trackListSection = table ? `<h2>Track List</h2>${table}` : '';
-  trackListDiv.innerHTML = heading + trackListSection + downloads;
+  trackListDiv.innerHTML = trackListSection + downloads;
   
   // Show cover art only if there's no track list (track list takes precedence)
   if (coverSrc && !table) {

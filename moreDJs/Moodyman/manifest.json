@@ -1,0 +1,103 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "Album Launch Party (2007-12-02)",
+      "file": "TrusMe_and_Moodymann_-_Album_launch_Party_2007-fullbozman.com",
+      "audioFile": "TrusMe_and_Moodymann_-_Album_launch_Party_2007-fullbozman.com.mp3",
+      "duration": 4580.791083,
+      "durationFormatted": "1:16:20",
+      "artist": "Trus'me & Moodymann",
+      "downloads": [
+        {
+          "file": "TrusMe_and_Moodymann_-_Album_launch_Party_2007-fullbozman.com.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2007",
+      "comment": "www.fullbozman.com"
+    },
+    {
+      "name": "Live Session in New-York",
+      "file": "Moodymann_and_Charles_Webster_-_Live_at_NYC-fullbozman.com",
+      "audioFile": "Moodymann_and_Charles_Webster_-_Live_at_NYC-fullbozman.com.mp3",
+      "duration": 4228.74487,
+      "durationFormatted": "1:10:28",
+      "artist": "Charles Webster & Moodymann",
+      "downloads": [
+        {
+          "file": "Moodymann_and_Charles_Webster_-_Live_at_NYC-fullbozman.com.mp3",
+          "label": "MP3"
+        }
+      ],
+      "comment": "www.fullbozman.com"
+    },
+    {
+      "name": "Live at Gilles Peterson Show (BBC Radio1 - 2007-10-11)",
+      "file": "Moodymann_-_live_at_Gilles_Peterson_show-oct07-fullbozman.com",
+      "audioFile": "Moodymann_-_live_at_Gilles_Peterson_show-oct07-fullbozman.com.mp3",
+      "duration": 7322.724,
+      "durationFormatted": "2:02:02",
+      "artist": "Moodymann",
+      "downloads": [
+        {
+          "file": "Moodymann_-_live_at_Gilles_Peterson_show-oct07-fullbozman.com.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Electronic",
+      "date": "2007",
+      "comment": "www.fullbozman.com"
+    },
+    {
+      "name": "Live at The Arches (Glasgow 2002)",
+      "file": "Moodymann_-_Live_at_The_Arches-Glasgow2002-fullbozman.com",
+      "audioFile": "Moodymann_-_Live_at_The_Arches-Glasgow2002-fullbozman.com.mp3",
+      "duration": 9685.55102,
+      "durationFormatted": "2:41:25",
+      "artist": "Moodymann",
+      "downloads": [
+        {
+          "file": "Moodymann_-_Live_at_The_Arches-Glasgow2002-fullbozman.com.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Blues",
+      "date": "2002",
+      "comment": "www.fullbozman.com"
+    },
+    {
+      "name": "Live on Mixtape (2006-11-18)",
+      "file": "Moodymann_-_Live_on_Mixtape_11-18-2006-fullbozman.com",
+      "audioFile": "Moodymann_-_Live_on_Mixtape_11-18-2006-fullbozman.com.mp3",
+      "duration": 3485.283265,
+      "durationFormatted": "0:58:05",
+      "artist": "Moodymann",
+      "downloads": [
+        {
+          "file": "Moodymann_-_Live_on_Mixtape_11-18-2006-fullbozman.com.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Electronic",
+      "date": "2006",
+      "comment": "www.fullbozman.com"
+    },
+    {
+      "name": "Motor, Detroit",
+      "file": "MoodyMann_-_Live_at_Motor_Detroit-fullbozman.com",
+      "audioFile": "MoodyMann_-_Live_at_Motor_Detroit-fullbozman.com.mp3",
+      "duration": 2793.806583,
+      "durationFormatted": "0:46:33",
+      "artist": "MoodyMann",
+      "downloads": [
+        {
+          "file": "MoodyMann_-_Live_at_Motor_Detroit-fullbozman.com.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "comment": "http://www.fullbozman.com"
+    }
+  ]
+}

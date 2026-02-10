@@ -13,6 +13,7 @@
       <canvas id="waveform"></canvas>
       <div id="waveformResizeHandle"></div>
       <audio id="audioPlayer" class="audioPlayer" controls></audio>
+      <div id="nowPlaying"></div>
       <div id="coverArt"></div>
       <div id="trackList"></div>
     </div>
@@ -53,13 +54,24 @@
         <div id="djDropdown" style="display: none;">
           <select id="djSelect">
             <option value="">Select a DJ...</option>
-            <option value="trip">trip-</option>
-            <option value="izmar">Izmar</option>
-            <option value="haze">haze</option>
-            <option value="rpfr">rpfr</option>
-            <option value="jx3p">jx3p</option>
-            <option value="gmanual">gmanual</option>
-            <option value="aboo">Aboo</option>
+            <optgroup label="Featured DJs">
+              <option value="aboo">Aboo</option>
+              <option value="gmanual">gmanual</option>
+              <option value="haze">haze</option>
+              <option value="izmar">Izmar</option>
+              <option value="jx3p">jx3p</option>
+              <option value="rpfr">rpfr</option>
+              <option value="trip">trip-</option>
+            </optgroup>
+            <optgroup label="More DJs">
+              <option value="moreDJs/Bulb">Bulb</option>
+              <option value="moreDJs/DeepRhythms">DeepRhythms</option>
+              <option value="moreDJs/Gorgon City">Gorgon City</option>
+              <option value="moreDJs/minilogue">minilogue</option>
+              <option value="moreDJs/Moodyman">Moodyman</option>
+              <option value="moreDJs/Theo Parrish">Theo Parrish</option>
+              <option value="moreDJs/Unique3">Unique3</option>
+            </optgroup>
           </select>
         </div>
         <div id="searchBox" style="display: none;">

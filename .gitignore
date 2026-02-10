@@ -1,4 +1,9 @@
 *.mp3
 *.m4a
 *.flac
-*.wav
+*.wavBH4WNF~8
+*.mediaartlocal
+.directory
+**/BH4WNF~8
+**/.mediaartlocal
+**/.directory

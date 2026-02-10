@@ -1,0 +1,71 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "Dj Marcus - Techno & House (128)",
+      "file": "djmarcus-techno&house",
+      "audioFile": "djmarcus-techno&house.mp3",
+      "duration": 4660.06225,
+      "durationFormatted": "1:17:40",
+      "artist": "Dj Marcus (Minilogue)",
+      "downloads": [
+        {
+          "file": "djmarcus-techno&house.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2008",
+      "comment": "Theo Parrish - Take a ride\nThe Mole - Acadian\nDj Kent - In the bush (Theo Parrish beats remix)\nManmade sience - Smoke\nSteve O\u2019Sullivan - Touched up\nMoodymann - Dem young sconies\nRadio Slave - No sleep 5 Bside (promo)\nOmar S - Oasis sixteen\nThe M"
+    },
+    {
+      "name": "Dj Seb - Old, new & Inbetweens (128)",
+      "file": "djseb-old_new&in_betweens",
+      "audioFile": "djseb-old_new&in_betweens.mp3",
+      "duration": 10968.006938,
+      "durationFormatted": "3:02:48",
+      "artist": "Dj Seb (Minilogue) ",
+      "downloads": [
+        {
+          "file": "djseb-old_new&in_betweens.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Electronic",
+      "date": "2008",
+      "comment": "Tracklist for old, new & in Betweens // \nBy Dj Seb (Minilogue) \n\nLunch Box - Brown box\nDeadbeat - A dub for akufen\nSystem - 2\nPole - Warum\nKit Clayton - Grey amber\nKlovn - Mc Klaren\nRetinaIT - Zucchine\nTiki Obmar - Cepia remix\nStrategy - Phantom Powered\nD"
+    },
+    {
+      "name": "Dj Seb - Selection Ambiente (128)",
+      "file": "djseb-selection_ambiente",
+      "audioFile": "djseb-selection_ambiente.mp3",
+      "duration": 5546.483313,
+      "durationFormatted": "1:32:26",
+      "artist": "Dj Seb (Minilogue)",
+      "downloads": [
+        {
+          "file": "djseb-selection_ambiente.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Electronic",
+      "date": "2008",
+      "comment": "Akinori \u2013 Red Field\nThe Beautiful Schizophonic \u2013 Cantiques a la glorie\nMartine Jules \u2013 Aile D\u2019aigle\nJohann Johannsson \u2013 ibm 729 II Magnetic tape unit\nMountains \u2013 Down under the manhattan bridge\nKoss- Air\nKammerflimmer Kollektief \u2013 Jinx\nJan Jelinek \u2013 A con"
+    },
+    {
+      "name": "Minilogue Live in Berlin",
+      "file": "minilogue_live_in_berlin",
+      "audioFile": "minilogue_live_in_berlin.mp3",
+      "duration": 4040.390708,
+      "durationFormatted": "1:07:20",
+      "artist": "Minilogue",
+      "downloads": [
+        {
+          "file": "minilogue_live_in_berlin.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House"
+    }
+  ]
+}

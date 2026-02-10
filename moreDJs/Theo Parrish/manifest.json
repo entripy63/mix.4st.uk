@@ -1,0 +1,147 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": " Blast From The Past - 10-04-2",
+      "file": "Theo_Parrish_-_Blast_From_The_Past_-2012-04-10-fullbozman.com",
+      "audioFile": "Theo_Parrish_-_Blast_From_The_Past_-2012-04-10-fullbozman.com.mp3",
+      "duration": 3567.124898,
+      "durationFormatted": "0:59:27",
+      "artist": "Theo Parrish",
+      "downloads": [
+        {
+          "file": "Theo_Parrish_-_Blast_From_The_Past_-2012-04-10-fullbozman.com.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other",
+      "date": "2012",
+      "comment": "www.fullbozman.com",
+      "peaksFile": "Theo_Parrish_-_Blast_From_The_Past_-2012-04-10-fullbozman.com.peaks.json"
+    },
+    {
+      "name": "Live at Albert Hall, Woodstock (2010-09-29)",
+      "file": "Theo_Parrish_-_Live_at_Albert_Hall_Woodstock_(2010-09-29)-fullbozman.com",
+      "audioFile": "Theo_Parrish_-_Live_at_Albert_Hall_Woodstock_(2010-09-29)-fullbozman.com.mp3",
+      "duration": 8040.097959,
+      "durationFormatted": "2:14:00",
+      "artist": "Theo Parrish",
+      "downloads": [
+        {
+          "file": "Theo_Parrish_-_Live_at_Albert_Hall_Woodstock_(2010-09-29)-fullbozman.com.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2010",
+      "comment": "www.fullbozman.com",
+      "peaksFile": "Theo_Parrish_-_Live_at_Albert_Hall_Woodstock_(2010-09-29)-fullbozman.com.peaks.json"
+    },
+    {
+      "name": "Live at Cutloose 2009-07-17",
+      "file": "Theo_Parrish_-_Live_at_Triptych_Scotland_2008-fullbozman.com",
+      "audioFile": "Theo_Parrish_-_Live_at_Triptych_Scotland_2008-fullbozman.com.mp3",
+      "duration": 8192.835918,
+      "durationFormatted": "2:16:32",
+      "artist": "Theo Parrish",
+      "downloads": [
+        {
+          "file": "Theo_Parrish_-_Live_at_Triptych_Scotland_2008-fullbozman.com.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other",
+      "date": "2012",
+      "comment": "www.fullbozman.com",
+      "peaksFile": "Theo_Parrish_-_Live_at_Triptych_Scotland_2008-fullbozman.com.peaks.json"
+    },
+    {
+      "name": "Live at RBMA (Propaganda Club / Moscow)",
+      "file": "Theo_Parrish_-_Live_at_Propaganda_2009.07.10-fullbozman.com",
+      "audioFile": "Theo_Parrish_-_Live_at_Propaganda_2009.07.10-fullbozman.com.mp3",
+      "duration": 3546.435918,
+      "durationFormatted": "0:59:06",
+      "artist": "Theo Parrish",
+      "downloads": [
+        {
+          "file": "Theo_Parrish_-_Live_at_Propaganda_2009.07.10-fullbozman.com.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2009",
+      "comment": "www.fullbozman.com",
+      "peaksFile": "Theo_Parrish_-_Live_at_Propaganda_2009.07.10-fullbozman.com.peaks.json"
+    },
+    {
+      "name": "Live at Soulful Beats (2010-09-27)",
+      "file": "Theo_Parrish_-_Live_at_Soulful_Beats_(with_Benji_B)-2010-09-27-fullbozman.com",
+      "audioFile": "Theo_Parrish_-_Live_at_Soulful_Beats_(with_Benji_B)-2010-09-27-fullbozman.com.mp3",
+      "duration": 10798.968163,
+      "durationFormatted": "2:59:58",
+      "artist": "Theo Parrish, Benji B.",
+      "downloads": [
+        {
+          "file": "Theo_Parrish_-_Live_at_Soulful_Beats_(with_Benji_B)-2010-09-27-fullbozman.com.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Bass",
+      "date": "2010",
+      "comment": "Recorded by Core News - http://core.thomaslaupstad.com/",
+      "peaksFile": "Theo_Parrish_-_Live_at_Soulful_Beats_(with_Benji_B)-2010-09-27-fullbozman.com.peaks.json",
+      "coverFile": "Theo_Parrish_-_Live_at_Soulful_Beats_(with_Benji_B)-2010-09-27-fullbozman.com.jpg"
+    },
+    {
+      "name": "Live at The Dig (Washington 2010-03-20)",
+      "file": "Theo_Parrish_-_Live_at_The_Dig_20-03-2010-fullbozman.com",
+      "audioFile": "Theo_Parrish_-_Live_at_The_Dig_20-03-2010-fullbozman.com.mp3",
+      "duration": 8631.849796,
+      "durationFormatted": "2:23:51",
+      "artist": "Theo Parrish",
+      "downloads": [
+        {
+          "file": "Theo_Parrish_-_Live_at_The_Dig_20-03-2010-fullbozman.com.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other",
+      "date": "2010",
+      "peaksFile": "Theo_Parrish_-_Live_at_The_Dig_20-03-2010-fullbozman.com.peaks.json"
+    },
+    {
+      "name": "Switch Playground (Studio Brus",
+      "file": "Theo_Parrish_-_Switch_Playground_studio_brussel-04-08-2012-fullbozman.com",
+      "audioFile": "Theo_Parrish_-_Switch_Playground_studio_brussel-04-08-2012-fullbozman.com.mp3",
+      "duration": 2927.751837,
+      "durationFormatted": "0:48:47",
+      "artist": "Theo Parrish",
+      "downloads": [
+        {
+          "file": "Theo_Parrish_-_Switch_Playground_studio_brussel-04-08-2012-fullbozman.com.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2012",
+      "comment": "www.fullbozman.com",
+      "peaksFile": "Theo_Parrish_-_Switch_Playground_studio_brussel-04-08-2012-fullbozman.com.peaks.json"
+    },
+    {
+      "name": "Theo Parrish Live @ Watergate, Berlin - 08-07-2009",
+      "file": "Theo_Parrish_-_Live_at_Watergate_(Berlin)-2009-07-08-fullbozman.com",
+      "audioFile": "Theo_Parrish_-_Live_at_Watergate_(Berlin)-2009-07-08-fullbozman.com.mp3",
+      "duration": 14130.050612,
+      "durationFormatted": "3:55:30",
+      "artist": "Theo Parrish",
+      "downloads": [
+        {
+          "file": "Theo_Parrish_-_Live_at_Watergate_(Berlin)-2009-07-08-fullbozman.com.mp3",
+          "label": "MP3"
+        }
+      ],
+      "comment": "Downloaded From: http://www.soundcloud.com/r_co",
+      "peaksFile": "Theo_Parrish_-_Live_at_Watergate_(Berlin)-2009-07-08-fullbozman.com.peaks.json",
+      "coverFile": "Theo_Parrish_-_Live_at_Watergate_(Berlin)-2009-07-08-fullbozman.com.png"
+    }
+  ]
+}

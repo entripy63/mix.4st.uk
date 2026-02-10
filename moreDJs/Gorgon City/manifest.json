@@ -1,0 +1,224 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "Gorgon City - BBC Radio 1 Essential Mix 2014-08-16",
+      "file": "Gorgon City - Radio 1 Essential Mix 140823",
+      "audioFile": "Gorgon City - Radio 1 Essential Mix 140823.mp3",
+      "duration": 7200.20898,
+      "durationFormatted": "2:00:00",
+      "artist": "Gorgon City",
+      "downloads": [
+        {
+          "file": "Gorgon City - Radio 1 Essential Mix 140823.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Music",
+      "date": "2014",
+      "comment": "Core News - http://core.thomaslaupstad.com/\r\n",
+      "peaksFile": "Gorgon City - Radio 1 Essential Mix 140823.peaks.json"
+    },
+    {
+      "name": "Gorgon City - Go All Night",
+      "file": "Gorgon City - Go All Night",
+      "audioFile": "Gorgon City - Go All Night.mp3",
+      "duration": 3664.43102,
+      "durationFormatted": "1:01:04",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Gorgon City - Go All Night.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Gorgon City - Go All Night.peaks.json"
+    },
+    {
+      "name": "Gorgon City - Kingdom Radio 008",
+      "file": "Gorgon City - Kingdom Radio 008",
+      "audioFile": "Gorgon City - Kingdom Radio 008.mp3",
+      "duration": 3480.006531,
+      "durationFormatted": "0:58:00",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Gorgon City - Kingdom Radio 008.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Gorgon City - Kingdom Radio 008.peaks.json"
+    },
+    {
+      "name": "Gorgon City - Kingdom Radio 009",
+      "file": "Gorgon City - Kingdom Radio 009",
+      "audioFile": "Gorgon City - Kingdom Radio 009.mp3",
+      "duration": 3480.006531,
+      "durationFormatted": "0:58:00",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Gorgon City - Kingdom Radio 009.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Gorgon City - Kingdom Radio 009.peaks.json"
+    },
+    {
+      "name": "Gorgon City - Mistajam Mix March 13",
+      "file": "Gorgon City - Mistajam Mix March 13",
+      "audioFile": "Gorgon City - Mistajam Mix March 13.mp3",
+      "duration": 1954.194275,
+      "durationFormatted": "0:32:34",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Gorgon City - Mistajam Mix March 13.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Gorgon City - Mistajam Mix March 13.peaks.json"
+    },
+    {
+      "name": "Gorgon City - Rinse FM 150203",
+      "file": "Gorgon City - Rinse FM 150203",
+      "audioFile": "Gorgon City - Rinse FM 150203.mp3",
+      "duration": 7141.433469,
+      "durationFormatted": "1:59:01",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Gorgon City - Rinse FM 150203.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Gorgon City - Rinse FM 150203.peaks.json"
+    },
+    {
+      "name": "Gorgon City - Rinse FM 160201",
+      "file": "Gorgon City - Rinse FM 160201",
+      "audioFile": "Gorgon City - Rinse FM 160201.mp3",
+      "duration": 7165.910204,
+      "durationFormatted": "1:59:25",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Gorgon City - Rinse FM 160201.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Gorgon City - Rinse FM 160201.peaks.json"
+    },
+    {
+      "name": "Gorgon City - Rinse FM 160404",
+      "file": "Gorgon City - Rinse FM 160404",
+      "audioFile": "Gorgon City - Rinse FM 160404.mp3",
+      "duration": 7169.044898,
+      "durationFormatted": "1:59:29",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Gorgon City - Rinse FM 160404.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Gorgon City - Rinse FM 160404.peaks.json"
+    },
+    {
+      "name": "Gorgon City - Rinse FM 170206",
+      "file": "Gorgon City - Rinse FM 170206",
+      "audioFile": "Gorgon City - Rinse FM 170206.mp3",
+      "duration": 7180.382041,
+      "durationFormatted": "1:59:40",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Gorgon City - Rinse FM 170206.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Gorgon City - Rinse FM 170206.peaks.json"
+    },
+    {
+      "name": "Gorgon City @ Amnesia Closing Party, Ibiza 2016",
+      "file": "Gorgon City - Amnesia Closing Party, Ibiza 2016",
+      "audioFile": "Gorgon City - Amnesia Closing Party, Ibiza 2016.mp3",
+      "duration": 5377.645675,
+      "durationFormatted": "1:29:37",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Gorgon City - Amnesia Closing Party, Ibiza 2016.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Gorgon City - Amnesia Closing Party, Ibiza 2016.peaks.json"
+    },
+    {
+      "name": "Rinse Dec Fix",
+      "file": "Gorgon City - Rinse Dec Fix",
+      "audioFile": "Gorgon City - Rinse Dec Fix.mp3",
+      "duration": 7222.621975,
+      "durationFormatted": "2:00:22",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Gorgon City - Rinse Dec Fix.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Gorgon City - Rinse Dec Fix.peaks.json"
+    },
+    {
+      "name": "Rinse FM 151207",
+      "file": "Gorgon City - Rinse FM 151207",
+      "audioFile": "Gorgon City - Rinse FM 151207.mp3",
+      "duration": 7125.808256,
+      "durationFormatted": "1:58:45",
+      "artist": "Gorgon City",
+      "downloads": [
+        {
+          "file": "Gorgon City - Rinse FM 151207.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Bass",
+      "peaksFile": "Gorgon City - Rinse FM 151207.peaks.json",
+      "coverFile": "Gorgon City - Rinse FM 151207.png"
+    },
+    {
+      "name": "Rinse FM 160606",
+      "file": "Gorgon City - Rinse FM 160606",
+      "audioFile": "Gorgon City - Rinse FM 160606.mp3",
+      "duration": 7184.7095,
+      "durationFormatted": "1:59:44",
+      "artist": "Gorgon City",
+      "downloads": [
+        {
+          "file": "Gorgon City - Rinse FM 160606.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Bass",
+      "peaksFile": "Gorgon City - Rinse FM 160606.peaks.json",
+      "coverFile": "Gorgon City - Rinse FM 160606.jpg"
+    },
+    {
+      "name": "Rinse FM 161003",
+      "file": "Gorgon City - Rinse FM 161003",
+      "audioFile": "Gorgon City - Rinse FM 161003.mp3",
+      "duration": 7184.970125,
+      "durationFormatted": "1:59:44",
+      "artist": "Gorgon City",
+      "downloads": [
+        {
+          "file": "Gorgon City - Rinse FM 161003.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Bass",
+      "peaksFile": "Gorgon City - Rinse FM 161003.peaks.json",
+      "coverFile": "Gorgon City - Rinse FM 161003.jpg"
+    }
+  ]
+}

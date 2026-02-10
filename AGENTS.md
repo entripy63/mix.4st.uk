@@ -27,6 +27,7 @@
 - `gmanual/` - gmanual's mix (1)
 - `haze/` - haze's mixes (58)
 - `rpfr/` - rpfr's mixes (34)
+- `moreDJs/` - many more DJ mix folders for various DJs
 
 ## Python Scripts
 - `generate-covers.py` - Run after adding audio files to extract embedded cover art images

@@ -521,3 +521,12 @@ td.key {
   width: 500px;
   flex-shrink: 0;
 }
+
+#nowPlaying {
+  margin-top: 10px;
+  flex-shrink: 0;
+}
+
+#nowPlaying h1 {
+  margin: 0;
+}

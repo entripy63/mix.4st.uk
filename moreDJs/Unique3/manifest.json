@@ -1,0 +1,196 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "209_unique3_warp_records_xmas_party_2004",
+      "file": "209_unique3_warp_records_xmas_party_2004",
+      "audioFile": "209_unique3_warp_records_xmas_party_2004.mp3",
+      "duration": 2785.0496,
+      "durationFormatted": "0:46:25",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "209_unique3_warp_records_xmas_party_2004.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "209_unique3_warp_records_xmas_party_2004.peaks.json"
+    },
+    {
+      "name": "@  'Left of Centre' Middlesbrough Arena",
+      "file": "Unique3_deejay_mix_#208_Left_of_Centre_Middlesbrough_2004",
+      "audioFile": "Unique3_deejay_mix_#208_Left_of_Centre_Middlesbrough_2004.mp3",
+      "duration": 3955.205333,
+      "durationFormatted": "1:05:55",
+      "artist": "Unique 3",
+      "downloads": [
+        {
+          "file": "Unique3_deejay_mix_#208_Left_of_Centre_Middlesbrough_2004.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Breaks & Bass",
+      "date": "2004",
+      "comment": "www.unique3.info",
+      "peaksFile": "Unique3_deejay_mix_#208_Left_of_Centre_Middlesbrough_2004.peaks.json"
+    },
+    {
+      "name": "@ Ministry of Sound - 'Off The Wall'",
+      "file": "'Off The Wall' @ Ministry of Sound",
+      "audioFile": "'Off The Wall' @ Ministry of Sound.mp3",
+      "duration": 3613.811042,
+      "durationFormatted": "1:00:13",
+      "artist": "Unique 3",
+      "downloads": [
+        {
+          "file": "'Off The Wall' @ Ministry of Sound.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Electro/Breaks",
+      "date": "2007",
+      "peaksFile": "'Off The Wall' @ Ministry of Sound.peaks.json"
+    },
+    {
+      "name": "Bleeps, Breaks & Bass Mix",
+      "file": "Bleeps, Breaks & Bass Mix",
+      "audioFile": "Bleeps, Breaks & Bass Mix.mp3",
+      "duration": 3649.697938,
+      "durationFormatted": "1:00:49",
+      "artist": "Unique 3",
+      "downloads": [
+        {
+          "file": "Bleeps, Breaks & Bass Mix.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Beats & Breaks",
+      "date": "2006",
+      "peaksFile": "Bleeps, Breaks & Bass Mix.peaks.json",
+      "coverFile": "Bleeps, Breaks & Bass Mix.jpg"
+    },
+    {
+      "name": "Breaks Mix March 2007",
+      "file": "Breaks Mix March 2007 1",
+      "audioFile": "Breaks Mix March 2007 1.mp3",
+      "duration": 4010.0832,
+      "durationFormatted": "1:06:50",
+      "artist": "Unique 3",
+      "downloads": [
+        {
+          "file": "Breaks Mix March 2007 1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Electronic",
+      "date": "2007",
+      "comment": "www.myspace.com/uniquethree",
+      "peaksFile": "Breaks Mix March 2007 1.peaks.json",
+      "coverFile": "Breaks Mix March 2007 1.jpg"
+    },
+    {
+      "name": "Glade Set 2006",
+      "file": "01 Glade Set 2006 1",
+      "audioFile": "01 Glade Set 2006 1.mp3",
+      "duration": 3609.678356,
+      "durationFormatted": "1:00:09",
+      "artist": "Unique 3",
+      "downloads": [
+        {
+          "file": "01 Glade Set 2006 1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other",
+      "peaksFile": "01 Glade Set 2006 1.peaks.json",
+      "coverFile": "01 Glade Set 2006 1.jpg"
+    },
+    {
+      "name": "Live Deejay Set @ 'Chew The Fat!' Glasgow",
+      "file": "Unique3_deejay_mix_215_ChewTheFat_Glasgow_May_2007",
+      "audioFile": "Unique3_deejay_mix_215_ChewTheFat_Glasgow_May_2007.mp3",
+      "duration": 3278.527275,
+      "durationFormatted": "0:54:38",
+      "artist": "Unique 3",
+      "downloads": [
+        {
+          "file": "Unique3_deejay_mix_215_ChewTheFat_Glasgow_May_2007.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Electro",
+      "date": "2007",
+      "comment": "www.unique3.info",
+      "peaksFile": "Unique3_deejay_mix_215_ChewTheFat_Glasgow_May_2007.peaks.json"
+    },
+    {
+      "name": "Live Deejay Set @ 'Join Session' Czech Republic",
+      "file": "unique3@join_session_czech_republic_sept07",
+      "audioFile": "unique3@join_session_czech_republic_sept07.mp3",
+      "duration": 3397.2538,
+      "durationFormatted": "0:56:37",
+      "artist": "Unique 3",
+      "downloads": [
+        {
+          "file": "unique3@join_session_czech_republic_sept07.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Electronic",
+      "date": "2007",
+      "comment": "www.unique3.info",
+      "peaksFile": "unique3@join_session_czech_republic_sept07.peaks.json"
+    },
+    {
+      "name": "Roundhouse Guest Mix",
+      "file": "Roundhouse Guest Mix 1",
+      "audioFile": "Roundhouse Guest Mix 1.mp3",
+      "duration": 3600.065275,
+      "durationFormatted": "1:00:00",
+      "artist": "Unique 3",
+      "downloads": [
+        {
+          "file": "Roundhouse Guest Mix 1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Roundhouse Guest Mix 1.peaks.json"
+    },
+    {
+      "name": "live DJ set @ Antiworld Festival 070707",
+      "file": "216_unique3_Antiworld_Festival_Set_0707070",
+      "audioFile": "216_unique3_Antiworld_Festival_Set_0707070.mp3",
+      "duration": 3629.980833,
+      "durationFormatted": "1:00:29",
+      "artist": "Unique 3",
+      "downloads": [
+        {
+          "file": "216_unique3_Antiworld_Festival_Set_0707070.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2007",
+      "comment": "www.unique3.info",
+      "peaksFile": "216_unique3_Antiworld_Festival_Set_0707070.peaks.json"
+    },
+    {
+      "name": "| 'electrofied' |",
+      "file": "Unique3-'Electrofied!!!_ April 2008",
+      "audioFile": "Unique3-'Electrofied!!!_ April 2008.mp3",
+      "duration": 3408.118356,
+      "durationFormatted": "0:56:48",
+      "artist": "Unique 3",
+      "downloads": [
+        {
+          "file": "Unique3-'Electrofied!!!_ April 2008.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Electro",
+      "date": "2008-03-27 17:21",
+      "comment": "www.unique3.info & www.myspace.com/uniquethree",
+      "peaksFile": "Unique3-'Electrofied!!!_ April 2008.peaks.json",
+      "coverFile": "Unique3-'Electrofied!!!_ April 2008.jpg"
+    }
+  ]
+}

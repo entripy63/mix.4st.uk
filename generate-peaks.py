@@ -100,15 +100,41 @@ def process_directory(directory):
         except Exception as e:
             print(f"ERROR: {e}")
 
+def find_dj_directories(base_directory):
+    """Find all directories containing audio files, including nested ones in moreDJs/."""
+    dj_dirs = []
+    extensions = ('.mp3', '.flac', '.m4a', '.wav')
+    
+    for entry in sorted(os.listdir(base_directory)):
+        path = os.path.join(base_directory, entry)
+        if os.path.isdir(path) and not entry.startswith('.'):
+            if entry == 'moreDJs':
+                # Scan subdirectories within moreDJs
+                for subentry in sorted(os.listdir(path)):
+                    subpath = os.path.join(path, subentry)
+                    if os.path.isdir(subpath):
+                        has_audio = any(f.lower().endswith(extensions) for f in os.listdir(subpath))
+                        if has_audio:
+                            dj_dirs.append((f"moreDJs/{subentry}", subpath))
+            else:
+                # Check root-level directories
+                has_audio = any(f.lower().endswith(extensions) for f in os.listdir(path))
+                if has_audio:
+                    dj_dirs.append((entry, path))
+    
+    return dj_dirs
+
 if __name__ == '__main__':
     directory = sys.argv[1] if len(sys.argv) > 1 else '.'
     extensions = ('.mp3', '.flac', '.m4a', '.wav')
     
-    # Process all subdirectories that contain audio files
-    for entry in sorted(os.listdir(directory)):
-        path = os.path.join(directory, entry)
-        if os.path.isdir(path) and not entry.startswith('.'):
-            has_audio = any(f.lower().endswith(extensions) for f in os.listdir(path))
-            if has_audio:
-                print(f"\n=== {entry} ===")
-                process_directory(path)
+    # Check if a specific DJ directory is given
+    if len(sys.argv) > 1 and any(f.lower().endswith(extensions) for f in os.listdir(directory)):
+        print(f"\n=== {os.path.basename(directory)} ===")
+        process_directory(directory)
+    else:
+        # Process all DJ directories
+        dj_dirs = find_dj_directories(directory)
+        for name, path in dj_dirs:
+            print(f"\n=== {name} ===")
+            process_directory(path)

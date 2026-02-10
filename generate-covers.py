@@ -61,16 +61,28 @@ def extract_cover(audio_path, output_path):
         return False
 
 def find_dj_folders(root_dir):
-    """Find DJ folders (directories containing audio files)."""
+    """Find DJ folders (directories containing audio files), including nested ones in moreDJs/."""
     dj_folders = []
     for item in sorted(root_dir.iterdir()):
         if item.is_dir() and not item.name.startswith('.'):
-            has_audio = any(
-                f.suffix.lower() in AUDIO_EXTENSIONS 
-                for f in item.iterdir() if f.is_file()
-            )
-            if has_audio:
-                dj_folders.append(item)
+            if item.name == 'moreDJs':
+                # Scan subdirectories within moreDJs
+                for subitem in sorted(item.iterdir()):
+                    if subitem.is_dir():
+                        has_audio = any(
+                            f.suffix.lower() in AUDIO_EXTENSIONS 
+                            for f in subitem.iterdir() if f.is_file()
+                        )
+                        if has_audio:
+                            dj_folders.append(subitem)
+            else:
+                # Check root-level directories
+                has_audio = any(
+                    f.suffix.lower() in AUDIO_EXTENSIONS 
+                    for f in item.iterdir() if f.is_file()
+                )
+                if has_audio:
+                    dj_folders.append(item)
     return dj_folders
 
 def process_folder(folder):
@@ -124,6 +136,20 @@ def main():
         print(f"Error: {root_dir} does not exist")
         sys.exit(1)
     
+    # Check if a specific DJ directory is given (has audio files directly)
+    has_audio = any(
+        f.suffix.lower() in AUDIO_EXTENSIONS 
+        for f in root_dir.iterdir() if f.is_file()
+    )
+    
+    if has_audio:
+        # Process just this directory
+        print(f"\nProcessing {root_dir.name}/")
+        extracted, skipped, no_art = process_folder(root_dir)
+        print(f"\nSummary: {extracted} extracted, {skipped} skipped, {no_art} without art")
+        return
+    
+    # Otherwise find and process all DJ folders
     dj_folders = find_dj_folders(root_dir)
     
     if not dj_folders:
