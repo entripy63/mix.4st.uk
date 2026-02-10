@@ -45,7 +45,46 @@ const state = {
   queue: storage.getJSON('queue', []),
   currentQueueIndex: storage.getNum('currentQueueIndex', -1),
   loopQueue: storage.getBool('loopQueue'),
-  queueIdCounter: storage.getNum('queueIdCounter', 0)
+  queueIdCounter: storage.getNum('queueIdCounter', 0),
+  currentMix: null
+};
+
+// Mix flags (favourites/hidden) - stored as arrays, used as Sets for O(1) lookup
+const mixFlags = {
+  _favourites: new Set(storage.getJSON('mixFavourites', [])),
+  _hidden: new Set(storage.getJSON('mixHidden', [])),
+  
+  isFavourite(mixId) { return this._favourites.has(mixId); },
+  isHidden(mixId) { return this._hidden.has(mixId); },
+  
+  toggleFavourite(mixId) {
+    if (this._favourites.has(mixId)) {
+      this._favourites.delete(mixId);
+    } else {
+      this._favourites.add(mixId);
+      // Can't be both favourite and hidden
+      this._hidden.delete(mixId);
+    }
+    this._save();
+    return this._favourites.has(mixId);
+  },
+  
+  toggleHidden(mixId) {
+    if (this._hidden.has(mixId)) {
+      this._hidden.delete(mixId);
+    } else {
+      this._hidden.add(mixId);
+      // Can't be both favourite and hidden
+      this._favourites.delete(mixId);
+    }
+    this._save();
+    return this._hidden.has(mixId);
+  },
+  
+  _save() {
+    storage.set('mixFavourites', [...this._favourites]);
+    storage.set('mixHidden', [...this._hidden]);
+  }
 };
 
 // Set canvas resolution to match CSS size
@@ -298,12 +337,16 @@ function getMixId(mix) {
 }
 
 function displayMixList(mixes) {
-  state.displayedMixes = mixes;
+  // Filter out hidden mixes
+  const visibleMixes = mixes.filter(mix => !mixFlags.isHidden(getMixId(mix)));
+  state.displayedMixes = visibleMixes;
   const mixList = document.getElementById('mixList');
-  const header = mixes.length > 1 ? `<div class="mix-list-header"><button onclick="addAllToQueue()">Add All to Queue</button></div>` : '';
+  const header = visibleMixes.length > 1 ? `<div class="mix-list-header"><button onclick="addAllToQueue()">Add All to Queue</button></div>` : '';
   mixList.innerHTML = header +
-    mixes.map((mix, i) => {
+    visibleMixes.map((mix, i) => {
       const mixId = getMixId(mix);
+      const isFav = mixFlags.isFavourite(mixId);
+      const favIcon = isFav ? '<span class="fav-icon" title="Favourite">❤️</span>' : '';
       const genre = mix.genre ? ` · ${escapeHtml(mix.genre)}` : '';
       const hasExtra = mix.date || mix.comment;
       const extraBtn = hasExtra ? `<button class="icon-btn info-btn" onclick="event.stopPropagation(); toggleMixInfo(this)" title="More info">ⓘ</button>` : '';
@@ -312,7 +355,7 @@ function displayMixList(mixes) {
       <button class="icon-btn" onclick="addToQueue('${mixId}')" title="Add to queue">+</button>
       <button class="icon-btn" onclick="playNow('${mixId}')" title="Play now">▶</button>
       <span class="mix-name">${escapeHtml(mix.name)} <span class="mix-duration">(${mix.duration}${genre})</span></span>
-      ${extraBtn}${extraInfo}
+      ${extraBtn}${favIcon}${extraInfo}
     </div>`;
     }).join('');
 }
@@ -347,6 +390,8 @@ async function playMix(mix) {
   
   if (mix.isLocal) {
     storage.remove('currentMixPath');
+    state.currentDownloadLinks = [];
+    state.currentCoverSrc = null;
     play(mix.audioSrc);
     displayTrackList(mix, '', [], null);
     loadPeaks(null);
@@ -356,6 +401,8 @@ async function playMix(mix) {
     storage.set('currentMixPath', mixId);
     const details = await fetchMixDetails(mix);
     if (details.audioSrc) {
+      state.currentDownloadLinks = details.downloadLinks || [];
+      state.currentCoverSrc = details.coverSrc;
       play(details.audioSrc);
       displayTrackList(mix, details.trackListTable, details.downloadLinks, details.coverSrc);
       loadPeaks(details.peaks);
@@ -380,15 +427,38 @@ function displayTrackList(mix, table, downloadLinks, coverSrc) {
   const djName = mix ? escapeHtml(mix.artist || getDJName(mix.htmlPath || mix.djPath)) : '';
   nowPlayingDiv.innerHTML = mixName ? `<h1>${mixName} by ${djName}</h1>` : '';
   
-  let downloads = '';
-  if (downloadLinks && downloadLinks.length > 0) {
-    downloads = `<div class="downloads">
-      <h2>Downloads</h2>
-      ${downloadLinks.map(d => `<a class="download-btn" href="${d.href}" download>${d.label}</a>`).join('')}
+  // Build action bar with download buttons (left) and flag buttons (right)
+  let actionBar = '';
+  const mixId = mix ? getMixId(mix) : null;
+  const hasDownloads = downloadLinks && downloadLinks.length > 0;
+  const canFlag = mixId && !mix.isLocal;
+  
+  if (hasDownloads || canFlag) {
+    const downloadBtns = hasDownloads 
+      ? downloadLinks.map(d => `<a class="action-btn download-btn" href="${d.href}" download><span class="action-icon">⬇</span>${d.label}</a>`).join('')
+      : '';
+    
+    let flagBtns = '';
+    if (canFlag) {
+      const isFav = mixFlags.isFavourite(mixId);
+      const isHidden = mixFlags.isHidden(mixId);
+      flagBtns = `
+        <button class="action-btn fav-btn${isFav ? ' active' : ''}" onclick="toggleCurrentFavourite()" title="${isFav ? 'Remove from favourites' : 'Add to favourites'}">
+          <span class="action-icon">${isFav ? '❤️' : '🤍'}</span>Fav
+        </button>
+        <button class="action-btn hide-btn${isHidden ? ' active' : ''}" onclick="toggleCurrentHidden()" title="${isHidden ? 'Unhide mix' : 'Hide mix'}">
+          <span class="action-icon">${isHidden ? '👁️' : '🚫'}</span>Hide
+        </button>`;
+    }
+    
+    actionBar = `<div class="action-bar">
+      <div class="action-left">${downloadBtns}</div>
+      <div class="action-right">${flagBtns}</div>
     </div>`;
   }
+  
   const trackListSection = table ? `<h2>Track List</h2>${table}` : '';
-  trackListDiv.innerHTML = trackListSection + downloads;
+  trackListDiv.innerHTML = trackListSection + actionBar;
   
   // Show cover art only if there's no track list (track list takes precedence)
   if (coverSrc && !table) {
@@ -396,6 +466,89 @@ function displayTrackList(mix, table, downloadLinks, coverSrc) {
   } else {
     coverArtDiv.innerHTML = '';
   }
+}
+
+function toggleCurrentFavourite() {
+  if (!state.currentMix) return;
+  const mixId = getMixId(state.currentMix);
+  mixFlags.toggleFavourite(mixId);
+  // Refresh action bar
+  const trackListDiv = document.getElementById('trackList');
+  const table = trackListDiv.querySelector('table');
+  displayTrackList(state.currentMix, table ? table.outerHTML : '', state.currentDownloadLinks || [], state.currentCoverSrc);
+  // Refresh browser list if visible
+  refreshBrowserList();
+}
+
+function toggleCurrentHidden() {
+  if (!state.currentMix) return;
+  const mixId = getMixId(state.currentMix);
+  mixFlags.toggleHidden(mixId);
+  // Refresh action bar
+  const trackListDiv = document.getElementById('trackList');
+  const table = trackListDiv.querySelector('table');
+  displayTrackList(state.currentMix, table ? table.outerHTML : '', state.currentDownloadLinks || [], state.currentCoverSrc);
+  // Refresh browser list if visible
+  refreshBrowserList();
+}
+
+function refreshBrowserList() {
+  const mode = document.querySelector('.mode-btn.active')?.dataset.mode;
+  if ((mode === 'dj' || mode === 'all') && state.currentDJ) {
+    displayMixList(filterMixes(state.currentMixes, state.currentFilter, state.currentGroups));
+  } else if (mode === 'search') {
+    const query = document.getElementById('searchInput')?.value;
+    if (query) performSearch(query);
+  } else if (mode === 'favourites') {
+    displayFavourites();
+  }
+}
+
+async function displayFavourites() {
+  const mixList = document.getElementById('mixList');
+  const favouriteIds = [...mixFlags._favourites];
+  
+  if (favouriteIds.length === 0) {
+    mixList.innerHTML = '<div style="color: #888; padding: 20px;">No favourites yet. Play a mix and click the Fav button to add it here.</div>';
+    return;
+  }
+  
+  // Load search index to get mix metadata
+  if (!searchIndex.data) {
+    mixList.innerHTML = '<div style="color: #888; padding: 20px;">Loading...</div>';
+    await searchIndex.load();
+  }
+  
+  // Build mixes from favourited IDs using search index
+  const mixes = [];
+  for (const mixId of favouriteIds) {
+    // mixId is like "trip/mix-name" or "haze/mix-name"
+    const match = searchIndex.data.find(m => `${m.dj}/${m.file}` === mixId);
+    if (match) {
+      mixes.push({
+        name: match.name,
+        file: match.file,
+        audioFile: match.audioFile,
+        duration: match.duration,
+        artist: match.artist,
+        genre: match.genre,
+        comment: match.comment,
+        peaksFile: match.peaksFile,
+        coverFile: match.coverFile,
+        downloads: match.downloads,
+        djPath: match.dj,
+        djLabel: match.dj
+      });
+    }
+  }
+  
+  if (mixes.length === 0) {
+    mixList.innerHTML = '<div style="color: #888; padding: 20px;">No favourites found in search index.</div>';
+    return;
+  }
+  
+  // Use the DJ-badged display (same as search results)
+  displayMixListWithDJ(mixes);
 }
 
 function getDJName(htmlPath) {
@@ -653,6 +806,12 @@ const browserModes = {
           searchInput.focus();
         });
       }
+    } else if (mode === 'favourites') {
+      djButtons.style.display = 'none';
+      djDropdown.style.display = 'none';
+      searchBox.style.display = 'none';
+      groupFilters.innerHTML = '';
+      displayFavourites();
     }
   }
 };
@@ -718,13 +877,19 @@ function displaySearchResults(results, query) {
 }
 
 function displayMixListWithDJ(mixes) {
-  // Store mixes globally for onclick handlers
-  window.currentSearchMixes = mixes;
+  // Filter out hidden mixes
+  const visibleMixes = mixes.filter(mix => !mixFlags.isHidden(getMixId(mix)));
+  
+  // Store visible mixes globally for onclick handlers (indices must match)
+  window.currentSearchMixes = visibleMixes;
   
   const mixList = document.getElementById('mixList');
-  const header = mixes.length > 1 ? `<div class="mix-list-header"><button onclick="addAllSearchResultsToQueue()">Add All to Queue</button></div>` : '';
+  const header = visibleMixes.length > 1 ? `<div class="mix-list-header"><button onclick="addAllSearchResultsToQueue()">Add All to Queue</button></div>` : '';
   
-  mixList.innerHTML = header + mixes.map((mix, i) => {
+  mixList.innerHTML = header + visibleMixes.map((mix, i) => {
+    const mixId = getMixId(mix);
+    const isFav = mixFlags.isFavourite(mixId);
+    const favIcon = isFav ? '<span class="fav-icon" title="Favourite">❤️</span>' : '';
     const djBadge = mix.djLabel ? `<span class="dj-badge">${escapeHtml(mix.djLabel)}</span> ` : '';
     const genre = mix.genre ? ` · ${escapeHtml(mix.genre)}` : '';
     const duration = mix.duration ? `(${mix.duration}${genre})` : '';
@@ -736,7 +901,7 @@ function displayMixListWithDJ(mixes) {
       <button class="icon-btn" onclick="addSearchResultToQueue(${i})" title="Add to queue">+</button>
       <button class="icon-btn" onclick="playSearchResult(${i})" title="Play now">▶</button>
       <span class="mix-name">${djBadge}${escapeHtml(mix.name)} <span class="mix-duration">${duration}</span></span>
-      ${extraBtn}${extraInfo}
+      ${extraBtn}${favIcon}${extraInfo}
     </div>`;
   }).join('');
 }
@@ -786,9 +951,11 @@ document.addEventListener('keydown', function(e) {
     } else {
       aud.pause();
     }
-  } else if (e.code === 'ArrowRight' && e.ctrlKey) {
+  } else if (e.code === 'ArrowDown' && e.ctrlKey) {
+    e.preventDefault();
     skipNext();
-  } else if (e.code === 'ArrowLeft' && e.ctrlKey) {
+  } else if (e.code === 'ArrowUp' && e.ctrlKey) {
+    e.preventDefault();
     skipPrev();
   } else if (e.code === 'KeyD' && e.ctrlKey) {
     e.preventDefault();
@@ -799,7 +966,26 @@ document.addEventListener('keydown', function(e) {
   } else if (e.code === 'KeyF' && e.ctrlKey) {
     e.preventDefault();
     browserModes.switch('search');
+  } else if (e.code === 'KeyV' && e.ctrlKey) {
+    e.preventDefault();
+    browserModes.switch('favourites');
+  } else if (e.code === 'Escape') {
+    hideHelp();
   }
+});
+
+// Help modal
+function showHelp() {
+  document.getElementById('helpModal').style.display = 'flex';
+}
+
+function hideHelp() {
+  document.getElementById('helpModal').style.display = 'none';
+}
+
+// Close modal when clicking outside content
+document.getElementById('helpModal')?.addEventListener('click', function(e) {
+  if (e.target === this) hideHelp();
 });
 
 // Handle local file selection
@@ -922,6 +1108,8 @@ function probeAudioPlayback(file) {
         load(details.audioSrc);
         aud.currentTime = storage.getNum('playerTime', 0);
         state.currentMix = mix;
+        state.currentDownloadLinks = details.downloadLinks || [];
+        state.currentCoverSrc = details.coverSrc;
         displayTrackList(mix, details.trackListTable, details.downloadLinks, details.coverSrc);
         loadPeaks(details.peaks);
         // Ensure waveform draws after layout is ready
