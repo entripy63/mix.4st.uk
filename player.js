@@ -314,9 +314,11 @@ function displayGroupFilters(mixes) {
     filterDiv.innerHTML = '';
     return;
   }
+  const otherMixes = filterMixes(mixes, 'Other', state.currentGroups);
+  const otherButton = otherMixes.length > 0 ? ` <button onclick="applyFilter('Other')">Other</button>` : '';
   filterDiv.innerHTML = `<button class="active" onclick="applyFilter('')">All</button> ` +
     state.currentGroups.map(g => `<button onclick="applyFilter('${g}')">${g}</button>`).join(' ') +
-    ` <button onclick="applyFilter('Other')">Other</button>`;
+    otherButton;
 }
 
 function updateFilterButtons() {
