@@ -927,37 +927,37 @@ function displaySearchResults(results, query) {
 }
 
 function displayMixListWithDJ(mixes) {
-   // Filter out hidden mixes (unless showing hidden mixes)
-   const visibleMixes = mixes.filter(mix => {
-     const isHidden = mixFlags.isHidden(getMixId(mix));
-     return !isHidden || state.showHiddenMixes;
-   });
-   
-   // Store visible mixes globally for onclick handlers (indices must match)
-   window.currentSearchMixes = visibleMixes;
-   
-   const mixList = document.getElementById('mixList');
-   const header = visibleMixes.length > 1 ? `<div class="mix-list-header"><button onclick="addAllSearchResultsToQueue()">Add All to Queue</button></div>` : '';
-   
-   mixList.innerHTML = header + visibleMixes.map((mix, i) => {
-     const mixId = getMixId(mix);
-     const isFav = mixFlags.isFavourite(mixId);
-     const isHidden = mixFlags.isHidden(mixId);
-     const favIcon = isFav ? '<span class="fav-icon" title="Favourite">❤️</span>' : '';
-     const hiddenIcon = isHidden ? '<span class="hidden-icon" title="Hidden">🚫</span>' : '';
-     const djBadge = mix.djLabel ? `<span class="dj-badge">${escapeHtml(mix.djLabel)}</span> ` : '';
-     const genre = mix.genre ? ` · ${escapeHtml(mix.genre)}` : '';
-     const duration = mix.duration ? `(${mix.duration}${genre})` : '';
-     const hasExtra = mix.comment;
-     const extraBtn = hasExtra ? `<button class="icon-btn info-btn" onclick="event.stopPropagation(); toggleSearchMixInfo(this)" title="More info">ⓘ</button>` : '';
-     const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
-     
-     return `<div class="mix-item">
-       <button class="icon-btn" onclick="addSearchResultToQueue(${i})" title="Add to queue">+</button>
-       <button class="icon-btn" onclick="playSearchResult(${i})" title="Play now">▶</button>
-       <span class="mix-name">${djBadge}${escapeHtml(mix.name)} <span class="mix-duration">${duration}</span></span>
-       ${extraBtn}${favIcon}${hiddenIcon}${extraInfo}
-     </div>`;
+    // Filter out hidden mixes (unless showing hidden mixes)
+    const visibleMixes = mixes.filter(mix => {
+      const isHidden = mixFlags.isHidden(getMixId(mix));
+      return !isHidden || state.showHiddenMixes;
+    });
+    
+    // Store visible mixes globally for onclick handlers (indices must match)
+    window.currentSearchMixes = visibleMixes;
+    
+    const mixList = document.getElementById('mixList');
+    const header = visibleMixes.length > 1 ? `<div class="mix-list-header"><button onclick="addAllSearchResultsToQueue()">Add All to Queue</button></div>` : '';
+    
+    mixList.innerHTML = header + visibleMixes.map((mix, i) => {
+      const mixId = getMixId(mix);
+      const isFav = mixFlags.isFavourite(mixId);
+      const isHidden = mixFlags.isHidden(mixId);
+      const favIcon = isFav ? '<span class="fav-icon" title="Favourite">❤️</span>' : '';
+      const hiddenIcon = isHidden ? '<span class="hidden-icon" title="Hidden">🚫</span>' : '';
+      const djSuffix = mix.djLabel ? ` - ${escapeHtml(mix.djLabel.split('/').pop())}` : '';
+      const genre = mix.genre ? ` · ${escapeHtml(mix.genre)}` : '';
+      const duration = mix.duration ? `(${mix.duration}${genre})` : '';
+      const hasExtra = mix.comment;
+      const extraBtn = hasExtra ? `<button class="icon-btn info-btn" onclick="event.stopPropagation(); toggleSearchMixInfo(this)" title="More info">ⓘ</button>` : '';
+      const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
+      
+      return `<div class="mix-item">
+        <button class="icon-btn" onclick="addSearchResultToQueue(${i})" title="Add to queue">+</button>
+        <button class="icon-btn" onclick="playSearchResult(${i})" title="Play now">▶</button>
+        <span class="mix-name">${escapeHtml(mix.name)}${djSuffix} <span class="mix-duration">${duration}</span></span>
+        ${extraBtn}${favIcon}${hiddenIcon}${extraInfo}
+      </div>`;
    }).join('');
 }
 
