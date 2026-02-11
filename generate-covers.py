@@ -183,47 +183,32 @@ def main():
         print(f"Writing covers to: {output_dir}")
         
         all_source_dirs = [d for d in sorted(source_dir.iterdir()) if d.is_dir() and not d.name.startswith('.')]
+        main_djs = config.get('main_djs', []) if config else []
         total_extracted = 0
         total_skipped = 0
         total_no_art = 0
         
-        if config and 'folder_mappings' in config:
-            mappings = config['folder_mappings']
-            for source_folder in all_source_dirs:
-                source_name = source_folder.name
-                if source_name not in mappings:
-                    print(f"Warning: {source_name} not in config mappings, skipping")
-                    continue
-                
-                output_folder = output_dir / mappings[source_name]
-                output_folder.mkdir(parents=True, exist_ok=True)
-                
-                print(f"\nProcessing {source_name} → {mappings[source_name]}/")
-                extracted, skipped, no_art = process_folder_split(source_folder, output_folder)
-                total_extracted += extracted
-                total_skipped += skipped
-                total_no_art += no_art
-                
-                if extracted == 0 and skipped == 0 and no_art > 0:
-                    print(f"  No embedded cover art found")
-                elif extracted == 0 and skipped > 0:
-                    print(f"  All covers already extracted ({skipped} files)")
-        else:
-            # Fallback: just mirror structure
-            for source_folder in all_source_dirs:
-                output_folder = output_dir / source_folder.name
-                output_folder.mkdir(parents=True, exist_ok=True)
-                
-                print(f"\nProcessing {source_folder.name}/")
-                extracted, skipped, no_art = process_folder_split(source_folder, output_folder)
-                total_extracted += extracted
-                total_skipped += skipped
-                total_no_art += no_art
-                
-                if extracted == 0 and skipped == 0 and no_art > 0:
-                    print(f"  No embedded cover art found")
-                elif extracted == 0 and skipped > 0:
-                    print(f"  All covers already extracted ({skipped} files)")
+        for source_folder in all_source_dirs:
+            source_name = source_folder.name
+            
+            # Determine output location: main DJ in root, others in moreDJs
+            if source_name in main_djs:
+                output_folder = output_dir / source_name
+            else:
+                output_folder = output_dir / 'moreDJs' / source_name
+            
+            output_folder.mkdir(parents=True, exist_ok=True)
+            
+            print(f"\nProcessing {source_name}/")
+            extracted, skipped, no_art = process_folder_split(source_folder, output_folder)
+            total_extracted += extracted
+            total_skipped += skipped
+            total_no_art += no_art
+            
+            if extracted == 0 and skipped == 0 and no_art > 0:
+                print(f"  No embedded cover art found")
+            elif extracted == 0 and skipped > 0:
+                print(f"  All covers already extracted ({skipped} files)")
         
         print(f"\nSummary: {total_extracted} extracted, {total_skipped} skipped, {total_no_art} without art")
         return

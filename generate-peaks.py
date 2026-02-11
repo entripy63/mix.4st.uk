@@ -183,28 +183,21 @@ if __name__ == '__main__':
                                   if os.path.isdir(os.path.join(source_dir, d)) 
                                   and not d.startswith('.')])
         
-        if config and 'folder_mappings' in config:
-            mappings = config['folder_mappings']
-            for source_name in all_source_dirs:
-                if source_name not in mappings:
-                    print(f"Warning: {source_name} not in config mappings, skipping")
-                    continue
-                
-                source_path = os.path.join(source_dir, source_name)
-                output_path = os.path.join(output_dir, mappings[source_name])
-                os.makedirs(output_path, exist_ok=True)
-                
-                print(f"\n=== {source_name} → {mappings[source_name]} ===")
-                process_directory_split(source_path, output_path)
-        else:
-            # Fallback: just mirror structure
-            for source_name in all_source_dirs:
-                source_path = os.path.join(source_dir, source_name)
+        main_djs = config.get('main_djs', []) if config else []
+        
+        for source_name in all_source_dirs:
+            source_path = os.path.join(source_dir, source_name)
+            
+            # Determine output location: main DJ in root, others in moreDJs
+            if source_name in main_djs:
                 output_path = os.path.join(output_dir, source_name)
-                os.makedirs(output_path, exist_ok=True)
-                
-                print(f"\n=== {source_name} ===")
-                process_directory_split(source_path, output_path)
+            else:
+                output_path = os.path.join(output_dir, 'moreDJs', source_name)
+            
+            os.makedirs(output_path, exist_ok=True)
+            
+            print(f"\n=== {source_name} ===")
+            process_directory_split(source_path, output_path)
     else:
         # Original behavior: check if a specific DJ directory is given
         if len(sys.argv) > 1 and any(f.lower().endswith(extensions) for f in os.listdir(output_dir)):

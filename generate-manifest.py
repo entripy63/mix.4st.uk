@@ -299,7 +299,7 @@ def main():
         # Original behavior: read and write from same location
         output_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path('.')
     
-    # If source_dir is set, use config mappings if available
+    # If source_dir is set, use simple logic: main DJs in root, others in moreDJs
     if source_dir:
         print(f"Reading audio from: {source_dir}")
         print(f"Writing manifests to: {output_dir}")
@@ -307,29 +307,21 @@ def main():
         # Find all DJ directories in source
         all_source_dirs = [d for d in sorted(source_dir.iterdir()) if d.is_dir() and not d.name.startswith('.')]
         
-        # If we have mappings, use them; otherwise try to auto-match
-        if config and 'folder_mappings' in config:
-            mappings = config['folder_mappings']
-            for source_folder in all_source_dirs:
-                source_name = source_folder.name
-                if source_name not in mappings:
-                    print(f"Warning: {source_name} not in config mappings, skipping")
-                    continue
-                
-                output_path = output_dir / mappings[source_name]
-                output_path.mkdir(parents=True, exist_ok=True)
-                
-                print(f"\n=== {source_name} → {mappings[source_name]} ===")
-                process_directory_split(source_folder, output_path)
-        else:
-            # Fallback: just mirror structure (old behavior)
-            for dj_dir in all_source_dirs:
-                relative = dj_dir.name
-                output_path = output_dir / relative
-                output_path.mkdir(parents=True, exist_ok=True)
-                
-                print(f"\n=== {relative} ===")
-                process_directory_split(dj_dir, output_path)
+        main_djs = config.get('main_djs', []) if config else []
+        
+        for source_folder in all_source_dirs:
+            source_name = source_folder.name
+            
+            # Determine output location: main DJ in root, others in moreDJs
+            if source_name in main_djs:
+                output_path = output_dir / source_name
+            else:
+                output_path = output_dir / 'moreDJs' / source_name
+            
+            output_path.mkdir(parents=True, exist_ok=True)
+            
+            print(f"\n=== {source_name} ===")
+            process_directory_split(source_folder, output_path)
     else:
         # Original behavior: find and process all DJ directories in place
         if len(sys.argv) > 1 and (output_dir / 'manifest.json').parent != output_dir.parent:
