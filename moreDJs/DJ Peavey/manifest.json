@@ -2,6 +2,23 @@
   "generated": true,
   "mixes": [
     {
+      "name": "My Deep House forever 007, deeprhythms guest mix #25",
+      "file": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808",
+      "audioFile": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808.mp3",
+      "duration": 3830.078878,
+      "durationFormatted": "1:03:50",
+      "artist": "DJ Peavey",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2008",
+      "peaksFile": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808.peaks.json"
+    },
+    {
       "name": "My Deep House Forever Radio Show Ed.025",
       "file": "peavey_mdhf025_soundcloud",
       "audioFile": "peavey_mdhf025_soundcloud.mp3",
@@ -187,23 +204,6 @@
       "date": "2012",
       "comment": "compiled & mixed 04/07/12",
       "peaksFile": "peavey_mdhf035.peaks.json"
-    },
-    {
-      "name": "My Deep House forever 007, deeprhythms guest mix #25",
-      "file": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808",
-      "audioFile": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808.mp3",
-      "duration": 3830.078878,
-      "durationFormatted": "1:03:50",
-      "artist": "DJ Peavey",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "House",
-      "date": "2008",
-      "peaksFile": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808.peaks.json"
     }
   ]
 }

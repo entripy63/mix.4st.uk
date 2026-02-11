@@ -12,7 +12,13 @@ import subprocess
 import json
 import os
 import sys
+import re
 from pathlib import Path
+
+def natural_sort_key(s):
+    """Generate sort key that handles numeric sequences naturally."""
+    return [int(text) if text.isdigit() else text.lower() 
+            for text in re.split(r'(\d+)', s)]
 
 def get_audio_metadata(audio_path):
     """Extract metadata from audio file using ffprobe."""
@@ -179,13 +185,16 @@ def process_directory(directory):
         # Determine primary audio file (prefer MP3 for streaming)
         primary_audio = f"{base_name}.mp3" if (directory / f"{base_name}.mp3").exists() else audio_file.name
         
+        # Use artist from metadata, fall back to folder name if empty
+        artist = meta['artist'] or directory.name
+        
         mix_entry = {
             'name': title,
             'file': base_name,
             'audioFile': primary_audio,
             'duration': meta['duration'],
             'durationFormatted': format_duration(meta['duration']),
-            'artist': meta['artist'],
+            'artist': artist,
             'downloads': downloads
         }
         
@@ -203,8 +212,8 @@ def process_directory(directory):
         mixes.append(mix_entry)
         print(f"  {base_name}: \"{title}\" ({format_duration(meta['duration'])})")
     
-    # Sort by name
-    mixes.sort(key=lambda m: m['name'])
+    # Sort by name (natural sort for numeric sequences)
+    mixes.sort(key=lambda m: natural_sort_key(m['name']))
     
     # Write manifest
     manifest = {

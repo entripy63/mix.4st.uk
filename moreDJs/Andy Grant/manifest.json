@@ -2,6 +2,40 @@
   "generated": true,
   "mixes": [
     {
+      "name": "andy grant",
+      "file": "andy_grant-lost_and_found_new",
+      "audioFile": "andy_grant-lost_and_found_new.mp3",
+      "duration": 6350.50115,
+      "durationFormatted": "1:45:50",
+      "artist": "andy grant",
+      "downloads": [
+        {
+          "file": "andy_grant-lost_and_found_new.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "house, deep house, techno",
+      "date": "2009",
+      "peaksFile": "andy_grant-lost_and_found_new.peaks.json"
+    },
+    {
+      "name": "andy grant - a deeper shade of soul",
+      "file": "andy grant - a deeper shade of soul",
+      "audioFile": "andy grant - a deeper shade of soul.mp3",
+      "duration": 8234.8179,
+      "durationFormatted": "2:17:14",
+      "artist": "andy grant",
+      "downloads": [
+        {
+          "file": "andy grant - a deeper shade of soul.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "house, deep house, techno, deep",
+      "date": "2003",
+      "peaksFile": "andy grant - a deeper shade of soul.peaks.json"
+    },
+    {
       "name": "Andy Grant - Deep Rising",
       "file": "andy_grant-deep_rising",
       "audioFile": "andy_grant-deep_rising.mp3",
@@ -36,6 +70,22 @@
       "date": "2012",
       "comment": "Maya Jane Coles - Something In The Air (Original Mix)(Hypercolour)                                         Maceo Plex - Ain't That Love (Original Mix)(Ellum Audio)                                       DJ T. - Leaving Me feat. Khan (Daniel Bortz Remix)(Get Physical Music)                                  Phonic Funk - One (Shur-i-kan Mix)(Dark Energy Recordings)                              Marvin Zeyss - In My Arms (GIOM Remix)(UM Records)                       Danny Daze, Matches - If This (Original Mix)(Noir Music)                          Alex Niggemann - Cite (Original Mix)(Tsuba)                                                                            Martin Dawson - Think About It feat. Nicholas Ryan Gant (Maceo Plex Remix)(Pets Recordings)                    Hamid - If I feat. Valentina (Jay Shepheard Remix)(murmur)                          Anja Schneider - Let Me Out (Original Mix)(Mobilee Records)                   Shlomi Aber - Freakside (original mix)(Ovum)                                                                         Inxec, Droog (LA) - Westbound (Original Mix)(Crosstown Rebels) + Kenlou - What A Sensation (Sensational Beats)(MAW Records)                  Alain Ho - Into A Deep (Hot Toddy Remix)(The Exquisite Pain Recordings) ",
       "peaksFile": "andy_grant-another_one_for_you.peaks.json"
+    },
+    {
+      "name": "back 2 back",
+      "file": "andy_grant-back_2_back",
+      "audioFile": "andy_grant-back_2_back.mp3",
+      "duration": 7496.3853,
+      "durationFormatted": "2:04:56",
+      "artist": "Andy Grant",
+      "downloads": [
+        {
+          "file": "andy_grant-back_2_back.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Dance",
+      "peaksFile": "andy_grant-back_2_back.peaks.json"
     },
     {
       "name": "Back in the Saddle",
@@ -123,6 +173,53 @@
       "peaksFile": "andy_grant-friends+family-2.peaks.json"
     },
     {
+      "name": "lack of focus",
+      "file": "andy_grant-lack_of_focus",
+      "audioFile": "andy_grant-lack_of_focus.mp3",
+      "duration": 5652.64475,
+      "durationFormatted": "1:34:12",
+      "artist": "Andy Grant",
+      "downloads": [
+        {
+          "file": "andy_grant-lack_of_focus.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Blues",
+      "peaksFile": "andy_grant-lack_of_focus.peaks.json"
+    },
+    {
+      "name": "last call",
+      "file": "andy_grant-last_call",
+      "audioFile": "andy_grant-last_call.mp3",
+      "duration": 9017.814333,
+      "durationFormatted": "2:30:17",
+      "artist": "Andy Grant",
+      "downloads": [
+        {
+          "file": "andy_grant-last_call.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Blues",
+      "peaksFile": "andy_grant-last_call.peaks.json"
+    },
+    {
+      "name": "live rave basement",
+      "file": "andy_grant-live-rave-basement",
+      "audioFile": "andy_grant-live-rave-basement.mp3",
+      "duration": 10810.93225,
+      "durationFormatted": "3:00:10",
+      "artist": "Andy Grant",
+      "downloads": [
+        {
+          "file": "andy_grant-live-rave-basement.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "andy_grant-live-rave-basement.peaks.json"
+    },
+    {
       "name": "Radio mix",
       "file": "andy_grant-radio_mix",
       "audioFile": "andy_grant-radio_mix.mp3",
@@ -138,6 +235,21 @@
       "genre": "Dance",
       "date": "2012",
       "peaksFile": "andy_grant-radio_mix.peaks.json"
+    },
+    {
+      "name": "rave basement session 1",
+      "file": "andy_grant-rave_basement_session_1",
+      "audioFile": "andy_grant-rave_basement_session_1.mp3",
+      "duration": 6699.04975,
+      "durationFormatted": "1:51:39",
+      "artist": "Andy Grant",
+      "downloads": [
+        {
+          "file": "andy_grant-rave_basement_session_1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "andy_grant-rave_basement_session_1.peaks.json"
     },
     {
       "name": "Rave Basement Sessions #2",
@@ -157,6 +269,51 @@
       "peaksFile": "andy_grant-rave_basement_sessions_2.peaks.json"
     },
     {
+      "name": "shaken not stirred320",
+      "file": "andy_grant-shaken_not_stirred320",
+      "audioFile": "andy_grant-shaken_not_stirred320.mp3",
+      "duration": 5992.4898,
+      "durationFormatted": "1:39:52",
+      "artist": "Andy Grant",
+      "downloads": [
+        {
+          "file": "andy_grant-shaken_not_stirred320.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "andy_grant-shaken_not_stirred320.peaks.json"
+    },
+    {
+      "name": "strobes and smoke",
+      "file": "andy_grant-strobes_and_smoke",
+      "audioFile": "andy_grant-strobes_and_smoke.mp3",
+      "duration": 8160.365714,
+      "durationFormatted": "2:16:00",
+      "artist": "Andy Grant",
+      "downloads": [
+        {
+          "file": "andy_grant-strobes_and_smoke.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "andy_grant-strobes_and_smoke.peaks.json"
+    },
+    {
+      "name": "the way we used to do it",
+      "file": "andy_grant-the_way_we_used_to_do_it",
+      "audioFile": "andy_grant-the_way_we_used_to_do_it.mp3",
+      "duration": 4644.153469,
+      "durationFormatted": "1:17:24",
+      "artist": "Andy Grant",
+      "downloads": [
+        {
+          "file": "andy_grant-the_way_we_used_to_do_it.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "andy_grant-the_way_we_used_to_do_it.peaks.json"
+    },
+    {
       "name": "This One's For You",
       "file": "andy_grant-this_ones_for_you",
       "audioFile": "andy_grant-this_ones_for_you.mp3",
@@ -174,169 +331,12 @@
       "peaksFile": "andy_grant-this_ones_for_you.peaks.json"
     },
     {
-      "name": "andy grant",
-      "file": "andy_grant-lost_and_found_new",
-      "audioFile": "andy_grant-lost_and_found_new.mp3",
-      "duration": 6350.50115,
-      "durationFormatted": "1:45:50",
-      "artist": "andy grant",
-      "downloads": [
-        {
-          "file": "andy_grant-lost_and_found_new.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "house, deep house, techno",
-      "date": "2009",
-      "peaksFile": "andy_grant-lost_and_found_new.peaks.json"
-    },
-    {
-      "name": "andy grant - a deeper shade of soul",
-      "file": "andy grant - a deeper shade of soul",
-      "audioFile": "andy grant - a deeper shade of soul.mp3",
-      "duration": 8234.8179,
-      "durationFormatted": "2:17:14",
-      "artist": "andy grant",
-      "downloads": [
-        {
-          "file": "andy grant - a deeper shade of soul.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "house, deep house, techno, deep",
-      "date": "2003",
-      "peaksFile": "andy grant - a deeper shade of soul.peaks.json"
-    },
-    {
-      "name": "back 2 back",
-      "file": "andy_grant-back_2_back",
-      "audioFile": "andy_grant-back_2_back.mp3",
-      "duration": 7496.3853,
-      "durationFormatted": "2:04:56",
-      "artist": "",
-      "downloads": [
-        {
-          "file": "andy_grant-back_2_back.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Dance",
-      "peaksFile": "andy_grant-back_2_back.peaks.json"
-    },
-    {
-      "name": "lack of focus",
-      "file": "andy_grant-lack_of_focus",
-      "audioFile": "andy_grant-lack_of_focus.mp3",
-      "duration": 5652.64475,
-      "durationFormatted": "1:34:12",
-      "artist": "",
-      "downloads": [
-        {
-          "file": "andy_grant-lack_of_focus.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Blues",
-      "peaksFile": "andy_grant-lack_of_focus.peaks.json"
-    },
-    {
-      "name": "last call",
-      "file": "andy_grant-last_call",
-      "audioFile": "andy_grant-last_call.mp3",
-      "duration": 9017.814333,
-      "durationFormatted": "2:30:17",
-      "artist": "",
-      "downloads": [
-        {
-          "file": "andy_grant-last_call.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Blues",
-      "peaksFile": "andy_grant-last_call.peaks.json"
-    },
-    {
-      "name": "live rave basement",
-      "file": "andy_grant-live-rave-basement",
-      "audioFile": "andy_grant-live-rave-basement.mp3",
-      "duration": 10810.93225,
-      "durationFormatted": "3:00:10",
-      "artist": "",
-      "downloads": [
-        {
-          "file": "andy_grant-live-rave-basement.mp3",
-          "label": "MP3"
-        }
-      ],
-      "peaksFile": "andy_grant-live-rave-basement.peaks.json"
-    },
-    {
-      "name": "rave basement session 1",
-      "file": "andy_grant-rave_basement_session_1",
-      "audioFile": "andy_grant-rave_basement_session_1.mp3",
-      "duration": 6699.04975,
-      "durationFormatted": "1:51:39",
-      "artist": "",
-      "downloads": [
-        {
-          "file": "andy_grant-rave_basement_session_1.mp3",
-          "label": "MP3"
-        }
-      ],
-      "peaksFile": "andy_grant-rave_basement_session_1.peaks.json"
-    },
-    {
-      "name": "shaken not stirred320",
-      "file": "andy_grant-shaken_not_stirred320",
-      "audioFile": "andy_grant-shaken_not_stirred320.mp3",
-      "duration": 5992.4898,
-      "durationFormatted": "1:39:52",
-      "artist": "",
-      "downloads": [
-        {
-          "file": "andy_grant-shaken_not_stirred320.mp3",
-          "label": "MP3"
-        }
-      ],
-      "peaksFile": "andy_grant-shaken_not_stirred320.peaks.json"
-    },
-    {
-      "name": "strobes and smoke",
-      "file": "andy_grant-strobes_and_smoke",
-      "audioFile": "andy_grant-strobes_and_smoke.mp3",
-      "duration": 8160.365714,
-      "durationFormatted": "2:16:00",
-      "artist": "",
-      "downloads": [
-        {
-          "file": "andy_grant-strobes_and_smoke.mp3",
-          "label": "MP3"
-        }
-      ],
-      "peaksFile": "andy_grant-strobes_and_smoke.peaks.json"
-    },
-    {
-      "name": "the way we used to do it",
-      "file": "andy_grant-the_way_we_used_to_do_it",
-      "audioFile": "andy_grant-the_way_we_used_to_do_it.mp3",
-      "duration": 4644.153469,
-      "durationFormatted": "1:17:24",
-      "artist": "",
-      "downloads": [
-        {
-          "file": "andy_grant-the_way_we_used_to_do_it.mp3",
-          "label": "MP3"
-        }
-      ],
-      "peaksFile": "andy_grant-the_way_we_used_to_do_it.peaks.json"
-    },
-    {
       "name": "winter deep redux",
       "file": "andy_grant-winter_deep_redux",
       "audioFile": "andy_grant-winter_deep_redux.mp3",
       "duration": 5139.043275,
       "durationFormatted": "1:25:39",
-      "artist": "",
+      "artist": "Andy Grant",
       "downloads": [
         {
           "file": "andy_grant-winter_deep_redux.mp3",

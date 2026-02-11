@@ -16,7 +16,8 @@
       ],
       "genre": "House",
       "date": "2008",
-      "comment": "Theo Parrish - Take a ride\nThe Mole - Acadian\nDj Kent - In the bush (Theo Parrish beats remix)\nManmade sience - Smoke\nSteve O\u2019Sullivan - Touched up\nMoodymann - Dem young sconies\nRadio Slave - No sleep 5 Bside (promo)\nOmar S - Oasis sixteen\nThe M"
+      "comment": "Theo Parrish - Take a ride\nThe Mole - Acadian\nDj Kent - In the bush (Theo Parrish beats remix)\nManmade sience - Smoke\nSteve O\u2019Sullivan - Touched up\nMoodymann - Dem young sconies\nRadio Slave - No sleep 5 Bside (promo)\nOmar S - Oasis sixteen\nThe M",
+      "peaksFile": "djmarcus-techno&house.peaks.json"
     },
     {
       "name": "Dj Seb - Old, new & Inbetweens (128)",
@@ -33,7 +34,8 @@
       ],
       "genre": "Electronic",
       "date": "2008",
-      "comment": "Tracklist for old, new & in Betweens // \nBy Dj Seb (Minilogue) \n\nLunch Box - Brown box\nDeadbeat - A dub for akufen\nSystem - 2\nPole - Warum\nKit Clayton - Grey amber\nKlovn - Mc Klaren\nRetinaIT - Zucchine\nTiki Obmar - Cepia remix\nStrategy - Phantom Powered\nD"
+      "comment": "Tracklist for old, new & in Betweens // \nBy Dj Seb (Minilogue) \n\nLunch Box - Brown box\nDeadbeat - A dub for akufen\nSystem - 2\nPole - Warum\nKit Clayton - Grey amber\nKlovn - Mc Klaren\nRetinaIT - Zucchine\nTiki Obmar - Cepia remix\nStrategy - Phantom Powered\nD",
+      "peaksFile": "djseb-old_new&in_betweens.peaks.json"
     },
     {
       "name": "Dj Seb - Selection Ambiente (128)",
@@ -50,7 +52,8 @@
       ],
       "genre": "Electronic",
       "date": "2008",
-      "comment": "Akinori \u2013 Red Field\nThe Beautiful Schizophonic \u2013 Cantiques a la glorie\nMartine Jules \u2013 Aile D\u2019aigle\nJohann Johannsson \u2013 ibm 729 II Magnetic tape unit\nMountains \u2013 Down under the manhattan bridge\nKoss- Air\nKammerflimmer Kollektief \u2013 Jinx\nJan Jelinek \u2013 A con"
+      "comment": "Akinori \u2013 Red Field\nThe Beautiful Schizophonic \u2013 Cantiques a la glorie\nMartine Jules \u2013 Aile D\u2019aigle\nJohann Johannsson \u2013 ibm 729 II Magnetic tape unit\nMountains \u2013 Down under the manhattan bridge\nKoss- Air\nKammerflimmer Kollektief \u2013 Jinx\nJan Jelinek \u2013 A con",
+      "peaksFile": "djseb-selection_ambiente.peaks.json"
     },
     {
       "name": "Minilogue Live in Berlin",
@@ -65,7 +68,8 @@
           "label": "MP3"
         }
       ],
-      "genre": "House"
+      "genre": "House",
+      "peaksFile": "minilogue_live_in_berlin.peaks.json"
     }
   ]
 }

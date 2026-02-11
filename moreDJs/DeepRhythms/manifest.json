@@ -2,6 +2,60 @@
   "generated": true,
   "mixes": [
     {
+      "name": "14 Tracks by Kong, deeprhythms guest mix #49",
+      "file": "deeprhythms_guestmix_49_14_tracks_by_kong_260611",
+      "audioFile": "deeprhythms_guestmix_49_14_tracks_by_kong_260611.mp3",
+      "duration": 3938.042958,
+      "durationFormatted": "1:05:38",
+      "artist": "Kong",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_49_14_tracks_by_kong_260611.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2011",
+      "peaksFile": "deeprhythms_guestmix_49_14_tracks_by_kong_260611.peaks.json",
+      "coverFile": "deeprhythms_guestmix_49_14_tracks_by_kong_260611.jpg"
+    },
+    {
+      "name": "22min set for Cyberdelia project",
+      "file": "22min_mix_for_cyberdelia_project_by_timo",
+      "audioFile": "22min_mix_for_cyberdelia_project_by_timo.mp3",
+      "duration": 1334.418375,
+      "durationFormatted": "0:22:14",
+      "artist": "Timo (timo@deeprhythms.com)",
+      "downloads": [
+        {
+          "file": "22min_mix_for_cyberdelia_project_by_timo.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2004",
+      "peaksFile": "22min_mix_for_cyberdelia_project_by_timo.peaks.json"
+    },
+    {
+      "name": "62 Odyssey by Point Guard",
+      "file": "deeprhythms_guestmix_62_odyssey_by_point_guard_130419",
+      "audioFile": "deeprhythms_guestmix_62_odyssey_by_point_guard_130419.mp3",
+      "duration": 5763.918367,
+      "durationFormatted": "1:36:03",
+      "artist": "Point Guard",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_62_odyssey_by_point_guard_130419.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Electonic",
+      "date": "2019",
+      "comment": "deeprhythms.com for the interview",
+      "peaksFile": "deeprhythms_guestmix_62_odyssey_by_point_guard_130419.peaks.json",
+      "coverFile": "deeprhythms_guestmix_62_odyssey_by_point_guard_130419.png"
+    },
+    {
       "name": "\"Studio lounge 5\" - live on Planetsoulnetwork.com on 2004-08-26",
       "file": "timo_rotonen_studio_lounge5_PSN_liveshow_26082004",
       "audioFile": "timo_rotonen_studio_lounge5_PSN_liveshow_26082004.mp3",
@@ -143,60 +197,6 @@
       "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/53_stop_listen_by_trackwerker.php.",
       "peaksFile": "deeprhythms_guestmix_53_stop_listen_by_trackwerker_070212.peaks.json",
       "coverFile": "deeprhythms_guestmix_53_stop_listen_by_trackwerker_070212.jpg"
-    },
-    {
-      "name": "14 Tracks by Kong, deeprhythms guest mix #49",
-      "file": "deeprhythms_guestmix_49_14_tracks_by_kong_260611",
-      "audioFile": "deeprhythms_guestmix_49_14_tracks_by_kong_260611.mp3",
-      "duration": 3938.042958,
-      "durationFormatted": "1:05:38",
-      "artist": "Kong",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_49_14_tracks_by_kong_260611.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "House",
-      "date": "2011",
-      "peaksFile": "deeprhythms_guestmix_49_14_tracks_by_kong_260611.peaks.json",
-      "coverFile": "deeprhythms_guestmix_49_14_tracks_by_kong_260611.jpg"
-    },
-    {
-      "name": "22min set for Cyberdelia project",
-      "file": "22min_mix_for_cyberdelia_project_by_timo",
-      "audioFile": "22min_mix_for_cyberdelia_project_by_timo.mp3",
-      "duration": 1334.418375,
-      "durationFormatted": "0:22:14",
-      "artist": "Timo (timo@deeprhythms.com)",
-      "downloads": [
-        {
-          "file": "22min_mix_for_cyberdelia_project_by_timo.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "House",
-      "date": "2004",
-      "peaksFile": "22min_mix_for_cyberdelia_project_by_timo.peaks.json"
-    },
-    {
-      "name": "62 Odyssey by Point Guard",
-      "file": "deeprhythms_guestmix_62_odyssey_by_point_guard_130419",
-      "audioFile": "deeprhythms_guestmix_62_odyssey_by_point_guard_130419.mp3",
-      "duration": 5763.918367,
-      "durationFormatted": "1:36:03",
-      "artist": "Point Guard",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_62_odyssey_by_point_guard_130419.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Electonic",
-      "date": "2019",
-      "comment": "deeprhythms.com for the interview",
-      "peaksFile": "deeprhythms_guestmix_62_odyssey_by_point_guard_130419.peaks.json",
-      "coverFile": "deeprhythms_guestmix_62_odyssey_by_point_guard_130419.png"
     },
     {
       "name": "Accelerator, deeprhythms.com guest mix 46",
@@ -479,12 +479,12 @@
       "peaksFile": "deeprhythms_guestmix_13_deep_space_nine_by_marc_cotterell_080105.peaks.json"
     },
     {
-      "name": "DeepOutage-TimoRotonen-Sep-25-03",
+      "name": "DeepOutage TimoRotonen Sep 25 03",
       "file": "DeepOutage-TimoRotonen-Sep-25-03",
       "audioFile": "DeepOutage-TimoRotonen-Sep-25-03.mp3",
       "duration": 7333.590188,
       "durationFormatted": "2:02:13",
-      "artist": "",
+      "artist": "DeepRhythms",
       "downloads": [
         {
           "file": "DeepOutage-TimoRotonen-Sep-25-03.mp3",
@@ -494,179 +494,41 @@
       "peaksFile": "DeepOutage-TimoRotonen-Sep-25-03.peaks.json"
     },
     {
-      "name": "DeepRhythms #13 - 'Raining cats & dogs' - 10.09.01",
-      "file": "deeprhythms_13_raining_cats_dogs_100901",
-      "audioFile": "deeprhythms_13_raining_cats_dogs_100901.mp3",
-      "duration": 3516.473438,
-      "durationFormatted": "0:58:36",
-      "artist": "timo@deeprhythms.com/",
+      "name": "Deeprhythms 2 - 20-03-01",
+      "file": "deeprhythms_2_skipping_needles_200301",
+      "audioFile": "deeprhythms_2_skipping_needles_200301.mp3",
+      "duration": 4086.700333,
+      "durationFormatted": "1:08:06",
+      "artist": "Timo Rotonen",
       "downloads": [
         {
-          "file": "deeprhythms_13_raining_cats_dogs_100901.mp3",
+          "file": "deeprhythms_2_skipping_needles_200301.mp3",
           "label": "MP3"
         }
       ],
       "genre": "House",
       "date": "2001",
-      "peaksFile": "deeprhythms_13_raining_cats_dogs_100901.peaks.json"
+      "comment": "Playlist:\r\nMelik & K nool: Rue De paris (Dedicace)\r\nB.I.T.S. feat. UNA - Yearnin for your love (Victor Simonelli Remix) (Look At You)\r\nDJ Camacho feat. Claybone - Keep Your Hands Above Water (Wake Up)\r\nFingercuffs - Fever For Life (Matty's Soulflower mix) (83 West Recordings)\r\nPound Boys feat. Earl Bennet - Be Strong (Pound Boys Naked Dub) (Dialogue)\r\nPound Boys feat. Rashaan - Shine (Lenny Fontana Master Mix) (Records Of Interest) \r\nKenny Bobien - U Gave Me Love (Basement Boys)\r\nDennis Ferrer - Wonderful People (Union City Blues mix) (Metaphor Recordings)\r\nMarlo - Wait Until The Morning (Estereo)\r\nColdfeer - Shamefaced (Francois K Dub) (Nite Grooves)\r\nThe Underground Culture Tourist - Jackin' the Jazz (Classic)\r\n",
+      "peaksFile": "deeprhythms_2_skipping_needles_200301.peaks.json",
+      "coverFile": "deeprhythms_2_skipping_needles_200301.png"
     },
     {
-      "name": "DeepRhythms #20 - 'Life, love and music' - 18.01.02",
-      "file": "deeprhythms_20_life_love_and_music_180102",
-      "audioFile": "deeprhythms_20_life_love_and_music_180102.mp3",
-      "duration": 3393.12325,
-      "durationFormatted": "0:56:33",
-      "artist": "timo@deeprhythms.com",
+      "name": "Deeprhythms 3 25 05 2001",
+      "file": "deeprhythms_3_getting_there_250501",
+      "audioFile": "deeprhythms_3_getting_there_250501.mp3",
+      "duration": 2943.232256,
+      "durationFormatted": "0:49:03",
+      "artist": "Timo Rotonen",
       "downloads": [
         {
-          "file": "deeprhythms_20_life_love_and_music_180102.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "House",
-      "date": "2002",
-      "peaksFile": "deeprhythms_20_life_love_and_music_180102.peaks.json"
-    },
-    {
-      "name": "DeepRhythms #21 - 'Siam' - 09.02.02",
-      "file": "deeprhythms_21_siam_090202",
-      "audioFile": "deeprhythms_21_siam_090202.mp3",
-      "duration": 3817.586938,
-      "durationFormatted": "1:03:37",
-      "artist": "timo@deeprhythms.com/",
-      "downloads": [
-        {
-          "file": "deeprhythms_21_siam_090202.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "House",
-      "date": "2002",
-      "peaksFile": "deeprhythms_21_siam_090202.peaks.json"
-    },
-    {
-      "name": "DeepRhythms #22 - 'Drought' - 15.03.02",
-      "file": "deeprhythms_22_drought_150302",
-      "audioFile": "deeprhythms_22_drought_150302.mp3",
-      "duration": 3811.892188,
-      "durationFormatted": "1:03:31",
-      "artist": "timo@deeprhythms.com2",
-      "downloads": [
-        {
-          "file": "deeprhythms_22_drought_150302.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "House",
-      "date": "2002",
-      "peaksFile": "deeprhythms_22_drought_150302.peaks.json"
-    },
-    {
-      "name": "DeepRhythms #23 - Sweat -150402",
-      "file": "deeprhythms_23_sweat_150402",
-      "audioFile": "deeprhythms_23_sweat_150402.mp3",
-      "duration": 3975.053063,
-      "durationFormatted": "1:06:15",
-      "artist": "timo@deeprhythms.com",
-      "downloads": [
-        {
-          "file": "deeprhythms_23_sweat_150402.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "house",
-      "date": "2002",
-      "comment": "http://deeprhythms.com",
-      "peaksFile": "deeprhythms_23_sweat_150402.peaks.json"
-    },
-    {
-      "name": "DeepRhythms 29 - 'Cheap Thrills' by Timo -17092002",
-      "file": "deeprhythms_29_cheap_thrills_170902",
-      "audioFile": "deeprhythms_29_cheap_thrills_170902.mp3",
-      "duration": 3747.657188,
-      "durationFormatted": "1:02:27",
-      "artist": "timo@deeprhythms.com",
-      "downloads": [
-        {
-          "file": "deeprhythms_29_cheap_thrills_170902.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "House",
-      "date": "2002",
-      "comment": "More mixes at http://deeprhythms.com",
-      "peaksFile": "deeprhythms_29_cheap_thrills_170902.peaks.json"
-    },
-    {
-      "name": "DeepRhythms guest mix 3 - \"I cry out to you\"",
-      "file": "deeprhythms_guestmix_3_i_cry_out_to_you_by_dj_nica_010302",
-      "audioFile": "deeprhythms_guestmix_3_i_cry_out_to_you_by_dj_nica_010302.mp3",
-      "duration": 4780.783,
-      "durationFormatted": "1:19:40",
-      "artist": "Dj Nica",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_3_i_cry_out_to_you_by_dj_nica_010302.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "House",
-      "date": "2002",
-      "comment": "more mixes @ http://deeprhythms.com",
-      "peaksFile": "deeprhythms_guestmix_3_i_cry_out_to_you_by_dj_nica_010302.peaks.json"
-    },
-    {
-      "name": "Deeprhythms #25 - Midsummer sessions volume 1 - 210602",
-      "file": "deeprhythms_25_midsummer_sessions_vol_1_210602",
-      "audioFile": "deeprhythms_25_midsummer_sessions_vol_1_210602.mp3",
-      "duration": 4225.810438,
-      "durationFormatted": "1:10:25",
-      "artist": "Timo Rotonen and David Wolf back to back",
-      "downloads": [
-        {
-          "file": "deeprhythms_25_midsummer_sessions_vol_1_210602.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "House",
-      "date": "2002",
-      "peaksFile": "deeprhythms_25_midsummer_sessions_vol_1_210602.peaks.json",
-      "coverFile": "deeprhythms_25_midsummer_sessions_vol_1_210602.png"
-    },
-    {
-      "name": "Deeprhythms #35 - Denial - 030303.mp3",
-      "file": "deeprhythms_35_denial_030303",
-      "audioFile": "deeprhythms_35_denial_030303.mp3",
-      "duration": 3514.91425,
-      "durationFormatted": "0:58:34",
-      "artist": "david@deeprhythms.com",
-      "downloads": [
-        {
-          "file": "deeprhythms_35_denial_030303.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Deep & Techy House",
-      "date": "2003",
-      "comment": "More mixes available at http://www.deeprhythms.com",
-      "peaksFile": "deeprhythms_35_denial_030303.peaks.json"
-    },
-    {
-      "name": "Deeprhythms #4 'Apollonkatu Groove'",
-      "file": "deeprhythms_4_apollonkatu_groove_030601",
-      "audioFile": "deeprhythms_4_apollonkatu_groove_030601.mp3",
-      "duration": 2732.355918,
-      "durationFormatted": "0:45:32",
-      "artist": "Timo (timo@deeprhythms.com)",
-      "downloads": [
-        {
-          "file": "deeprhythms_4_apollonkatu_groove_030601.mp3",
+          "file": "deeprhythms_3_getting_there_250501.mp3",
           "label": "MP3"
         }
       ],
       "genre": "House",
       "date": "2001",
-      "peaksFile": "deeprhythms_4_apollonkatu_groove_030601.peaks.json"
+      "peaksFile": "deeprhythms_3_getting_there_250501.peaks.json",
+      "coverFile": "deeprhythms_3_getting_there_250501.png"
     },
     {
       "name": "Deeprhythms 18 -- Don't give up - 091202",
@@ -701,25 +563,6 @@
       "genre": "House",
       "date": "2001",
       "peaksFile": "deeprhythms_19_love_is_for_free_311201.peaks.json"
-    },
-    {
-      "name": "Deeprhythms 2 - 20-03-01",
-      "file": "deeprhythms_2_skipping_needles_200301",
-      "audioFile": "deeprhythms_2_skipping_needles_200301.mp3",
-      "duration": 4086.700333,
-      "durationFormatted": "1:08:06",
-      "artist": "Timo Rotonen",
-      "downloads": [
-        {
-          "file": "deeprhythms_2_skipping_needles_200301.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "House",
-      "date": "2001",
-      "comment": "Playlist:\r\nMelik & K nool: Rue De paris (Dedicace)\r\nB.I.T.S. feat. UNA - Yearnin for your love (Victor Simonelli Remix) (Look At You)\r\nDJ Camacho feat. Claybone - Keep Your Hands Above Water (Wake Up)\r\nFingercuffs - Fever For Life (Matty's Soulflower mix) (83 West Recordings)\r\nPound Boys feat. Earl Bennet - Be Strong (Pound Boys Naked Dub) (Dialogue)\r\nPound Boys feat. Rashaan - Shine (Lenny Fontana Master Mix) (Records Of Interest) \r\nKenny Bobien - U Gave Me Love (Basement Boys)\r\nDennis Ferrer - Wonderful People (Union City Blues mix) (Metaphor Recordings)\r\nMarlo - Wait Until The Morning (Estereo)\r\nColdfeer - Shamefaced (Francois K Dub) (Nite Grooves)\r\nThe Underground Culture Tourist - Jackin' the Jazz (Classic)\r\n",
-      "peaksFile": "deeprhythms_2_skipping_needles_200301.peaks.json",
-      "coverFile": "deeprhythms_2_skipping_needles_200301.png"
     },
     {
       "name": "Deeprhythms 24 - Screech! - 050502",
@@ -775,22 +618,22 @@
       "peaksFile": "deeprhythms_28_kurosawa_230802.peaks.json"
     },
     {
-      "name": "Deeprhythms 3 25 05 2001",
-      "file": "deeprhythms_3_getting_there_250501",
-      "audioFile": "deeprhythms_3_getting_there_250501.mp3",
-      "duration": 2943.232256,
-      "durationFormatted": "0:49:03",
-      "artist": "Timo Rotonen",
+      "name": "DeepRhythms 29 - 'Cheap Thrills' by Timo -17092002",
+      "file": "deeprhythms_29_cheap_thrills_170902",
+      "audioFile": "deeprhythms_29_cheap_thrills_170902.mp3",
+      "duration": 3747.657188,
+      "durationFormatted": "1:02:27",
+      "artist": "timo@deeprhythms.com",
       "downloads": [
         {
-          "file": "deeprhythms_3_getting_there_250501.mp3",
+          "file": "deeprhythms_29_cheap_thrills_170902.mp3",
           "label": "MP3"
         }
       ],
       "genre": "House",
-      "date": "2001",
-      "peaksFile": "deeprhythms_3_getting_there_250501.peaks.json",
-      "coverFile": "deeprhythms_3_getting_there_250501.png"
+      "date": "2002",
+      "comment": "More mixes at http://deeprhythms.com",
+      "peaksFile": "deeprhythms_29_cheap_thrills_170902.peaks.json"
     },
     {
       "name": "Deeprhythms 30 - 'Brisk' by David -271002",
@@ -965,6 +808,24 @@
       "peaksFile": "deeprhythms_41_flight_19_121004.peaks.json"
     },
     {
+      "name": "deeprhythms 42 - Variables - 26042005",
+      "file": "deeprhythms_42_variable_270405",
+      "audioFile": "deeprhythms_42_variable_270405.mp3",
+      "duration": 4375.066313,
+      "durationFormatted": "1:12:55",
+      "artist": "Timo (timo@deeprhythms.com)",
+      "downloads": [
+        {
+          "file": "deeprhythms_42_variable_270405.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2005",
+      "comment": "Copyright respective artists, promotional use only. Platlist and more info at deeprhythms.com",
+      "peaksFile": "deeprhythms_42_variable_270405.peaks.json"
+    },
+    {
       "name": "Deeprhythms 43 - Static - 31.12.2005",
       "file": "deeprhythms_43_static_020106",
       "audioFile": "deeprhythms_43_static_020106.mp3",
@@ -1134,6 +995,288 @@
       "coverFile": "deeprhythms_51_isolation_tank_291209.jpg"
     },
     {
+      "name": "Deeprhythms #4 'Apollonkatu Groove'",
+      "file": "deeprhythms_4_apollonkatu_groove_030601",
+      "audioFile": "deeprhythms_4_apollonkatu_groove_030601.mp3",
+      "duration": 2732.355918,
+      "durationFormatted": "0:45:32",
+      "artist": "Timo (timo@deeprhythms.com)",
+      "downloads": [
+        {
+          "file": "deeprhythms_4_apollonkatu_groove_030601.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2001",
+      "peaksFile": "deeprhythms_4_apollonkatu_groove_030601.peaks.json"
+    },
+    {
+      "name": "DeepRhythms #13 - 'Raining cats & dogs' - 10.09.01",
+      "file": "deeprhythms_13_raining_cats_dogs_100901",
+      "audioFile": "deeprhythms_13_raining_cats_dogs_100901.mp3",
+      "duration": 3516.473438,
+      "durationFormatted": "0:58:36",
+      "artist": "timo@deeprhythms.com/",
+      "downloads": [
+        {
+          "file": "deeprhythms_13_raining_cats_dogs_100901.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2001",
+      "peaksFile": "deeprhythms_13_raining_cats_dogs_100901.peaks.json"
+    },
+    {
+      "name": "DeepRhythms #20 - 'Life, love and music' - 18.01.02",
+      "file": "deeprhythms_20_life_love_and_music_180102",
+      "audioFile": "deeprhythms_20_life_love_and_music_180102.mp3",
+      "duration": 3393.12325,
+      "durationFormatted": "0:56:33",
+      "artist": "timo@deeprhythms.com",
+      "downloads": [
+        {
+          "file": "deeprhythms_20_life_love_and_music_180102.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2002",
+      "peaksFile": "deeprhythms_20_life_love_and_music_180102.peaks.json"
+    },
+    {
+      "name": "DeepRhythms #21 - 'Siam' - 09.02.02",
+      "file": "deeprhythms_21_siam_090202",
+      "audioFile": "deeprhythms_21_siam_090202.mp3",
+      "duration": 3817.586938,
+      "durationFormatted": "1:03:37",
+      "artist": "timo@deeprhythms.com/",
+      "downloads": [
+        {
+          "file": "deeprhythms_21_siam_090202.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2002",
+      "peaksFile": "deeprhythms_21_siam_090202.peaks.json"
+    },
+    {
+      "name": "DeepRhythms #22 - 'Drought' - 15.03.02",
+      "file": "deeprhythms_22_drought_150302",
+      "audioFile": "deeprhythms_22_drought_150302.mp3",
+      "duration": 3811.892188,
+      "durationFormatted": "1:03:31",
+      "artist": "timo@deeprhythms.com2",
+      "downloads": [
+        {
+          "file": "deeprhythms_22_drought_150302.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2002",
+      "peaksFile": "deeprhythms_22_drought_150302.peaks.json"
+    },
+    {
+      "name": "DeepRhythms #23 - Sweat -150402",
+      "file": "deeprhythms_23_sweat_150402",
+      "audioFile": "deeprhythms_23_sweat_150402.mp3",
+      "duration": 3975.053063,
+      "durationFormatted": "1:06:15",
+      "artist": "timo@deeprhythms.com",
+      "downloads": [
+        {
+          "file": "deeprhythms_23_sweat_150402.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "house",
+      "date": "2002",
+      "comment": "http://deeprhythms.com",
+      "peaksFile": "deeprhythms_23_sweat_150402.peaks.json"
+    },
+    {
+      "name": "Deeprhythms #25 - Midsummer sessions volume 1 - 210602",
+      "file": "deeprhythms_25_midsummer_sessions_vol_1_210602",
+      "audioFile": "deeprhythms_25_midsummer_sessions_vol_1_210602.mp3",
+      "duration": 4225.810438,
+      "durationFormatted": "1:10:25",
+      "artist": "Timo Rotonen and David Wolf back to back",
+      "downloads": [
+        {
+          "file": "deeprhythms_25_midsummer_sessions_vol_1_210602.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2002",
+      "peaksFile": "deeprhythms_25_midsummer_sessions_vol_1_210602.peaks.json",
+      "coverFile": "deeprhythms_25_midsummer_sessions_vol_1_210602.png"
+    },
+    {
+      "name": "Deeprhythms #35 - Denial - 030303.mp3",
+      "file": "deeprhythms_35_denial_030303",
+      "audioFile": "deeprhythms_35_denial_030303.mp3",
+      "duration": 3514.91425,
+      "durationFormatted": "0:58:34",
+      "artist": "david@deeprhythms.com",
+      "downloads": [
+        {
+          "file": "deeprhythms_35_denial_030303.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep & Techy House",
+      "date": "2003",
+      "comment": "More mixes available at http://www.deeprhythms.com",
+      "peaksFile": "deeprhythms_35_denial_030303.peaks.json"
+    },
+    {
+      "name": "DeepRhythms guest mix 3 - \"I cry out to you\"",
+      "file": "deeprhythms_guestmix_3_i_cry_out_to_you_by_dj_nica_010302",
+      "audioFile": "deeprhythms_guestmix_3_i_cry_out_to_you_by_dj_nica_010302.mp3",
+      "duration": 4780.783,
+      "durationFormatted": "1:19:40",
+      "artist": "Dj Nica",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_3_i_cry_out_to_you_by_dj_nica_010302.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2002",
+      "comment": "more mixes @ http://deeprhythms.com",
+      "peaksFile": "deeprhythms_guestmix_3_i_cry_out_to_you_by_dj_nica_010302.peaks.json"
+    },
+    {
+      "name": "Deeprhythms guest mix 6 - Brad Peterson - The Evidence - 061002",
+      "file": "deeprhythms_guestmix_6_the_evidence_by_brad_peterson_061002",
+      "audioFile": "deeprhythms_guestmix_6_the_evidence_by_brad_peterson_061002.mp3",
+      "duration": 3140.388563,
+      "durationFormatted": "0:52:20",
+      "artist": "Brad Peterson - www.moodyroom.com",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_6_the_evidence_by_brad_peterson_061002.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Techno",
+      "date": "2002",
+      "comment": "http://deeprhythms.com",
+      "peaksFile": "deeprhythms_guestmix_6_the_evidence_by_brad_peterson_061002.peaks.json"
+    },
+    {
+      "name": "Deeprhythms guest mix 10 -  Sirens",
+      "file": "deeprhythms_guestmix_10_sirens_by_tomasz_121103",
+      "audioFile": "deeprhythms_guestmix_10_sirens_by_tomasz_121103.mp3",
+      "duration": 4635.253688,
+      "durationFormatted": "1:17:15",
+      "artist": "Tomasz Szymanski (Vancouver, Canada)",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_10_sirens_by_tomasz_121103.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "deep house",
+      "date": "2003",
+      "comment": "http://deeprhythms.com\r\nhttp://slowitdown.org",
+      "peaksFile": "deeprhythms_guestmix_10_sirens_by_tomasz_121103.peaks.json"
+    },
+    {
+      "name": "Deeprhythms guest mix 11 \"Moving House\" by Andy Grant",
+      "file": "deeprhythms_guestmix_11_moving_house_by_andy_grant_270204",
+      "audioFile": "deeprhythms_guestmix_11_moving_house_by_andy_grant_270204.mp3",
+      "duration": 4230.870188,
+      "durationFormatted": "1:10:30",
+      "artist": "Andy Grant - andy@planetsoulnetwork.com",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_11_moving_house_by_andy_grant_270204.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2004",
+      "comment": "A guest by Andy Grant for www.deeprhythms.com",
+      "peaksFile": "deeprhythms_guestmix_11_moving_house_by_andy_grant_270204.peaks.json"
+    },
+    {
+      "name": "Deeprhythms guest mix 12 'Vanguard'",
+      "file": "deeprhythms_guestmix_12_vanguard_by_trulymadly_210804",
+      "audioFile": "deeprhythms_guestmix_12_vanguard_by_trulymadly_210804.mp3",
+      "duration": 4600.032813,
+      "durationFormatted": "1:16:40",
+      "artist": "Truly-Madly (Michael Joyce)",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_12_vanguard_by_trulymadly_210804.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2004",
+      "comment": "A guest mix by Michael Joyce of truly-madly.com",
+      "peaksFile": "deeprhythms_guestmix_12_vanguard_by_trulymadly_210804.peaks.json"
+    },
+    {
+      "name": "Deeprhythms guest mix 14 -  Keeping My Mind",
+      "file": "deeprhythms_guestmix_15_keeping_my_mind_by_james_bucknell_260106",
+      "audioFile": "deeprhythms_guestmix_15_keeping_my_mind_by_james_bucknell_260106.mp3",
+      "duration": 4075.96425,
+      "durationFormatted": "1:07:55",
+      "artist": "James Bucknell",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_15_keeping_my_mind_by_james_bucknell_260106.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2006",
+      "comment": "A guest mix by James Bucknell for deeprhythms.com. All rights reseved by respective artists and labels. Promotional use only.E-mail James: echoloop@hotmail.com. ",
+      "peaksFile": "deeprhythms_guestmix_15_keeping_my_mind_by_james_bucknell_260106.peaks.json"
+    },
+    {
+      "name": "deeprhythms guest mix 44",
+      "file": "deeprhythms_guestmix_44_red_d_we_play_house_interview_guest_mix_221110",
+      "audioFile": "deeprhythms_guestmix_44_red_d_we_play_house_interview_guest_mix_221110.mp3",
+      "duration": 3406.106122,
+      "durationFormatted": "0:56:46",
+      "artist": "Red D",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_44_red_d_we_play_house_interview_guest_mix_221110.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2010",
+      "comment": "We Play House Recordings boss captures a story of a wild night in a mix. Copyright respective artists and labels, for promotional use only. Playlist + INTERVIEW: http://deeprhythms.com/guest_mixes/re_d__we_play_house_interview_guest_mix_44.php",
+      "peaksFile": "deeprhythms_guestmix_44_red_d_we_play_house_interview_guest_mix_221110.peaks.json",
+      "coverFile": "deeprhythms_guestmix_44_red_d_we_play_house_interview_guest_mix_221110.jpg"
+    },
+    {
+      "name": "Deeprhythms guest mix #9 - 'Connections'",
+      "file": "deeprhythms_guestmix_9_connections_by_davide_maffei_220803",
+      "audioFile": "deeprhythms_guestmix_9_connections_by_davide_maffei_220803.mp3",
+      "duration": 4504.450625,
+      "durationFormatted": "1:15:04",
+      "artist": "DavideM ",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_9_connections_by_davide_maffei_220803.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2003",
+      "peaksFile": "deeprhythms_guestmix_9_connections_by_davide_maffei_220803.peaks.json"
+    },
+    {
       "name": "Deeprhythms guest mix #16 - Margarine plantation - 25092006",
       "file": "deeprhythms_guestmix_16_margarine_plantation_by_le_dub_dwell_021006",
       "audioFile": "deeprhythms_guestmix_16_margarine_plantation_by_le_dub_dwell_021006.mp3",
@@ -1283,21 +1426,19 @@
       "coverFile": "deeprhythms_guestmix_23_hitek_house_by_brad_peterson_070208.png"
     },
     {
-      "name": "Deeprhythms guest mix #9 - 'Connections'",
-      "file": "deeprhythms_guestmix_9_connections_by_davide_maffei_220803",
-      "audioFile": "deeprhythms_guestmix_9_connections_by_davide_maffei_220803.mp3",
-      "duration": 4504.450625,
-      "durationFormatted": "1:15:04",
-      "artist": "DavideM ",
+      "name": "deeprhythms guest mix - 'crax'",
+      "file": "deeprhythms_guestmix_4_crax_by_keto_160602",
+      "audioFile": "deeprhythms_guestmix_4_crax_by_keto_160602.mp3",
+      "duration": 4395.969875,
+      "durationFormatted": "1:13:15",
+      "artist": "keto",
       "downloads": [
         {
-          "file": "deeprhythms_guestmix_9_connections_by_davide_maffei_220803.mp3",
+          "file": "deeprhythms_guestmix_4_crax_by_keto_160602.mp3",
           "label": "MP3"
         }
       ],
-      "genre": "House",
-      "date": "2003",
-      "peaksFile": "deeprhythms_guestmix_9_connections_by_davide_maffei_220803.peaks.json"
+      "peaksFile": "deeprhythms_guestmix_4_crax_by_keto_160602.peaks.json"
     },
     {
       "name": "Deeprhythms guest mix - Smoke it deep 3",
@@ -1314,96 +1455,6 @@
       ],
       "genre": "House",
       "peaksFile": "deeprhythms_guestmix_5_smoke_it_deep_3_by_blacksoul_020902.peaks.json"
-    },
-    {
-      "name": "Deeprhythms guest mix 10 -  Sirens",
-      "file": "deeprhythms_guestmix_10_sirens_by_tomasz_121103",
-      "audioFile": "deeprhythms_guestmix_10_sirens_by_tomasz_121103.mp3",
-      "duration": 4635.253688,
-      "durationFormatted": "1:17:15",
-      "artist": "Tomasz Szymanski (Vancouver, Canada)",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_10_sirens_by_tomasz_121103.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "deep house",
-      "date": "2003",
-      "comment": "http://deeprhythms.com\r\nhttp://slowitdown.org",
-      "peaksFile": "deeprhythms_guestmix_10_sirens_by_tomasz_121103.peaks.json"
-    },
-    {
-      "name": "Deeprhythms guest mix 11 \"Moving House\" by Andy Grant",
-      "file": "deeprhythms_guestmix_11_moving_house_by_andy_grant_270204",
-      "audioFile": "deeprhythms_guestmix_11_moving_house_by_andy_grant_270204.mp3",
-      "duration": 4230.870188,
-      "durationFormatted": "1:10:30",
-      "artist": "Andy Grant - andy@planetsoulnetwork.com",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_11_moving_house_by_andy_grant_270204.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "House",
-      "date": "2004",
-      "comment": "A guest by Andy Grant for www.deeprhythms.com",
-      "peaksFile": "deeprhythms_guestmix_11_moving_house_by_andy_grant_270204.peaks.json"
-    },
-    {
-      "name": "Deeprhythms guest mix 12 'Vanguard'",
-      "file": "deeprhythms_guestmix_12_vanguard_by_trulymadly_210804",
-      "audioFile": "deeprhythms_guestmix_12_vanguard_by_trulymadly_210804.mp3",
-      "duration": 4600.032813,
-      "durationFormatted": "1:16:40",
-      "artist": "Truly-Madly (Michael Joyce)",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_12_vanguard_by_trulymadly_210804.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "House",
-      "date": "2004",
-      "comment": "A guest mix by Michael Joyce of truly-madly.com",
-      "peaksFile": "deeprhythms_guestmix_12_vanguard_by_trulymadly_210804.peaks.json"
-    },
-    {
-      "name": "Deeprhythms guest mix 14 -  Keeping My Mind",
-      "file": "deeprhythms_guestmix_15_keeping_my_mind_by_james_bucknell_260106",
-      "audioFile": "deeprhythms_guestmix_15_keeping_my_mind_by_james_bucknell_260106.mp3",
-      "duration": 4075.96425,
-      "durationFormatted": "1:07:55",
-      "artist": "James Bucknell",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_15_keeping_my_mind_by_james_bucknell_260106.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Deep House",
-      "date": "2006",
-      "comment": "A guest mix by James Bucknell for deeprhythms.com. All rights reseved by respective artists and labels. Promotional use only.E-mail James: echoloop@hotmail.com. ",
-      "peaksFile": "deeprhythms_guestmix_15_keeping_my_mind_by_james_bucknell_260106.peaks.json"
-    },
-    {
-      "name": "Deeprhythms guest mix 6 - Brad Peterson - The Evidence - 061002",
-      "file": "deeprhythms_guestmix_6_the_evidence_by_brad_peterson_061002",
-      "audioFile": "deeprhythms_guestmix_6_the_evidence_by_brad_peterson_061002.mp3",
-      "duration": 3140.388563,
-      "durationFormatted": "0:52:20",
-      "artist": "Brad Peterson - www.moodyroom.com",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_6_the_evidence_by_brad_peterson_061002.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Techno",
-      "date": "2002",
-      "comment": "http://deeprhythms.com",
-      "peaksFile": "deeprhythms_guestmix_6_the_evidence_by_brad_peterson_061002.peaks.json"
     },
     {
       "name": "Deerhythms guest mix #56 'MSM Honey mix'",
@@ -1582,6 +1633,24 @@
       "coverFile": "deeprhythms_guestmix_63_gestalt_records_for_deeprhythms_040519.jpg"
     },
     {
+      "name": "Guest mix 59 Coastal Dreams by Kuri",
+      "file": "deeprhythms_guestmix_59_coastal_dreams_by_kuri_kondrak_060219",
+      "audioFile": "deeprhythms_guestmix_59_coastal_dreams_by_kuri_kondrak_060219.mp3",
+      "duration": 3802.488163,
+      "durationFormatted": "1:03:22",
+      "artist": "Kuri Kondrak",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_59_coastal_dreams_by_kuri_kondrak_060219.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Techno, House",
+      "date": "2019",
+      "peaksFile": "deeprhythms_guestmix_59_coastal_dreams_by_kuri_kondrak_060219.peaks.json",
+      "coverFile": "deeprhythms_guestmix_59_coastal_dreams_by_kuri_kondrak_060219.png"
+    },
+    {
       "name": "Guest mix #60 'Square Rooms' ",
       "file": "deeprhythms_guestmix_60_square_rooms_by_estimulo_280219",
       "audioFile": "deeprhythms_guestmix_60_square_rooms_by_estimulo_280219.mp3",
@@ -1653,24 +1722,6 @@
       "coverFile": "deeprhythms_guestmix_67_tet_for_deeprhythms_080819.jpg"
     },
     {
-      "name": "Guest mix 59 Coastal Dreams by Kuri",
-      "file": "deeprhythms_guestmix_59_coastal_dreams_by_kuri_kondrak_060219",
-      "audioFile": "deeprhythms_guestmix_59_coastal_dreams_by_kuri_kondrak_060219.mp3",
-      "duration": 3802.488163,
-      "durationFormatted": "1:03:22",
-      "artist": "Kuri Kondrak",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_59_coastal_dreams_by_kuri_kondrak_060219.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Techno, House",
-      "date": "2019",
-      "peaksFile": "deeprhythms_guestmix_59_coastal_dreams_by_kuri_kondrak_060219.peaks.json",
-      "coverFile": "deeprhythms_guestmix_59_coastal_dreams_by_kuri_kondrak_060219.png"
-    },
-    {
       "name": "Hollow Cloud - deeprhythms.com guest mix #24",
       "file": "deeprhythms_guestmix_24_hollow_cloud_by_kompressorkanonen_010608",
       "audioFile": "deeprhythms_guestmix_24_hollow_cloud_by_kompressorkanonen_010608.mp3",
@@ -1687,419 +1738,6 @@
       "date": "2008",
       "peaksFile": "deeprhythms_guestmix_24_hollow_cloud_by_kompressorkanonen_010608.peaks.json",
       "coverFile": "deeprhythms_guestmix_24_hollow_cloud_by_kompressorkanonen_010608.png"
-    },
-    {
-      "name": "It's Up To You",
-      "file": "deeprhythms_guestmix_7_its_up_to_you_by_christopher_layne_221102",
-      "audioFile": "deeprhythms_guestmix_7_its_up_to_you_by_christopher_layne_221102.mp3",
-      "duration": 3707.898776,
-      "durationFormatted": "1:01:47",
-      "artist": "Christopher Layne",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_7_its_up_to_you_by_christopher_layne_221102.mp3",
-          "label": "MP3"
-        }
-      ],
-      "date": "2002",
-      "comment": "clayne@anodized.com",
-      "peaksFile": "deeprhythms_guestmix_7_its_up_to_you_by_christopher_layne_221102.peaks.json"
-    },
-    {
-      "name": "Laundry day, deeprhythms guest mix #42",
-      "file": "deeprhythms_guestmix_42_laundry_day_by_pat_lezizmo_090610",
-      "audioFile": "deeprhythms_guestmix_42_laundry_day_by_pat_lezizmo_090610.mp3",
-      "duration": 4548.707458,
-      "durationFormatted": "1:15:48",
-      "artist": "Pat lezizmo",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_42_laundry_day_by_pat_lezizmo_090610.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Deep House",
-      "date": "2010",
-      "comment": " Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/42_laundry_day_by_pat_lezizmo.php",
-      "peaksFile": "deeprhythms_guestmix_42_laundry_day_by_pat_lezizmo_090610.peaks.json",
-      "coverFile": "deeprhythms_guestmix_42_laundry_day_by_pat_lezizmo_090610.jpg"
-    },
-    {
-      "name": "Live at Miranda Latina, Bogota part 2",
-      "file": "deeprhythms_live_Bogota_pt2",
-      "audioFile": "deeprhythms_live_Bogota_pt2.mp3",
-      "duration": 2912.796,
-      "durationFormatted": "0:48:32",
-      "artist": "Timo (timo@deeprhythms.com)",
-      "downloads": [
-        {
-          "file": "deeprhythms_live_Bogota_pt2.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "House",
-      "date": "2004",
-      "peaksFile": "deeprhythms_live_Bogota_pt2.peaks.json"
-    },
-    {
-      "name": "Live at Miranda Latina, Bogota, part 1",
-      "file": "deeprhythms_live_Bogota_pt1",
-      "audioFile": "deeprhythms_live_Bogota_pt1.mp3",
-      "duration": 3621.636,
-      "durationFormatted": "1:00:21",
-      "artist": "Timo (timo@deeprhythms.com)",
-      "downloads": [
-        {
-          "file": "deeprhythms_live_Bogota_pt1.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "House",
-      "date": "2004",
-      "peaksFile": "deeprhythms_live_Bogota_pt1.peaks.json"
-    },
-    {
-      "name": "Made In Chicago, deeprhythms guest mix #47",
-      "file": "deeprhythms_guestmix_47_made_in_chicago_by_chicagodeep_interview_140411",
-      "audioFile": "deeprhythms_guestmix_47_made_in_chicago_by_chicagodeep_interview_140411.mp3",
-      "duration": 4790.679,
-      "durationFormatted": "1:19:50",
-      "artist": "Chicagodeep",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_47_made_in_chicago_by_chicagodeep_interview_140411.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Chicago house",
-      "date": "2011",
-      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/47_made_in_chicago_by_chicagodeep.php.",
-      "peaksFile": "deeprhythms_guestmix_47_made_in_chicago_by_chicagodeep_interview_140411.peaks.json",
-      "coverFile": "deeprhythms_guestmix_47_made_in_chicago_by_chicagodeep_interview_140411.png"
-    },
-    {
-      "name": "Meanwhile, deeprhythms guest mix #28",
-      "file": "deeprhythms_guestmix_28_meanwhile_by_mike_bishop_080309",
-      "audioFile": "deeprhythms_guestmix_28_meanwhile_by_mike_bishop_080309.mp3",
-      "duration": 4649.722878,
-      "durationFormatted": "1:17:29",
-      "artist": "Mike Bishop",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_28_meanwhile_by_mike_bishop_080309.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Deep House",
-      "date": "2009",
-      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/28_meanwhile_by_mike_bishop.php. More from Mike Bishop at http://www.discogs.com/user/mrmrb",
-      "peaksFile": "deeprhythms_guestmix_28_meanwhile_by_mike_bishop_080309.peaks.json",
-      "coverFile": "deeprhythms_guestmix_28_meanwhile_by_mike_bishop_080309.jpg"
-    },
-    {
-      "name": "MidNightMoodZ, deeprhythms guest mix #40",
-      "file": "deeprhythms_guestmix_40_midnitemoodz_by_timdeep_290310",
-      "audioFile": "deeprhythms_guestmix_40_midnitemoodz_by_timdeep_290310.mp3",
-      "duration": 4323.296833,
-      "durationFormatted": "1:12:03",
-      "artist": "TimDeep",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_40_midnitemoodz_by_timdeep_290310.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Deep House",
-      "date": "2010",
-      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/40_midnightmoodz_by_timdeep.php. More from Tim Cunningham at http://www.myspace.com/timdeep",
-      "peaksFile": "deeprhythms_guestmix_40_midnitemoodz_by_timdeep_290310.peaks.json",
-      "coverFile": "deeprhythms_guestmix_40_midnitemoodz_by_timdeep_290310.jpg"
-    },
-    {
-      "name": "My Deep House forever 007, deeprhythms guest mix #25",
-      "file": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808",
-      "audioFile": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808.mp3",
-      "duration": 3830.078878,
-      "durationFormatted": "1:03:50",
-      "artist": "DJ Peavey",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "House",
-      "date": "2008",
-      "peaksFile": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808.peaks.json",
-      "coverFile": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808.jpg"
-    },
-    {
-      "name": "No Good, deeprhythms guest mix #30",
-      "file": "deeprhythms_guestmix_30_no_good_by_dirty_cover_190509",
-      "audioFile": "deeprhythms_guestmix_30_no_good_by_dirty_cover_190509.mp3",
-      "duration": 3178.245378,
-      "durationFormatted": "0:52:58",
-      "artist": "Petar Cvetkovic / Dirty Cover",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_30_no_good_by_dirty_cover_190509.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Deep House",
-      "date": "2009",
-      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/30_no_good_by_dirty_cover.php. More about Dirty Cover: http://www.myspace.com/dirtycoverbg",
-      "peaksFile": "deeprhythms_guestmix_30_no_good_by_dirty_cover_190509.peaks.json",
-      "coverFile": "deeprhythms_guestmix_30_no_good_by_dirty_cover_190509.png"
-    },
-    {
-      "name": "SCPCOCT11, deeprhythms.com guest mix 52",
-      "file": "deeprhythms_guestmix_52_scpcoct11_by_spirit_catcher_201111",
-      "audioFile": "deeprhythms_guestmix_52_scpcoct11_by_spirit_catcher_201111.mp3",
-      "duration": 3624.286211,
-      "durationFormatted": "1:00:24",
-      "artist": "Spirit Catcher",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_52_scpcoct11_by_spirit_catcher_201111.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Deep House",
-      "date": "2011",
-      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/52_scpcoct11_by_spirit_catcher.php.",
-      "peaksFile": "deeprhythms_guestmix_52_scpcoct11_by_spirit_catcher_201111.peaks.json",
-      "coverFile": "deeprhythms_guestmix_52_scpcoct11_by_spirit_catcher_201111.png"
-    },
-    {
-      "name": "System Sauce - deeprhythms guest mix #38",
-      "file": "deeprhythms_guestmix_38_system_sauce_by_mike_bishop_191209",
-      "audioFile": "deeprhythms_guestmix_38_system_sauce_by_mike_bishop_191209.mp3",
-      "duration": 4129.285333,
-      "durationFormatted": "1:08:49",
-      "artist": "Mike Bishop",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_38_system_sauce_by_mike_bishop_191209.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "House",
-      "date": "2009",
-      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/38_system_sauce_by_mike_bishop.php. ",
-      "peaksFile": "deeprhythms_guestmix_38_system_sauce_by_mike_bishop_191209.peaks.json",
-      "coverFile": "deeprhythms_guestmix_38_system_sauce_by_mike_bishop_191209.jpg"
-    },
-    {
-      "name": "Syvyyttae Part1, deeprhythms guest mix 51",
-      "file": "deeprhythms_guestmix_51_syvyyttae_by_juergen_junker_interview_170811",
-      "audioFile": "deeprhythms_guestmix_51_syvyyttae_by_juergen_junker_interview_170811.mp3",
-      "duration": 3624.103333,
-      "durationFormatted": "1:00:24",
-      "artist": "Juergen Junker",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_51_syvyyttae_by_juergen_junker_interview_170811.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Deep House",
-      "date": "2011",
-      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/51_syvyyttae_by_juergen_junker.php. PT2 here! http://soundcloud.com/juergen-junker/syvyyttae-part2",
-      "peaksFile": "deeprhythms_guestmix_51_syvyyttae_by_juergen_junker_interview_170811.peaks.json",
-      "coverFile": "deeprhythms_guestmix_51_syvyyttae_by_juergen_junker_interview_170811.png"
-    },
-    {
-      "name": "Take Your Shoes off, deeprhythms.com guest mix #39",
-      "file": "deeprhythms_guestmix_39_take_your_shoes_off_by_daniel_paul_280210",
-      "audioFile": "deeprhythms_guestmix_39_take_your_shoes_off_by_daniel_paul_280210.mp3",
-      "duration": 3957.026325,
-      "durationFormatted": "1:05:57",
-      "artist": "Daniel Paul",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_39_take_your_shoes_off_by_daniel_paul_280210.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Deep House",
-      "date": "2010",
-      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/39_take_your_shoes_off_by_daniel_paul.php. More from Daniel Paul at  www.cabinet-records.de",
-      "peaksFile": "deeprhythms_guestmix_39_take_your_shoes_off_by_daniel_paul_280210.peaks.json",
-      "coverFile": "deeprhythms_guestmix_39_take_your_shoes_off_by_daniel_paul_280210.png"
-    },
-    {
-      "name": "The Arrival, deeprhythms guest mix #27",
-      "file": "deeprhythms_guestmix_27_the_arrival_by_timdeep_080209",
-      "audioFile": "deeprhythms_guestmix_27_the_arrival_by_timdeep_080209.mp3",
-      "duration": 4646.326958,
-      "durationFormatted": "1:17:26",
-      "artist": "TimDeep",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_27_the_arrival_by_timdeep_080209.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Deep House",
-      "date": "2009",
-      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/27_the_arrival_by_timdeep.php. More from Tim Cunningham at http://www.myspace.com/timdeep",
-      "peaksFile": "deeprhythms_guestmix_27_the_arrival_by_timdeep_080209.peaks.json",
-      "coverFile": "deeprhythms_guestmix_27_the_arrival_by_timdeep_080209.png"
-    },
-    {
-      "name": "Thelonious Funk Sessions #149 (Chicago Special Part 1) ",
-      "file": "Thelonious Funk Sessions #149 (Chicago Special Part 1)",
-      "audioFile": "Thelonious Funk Sessions #149 (Chicago Special Part 1).mp3",
-      "duration": 4575.768,
-      "durationFormatted": "1:16:15",
-      "artist": "Thelonious Funk",
-      "downloads": [
-        {
-          "file": "Thelonious Funk Sessions #149 (Chicago Special Part 1).mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Electronic",
-      "date": "1999",
-      "peaksFile": "Thelonious Funk Sessions #149 (Chicago Special Part 1).peaks.json"
-    },
-    {
-      "name": "Thelonious Funk Sessions #149 (Chicago Special Part 2)",
-      "file": "Thelonious Funk Sessions #149 (Chicago Special Part 2)",
-      "audioFile": "Thelonious Funk Sessions #149 (Chicago Special Part 2).mp3",
-      "duration": 4786.728,
-      "durationFormatted": "1:19:46",
-      "artist": "Thelonious Funk",
-      "downloads": [
-        {
-          "file": "Thelonious Funk Sessions #149 (Chicago Special Part 2).mp3",
-          "label": "MP3"
-        }
-      ],
-      "peaksFile": "Thelonious Funk Sessions #149 (Chicago Special Part 2).peaks.json"
-    },
-    {
-      "name": "Timo live at \"Valtimo\", mbar Helsinki,  21st of May 2004",
-      "file": "Timo_Rotonen_deeprhythms.com_live_at_Valtimo_mbar_Helsinki_210504_80kbs",
-      "audioFile": "Timo_Rotonen_deeprhythms.com_live_at_Valtimo_mbar_Helsinki_210504_80kbs.mp3",
-      "duration": 9748.7279,
-      "durationFormatted": "2:42:28",
-      "artist": "Timo Rotonen (timo@deeprhythms.com)",
-      "downloads": [
-        {
-          "file": "Timo_Rotonen_deeprhythms.com_live_at_Valtimo_mbar_Helsinki_210504_80kbs.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Deep house",
-      "date": "2004",
-      "peaksFile": "Timo_Rotonen_deeprhythms.com_live_at_Valtimo_mbar_Helsinki_210504_80kbs.peaks.json"
-    },
-    {
-      "name": "Truetek, deeprhythms guest mix #31",
-      "file": "deeprhythms_guestmix_31_truetek_by_brad_peterson_100609",
-      "audioFile": "deeprhythms_guestmix_31_truetek_by_brad_peterson_100609.mp3",
-      "duration": 4805.877625,
-      "durationFormatted": "1:20:05",
-      "artist": "Brad Peterson",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_31_truetek_by_brad_peterson_100609.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Deep tech",
-      "date": "2009",
-      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/31_truetek_by_brad_peterson.php.",
-      "peaksFile": "deeprhythms_guestmix_31_truetek_by_brad_peterson_100609.peaks.json",
-      "coverFile": "deeprhythms_guestmix_31_truetek_by_brad_peterson_100609.png"
-    },
-    {
-      "name": "Vodka sessions vol .1",
-      "file": "Timo_and_Dan_-_Vodka_sessions_vol1_-_Helsinki_22.11.03",
-      "audioFile": "Timo_and_Dan_-_Vodka_sessions_vol1_-_Helsinki_22.11.03.mp3",
-      "duration": 4757.211375,
-      "durationFormatted": "1:19:17",
-      "artist": "Dan Cuthbert and Timo Rotonen",
-      "downloads": [
-        {
-          "file": "Timo_and_Dan_-_Vodka_sessions_vol1_-_Helsinki_22.11.03.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Deep House",
-      "date": "2003",
-      "comment": "Mixed live in Helsinki on a snowy day in late November",
-      "peaksFile": "Timo_and_Dan_-_Vodka_sessions_vol1_-_Helsinki_22.11.03.peaks.json"
-    },
-    {
-      "name": "Vodka sessions vol 2 - Helsinki 23.11.03",
-      "file": "Timo_and_Dan_-_Vodka_sessions_vol2_-_Helsinki_23.11.03",
-      "audioFile": "Timo_and_Dan_-_Vodka_sessions_vol2_-_Helsinki_23.11.03.mp3",
-      "duration": 5029.746938,
-      "durationFormatted": "1:23:49",
-      "artist": "Dan Cuthbert and Timo Rotonen",
-      "downloads": [
-        {
-          "file": "Timo_and_Dan_-_Vodka_sessions_vol2_-_Helsinki_23.11.03.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "deep house",
-      "date": "2003",
-      "peaksFile": "Timo_and_Dan_-_Vodka_sessions_vol2_-_Helsinki_23.11.03.peaks.json"
-    },
-    {
-      "name": "deeprhythms 42 - Variables - 26042005",
-      "file": "deeprhythms_42_variable_270405",
-      "audioFile": "deeprhythms_42_variable_270405.mp3",
-      "duration": 4375.066313,
-      "durationFormatted": "1:12:55",
-      "artist": "Timo (timo@deeprhythms.com)",
-      "downloads": [
-        {
-          "file": "deeprhythms_42_variable_270405.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Deep House",
-      "date": "2005",
-      "comment": "Copyright respective artists, promotional use only. Platlist and more info at deeprhythms.com",
-      "peaksFile": "deeprhythms_42_variable_270405.peaks.json"
-    },
-    {
-      "name": "deeprhythms guest mix - 'crax'",
-      "file": "deeprhythms_guestmix_4_crax_by_keto_160602",
-      "audioFile": "deeprhythms_guestmix_4_crax_by_keto_160602.mp3",
-      "duration": 4395.969875,
-      "durationFormatted": "1:13:15",
-      "artist": "keto",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_4_crax_by_keto_160602.mp3",
-          "label": "MP3"
-        }
-      ],
-      "peaksFile": "deeprhythms_guestmix_4_crax_by_keto_160602.peaks.json"
-    },
-    {
-      "name": "deeprhythms guest mix 44",
-      "file": "deeprhythms_guestmix_44_red_d_we_play_house_interview_guest_mix_221110",
-      "audioFile": "deeprhythms_guestmix_44_red_d_we_play_house_interview_guest_mix_221110.mp3",
-      "duration": 3406.106122,
-      "durationFormatted": "0:56:46",
-      "artist": "Red D",
-      "downloads": [
-        {
-          "file": "deeprhythms_guestmix_44_red_d_we_play_house_interview_guest_mix_221110.mp3",
-          "label": "MP3"
-        }
-      ],
-      "date": "2010",
-      "comment": "We Play House Recordings boss captures a story of a wild night in a mix. Copyright respective artists and labels, for promotional use only. Playlist + INTERVIEW: http://deeprhythms.com/guest_mixes/re_d__we_play_house_interview_guest_mix_44.php",
-      "peaksFile": "deeprhythms_guestmix_44_red_d_we_play_house_interview_guest_mix_221110.peaks.json",
-      "coverFile": "deeprhythms_guestmix_44_red_d_we_play_house_interview_guest_mix_221110.jpg"
     },
     {
       "name": "http://deeprhythms.com",
@@ -2327,6 +1965,76 @@
       "peaksFile": "deeprhythms_guestmix_2_of_spirit_from_chaos_by_roxnadz_221001.peaks.json"
     },
     {
+      "name": "It's Up To You",
+      "file": "deeprhythms_guestmix_7_its_up_to_you_by_christopher_layne_221102",
+      "audioFile": "deeprhythms_guestmix_7_its_up_to_you_by_christopher_layne_221102.mp3",
+      "duration": 3707.898776,
+      "durationFormatted": "1:01:47",
+      "artist": "Christopher Layne",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_7_its_up_to_you_by_christopher_layne_221102.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2002",
+      "comment": "clayne@anodized.com",
+      "peaksFile": "deeprhythms_guestmix_7_its_up_to_you_by_christopher_layne_221102.peaks.json"
+    },
+    {
+      "name": "Laundry day, deeprhythms guest mix #42",
+      "file": "deeprhythms_guestmix_42_laundry_day_by_pat_lezizmo_090610",
+      "audioFile": "deeprhythms_guestmix_42_laundry_day_by_pat_lezizmo_090610.mp3",
+      "duration": 4548.707458,
+      "durationFormatted": "1:15:48",
+      "artist": "Pat lezizmo",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_42_laundry_day_by_pat_lezizmo_090610.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2010",
+      "comment": " Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/42_laundry_day_by_pat_lezizmo.php",
+      "peaksFile": "deeprhythms_guestmix_42_laundry_day_by_pat_lezizmo_090610.peaks.json",
+      "coverFile": "deeprhythms_guestmix_42_laundry_day_by_pat_lezizmo_090610.jpg"
+    },
+    {
+      "name": "Live at Miranda Latina, Bogota part 2",
+      "file": "deeprhythms_live_Bogota_pt2",
+      "audioFile": "deeprhythms_live_Bogota_pt2.mp3",
+      "duration": 2912.796,
+      "durationFormatted": "0:48:32",
+      "artist": "Timo (timo@deeprhythms.com)",
+      "downloads": [
+        {
+          "file": "deeprhythms_live_Bogota_pt2.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2004",
+      "peaksFile": "deeprhythms_live_Bogota_pt2.peaks.json"
+    },
+    {
+      "name": "Live at Miranda Latina, Bogota, part 1",
+      "file": "deeprhythms_live_Bogota_pt1",
+      "audioFile": "deeprhythms_live_Bogota_pt1.mp3",
+      "duration": 3621.636,
+      "durationFormatted": "1:00:21",
+      "artist": "Timo (timo@deeprhythms.com)",
+      "downloads": [
+        {
+          "file": "deeprhythms_live_Bogota_pt1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2004",
+      "peaksFile": "deeprhythms_live_Bogota_pt1.peaks.json"
+    },
+    {
       "name": "live with Timo Rotonen from deeprhythms.com - chat with Timo now on www.planetsoulnetwork.com",
       "file": "Bluetransmission-TimoRotonen-Aprl-9-03",
       "audioFile": "Bluetransmission-TimoRotonen-Aprl-9-03.mp3",
@@ -2343,6 +2051,119 @@
       "date": "2003",
       "comment": "planetsoulnetwork.com",
       "peaksFile": "Bluetransmission-TimoRotonen-Aprl-9-03.peaks.json"
+    },
+    {
+      "name": "Made In Chicago, deeprhythms guest mix #47",
+      "file": "deeprhythms_guestmix_47_made_in_chicago_by_chicagodeep_interview_140411",
+      "audioFile": "deeprhythms_guestmix_47_made_in_chicago_by_chicagodeep_interview_140411.mp3",
+      "duration": 4790.679,
+      "durationFormatted": "1:19:50",
+      "artist": "Chicagodeep",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_47_made_in_chicago_by_chicagodeep_interview_140411.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Chicago house",
+      "date": "2011",
+      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/47_made_in_chicago_by_chicagodeep.php.",
+      "peaksFile": "deeprhythms_guestmix_47_made_in_chicago_by_chicagodeep_interview_140411.peaks.json",
+      "coverFile": "deeprhythms_guestmix_47_made_in_chicago_by_chicagodeep_interview_140411.png"
+    },
+    {
+      "name": "Meanwhile, deeprhythms guest mix #28",
+      "file": "deeprhythms_guestmix_28_meanwhile_by_mike_bishop_080309",
+      "audioFile": "deeprhythms_guestmix_28_meanwhile_by_mike_bishop_080309.mp3",
+      "duration": 4649.722878,
+      "durationFormatted": "1:17:29",
+      "artist": "Mike Bishop",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_28_meanwhile_by_mike_bishop_080309.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/28_meanwhile_by_mike_bishop.php. More from Mike Bishop at http://www.discogs.com/user/mrmrb",
+      "peaksFile": "deeprhythms_guestmix_28_meanwhile_by_mike_bishop_080309.peaks.json",
+      "coverFile": "deeprhythms_guestmix_28_meanwhile_by_mike_bishop_080309.jpg"
+    },
+    {
+      "name": "MidNightMoodZ, deeprhythms guest mix #40",
+      "file": "deeprhythms_guestmix_40_midnitemoodz_by_timdeep_290310",
+      "audioFile": "deeprhythms_guestmix_40_midnitemoodz_by_timdeep_290310.mp3",
+      "duration": 4323.296833,
+      "durationFormatted": "1:12:03",
+      "artist": "TimDeep",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_40_midnitemoodz_by_timdeep_290310.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2010",
+      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/40_midnightmoodz_by_timdeep.php. More from Tim Cunningham at http://www.myspace.com/timdeep",
+      "peaksFile": "deeprhythms_guestmix_40_midnitemoodz_by_timdeep_290310.peaks.json",
+      "coverFile": "deeprhythms_guestmix_40_midnitemoodz_by_timdeep_290310.jpg"
+    },
+    {
+      "name": "My Deep House forever 007, deeprhythms guest mix #25",
+      "file": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808",
+      "audioFile": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808.mp3",
+      "duration": 3830.078878,
+      "durationFormatted": "1:03:50",
+      "artist": "DJ Peavey",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2008",
+      "peaksFile": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808.peaks.json",
+      "coverFile": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808.jpg"
+    },
+    {
+      "name": "No Good, deeprhythms guest mix #30",
+      "file": "deeprhythms_guestmix_30_no_good_by_dirty_cover_190509",
+      "audioFile": "deeprhythms_guestmix_30_no_good_by_dirty_cover_190509.mp3",
+      "duration": 3178.245378,
+      "durationFormatted": "0:52:58",
+      "artist": "Petar Cvetkovic / Dirty Cover",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_30_no_good_by_dirty_cover_190509.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/30_no_good_by_dirty_cover.php. More about Dirty Cover: http://www.myspace.com/dirtycoverbg",
+      "peaksFile": "deeprhythms_guestmix_30_no_good_by_dirty_cover_190509.peaks.json",
+      "coverFile": "deeprhythms_guestmix_30_no_good_by_dirty_cover_190509.png"
+    },
+    {
+      "name": "SCPCOCT11, deeprhythms.com guest mix 52",
+      "file": "deeprhythms_guestmix_52_scpcoct11_by_spirit_catcher_201111",
+      "audioFile": "deeprhythms_guestmix_52_scpcoct11_by_spirit_catcher_201111.mp3",
+      "duration": 3624.286211,
+      "durationFormatted": "1:00:24",
+      "artist": "Spirit Catcher",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_52_scpcoct11_by_spirit_catcher_201111.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2011",
+      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/52_scpcoct11_by_spirit_catcher.php.",
+      "peaksFile": "deeprhythms_guestmix_52_scpcoct11_by_spirit_catcher_201111.peaks.json",
+      "coverFile": "deeprhythms_guestmix_52_scpcoct11_by_spirit_catcher_201111.png"
     },
     {
       "name": "sponka",
@@ -2381,12 +2202,137 @@
       "peaksFile": "deepsoul16-3raw.peaks.json"
     },
     {
-      "name": "timo_rotonen_height_of_summer_128",
+      "name": "System Sauce - deeprhythms guest mix #38",
+      "file": "deeprhythms_guestmix_38_system_sauce_by_mike_bishop_191209",
+      "audioFile": "deeprhythms_guestmix_38_system_sauce_by_mike_bishop_191209.mp3",
+      "duration": 4129.285333,
+      "durationFormatted": "1:08:49",
+      "artist": "Mike Bishop",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_38_system_sauce_by_mike_bishop_191209.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2009",
+      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/38_system_sauce_by_mike_bishop.php. ",
+      "peaksFile": "deeprhythms_guestmix_38_system_sauce_by_mike_bishop_191209.peaks.json",
+      "coverFile": "deeprhythms_guestmix_38_system_sauce_by_mike_bishop_191209.jpg"
+    },
+    {
+      "name": "Syvyyttae Part1, deeprhythms guest mix 51",
+      "file": "deeprhythms_guestmix_51_syvyyttae_by_juergen_junker_interview_170811",
+      "audioFile": "deeprhythms_guestmix_51_syvyyttae_by_juergen_junker_interview_170811.mp3",
+      "duration": 3624.103333,
+      "durationFormatted": "1:00:24",
+      "artist": "Juergen Junker",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_51_syvyyttae_by_juergen_junker_interview_170811.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2011",
+      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/51_syvyyttae_by_juergen_junker.php. PT2 here! http://soundcloud.com/juergen-junker/syvyyttae-part2",
+      "peaksFile": "deeprhythms_guestmix_51_syvyyttae_by_juergen_junker_interview_170811.peaks.json",
+      "coverFile": "deeprhythms_guestmix_51_syvyyttae_by_juergen_junker_interview_170811.png"
+    },
+    {
+      "name": "Take Your Shoes off, deeprhythms.com guest mix #39",
+      "file": "deeprhythms_guestmix_39_take_your_shoes_off_by_daniel_paul_280210",
+      "audioFile": "deeprhythms_guestmix_39_take_your_shoes_off_by_daniel_paul_280210.mp3",
+      "duration": 3957.026325,
+      "durationFormatted": "1:05:57",
+      "artist": "Daniel Paul",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_39_take_your_shoes_off_by_daniel_paul_280210.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2010",
+      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/39_take_your_shoes_off_by_daniel_paul.php. More from Daniel Paul at  www.cabinet-records.de",
+      "peaksFile": "deeprhythms_guestmix_39_take_your_shoes_off_by_daniel_paul_280210.peaks.json",
+      "coverFile": "deeprhythms_guestmix_39_take_your_shoes_off_by_daniel_paul_280210.png"
+    },
+    {
+      "name": "The Arrival, deeprhythms guest mix #27",
+      "file": "deeprhythms_guestmix_27_the_arrival_by_timdeep_080209",
+      "audioFile": "deeprhythms_guestmix_27_the_arrival_by_timdeep_080209.mp3",
+      "duration": 4646.326958,
+      "durationFormatted": "1:17:26",
+      "artist": "TimDeep",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_27_the_arrival_by_timdeep_080209.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/27_the_arrival_by_timdeep.php. More from Tim Cunningham at http://www.myspace.com/timdeep",
+      "peaksFile": "deeprhythms_guestmix_27_the_arrival_by_timdeep_080209.peaks.json",
+      "coverFile": "deeprhythms_guestmix_27_the_arrival_by_timdeep_080209.png"
+    },
+    {
+      "name": "Thelonious Funk Sessions #149 (Chicago Special Part 1) ",
+      "file": "Thelonious Funk Sessions #149 (Chicago Special Part 1)",
+      "audioFile": "Thelonious Funk Sessions #149 (Chicago Special Part 1).mp3",
+      "duration": 4575.768,
+      "durationFormatted": "1:16:15",
+      "artist": "Thelonious Funk",
+      "downloads": [
+        {
+          "file": "Thelonious Funk Sessions #149 (Chicago Special Part 1).mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Electronic",
+      "date": "1999",
+      "peaksFile": "Thelonious Funk Sessions #149 (Chicago Special Part 1).peaks.json"
+    },
+    {
+      "name": "Thelonious Funk Sessions #149 (Chicago Special Part 2)",
+      "file": "Thelonious Funk Sessions #149 (Chicago Special Part 2)",
+      "audioFile": "Thelonious Funk Sessions #149 (Chicago Special Part 2).mp3",
+      "duration": 4786.728,
+      "durationFormatted": "1:19:46",
+      "artist": "Thelonious Funk",
+      "downloads": [
+        {
+          "file": "Thelonious Funk Sessions #149 (Chicago Special Part 2).mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Thelonious Funk Sessions #149 (Chicago Special Part 2).peaks.json"
+    },
+    {
+      "name": "Timo live at \"Valtimo\", mbar Helsinki,  21st of May 2004",
+      "file": "Timo_Rotonen_deeprhythms.com_live_at_Valtimo_mbar_Helsinki_210504_80kbs",
+      "audioFile": "Timo_Rotonen_deeprhythms.com_live_at_Valtimo_mbar_Helsinki_210504_80kbs.mp3",
+      "duration": 9748.7279,
+      "durationFormatted": "2:42:28",
+      "artist": "Timo Rotonen (timo@deeprhythms.com)",
+      "downloads": [
+        {
+          "file": "Timo_Rotonen_deeprhythms.com_live_at_Valtimo_mbar_Helsinki_210504_80kbs.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep house",
+      "date": "2004",
+      "peaksFile": "Timo_Rotonen_deeprhythms.com_live_at_Valtimo_mbar_Helsinki_210504_80kbs.peaks.json"
+    },
+    {
+      "name": "timo rotonen height of summer 128",
       "file": "timo_rotonen_height_of_summer_128",
       "audioFile": "timo_rotonen_height_of_summer_128.mp3",
       "duration": 7261.28325,
       "durationFormatted": "2:01:01",
-      "artist": "",
+      "artist": "DeepRhythms",
       "downloads": [
         {
           "file": "timo_rotonen_height_of_summer_128.mp3",
@@ -2396,12 +2342,31 @@
       "peaksFile": "timo_rotonen_height_of_summer_128.peaks.json"
     },
     {
-      "name": "underground_exit_timo_140803",
+      "name": "Truetek, deeprhythms guest mix #31",
+      "file": "deeprhythms_guestmix_31_truetek_by_brad_peterson_100609",
+      "audioFile": "deeprhythms_guestmix_31_truetek_by_brad_peterson_100609.mp3",
+      "duration": 4805.877625,
+      "durationFormatted": "1:20:05",
+      "artist": "Brad Peterson",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_31_truetek_by_brad_peterson_100609.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep tech",
+      "date": "2009",
+      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/31_truetek_by_brad_peterson.php.",
+      "peaksFile": "deeprhythms_guestmix_31_truetek_by_brad_peterson_100609.peaks.json",
+      "coverFile": "deeprhythms_guestmix_31_truetek_by_brad_peterson_100609.png"
+    },
+    {
+      "name": "underground exit timo 140803",
       "file": "underground_exit_timo_140803",
       "audioFile": "underground_exit_timo_140803.mp3",
       "duration": 7059.14775,
       "durationFormatted": "1:57:39",
-      "artist": "",
+      "artist": "DeepRhythms",
       "downloads": [
         {
           "file": "underground_exit_timo_140803.mp3",
@@ -2411,12 +2376,12 @@
       "peaksFile": "underground_exit_timo_140803.peaks.json"
     },
     {
-      "name": "unreleased_105min_deeprhythms_mix_timo_070803",
+      "name": "unreleased 105min deeprhythms mix timo 070803",
       "file": "unreleased_105min_deeprhythms_mix_timo_070803",
       "audioFile": "unreleased_105min_deeprhythms_mix_timo_070803.mp3",
       "duration": 6322.546938,
       "durationFormatted": "1:45:22",
-      "artist": "",
+      "artist": "DeepRhythms",
       "downloads": [
         {
           "file": "unreleased_105min_deeprhythms_mix_timo_070803.mp3",
@@ -2424,6 +2389,41 @@
         }
       ],
       "peaksFile": "unreleased_105min_deeprhythms_mix_timo_070803.peaks.json"
+    },
+    {
+      "name": "Vodka sessions vol 2 - Helsinki 23.11.03",
+      "file": "Timo_and_Dan_-_Vodka_sessions_vol2_-_Helsinki_23.11.03",
+      "audioFile": "Timo_and_Dan_-_Vodka_sessions_vol2_-_Helsinki_23.11.03.mp3",
+      "duration": 5029.746938,
+      "durationFormatted": "1:23:49",
+      "artist": "Dan Cuthbert and Timo Rotonen",
+      "downloads": [
+        {
+          "file": "Timo_and_Dan_-_Vodka_sessions_vol2_-_Helsinki_23.11.03.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "deep house",
+      "date": "2003",
+      "peaksFile": "Timo_and_Dan_-_Vodka_sessions_vol2_-_Helsinki_23.11.03.peaks.json"
+    },
+    {
+      "name": "Vodka sessions vol .1",
+      "file": "Timo_and_Dan_-_Vodka_sessions_vol1_-_Helsinki_22.11.03",
+      "audioFile": "Timo_and_Dan_-_Vodka_sessions_vol1_-_Helsinki_22.11.03.mp3",
+      "duration": 4757.211375,
+      "durationFormatted": "1:19:17",
+      "artist": "Dan Cuthbert and Timo Rotonen",
+      "downloads": [
+        {
+          "file": "Timo_and_Dan_-_Vodka_sessions_vol1_-_Helsinki_22.11.03.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2003",
+      "comment": "Mixed live in Helsinki on a snowy day in late November",
+      "peaksFile": "Timo_and_Dan_-_Vodka_sessions_vol1_-_Helsinki_22.11.03.peaks.json"
     }
   ]
 }

@@ -2,12 +2,12 @@
   "generated": true,
   "mixes": [
     {
-      "name": "209_unique3_warp_records_xmas_party_2004",
+      "name": "209 unique3 warp records xmas party 2004",
       "file": "209_unique3_warp_records_xmas_party_2004",
       "audioFile": "209_unique3_warp_records_xmas_party_2004.mp3",
       "duration": 2785.0496,
       "durationFormatted": "0:46:25",
-      "artist": "",
+      "artist": "Unique3",
       "downloads": [
         {
           "file": "209_unique3_warp_records_xmas_party_2004.mp3",
@@ -142,21 +142,6 @@
       "peaksFile": "unique3@join_session_czech_republic_sept07.peaks.json"
     },
     {
-      "name": "Roundhouse Guest Mix",
-      "file": "Roundhouse Guest Mix 1",
-      "audioFile": "Roundhouse Guest Mix 1.mp3",
-      "duration": 3600.065275,
-      "durationFormatted": "1:00:00",
-      "artist": "Unique 3",
-      "downloads": [
-        {
-          "file": "Roundhouse Guest Mix 1.mp3",
-          "label": "MP3"
-        }
-      ],
-      "peaksFile": "Roundhouse Guest Mix 1.peaks.json"
-    },
-    {
       "name": "live DJ set @ Antiworld Festival 070707",
       "file": "216_unique3_Antiworld_Festival_Set_0707070",
       "audioFile": "216_unique3_Antiworld_Festival_Set_0707070.mp3",
@@ -172,6 +157,21 @@
       "date": "2007",
       "comment": "www.unique3.info",
       "peaksFile": "216_unique3_Antiworld_Festival_Set_0707070.peaks.json"
+    },
+    {
+      "name": "Roundhouse Guest Mix",
+      "file": "Roundhouse Guest Mix 1",
+      "audioFile": "Roundhouse Guest Mix 1.mp3",
+      "duration": 3600.065275,
+      "durationFormatted": "1:00:00",
+      "artist": "Unique 3",
+      "downloads": [
+        {
+          "file": "Roundhouse Guest Mix 1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Roundhouse Guest Mix 1.peaks.json"
     },
     {
       "name": "| 'electrofied' |",

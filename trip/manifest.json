@@ -137,10 +137,25 @@
       "peaksFile": "ATH210127.peaks.json"
     },
     {
+      "name": "Deep09 181202",
+      "file": "D09181202",
+      "audioFile": "D09181202.flac",
+      "duration": 13931.072472,
+      "durationFormatted": "3:52:11",
+      "artist": "trip-",
+      "downloads": [
+        {
+          "file": "D09181202.flac",
+          "label": "FLAC"
+        }
+      ],
+      "peaksFile": "D09181202.peaks.json"
+    },
+    {
       "name": "Deep 190303",
       "file": "D190303",
       "audioFile": "D190303.mp3",
-      "duration": 7922.233469,
+      "duration": 7922.189342,
       "durationFormatted": "2:12:02",
       "artist": "trip-",
       "downloads": [
@@ -159,7 +174,7 @@
       "name": "Deep 201223",
       "file": "D201223",
       "audioFile": "D201223.mp3",
-      "duration": 6797.270204,
+      "duration": 6797.230975,
       "durationFormatted": "1:53:17",
       "artist": "trip-",
       "downloads": [
@@ -189,21 +204,6 @@
       ],
       "genre": "Deep",
       "peaksFile": "D210117.peaks.json"
-    },
-    {
-      "name": "Deep09 181202",
-      "file": "D09181202",
-      "audioFile": "D09181202.flac",
-      "duration": 13931.072472,
-      "durationFormatted": "3:52:11",
-      "artist": "trip-",
-      "downloads": [
-        {
-          "file": "D09181202.flac",
-          "label": "FLAC"
-        }
-      ],
-      "peaksFile": "D09181202.peaks.json"
     },
     {
       "name": "MK 181207",
@@ -255,7 +255,7 @@
       "name": "ST 201210",
       "file": "ST201210",
       "audioFile": "ST201210.mp3",
-      "duration": 11621.720816,
+      "duration": 11621.67068,
       "durationFormatted": "3:13:41",
       "artist": "trip-",
       "downloads": [

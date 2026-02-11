@@ -15,22 +15,8 @@
         }
       ],
       "date": "2007",
-      "comment": "www.fullbozman.com"
-    },
-    {
-      "name": "Live Session in New-York",
-      "file": "Moodymann_and_Charles_Webster_-_Live_at_NYC-fullbozman.com",
-      "audioFile": "Moodymann_and_Charles_Webster_-_Live_at_NYC-fullbozman.com.mp3",
-      "duration": 4228.74487,
-      "durationFormatted": "1:10:28",
-      "artist": "Charles Webster & Moodymann",
-      "downloads": [
-        {
-          "file": "Moodymann_and_Charles_Webster_-_Live_at_NYC-fullbozman.com.mp3",
-          "label": "MP3"
-        }
-      ],
-      "comment": "www.fullbozman.com"
+      "comment": "www.fullbozman.com",
+      "peaksFile": "TrusMe_and_Moodymann_-_Album_launch_Party_2007-fullbozman.com.peaks.json"
     },
     {
       "name": "Live at Gilles Peterson Show (BBC Radio1 - 2007-10-11)",
@@ -47,7 +33,8 @@
       ],
       "genre": "Electronic",
       "date": "2007",
-      "comment": "www.fullbozman.com"
+      "comment": "www.fullbozman.com",
+      "peaksFile": "Moodymann_-_live_at_Gilles_Peterson_show-oct07-fullbozman.com.peaks.json"
     },
     {
       "name": "Live at The Arches (Glasgow 2002)",
@@ -64,7 +51,8 @@
       ],
       "genre": "Blues",
       "date": "2002",
-      "comment": "www.fullbozman.com"
+      "comment": "www.fullbozman.com",
+      "peaksFile": "Moodymann_-_Live_at_The_Arches-Glasgow2002-fullbozman.com.peaks.json"
     },
     {
       "name": "Live on Mixtape (2006-11-18)",
@@ -81,7 +69,24 @@
       ],
       "genre": "Electronic",
       "date": "2006",
-      "comment": "www.fullbozman.com"
+      "comment": "www.fullbozman.com",
+      "peaksFile": "Moodymann_-_Live_on_Mixtape_11-18-2006-fullbozman.com.peaks.json"
+    },
+    {
+      "name": "Live Session in New-York",
+      "file": "Moodymann_and_Charles_Webster_-_Live_at_NYC-fullbozman.com",
+      "audioFile": "Moodymann_and_Charles_Webster_-_Live_at_NYC-fullbozman.com.mp3",
+      "duration": 4228.74487,
+      "durationFormatted": "1:10:28",
+      "artist": "Charles Webster & Moodymann",
+      "downloads": [
+        {
+          "file": "Moodymann_and_Charles_Webster_-_Live_at_NYC-fullbozman.com.mp3",
+          "label": "MP3"
+        }
+      ],
+      "comment": "www.fullbozman.com",
+      "peaksFile": "Moodymann_and_Charles_Webster_-_Live_at_NYC-fullbozman.com.peaks.json"
     },
     {
       "name": "Motor, Detroit",
@@ -97,7 +102,8 @@
         }
       ],
       "genre": "House",
-      "comment": "http://www.fullbozman.com"
+      "comment": "http://www.fullbozman.com",
+      "peaksFile": "MoodyMann_-_Live_at_Motor_Detroit-fullbozman.com.peaks.json"
     }
   ]
 }

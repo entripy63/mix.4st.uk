@@ -7,7 +7,7 @@
       "audioFile": "Bulb - Into the deep 001.mp3",
       "duration": 3339.4187,
       "durationFormatted": "0:55:39",
-      "artist": "",
+      "artist": "Bulb",
       "downloads": [
         {
           "file": "Bulb - Into the deep 001.mp3",
@@ -35,6 +35,42 @@
       "comment": "http://soundcloud.com/bulb\r\nhttp://www.mixcloud.com/bulb/",
       "peaksFile": "Bulb - Into the deep 002.peaks.json",
       "coverFile": "Bulb - Into the deep 002.jpg"
+    },
+    {
+      "name": "Into the deep 2.0",
+      "file": "Bulb_-_Into_the_deep_2.0",
+      "audioFile": "Bulb_-_Into_the_deep_2.0.mp3",
+      "duration": 2946.197478,
+      "durationFormatted": "0:49:06",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb_-_Into_the_deep_2.0.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2013",
+      "comment": "into-the-deep.rpod.ru",
+      "peaksFile": "Bulb_-_Into_the_deep_2.0.peaks.json",
+      "coverFile": "Bulb_-_Into_the_deep_2.0.jpg"
+    },
+    {
+      "name": "Into the deep 2.1",
+      "file": "Bulb_-_Into_the_deep_2.1",
+      "audioFile": "Bulb_-_Into_the_deep_2.1.mp3",
+      "duration": 3557.5934,
+      "durationFormatted": "0:59:17",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb_-_Into_the_deep_2.1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2013",
+      "comment": "into-the-deep.rpod.ru",
+      "peaksFile": "Bulb_-_Into_the_deep_2.1.peaks.json",
+      "coverFile": "Bulb_-_Into_the_deep_2.1.jpg"
     },
     {
       "name": "Into the deep 003",
@@ -345,42 +381,6 @@
       "comment": "into-the-deep.rpod.ru",
       "peaksFile": "Bulb_-_Into_the_deep_019.peaks.json",
       "coverFile": "Bulb_-_Into_the_deep_019.jpg"
-    },
-    {
-      "name": "Into the deep 2.0",
-      "file": "Bulb_-_Into_the_deep_2.0",
-      "audioFile": "Bulb_-_Into_the_deep_2.0.mp3",
-      "duration": 2946.197478,
-      "durationFormatted": "0:49:06",
-      "artist": "Bulb",
-      "downloads": [
-        {
-          "file": "Bulb_-_Into_the_deep_2.0.mp3",
-          "label": "MP3"
-        }
-      ],
-      "date": "2013",
-      "comment": "into-the-deep.rpod.ru",
-      "peaksFile": "Bulb_-_Into_the_deep_2.0.peaks.json",
-      "coverFile": "Bulb_-_Into_the_deep_2.0.jpg"
-    },
-    {
-      "name": "Into the deep 2.1",
-      "file": "Bulb_-_Into_the_deep_2.1",
-      "audioFile": "Bulb_-_Into_the_deep_2.1.mp3",
-      "duration": 3557.5934,
-      "durationFormatted": "0:59:17",
-      "artist": "Bulb",
-      "downloads": [
-        {
-          "file": "Bulb_-_Into_the_deep_2.1.mp3",
-          "label": "MP3"
-        }
-      ],
-      "date": "2013",
-      "comment": "into-the-deep.rpod.ru",
-      "peaksFile": "Bulb_-_Into_the_deep_2.1.peaks.json",
-      "coverFile": "Bulb_-_Into_the_deep_2.1.jpg"
     }
   ]
 }

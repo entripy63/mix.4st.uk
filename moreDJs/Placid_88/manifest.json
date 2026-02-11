@@ -7,13 +7,29 @@
       "audioFile": "Placid WGD - www.Timeline-Music.net.mp3",
       "duration": 7536.822958,
       "durationFormatted": "2:05:36",
-      "artist": "",
+      "artist": "Placid_88",
       "downloads": [
         {
           "file": "Placid WGD - www.Timeline-Music.net.mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "Placid WGD - www.Timeline-Music.net.peaks.json"
+    },
+    {
+      "name": "An Acid Attack",
+      "file": "Acidattack",
+      "audioFile": "Acidattack.mp3",
+      "duration": 6405.041633,
+      "durationFormatted": "1:46:45",
+      "artist": "Placid",
+      "downloads": [
+        {
+          "file": "Acidattack.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Acidattack.peaks.json"
     },
     {
       "name": "APT CLub - NYC - 12 September 2008  part 1",
@@ -29,7 +45,8 @@
         }
       ],
       "genre": "Other",
-      "date": "2009"
+      "date": "2009",
+      "peaksFile": "APT CLub - NYC - 12 September 2008  part 1.peaks.json"
     },
     {
       "name": "APT Club - NYC - 12 September 2008 part 2",
@@ -45,21 +62,8 @@
         }
       ],
       "genre": "Other",
-      "date": "2008"
-    },
-    {
-      "name": "An Acid Attack",
-      "file": "Acidattack",
-      "audioFile": "Acidattack.mp3",
-      "duration": 6405.041633,
-      "durationFormatted": "1:46:45",
-      "artist": "Placid",
-      "downloads": [
-        {
-          "file": "Acidattack.mp3",
-          "label": "MP3"
-        }
-      ]
+      "date": "2008",
+      "peaksFile": "APT Club - NYC - 12 September 2008 part 2.peaks.json"
     },
     {
       "name": "BH Mix",
@@ -73,7 +77,8 @@
           "file": "BH Mixedt.mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "BH Mixedt.peaks.json"
     },
     {
       "name": "Driftwood",
@@ -87,7 +92,8 @@
           "file": "Driftwood.mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "Driftwood.peaks.json"
     },
     {
       "name": "EstimuloShow Going Deeper with Placid 1",
@@ -95,14 +101,15 @@
       "audioFile": "EstimuloShow_Going_Deeper_with_Placid 1.mp3",
       "duration": 6951.191875,
       "durationFormatted": "1:55:51",
-      "artist": "",
+      "artist": "Placid_88",
       "downloads": [
         {
           "file": "EstimuloShow_Going_Deeper_with_Placid 1.mp3",
           "label": "MP3"
         }
       ],
-      "genre": "Other"
+      "genre": "Other",
+      "peaksFile": "EstimuloShow_Going_Deeper_with_Placid 1.peaks.json"
     },
     {
       "name": "I Love Acid - 15 May 2015",
@@ -116,7 +123,8 @@
           "file": "ILA15052015edt.mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "ILA15052015edt.peaks.json"
     },
     {
       "name": "Mix for Mart",
@@ -130,7 +138,8 @@
           "file": "Pure_5th.mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "Pure_5th.peaks.json"
     },
     {
       "name": "Placid",
@@ -144,7 +153,8 @@
           "file": "WGDTB.mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "WGDTB.peaks.json"
     },
     {
       "name": "Pure Acid",
@@ -160,7 +170,8 @@
         }
       ],
       "genre": "Other",
-      "date": "2009"
+      "date": "2009",
+      "peaksFile": "Pure acid.peaks.json"
     },
     {
       "name": "TB Dreams",
@@ -174,7 +185,8 @@
           "file": "August 2015.mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "August 2015.peaks.json"
     },
     {
       "name": "The House Sound Of DJ International",
@@ -188,63 +200,8 @@
           "file": "The House Sound of DJ International.mp3",
           "label": "MP3"
         }
-      ]
-    },
-    {
-      "name": "WGD  8th Feb",
-      "file": "We're Going Deep 2",
-      "audioFile": "We're Going Deep 2.mp3",
-      "duration": 7341.270204,
-      "durationFormatted": "2:02:21",
-      "artist": "Placid",
-      "downloads": [
-        {
-          "file": "We're Going Deep 2.mp3",
-          "label": "MP3"
-        }
-      ]
-    },
-    {
-      "name": "WGD 4",
-      "file": "WGD 4",
-      "audioFile": "WGD 4.mp3",
-      "duration": 7251.461224,
-      "durationFormatted": "2:00:51",
-      "artist": "Placid",
-      "downloads": [
-        {
-          "file": "WGD 4.mp3",
-          "label": "MP3"
-        }
-      ]
-    },
-    {
-      "name": "WGD 8",
-      "file": "WGD8",
-      "audioFile": "WGD8.mp3",
-      "duration": 7197.831837,
-      "durationFormatted": "1:59:57",
-      "artist": "Placid",
-      "downloads": [
-        {
-          "file": "WGD8.mp3",
-          "label": "MP3"
-        }
-      ]
-    },
-    {
-      "name": "WGD5",
-      "file": "WGD5",
-      "audioFile": "WGD5.mp3",
-      "duration": 7159.562449,
-      "durationFormatted": "1:59:19",
-      "artist": "Placid",
-      "downloads": [
-        {
-          "file": "WGD5.mp3",
-          "label": "MP3"
-        }
-      ]
+      ],
+      "peaksFile": "The House Sound of DJ International.peaks.json"
     },
     {
       "name": "We're Going Deep Maximal techno Edition",
@@ -252,13 +209,14 @@
       "audioFile": "We're Going Deep Maximal techno Edition.mp3",
       "duration": 7470.628571,
       "durationFormatted": "2:04:30",
-      "artist": "",
+      "artist": "Placid_88",
       "downloads": [
         {
           "file": "We're Going Deep Maximal techno Edition.mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "We're Going Deep Maximal techno Edition.peaks.json"
     },
     {
       "name": "Were Going Deep",
@@ -272,7 +230,8 @@
           "file": "WGD 6.mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "WGD 6.peaks.json"
     },
     {
       "name": "wgd3",
@@ -286,7 +245,68 @@
           "file": "wgd3.mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "wgd3.peaks.json"
+    },
+    {
+      "name": "WGD5",
+      "file": "WGD5",
+      "audioFile": "WGD5.mp3",
+      "duration": 7159.562449,
+      "durationFormatted": "1:59:19",
+      "artist": "Placid",
+      "downloads": [
+        {
+          "file": "WGD5.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "WGD5.peaks.json"
+    },
+    {
+      "name": "WGD 4",
+      "file": "WGD 4",
+      "audioFile": "WGD 4.mp3",
+      "duration": 7251.461224,
+      "durationFormatted": "2:00:51",
+      "artist": "Placid",
+      "downloads": [
+        {
+          "file": "WGD 4.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "WGD 4.peaks.json"
+    },
+    {
+      "name": "WGD 8",
+      "file": "WGD8",
+      "audioFile": "WGD8.mp3",
+      "duration": 7197.831837,
+      "durationFormatted": "1:59:57",
+      "artist": "Placid",
+      "downloads": [
+        {
+          "file": "WGD8.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "WGD8.peaks.json"
+    },
+    {
+      "name": "WGD  8th Feb",
+      "file": "We're Going Deep 2",
+      "audioFile": "We're Going Deep 2.mp3",
+      "duration": 7341.270204,
+      "durationFormatted": "2:02:21",
+      "artist": "Placid",
+      "downloads": [
+        {
+          "file": "We're Going Deep 2.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "We're Going Deep 2.peaks.json"
     }
   ]
 }

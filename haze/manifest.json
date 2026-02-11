@@ -54,6 +54,60 @@
       "peaksFile": "Haze-April2011_House_mix.peaks.json"
     },
     {
+      "name": "c0ma club thanksgiving21 acid",
+      "file": "c0ma club thanksgiving21 acid",
+      "audioFile": "c0ma club thanksgiving21 acid.mp3",
+      "duration": 7478.232,
+      "durationFormatted": "2:04:38",
+      "artist": "Sherman Heath",
+      "downloads": [
+        {
+          "file": "c0ma club thanksgiving21 acid.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "ACID",
+      "date": "2021",
+      "comment": "Recorded 24/11/2021, 22:02:16 GMT",
+      "peaksFile": "c0ma club thanksgiving21 acid.peaks.json",
+      "coverFile": "c0ma club thanksgiving21 acid.png"
+    },
+    {
+      "name": "December 2019 Transmission",
+      "file": "December 2019 Transmission",
+      "audioFile": "December 2019 Transmission.mp3",
+      "duration": 7502.016,
+      "durationFormatted": "2:05:02",
+      "artist": "LMS",
+      "downloads": [
+        {
+          "file": "December 2019 Transmission.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Radio Show",
+      "date": "2019",
+      "comment": "Recorded 16/12/2019, 13:08:35 GMT",
+      "peaksFile": "December 2019 Transmission.peaks.json"
+    },
+    {
+      "name": "December house mix",
+      "file": "djhaze-december2012mix",
+      "audioFile": "djhaze-december2012mix.mp3",
+      "duration": 5688.502857,
+      "durationFormatted": "1:34:48",
+      "artist": "DJ Haze",
+      "downloads": [
+        {
+          "file": "djhaze-december2012mix.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "DJ Mix - House",
+      "date": "2012",
+      "peaksFile": "djhaze-december2012mix.peaks.json"
+    },
+    {
       "name": "DJ Haze - Uncovered",
       "file": "Haze-Uncovered",
       "audioFile": "Haze-Uncovered.mp3",
@@ -146,41 +200,6 @@
       "coverFile": "Haze-Sideways-World.png"
     },
     {
-      "name": "December 2019 Transmission",
-      "file": "December 2019 Transmission",
-      "audioFile": "December 2019 Transmission.mp3",
-      "duration": 7502.016,
-      "durationFormatted": "2:05:02",
-      "artist": "LMS",
-      "downloads": [
-        {
-          "file": "December 2019 Transmission.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Radio Show",
-      "date": "2019",
-      "comment": "Recorded 16/12/2019, 13:08:35 GMT",
-      "peaksFile": "December 2019 Transmission.peaks.json"
-    },
-    {
-      "name": "December house mix",
-      "file": "djhaze-december2012mix",
-      "audioFile": "djhaze-december2012mix.mp3",
-      "duration": 5688.502857,
-      "durationFormatted": "1:34:48",
-      "artist": "DJ Haze",
-      "downloads": [
-        {
-          "file": "djhaze-december2012mix.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "DJ Mix - House",
-      "date": "2012",
-      "peaksFile": "djhaze-december2012mix.peaks.json"
-    },
-    {
       "name": "Does My Bass Look Big In This?",
       "file": "Sherman Heath - Does My Bass Look Big In This_",
       "audioFile": "Sherman Heath - Does My Bass Look Big In This_.mp3",
@@ -234,6 +253,21 @@
       "peaksFile": "Domino - Breaks Mix July '08.peaks.json"
     },
     {
+      "name": "Fantazia SanctuaryFestival08",
+      "file": "Haze-Fantazia-SanctuaryFestival08",
+      "audioFile": "Haze-Fantazia-SanctuaryFestival08.mp3",
+      "duration": 3706.044082,
+      "durationFormatted": "1:01:46",
+      "artist": "haze",
+      "downloads": [
+        {
+          "file": "Haze-Fantazia-SanctuaryFestival08.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Haze-Fantazia-SanctuaryFestival08.peaks.json"
+    },
+    {
       "name": "Feb 2020 Transmission",
       "file": "LMS Feb 2020 Transmission",
       "audioFile": "LMS Feb 2020 Transmission.mp3",
@@ -252,71 +286,19 @@
       "coverFile": "LMS Feb 2020 Transmission.png"
     },
     {
-      "name": "Haze-Fantazia-SanctuaryFestival08",
-      "file": "Haze-Fantazia-SanctuaryFestival08",
-      "audioFile": "Haze-Fantazia-SanctuaryFestival08.mp3",
-      "duration": 3706.044082,
-      "durationFormatted": "1:01:46",
-      "artist": "",
+      "name": "fsol radio mix take 3\n",
+      "file": "LMS TerminalRadiomix",
+      "audioFile": "LMS TerminalRadiomix.mp3",
+      "duration": 902.922449,
+      "durationFormatted": "0:15:02",
+      "artist": "haze",
       "downloads": [
         {
-          "file": "Haze-Fantazia-SanctuaryFestival08.mp3",
+          "file": "LMS TerminalRadiomix.mp3",
           "label": "MP3"
         }
       ],
-      "peaksFile": "Haze-Fantazia-SanctuaryFestival08.peaks.json"
-    },
-    {
-      "name": "Haze-Sounds_for_a_New_Millenium_pt1",
-      "file": "Haze-Sounds_for_a_New_Millenium_pt1",
-      "audioFile": "Haze-Sounds_for_a_New_Millenium_pt1.mp3",
-      "duration": 2776.398367,
-      "durationFormatted": "0:46:16",
-      "artist": "Haze",
-      "downloads": [
-        {
-          "file": "Haze-Sounds_for_a_New_Millenium_pt1.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "House",
-      "date": "2006",
-      "peaksFile": "Haze-Sounds_for_a_New_Millenium_pt1.peaks.json"
-    },
-    {
-      "name": "Haze-Sounds_for_a_New_Millenium_pt2",
-      "file": "Haze-Sounds_for_a_New_Millenium_pt2",
-      "audioFile": "Haze-Sounds_for_a_New_Millenium_pt2.mp3",
-      "duration": 2573.139592,
-      "durationFormatted": "0:42:53",
-      "artist": "dj haze",
-      "downloads": [
-        {
-          "file": "Haze-Sounds_for_a_New_Millenium_pt2.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "House",
-      "date": "2006",
-      "comment": " 000002D6 000002DE 000020C7 00001D6C 001E84C5 001E84C5 000070BE 00006F72 000AD59E 0016E38E",
-      "peaksFile": "Haze-Sounds_for_a_New_Millenium_pt2.peaks.json",
-      "coverFile": "Haze-Sounds_for_a_New_Millenium_pt2.png"
-    },
-    {
-      "name": "Jan 2019 Transmission",
-      "file": "Jan 2019 Transmission 18",
-      "audioFile": "Jan 2019 Transmission 18.mp3",
-      "duration": 3845.355102,
-      "durationFormatted": "1:04:05",
-      "artist": "LMS",
-      "downloads": [
-        {
-          "file": "Jan 2019 Transmission 18.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Electronic",
-      "peaksFile": "Jan 2019 Transmission 18.peaks.json"
+      "peaksFile": "LMS TerminalRadiomix.peaks.json"
     },
     {
       "name": "Jan2020 Transmission",
@@ -334,6 +316,22 @@
       "genre": "DJ Mix - Eclectic",
       "date": "2020",
       "peaksFile": "LMS January 2020 Transmission.peaks.json"
+    },
+    {
+      "name": "Jan 2019 Transmission",
+      "file": "Jan 2019 Transmission 18",
+      "audioFile": "Jan 2019 Transmission 18.mp3",
+      "duration": 3845.355102,
+      "durationFormatted": "1:04:05",
+      "artist": "LMS",
+      "downloads": [
+        {
+          "file": "Jan 2019 Transmission 18.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Electronic",
+      "peaksFile": "Jan 2019 Transmission 18.peaks.json"
     },
     {
       "name": "July 2020 Transmission Part 1",
@@ -389,23 +387,6 @@
       "peaksFile": "LMS Coffee & Jazz Session 29AUG2020.peaks.json"
     },
     {
-      "name": "LMS Coffee* & Jazz Session - Ahmad Jamal Special",
-      "file": "LMS Coffee_ & Jazz Session - Ahmad Jamal Special",
-      "audioFile": "LMS Coffee_ & Jazz Session - Ahmad Jamal Special.m4a",
-      "duration": 7216.588481,
-      "durationFormatted": "2:00:16",
-      "artist": "LMS",
-      "downloads": [
-        {
-          "file": "LMS Coffee_ & Jazz Session - Ahmad Jamal Special.m4a",
-          "label": "M4A"
-        }
-      ],
-      "genre": "Jazz",
-      "date": "2020",
-      "peaksFile": "LMS Coffee_ & Jazz Session - Ahmad Jamal Special.peaks.json"
-    },
-    {
       "name": "LMS Coffee* & Jazz Session 16AUG2020",
       "file": "LMS Coffee_ & Jazz Session 16AUG2020",
       "audioFile": "LMS Coffee_ & Jazz Session 16AUG2020.m4a",
@@ -438,6 +419,23 @@
       "genre": "Jazz",
       "date": "202",
       "peaksFile": "LMS Coffee_ & Jazz Session 26Jul2020.peaks.json"
+    },
+    {
+      "name": "LMS Coffee* & Jazz Session - Ahmad Jamal Special",
+      "file": "LMS Coffee_ & Jazz Session - Ahmad Jamal Special",
+      "audioFile": "LMS Coffee_ & Jazz Session - Ahmad Jamal Special.m4a",
+      "duration": 7216.588481,
+      "durationFormatted": "2:00:16",
+      "artist": "LMS",
+      "downloads": [
+        {
+          "file": "LMS Coffee_ & Jazz Session - Ahmad Jamal Special.m4a",
+          "label": "M4A"
+        }
+      ],
+      "genre": "Jazz",
+      "date": "2020",
+      "peaksFile": "LMS Coffee_ & Jazz Session - Ahmad Jamal Special.peaks.json"
     },
     {
       "name": "LMS January 2021 Transmission",
@@ -546,22 +544,6 @@
       "peaksFile": "Haze-May2011_DNBmix.peaks.json"
     },
     {
-      "name": "NYE21-22",
-      "file": "NYE21-22",
-      "audioFile": "NYE21-22.flac",
-      "duration": 9919.578229,
-      "durationFormatted": "2:45:19",
-      "artist": "",
-      "downloads": [
-        {
-          "file": "NYE21-22.flac",
-          "label": "FLAC"
-        }
-      ],
-      "comment": "Recorded 31/12/2021, 23:44:31 GMT",
-      "peaksFile": "NYE21-22.peaks.json"
-    },
-    {
       "name": "November 2017 mix\n\n",
       "file": "LMS 20NOV17",
       "audioFile": "LMS 20NOV17.mp3",
@@ -595,6 +577,22 @@
       "peaksFile": "LMS - November 2019.peaks.json"
     },
     {
+      "name": "NYE21-22",
+      "file": "NYE21-22",
+      "audioFile": "NYE21-22.flac",
+      "duration": 9919.578229,
+      "durationFormatted": "2:45:19",
+      "artist": "haze",
+      "downloads": [
+        {
+          "file": "NYE21-22.flac",
+          "label": "FLAC"
+        }
+      ],
+      "comment": "Recorded 31/12/2021, 23:44:31 GMT",
+      "peaksFile": "NYE21-22.peaks.json"
+    },
+    {
       "name": "October 2020 91 mix - extended version",
       "file": "October 2020 91 mix - extended version",
       "audioFile": "October 2020 91 mix - extended version.mp3",
@@ -610,6 +608,23 @@
       "date": "1991",
       "comment": "Recorded 23/10/2020, 23:38:33 BST",
       "peaksFile": "October 2020 91 mix - extended version.peaks.json"
+    },
+    {
+      "name": "oldskool drum'n'base'n'jungle FB Live transmission",
+      "file": "HAZE-oldskool drum'n'base'n'jungle170217",
+      "audioFile": "HAZE-oldskool drum'n'base'n'jungle170217.mp3",
+      "duration": 4140.277551,
+      "durationFormatted": "1:09:00",
+      "artist": "DJ Haze",
+      "downloads": [
+        {
+          "file": "HAZE-oldskool drum'n'base'n'jungle170217.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Drum & Bass",
+      "date": "2017",
+      "peaksFile": "HAZE-oldskool drum'n'base'n'jungle170217.peaks.json"
     },
     {
       "name": "Progressive House Mix December 2015",
@@ -734,6 +749,21 @@
       "peaksFile": "Meezoid & Haze - Random Broadcast 005 (29-01-14).peaks.json"
     },
     {
+      "name": "random jungle mix",
+      "file": "random-jungle-mix",
+      "audioFile": "random-jungle-mix.mp3",
+      "duration": 4723.565714,
+      "durationFormatted": "1:18:43",
+      "artist": "haze",
+      "downloads": [
+        {
+          "file": "random-jungle-mix.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "random-jungle-mix.peaks.json"
+    },
+    {
       "name": "Random mix of $kully's tunes",
       "file": "haze-randommixofskullydnb",
       "audioFile": "haze-randommixofskullydnb.mp3",
@@ -769,6 +799,42 @@
       "peaksFile": "shermanheath_c0maclub_19122021.peaks.json"
     },
     {
+      "name": "Sounds for a New Millenium pt1",
+      "file": "Haze-Sounds_for_a_New_Millenium_pt1",
+      "audioFile": "Haze-Sounds_for_a_New_Millenium_pt1.mp3",
+      "duration": 2776.398367,
+      "durationFormatted": "0:46:16",
+      "artist": "Haze",
+      "downloads": [
+        {
+          "file": "Haze-Sounds_for_a_New_Millenium_pt1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2006",
+      "peaksFile": "Haze-Sounds_for_a_New_Millenium_pt1.peaks.json"
+    },
+    {
+      "name": "Sounds for a New Millenium pt2",
+      "file": "Haze-Sounds_for_a_New_Millenium_pt2",
+      "audioFile": "Haze-Sounds_for_a_New_Millenium_pt2.mp3",
+      "duration": 2573.139592,
+      "durationFormatted": "0:42:53",
+      "artist": "dj haze",
+      "downloads": [
+        {
+          "file": "Haze-Sounds_for_a_New_Millenium_pt2.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2006",
+      "comment": " 000002D6 000002DE 000020C7 00001D6C 001E84C5 001E84C5 000070BE 00006F72 000AD59E 0016E38E",
+      "peaksFile": "Haze-Sounds_for_a_New_Millenium_pt2.peaks.json",
+      "coverFile": "Haze-Sounds_for_a_New_Millenium_pt2.png"
+    },
+    {
       "name": "There are children laughing in my head",
       "file": "There are children laughing in my head",
       "audioFile": "There are children laughing in my head.mp3",
@@ -786,39 +852,6 @@
       "comment": "recorded for Terminal Radio - a transmission from the Future Sound Of Lond board. ",
       "peaksFile": "There are children laughing in my head.peaks.json",
       "coverFile": "There are children laughing in my head.jpg"
-    },
-    {
-      "name": "Transmission #13",
-      "file": "LMSTransmission23DEC2016",
-      "audioFile": "LMSTransmission23DEC2016.mp3",
-      "duration": 7338.318367,
-      "durationFormatted": "2:02:18",
-      "artist": "LMS",
-      "downloads": [
-        {
-          "file": "LMSTransmission23DEC2016.mp3",
-          "label": "MP3"
-        }
-      ],
-      "date": "2016",
-      "peaksFile": "LMSTransmission23DEC2016.peaks.json"
-    },
-    {
-      "name": "Transmission #FIN",
-      "file": "LMSTransmission30OCT2016",
-      "audioFile": "LMSTransmission30OCT2016.mp3",
-      "duration": 4051.435102,
-      "durationFormatted": "1:07:31",
-      "artist": "LMS",
-      "downloads": [
-        {
-          "file": "LMSTransmission30OCT2016.mp3",
-          "label": "MP3"
-        }
-      ],
-      "date": "2016",
-      "peaksFile": "LMSTransmission30OCT2016.peaks.json",
-      "coverFile": "LMSTransmission30OCT2016.png"
     },
     {
       "name": "Transmission 12DEC2017 part 1",
@@ -889,6 +922,39 @@
       "peaksFile": "LMSTransmission23SEP2017.peaks.json"
     },
     {
+      "name": "Transmission #13",
+      "file": "LMSTransmission23DEC2016",
+      "audioFile": "LMSTransmission23DEC2016.mp3",
+      "duration": 7338.318367,
+      "durationFormatted": "2:02:18",
+      "artist": "LMS",
+      "downloads": [
+        {
+          "file": "LMSTransmission23DEC2016.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2016",
+      "peaksFile": "LMSTransmission23DEC2016.peaks.json"
+    },
+    {
+      "name": "Transmission #FIN",
+      "file": "LMSTransmission30OCT2016",
+      "audioFile": "LMSTransmission30OCT2016.mp3",
+      "duration": 4051.435102,
+      "durationFormatted": "1:07:31",
+      "artist": "LMS",
+      "downloads": [
+        {
+          "file": "LMSTransmission30OCT2016.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2016",
+      "peaksFile": "LMSTransmission30OCT2016.peaks.json",
+      "coverFile": "LMSTransmission30OCT2016.png"
+    },
+    {
       "name": "Transmission Station #76 09MARCH2016",
       "file": "LMS Transmission Station #76 09MARCH2016",
       "audioFile": "LMS Transmission Station #76 09MARCH2016.mp3",
@@ -934,72 +1000,6 @@
         }
       ],
       "peaksFile": "LMS Transmission Station #76_25thMay2016.peaks.json"
-    },
-    {
-      "name": "c0ma club thanksgiving21 acid",
-      "file": "c0ma club thanksgiving21 acid",
-      "audioFile": "c0ma club thanksgiving21 acid.mp3",
-      "duration": 7478.232,
-      "durationFormatted": "2:04:38",
-      "artist": "Sherman Heath",
-      "downloads": [
-        {
-          "file": "c0ma club thanksgiving21 acid.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "ACID",
-      "date": "2021",
-      "comment": "Recorded 24/11/2021, 22:02:16 GMT",
-      "peaksFile": "c0ma club thanksgiving21 acid.peaks.json",
-      "coverFile": "c0ma club thanksgiving21 acid.png"
-    },
-    {
-      "name": "fsol radio mix take 3\n",
-      "file": "LMS TerminalRadiomix",
-      "audioFile": "LMS TerminalRadiomix.mp3",
-      "duration": 902.922449,
-      "durationFormatted": "0:15:02",
-      "artist": "haze",
-      "downloads": [
-        {
-          "file": "LMS TerminalRadiomix.mp3",
-          "label": "MP3"
-        }
-      ],
-      "peaksFile": "LMS TerminalRadiomix.peaks.json"
-    },
-    {
-      "name": "oldskool drum'n'base'n'jungle FB Live transmission",
-      "file": "HAZE-oldskool drum'n'base'n'jungle170217",
-      "audioFile": "HAZE-oldskool drum'n'base'n'jungle170217.mp3",
-      "duration": 4140.277551,
-      "durationFormatted": "1:09:00",
-      "artist": "DJ Haze",
-      "downloads": [
-        {
-          "file": "HAZE-oldskool drum'n'base'n'jungle170217.mp3",
-          "label": "MP3"
-        }
-      ],
-      "genre": "Drum & Bass",
-      "date": "2017",
-      "peaksFile": "HAZE-oldskool drum'n'base'n'jungle170217.peaks.json"
-    },
-    {
-      "name": "random-jungle-mix",
-      "file": "random-jungle-mix",
-      "audioFile": "random-jungle-mix.mp3",
-      "duration": 4723.565714,
-      "durationFormatted": "1:18:43",
-      "artist": "",
-      "downloads": [
-        {
-          "file": "random-jungle-mix.mp3",
-          "label": "MP3"
-        }
-      ],
-      "peaksFile": "random-jungle-mix.peaks.json"
     }
   ]
 }
