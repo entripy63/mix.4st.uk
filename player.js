@@ -34,19 +34,23 @@ const waveformCanvas = document.getElementById("waveform");
 const waveformCtx = waveformCanvas.getContext("2d");
 
 const state = {
-  currentPeaks: null,
-  isResizing: false,
-  currentMixes: [],
-  currentDJ: '',
-  currentFilter: '',
-  currentGroups: [],
-  displayedMixes: [],
-  draggedIndex: null,
-  queue: storage.getJSON('queue', []),
-  currentQueueIndex: storage.getNum('currentQueueIndex', -1),
-  loopQueue: storage.getBool('loopQueue'),
-  queueIdCounter: storage.getNum('queueIdCounter', 0),
-  currentMix: null
+   currentPeaks: null,
+   isResizing: false,
+   currentMixes: [],
+   currentDJ: '',
+   currentFilter: '',
+   currentGroups: [],
+   displayedMixes: [],
+   draggedIndex: null,
+   queue: storage.getJSON('queue', []),
+   currentQueueIndex: storage.getNum('currentQueueIndex', -1),
+   loopQueue: storage.getBool('loopQueue'),
+   queueIdCounter: storage.getNum('queueIdCounter', 0),
+   currentMix: null,
+   playingFromPlayNow: false,
+   previousQueueIndex: -1,
+   previousQueueTime: 0,
+   showHiddenMixes: false  // Ephemeral, not persisted
 };
 
 // Mix flags (favourites/hidden) - stored as arrays, used as Sets for O(1) lookup
@@ -241,15 +245,40 @@ window.addEventListener("beforeunload", function () {
 });
 
 aud.addEventListener("ended", async function () {
-  if (state.currentQueueIndex >= 0 && state.currentQueueIndex < state.queue.length - 1) {
-    state.currentQueueIndex++;
-    saveQueue();
-    await playFromQueue(state.currentQueueIndex);
-  } else if (state.loopQueue && state.queue.length > 0) {
-    state.currentQueueIndex = 0;
-    saveQueue();
-    await playFromQueue(state.currentQueueIndex);
-  }
+   // Handle Play Now mix end based on setting
+   if (state.playingFromPlayNow) {
+     const setting = storage.get('afterPlayNow', 'stop');
+     
+     if (setting === 'loop') {
+       aud.currentTime = 0;
+       aud.play();
+       return;
+     } else if (setting === 'continue') {
+       // Restore previous queue position
+       if (state.previousQueueIndex >= 0 && state.previousQueueIndex < state.queue.length) {
+         state.currentQueueIndex = state.previousQueueIndex;
+         state.playingFromPlayNow = false;
+         saveQueue();
+         await playFromQueue(state.currentQueueIndex);
+         // Try to restore position in the mix
+         aud.currentTime = state.previousQueueTime;
+       }
+       return;
+     }
+     // else setting === 'stop' - do nothing
+     return;
+   }
+   
+   // Normal queue handling
+   if (state.currentQueueIndex >= 0 && state.currentQueueIndex < state.queue.length - 1) {
+     state.currentQueueIndex++;
+     saveQueue();
+     await playFromQueue(state.currentQueueIndex);
+   } else if (state.loopQueue && state.queue.length > 0) {
+     state.currentQueueIndex = 0;
+     saveQueue();
+     await playFromQueue(state.currentQueueIndex);
+   }
 });
 
 aud.addEventListener("play", updateQueueInfo);
@@ -346,27 +375,32 @@ function getMixId(mix) {
 }
 
 function displayMixList(mixes) {
-  // Filter out hidden mixes
-  const visibleMixes = mixes.filter(mix => !mixFlags.isHidden(getMixId(mix)));
-  state.displayedMixes = visibleMixes;
-  const mixList = document.getElementById('mixList');
-  const header = visibleMixes.length > 1 ? `<div class="mix-list-header"><button onclick="addAllToQueue()">Add All to Queue</button></div>` : '';
-  mixList.innerHTML = header +
-    visibleMixes.map((mix, i) => {
-      const mixId = getMixId(mix);
-      const isFav = mixFlags.isFavourite(mixId);
-      const favIcon = isFav ? '<span class="fav-icon" title="Favourite">❤️</span>' : '';
-      const genre = mix.genre ? ` · ${escapeHtml(mix.genre)}` : '';
-      const hasExtra = mix.date || mix.comment;
-      const extraBtn = hasExtra ? `<button class="icon-btn info-btn" onclick="event.stopPropagation(); toggleMixInfo(this)" title="More info">ⓘ</button>` : '';
-      const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.date ? `<div><strong>Date:</strong> ${escapeHtml(mix.date)}</div>` : ''}${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
-      return `<div class="mix-item">
-      <button class="icon-btn" onclick="addToQueue('${mixId}')" title="Add to queue">+</button>
-      <button class="icon-btn" onclick="playNow('${mixId}')" title="Play now">▶</button>
-      <span class="mix-name">${escapeHtml(mix.name)} <span class="mix-duration">(${mix.duration}${genre})</span></span>
-      ${extraBtn}${favIcon}${extraInfo}
-    </div>`;
-    }).join('');
+   // Filter out hidden mixes (unless showing hidden mixes)
+   const visibleMixes = mixes.filter(mix => {
+     const isHidden = mixFlags.isHidden(getMixId(mix));
+     return !isHidden || state.showHiddenMixes;
+   });
+   state.displayedMixes = visibleMixes;
+   const mixList = document.getElementById('mixList');
+   const header = visibleMixes.length > 1 ? `<div class="mix-list-header"><button onclick="addAllToQueue()">Add All to Queue</button></div>` : '';
+   mixList.innerHTML = header +
+     visibleMixes.map((mix, i) => {
+       const mixId = getMixId(mix);
+       const isFav = mixFlags.isFavourite(mixId);
+       const isHidden = mixFlags.isHidden(mixId);
+       const favIcon = isFav ? '<span class="fav-icon" title="Favourite">❤️</span>' : '';
+       const hiddenIcon = isHidden ? '<span class="hidden-icon" title="Hidden">🚫</span>' : '';
+       const genre = mix.genre ? ` · ${escapeHtml(mix.genre)}` : '';
+       const hasExtra = mix.date || mix.comment;
+       const extraBtn = hasExtra ? `<button class="icon-btn info-btn" onclick="event.stopPropagation(); toggleMixInfo(this)" title="More info">ⓘ</button>` : '';
+       const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.date ? `<div><strong>Date:</strong> ${escapeHtml(mix.date)}</div>` : ''}${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
+       return `<div class="mix-item">
+       <button class="icon-btn" onclick="addToQueue('${mixId}')" title="Add to queue">+</button>
+       <button class="icon-btn" onclick="playNow('${mixId}')" title="Play now">▶</button>
+       <span class="mix-name">${escapeHtml(mix.name)} <span class="mix-duration">(${mix.duration}${genre})</span></span>
+       ${extraBtn}${favIcon}${hiddenIcon}${extraInfo}
+     </div>`;
+     }).join('');
 }
 
 function toggleMixInfo(btn) {
@@ -421,9 +455,14 @@ async function playMix(mix) {
 }
 
 async function playNow(mixId) {
-  state.currentQueueIndex = -1;
-  const mix = state.currentMixes.find(m => getMixId(m) === mixId);
-  await playMix(mix || { name: mixId.split('/').pop(), htmlPath: mixId });
+   // Save current queue position before Play Now overwrites it
+   state.previousQueueIndex = state.currentQueueIndex;
+   state.previousQueueTime = aud.currentTime;
+   state.playingFromPlayNow = true;
+   
+   state.currentQueueIndex = -1;
+   const mix = state.currentMixes.find(m => getMixId(m) === mixId);
+   await playMix(mix || { name: mixId.split('/').pop(), htmlPath: mixId });
 }
 
 function displayTrackList(mix, table, downloadLinks, coverSrc) {
@@ -888,33 +927,38 @@ function displaySearchResults(results, query) {
 }
 
 function displayMixListWithDJ(mixes) {
-  // Filter out hidden mixes
-  const visibleMixes = mixes.filter(mix => !mixFlags.isHidden(getMixId(mix)));
-  
-  // Store visible mixes globally for onclick handlers (indices must match)
-  window.currentSearchMixes = visibleMixes;
-  
-  const mixList = document.getElementById('mixList');
-  const header = visibleMixes.length > 1 ? `<div class="mix-list-header"><button onclick="addAllSearchResultsToQueue()">Add All to Queue</button></div>` : '';
-  
-  mixList.innerHTML = header + visibleMixes.map((mix, i) => {
-    const mixId = getMixId(mix);
-    const isFav = mixFlags.isFavourite(mixId);
-    const favIcon = isFav ? '<span class="fav-icon" title="Favourite">❤️</span>' : '';
-    const djBadge = mix.djLabel ? `<span class="dj-badge">${escapeHtml(mix.djLabel)}</span> ` : '';
-    const genre = mix.genre ? ` · ${escapeHtml(mix.genre)}` : '';
-    const duration = mix.duration ? `(${mix.duration}${genre})` : '';
-    const hasExtra = mix.comment;
-    const extraBtn = hasExtra ? `<button class="icon-btn info-btn" onclick="event.stopPropagation(); toggleSearchMixInfo(this)" title="More info">ⓘ</button>` : '';
-    const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
-    
-    return `<div class="mix-item">
-      <button class="icon-btn" onclick="addSearchResultToQueue(${i})" title="Add to queue">+</button>
-      <button class="icon-btn" onclick="playSearchResult(${i})" title="Play now">▶</button>
-      <span class="mix-name">${djBadge}${escapeHtml(mix.name)} <span class="mix-duration">${duration}</span></span>
-      ${extraBtn}${favIcon}${extraInfo}
-    </div>`;
-  }).join('');
+   // Filter out hidden mixes (unless showing hidden mixes)
+   const visibleMixes = mixes.filter(mix => {
+     const isHidden = mixFlags.isHidden(getMixId(mix));
+     return !isHidden || state.showHiddenMixes;
+   });
+   
+   // Store visible mixes globally for onclick handlers (indices must match)
+   window.currentSearchMixes = visibleMixes;
+   
+   const mixList = document.getElementById('mixList');
+   const header = visibleMixes.length > 1 ? `<div class="mix-list-header"><button onclick="addAllSearchResultsToQueue()">Add All to Queue</button></div>` : '';
+   
+   mixList.innerHTML = header + visibleMixes.map((mix, i) => {
+     const mixId = getMixId(mix);
+     const isFav = mixFlags.isFavourite(mixId);
+     const isHidden = mixFlags.isHidden(mixId);
+     const favIcon = isFav ? '<span class="fav-icon" title="Favourite">❤️</span>' : '';
+     const hiddenIcon = isHidden ? '<span class="hidden-icon" title="Hidden">🚫</span>' : '';
+     const djBadge = mix.djLabel ? `<span class="dj-badge">${escapeHtml(mix.djLabel)}</span> ` : '';
+     const genre = mix.genre ? ` · ${escapeHtml(mix.genre)}` : '';
+     const duration = mix.duration ? `(${mix.duration}${genre})` : '';
+     const hasExtra = mix.comment;
+     const extraBtn = hasExtra ? `<button class="icon-btn info-btn" onclick="event.stopPropagation(); toggleSearchMixInfo(this)" title="More info">ⓘ</button>` : '';
+     const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
+     
+     return `<div class="mix-item">
+       <button class="icon-btn" onclick="addSearchResultToQueue(${i})" title="Add to queue">+</button>
+       <button class="icon-btn" onclick="playSearchResult(${i})" title="Play now">▶</button>
+       <span class="mix-name">${djBadge}${escapeHtml(mix.name)} <span class="mix-duration">${duration}</span></span>
+       ${extraBtn}${favIcon}${hiddenIcon}${extraInfo}
+     </div>`;
+   }).join('');
 }
 
 function toggleSearchMixInfo(btn) {
@@ -942,14 +986,19 @@ function addAllSearchResultsToQueue() {
 }
 
 async function playSearchResult(index) {
-  const mix = window.currentSearchMixes[index];
-  if (mix) {
-    state.queue.push({ ...mix, queueId: generateQueueId() });
-    state.currentQueueIndex = state.queue.length - 1;
-    saveQueue();
-    displayQueue();
-    await playMix(mix);
-  }
+   const mix = window.currentSearchMixes[index];
+   if (mix) {
+     // Save current queue position before Play Now overwrites it
+     state.previousQueueIndex = state.currentQueueIndex;
+     state.previousQueueTime = aud.currentTime;
+     state.playingFromPlayNow = true;
+     
+     state.queue.push({ ...mix, queueId: generateQueueId() });
+     state.currentQueueIndex = state.queue.length - 1;
+     saveQueue();
+     displayQueue();
+     await playMix(mix);
+   }
 }
 
 // Keyboard shortcuts
@@ -981,8 +1030,46 @@ document.addEventListener('keydown', function(e) {
     e.preventDefault();
     browserModes.switch('favourites');
   } else if (e.code === 'Escape') {
+    hideSettings();
     hideHelp();
   }
+});
+
+// Settings modal
+function showSettings() {
+   document.getElementById('settingsModal').style.display = 'flex';
+   // Initialize radio buttons from storage
+   const setting = storage.get('afterPlayNow', 'stop');
+   const radio = document.querySelector(`input[name="afterPlayNow"][value="${setting}"]`);
+   if (radio) radio.checked = true;
+   // Initialize checkbox from state (not persisted)
+   document.getElementById('showHiddenMixesCheckbox').checked = state.showHiddenMixes;
+}
+
+function hideSettings() {
+   document.getElementById('settingsModal').style.display = 'none';
+}
+
+function updateSetting(key, value) {
+   storage.set(key, value);
+}
+
+function updateShowHiddenMixes(checked) {
+   state.showHiddenMixes = checked;
+   // Refresh current display
+   if (state.currentDJ) {
+     loadDJ(state.currentDJ);
+   } else {
+     // Re-render current mix list view
+     if (state.displayedMixes) {
+       displayMixList(state.currentMixes);
+     }
+   }
+}
+
+// Close settings modal when clicking outside content
+document.getElementById('settingsModal')?.addEventListener('click', function(e) {
+  if (e.target === this) hideSettings();
 });
 
 // Help modal
@@ -994,7 +1081,7 @@ function hideHelp() {
   document.getElementById('helpModal').style.display = 'none';
 }
 
-// Close modal when clicking outside content
+// Close help modal when clicking outside content
 document.getElementById('helpModal')?.addEventListener('click', function(e) {
   if (e.target === this) hideHelp();
 });

@@ -45,9 +45,39 @@
             <span class="mode-icon">❤️</span>
             <span class="mode-label">Favourites</span>
           </button>
+          <button class="settings-btn" onclick="showSettings()" title="Settings">⚙️</button>
           <button class="help-btn" onclick="showHelp()" title="Keyboard shortcuts (?)">?</button>
-        </div>
-        <div id="helpModal" class="modal" style="display: none;">
+          </div>
+          <div id="settingsModal" class="modal" style="display: none;">
+            <div class="modal-content">
+              <button class="modal-close" onclick="hideSettings()">×</button>
+              <h2>Settings</h2>
+              <div class="settings-group">
+                <label class="setting-label">After Play Now:</label>
+                <div class="setting-options">
+                  <label class="radio-label">
+                    <input type="radio" name="afterPlayNow" value="stop" onchange="updateSetting('afterPlayNow', this.value)">
+                    Stop
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" name="afterPlayNow" value="loop" onchange="updateSetting('afterPlayNow', this.value)">
+                    Loop
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" name="afterPlayNow" value="continue" onchange="updateSetting('afterPlayNow', this.value)">
+                    Continue with Queue
+                  </label>
+                </div>
+              </div>
+              <div class="settings-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="showHiddenMixesCheckbox" onchange="updateShowHiddenMixes(this.checked)">
+                  Show Hidden Mixes
+                </label>
+              </div>
+            </div>
+          </div>
+          <div id="helpModal" class="modal" style="display: none;">
           <div class="modal-content">
             <button class="modal-close" onclick="hideHelp()">×</button>
             <h2>Keyboard Shortcuts</h2>
@@ -62,7 +92,7 @@
               <tr><td><kbd>Esc</kbd></td><td>Close this help</td></tr>
             </table>
           </div>
-        </div>
+          </div>
         <div id="djButtons">
           <button onclick="loadDJ('trip')">trip-</button>
           <button onclick="loadDJ('izmar')">Izmar</button>
@@ -85,12 +115,23 @@
               <option value="trip">trip-</option>
             </optgroup>
             <optgroup label="More DJs">
+              <option value="moreDJs/Aaron Ross">Aaron Ross</option>
+              <option value="moreDJs/Andy Grant">Andy Grant</option>
               <option value="moreDJs/Bulb">Bulb</option>
+              <option value="moreDJs/claptone">claptone</option>
               <option value="moreDJs/DeepRhythms">DeepRhythms</option>
+              <option value="moreDJs/DJ Peavey">DJ Peavey</option>
+              <option value="moreDJs/DJ Westy">DJ Westy</option>
+              <option value="moreDJs/Duke Dumont">Duke Dumont</option>
+              <option value="moreDJs/fluxion">fluxion</option>
               <option value="moreDJs/Gorgon City">Gorgon City</option>
+              <option value="moreDJs/jungletrain">jungletrain</option>
+              <option value="moreDJs/migas">migas</option>
               <option value="moreDJs/minilogue">minilogue</option>
               <option value="moreDJs/Moodyman">Moodyman</option>
+              <option value="moreDJs/Placid_88">Placid_88</option>
               <option value="moreDJs/Theo Parrish">Theo Parrish</option>
+              <option value="moreDJs/Truly Madly">Truly Madly</option>
               <option value="moreDJs/Unique3">Unique3</option>
             </optgroup>
           </select>

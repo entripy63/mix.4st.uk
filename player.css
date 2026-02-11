@@ -142,24 +142,31 @@ button:active {
   border-bottom: 1px solid #3d3d5c;
 }
 
-.help-btn {
-  margin-left: auto;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border-radius: 50%;
-  font-size: 14px;
-  font-weight: bold;
-  background: transparent;
-  border: 1px solid #3d3d5c;
-  color: #888;
+.settings-btn, .help-btn {
+   width: 28px;
+   height: 28px;
+   padding: 0;
+   border-radius: 50%;
+   font-size: 14px;
+   font-weight: bold;
+   background: transparent;
+   border: 1px solid #3d3d5c;
+   color: #888;
 }
 
-.help-btn:hover {
-  background: rgba(92, 107, 192, 0.2);
-  color: #e0e0e0;
-  border-color: #5c6bc0;
-  transform: none;
+.settings-btn {
+   margin-left: auto;
+}
+
+.help-btn {
+   margin-left: 4px;
+}
+
+.settings-btn:hover, .help-btn:hover {
+   background: rgba(92, 107, 192, 0.2);
+   color: #e0e0e0;
+   border-color: #5c6bc0;
+   transform: none;
 }
 
 /* Help modal */
@@ -217,8 +224,58 @@ button:active {
 }
 
 .shortcuts-table td:first-child {
-  text-align: right;
-  white-space: nowrap;
+   text-align: right;
+   white-space: nowrap;
+}
+
+.settings-group {
+   margin-bottom: 16px;
+}
+
+.settings-group:not(:first-child) {
+   margin-top: 16px;
+   padding-top: 16px;
+   border-top: 1px solid #3d3d5c;
+}
+
+.setting-label {
+   display: block;
+   font-weight: bold;
+   margin-bottom: 8px;
+   color: #e0e0e0;
+}
+
+.setting-options {
+   display: flex;
+   flex-direction: column;
+   gap: 8px;
+}
+
+.radio-label {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   cursor: pointer;
+   color: #e0e0e0;
+}
+
+.radio-label input[type="radio"] {
+   cursor: pointer;
+   accent-color: #5c6bc0;
+}
+
+.checkbox-label {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   cursor: pointer;
+   color: #e0e0e0;
+   font-weight: bold;
+}
+
+.checkbox-label input[type="checkbox"] {
+   cursor: pointer;
+   accent-color: #5c6bc0;
 }
 
 kbd {
@@ -597,11 +654,15 @@ h2 {
   cursor: not-allowed;
 }
 
-/* Favourite icon in mix list */
-.fav-icon {
-  margin-left: auto;
-  padding-left: 8px;
-  font-size: 14px;
+/* Favourite and Hidden icons in mix list */
+.fav-icon, .hidden-icon {
+   margin-left: auto;
+   padding-left: 8px;
+   font-size: 14px;
+}
+
+.hidden-icon {
+   margin-left: 4px;
 }
 table.border {
   border-collapse: separate;
