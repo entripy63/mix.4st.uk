@@ -54,9 +54,60 @@ def format_duration(seconds):
     secs = int(seconds % 60)
     return f"{hours}:{minutes:02d}:{secs:02d}"
 
+def extract_dj_and_mix_from_filename(filename, folder_name):
+    """
+    Extract DJ name and mix name from filename when metadata is missing.
+    Handles various naming conventions:
+    - DJName-MixName.mp3 (DJ name matches folder name)
+    - Just-MixName.mp3 (whole filename is mix name if folder not in filename)
+    - Folder_Name/filename.mp3 (use folder name as DJ, filename as mix)
+    
+    Returns: (dj_name, mix_name) tuple
+    """
+    # Remove extension
+    name_without_ext = Path(filename).stem
+    
+    # Replace underscores with spaces for display
+    display_name = name_without_ext.replace('_', ' ')
+    
+    # Normalize for comparison (remove underscores, hyphens, convert to lowercase)
+    folder_normalized = folder_name.lower().replace('_', '').replace(' ', '').replace('-', '')
+    filename_normalized = display_name.lower().replace('_', '').replace(' ', '').replace('-', '')
+    
+    # Check if filename starts with folder name (allowing for format variations)
+    if filename_normalized.startswith(folder_normalized):
+        # Try to extract remainder by finding where folder name ends
+        # Look for hyphen or dash as a separator
+        idx = 0
+        folder_chars_matched = 0
+        
+        for i, char in enumerate(display_name.lower()):
+            normalized_char = char.replace('_', '').replace(' ', '').replace('-', '')
+            if folder_chars_matched < len(folder_normalized) and normalized_char == folder_normalized[folder_chars_matched]:
+                folder_chars_matched += 1
+                idx = i + 1
+        
+        # Skip any hyphens, underscores, or spaces after the folder name part
+        while idx < len(display_name) and display_name[idx] in '-_ ':
+            idx += 1
+        
+        remainder = display_name[idx:].strip()
+        # Also replace hyphens with spaces in the remainder for better display
+        remainder = remainder.replace('-', ' ')
+        
+        if remainder:
+            return folder_name, remainder
+        else:
+            # If nothing left after removing folder name, use whole filename
+            return folder_name, display_name.replace('-', ' ')
+    else:
+        # Folder name not in filename, use whole filename as mix name
+        # Replace hyphens with spaces
+        return folder_name, display_name.replace('-', ' ')
+
 def find_best_audio_file(directory, base_name):
     """Find the best audio file for a given base name (prefer FLAC for metadata, MP3 for playback)."""
-    extensions = ['.mp3', '.flac', '.m4a']
+    extensions = ['.flac', '.m4a', '.mp3', '.opus']
     for ext in extensions:
         path = directory / f"{base_name}{ext}"
         if path.exists():
@@ -65,7 +116,7 @@ def find_best_audio_file(directory, base_name):
 
 def find_download_files(directory, base_name):
     """Find all download formats available for a mix."""
-    extensions = [('.flac', 'FLAC'), ('.mp3', 'MP3'), ('.m4a', 'M4A')]
+    extensions = [('.flac', 'FLAC'), ('.mp3', 'MP3'), ('.m4a', 'M4A'), ('.opus', 'OPUS')]
     downloads = []
     for ext, label in extensions:
         path = directory / f"{base_name}{ext}"
@@ -79,7 +130,7 @@ def find_download_files(directory, base_name):
 def process_directory(directory):
     """Process a DJ directory and generate manifest.json."""
     directory = Path(directory)
-    extensions = {'.mp3', '.flac', '.m4a'}
+    extensions = {'.mp3', '.flac', '.m4a', '.opus'}
     
     # Find unique base names (without extension)
     base_names = set()
@@ -102,8 +153,13 @@ def process_directory(directory):
         if not meta:
             continue
         
-        # Use title from metadata, fall back to filename
-        title = meta['title'] or base_name
+        # Use title from metadata, fall back to filename parsing
+        if meta['title']:
+            title = meta['title']
+        else:
+            # Fallback: extract from filename
+            _, mix_name = extract_dj_and_mix_from_filename(base_name, directory.name)
+            title = mix_name
         
         # Check for peaks file
         peaks_file = directory / f"{base_name}.peaks.json"
@@ -165,7 +221,7 @@ def process_directory(directory):
 def find_dj_directories(base_directory):
     """Find all directories containing audio files, including nested ones in moreDJs/."""
     dj_dirs = []
-    extensions = {'.mp3', '.flac', '.m4a'}
+    extensions = {'.mp3', '.flac', '.m4a', '.opus'}
     
     for entry in base_directory.iterdir():
         if entry.is_dir() and not entry.name.startswith('.'):
@@ -190,7 +246,7 @@ def main():
     # If a specific directory is given, process just that one
     if len(sys.argv) > 1 and (base_directory / 'manifest.json').parent != base_directory.parent:
         # Check if it's a DJ directory (has audio files)
-        extensions = {'.mp3', '.flac', '.m4a'}
+        extensions = {'.mp3', '.flac', '.m4a', '.opus'}
         has_audio = any(f.suffix.lower() in extensions for f in base_directory.iterdir() if f.is_file())
         if has_audio:
             print(f"\n=== {base_directory.name} ===")

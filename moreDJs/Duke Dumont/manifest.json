@@ -1,0 +1,144 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "'Vegas Pool Party' Mix",
+      "file": "Duke Dumont - 'Vegas Pool Party' Mix",
+      "audioFile": "Duke Dumont - 'Vegas Pool Party' Mix.mp3",
+      "duration": 3747.134694,
+      "durationFormatted": "1:02:27",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Duke Dumont - 'Vegas Pool Party' Mix.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Duke Dumont - 'Vegas Pool Party' Mix.peaks.json"
+    },
+    {
+      "name": "5 Hours Set Live @ NOVO Los Angeles Sept 2016",
+      "file": "Duke Dumont - 5 Hours Set Live @ NOVO Los Angeles Sept 2016 ",
+      "audioFile": "Duke Dumont - 5 Hours Set Live @ NOVO Los Angeles Sept 2016 .mp3",
+      "duration": 17931.049796,
+      "durationFormatted": "4:58:51",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Duke Dumont - 5 Hours Set Live @ NOVO Los Angeles Sept 2016 .mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Duke Dumont - 5 Hours Set Live @ NOVO Los Angeles Sept 2016 .peaks.json"
+    },
+    {
+      "name": "Cream (Liverpool) December 26th",
+      "file": "Duke Dumont - Cream (Liverpool) December 26th",
+      "audioFile": "Duke Dumont - Cream (Liverpool) December 26th.mp3",
+      "duration": 5231.56895,
+      "durationFormatted": "1:27:11",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Duke Dumont - Cream (Liverpool) December 26th.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Duke Dumont - Cream (Liverpool) December 26th.peaks.json"
+    },
+    {
+      "name": "Duke Dumont Live-SAT-08-03-2013",
+      "file": "Duke Dumont - 01_hard_summer_2013_live-sat-08-03-2013-talion",
+      "audioFile": "Duke Dumont - 01_hard_summer_2013_live-sat-08-03-2013-talion.mp3",
+      "duration": 4351.56,
+      "durationFormatted": "1:12:31",
+      "artist": "Hard Summer 2013",
+      "downloads": [
+        {
+          "file": "Duke Dumont - 01_hard_summer_2013_live-sat-08-03-2013-talion.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2013",
+      "comment": "TALiON",
+      "peaksFile": "Duke Dumont - 01_hard_summer_2013_live-sat-08-03-2013-talion.peaks.json"
+    },
+    {
+      "name": "Holy Ship Private Island Party (Bahamas) 04.01",
+      "file": "Duke Dumont - Holy Ship Private Island Party (Bahamas) 04.01.15",
+      "audioFile": "Duke Dumont - Holy Ship Private Island Party (Bahamas) 04.01.15.mp3",
+      "duration": 1989.177583,
+      "durationFormatted": "0:33:09",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Duke Dumont - Holy Ship Private Island Party (Bahamas) 04.01.15.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Blues",
+      "peaksFile": "Duke Dumont - Holy Ship Private Island Party (Bahamas) 04.01.15.peaks.json"
+    },
+    {
+      "name": "Live In Detroit (October 7th 2016)",
+      "file": "Duke Dumont - Live In Detroit (October 7th 2016)",
+      "audioFile": "Duke Dumont - Live In Detroit (October 7th 2016).mp3",
+      "duration": 4618.03102,
+      "durationFormatted": "1:16:58",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Duke Dumont - Live In Detroit (October 7th 2016).mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Duke Dumont - Live In Detroit (October 7th 2016).peaks.json"
+    },
+    {
+      "name": "Radio 1 Essential Mix",
+      "file": "Duke Dumont - Radio 1 Essential Mix",
+      "audioFile": "Duke Dumont - Radio 1 Essential Mix.mp3",
+      "duration": 7178.057143,
+      "durationFormatted": "1:59:38",
+      "artist": "Duke Dumont",
+      "downloads": [
+        {
+          "file": "Duke Dumont - Radio 1 Essential Mix.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Duke Dumont - Radio 1 Essential Mix.peaks.json"
+    },
+    {
+      "name": "The Dawn Is Your Enemy (Promo DJ Mix)",
+      "file": "Duke Dumont - The Dawn Is Your Enemy (Promo DJ Mix)",
+      "audioFile": "Duke Dumont - The Dawn Is Your Enemy (Promo DJ Mix).mp3",
+      "duration": 3400.698776,
+      "durationFormatted": "0:56:40",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Duke Dumont - The Dawn Is Your Enemy (Promo DJ Mix).mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Duke Dumont - The Dawn Is Your Enemy (Promo DJ Mix).peaks.json"
+    },
+    {
+      "name": "Triple J",
+      "file": "Duke Dumont - Triple J",
+      "audioFile": "Duke Dumont - Triple J.mp3",
+      "duration": 3600.378776,
+      "durationFormatted": "1:00:00",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Duke Dumont - Triple J.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Duke Dumont - Triple J.peaks.json"
+    }
+  ]
+}

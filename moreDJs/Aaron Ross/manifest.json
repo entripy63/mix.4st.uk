@@ -1,0 +1,50 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "AR JUST HOUSE DJMIX",
+      "file": "AR JUST HOUSE DJMIX",
+      "audioFile": "AR JUST HOUSE DJMIX.mp3",
+      "duration": 3469.296327,
+      "durationFormatted": "0:57:49",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "AR JUST HOUSE DJMIX.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "AR JUST HOUSE DJMIX.peaks.json"
+    },
+    {
+      "name": "AR Mid Summer Mix 2013",
+      "file": "AR Mid Summer Mix 2013",
+      "audioFile": "AR Mid Summer Mix 2013.mp3",
+      "duration": 4116.793469,
+      "durationFormatted": "1:08:36",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "AR Mid Summer Mix 2013.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "AR Mid Summer Mix 2013.peaks.json"
+    },
+    {
+      "name": "JAN 2015 DJMIX",
+      "file": "JAN 2015 DJMIX",
+      "audioFile": "JAN 2015 DJMIX.mp3",
+      "duration": 3600.039184,
+      "durationFormatted": "1:00:00",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "JAN 2015 DJMIX.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "JAN 2015 DJMIX.peaks.json"
+    }
+  ]
+}

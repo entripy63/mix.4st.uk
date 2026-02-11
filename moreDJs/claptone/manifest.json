@@ -1,0 +1,1573 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "BBC Radio 1 Pete Tong After Hours Mix",
+      "file": "Claptone-BBC_Radio_1_Pete_Tong_After_Hours_Mix",
+      "audioFile": "Claptone-BBC_Radio_1_Pete_Tong_After_Hours_Mix.mp3",
+      "duration": 2465.750204,
+      "durationFormatted": "0:41:05",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-BBC_Radio_1_Pete_Tong_After_Hours_Mix.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 1",
+      "file": "Claptone-Clapcast_1",
+      "audioFile": "Claptone-Clapcast_1.mp3",
+      "duration": 3572.793469,
+      "durationFormatted": "0:59:32",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_1.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 10",
+      "file": "Claptone-Clapcast_10",
+      "audioFile": "Claptone-Clapcast_10.mp3",
+      "duration": 3609.939592,
+      "durationFormatted": "1:00:09",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_10.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 100",
+      "file": "Claptone-Clapcast_100",
+      "audioFile": "Claptone-Clapcast_100.mp3",
+      "duration": 3644.290612,
+      "durationFormatted": "1:00:44",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_100.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 101",
+      "file": "Claptone-Clapcast_101",
+      "audioFile": "Claptone-Clapcast_101.mp3",
+      "duration": 3625.142857,
+      "durationFormatted": "1:00:25",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_101.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 102",
+      "file": "Claptone-Clapcast_102",
+      "audioFile": "Claptone-Clapcast_102.mp3",
+      "duration": 3648.914286,
+      "durationFormatted": "1:00:48",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_102.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 103",
+      "file": "Claptone-Clapcast_103",
+      "audioFile": "Claptone-Clapcast_103.mp3",
+      "duration": 3640.058776,
+      "durationFormatted": "1:00:40",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_103.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 104",
+      "file": "Claptone-Clapcast_104",
+      "audioFile": "Claptone-Clapcast_104.mp3",
+      "duration": 3611.324082,
+      "durationFormatted": "1:00:11",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_104.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 105",
+      "file": "Claptone-Clapcast_105",
+      "audioFile": "Claptone-Clapcast_105.mp3",
+      "duration": 3613.805714,
+      "durationFormatted": "1:00:13",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_105.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 106",
+      "file": "Claptone-Clapcast_106",
+      "audioFile": "Claptone-Clapcast_106.mp3",
+      "duration": 3726.367347,
+      "durationFormatted": "1:02:06",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_106.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 107",
+      "file": "Claptone-Clapcast_107",
+      "audioFile": "Claptone-Clapcast_107.mp3",
+      "duration": 3706.488163,
+      "durationFormatted": "1:01:46",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_107.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 11",
+      "file": "Claptone-Clapcast_11",
+      "audioFile": "Claptone-Clapcast_11.mp3",
+      "duration": 3602.050612,
+      "durationFormatted": "1:00:02",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_11.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 12",
+      "file": "Claptone-Clapcast_12",
+      "audioFile": "Claptone-Clapcast_12.mp3",
+      "duration": 3682.298776,
+      "durationFormatted": "1:01:22",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_12.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 13",
+      "file": "Claptone-Clapcast_13",
+      "audioFile": "Claptone-Clapcast_13.mp3",
+      "duration": 3683.422041,
+      "durationFormatted": "1:01:23",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_13.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 14",
+      "file": "Claptone-Clapcast_14",
+      "audioFile": "Claptone-Clapcast_14.mp3",
+      "duration": 3717.302857,
+      "durationFormatted": "1:01:57",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_14.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 15",
+      "file": "Claptone-Clapcast_15",
+      "audioFile": "Claptone-Clapcast_15.mp3",
+      "duration": 3771.376327,
+      "durationFormatted": "1:02:51",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_15.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 16",
+      "file": "Claptone-Clapcast_16",
+      "audioFile": "Claptone-Clapcast_16.mp3",
+      "duration": 3629.348571,
+      "durationFormatted": "1:00:29",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_16.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 17",
+      "file": "Claptone-Clapcast_17",
+      "audioFile": "Claptone-Clapcast_17.mp3",
+      "duration": 3631.307755,
+      "durationFormatted": "1:00:31",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_17.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 18",
+      "file": "Claptone-Clapcast_18",
+      "audioFile": "Claptone-Clapcast_18.mp3",
+      "duration": 3622.086531,
+      "durationFormatted": "1:00:22",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_18.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 19",
+      "file": "Claptone-Clapcast_19",
+      "audioFile": "Claptone-Clapcast_19.mp3",
+      "duration": 3611.08898,
+      "durationFormatted": "1:00:11",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_19.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 2",
+      "file": "Claptone-Clapcast_2",
+      "audioFile": "Claptone-Clapcast_2.mp3",
+      "duration": 3653.459592,
+      "durationFormatted": "1:00:53",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_2.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 20",
+      "file": "Claptone-Clapcast_20",
+      "audioFile": "Claptone-Clapcast_20.mp3",
+      "duration": 3667.774694,
+      "durationFormatted": "1:01:07",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_20.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 21",
+      "file": "Claptone-Clapcast_21",
+      "audioFile": "Claptone-Clapcast_21.mp3",
+      "duration": 3629.557551,
+      "durationFormatted": "1:00:29",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_21.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 22",
+      "file": "Claptone-Clapcast_22",
+      "audioFile": "Claptone-Clapcast_22.mp3",
+      "duration": 3657.586939,
+      "durationFormatted": "1:00:57",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_22.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 23",
+      "file": "Claptone-Clapcast_23",
+      "audioFile": "Claptone-Clapcast_23.mp3",
+      "duration": 3634.520816,
+      "durationFormatted": "1:00:34",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_23.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 24",
+      "file": "Claptone-Clapcast_24",
+      "audioFile": "Claptone-Clapcast_24.mp3",
+      "duration": 3648.339592,
+      "durationFormatted": "1:00:48",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_24.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 25",
+      "file": "Claptone-Clapcast_25",
+      "audioFile": "Claptone-Clapcast_25.mp3",
+      "duration": 3631.36,
+      "durationFormatted": "1:00:31",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_25.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 26",
+      "file": "Claptone-Clapcast_26",
+      "audioFile": "Claptone-Clapcast_26.mp3",
+      "duration": 3654.791837,
+      "durationFormatted": "1:00:54",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_26.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 27",
+      "file": "Claptone-Clapcast_27",
+      "audioFile": "Claptone-Clapcast_27.mp3",
+      "duration": 3613.805714,
+      "durationFormatted": "1:00:13",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_27.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 28",
+      "file": "Claptone-Clapcast_28",
+      "audioFile": "Claptone-Clapcast_28.mp3",
+      "duration": 3765.133061,
+      "durationFormatted": "1:02:45",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_28.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 29",
+      "file": "Claptone-Clapcast_29",
+      "audioFile": "Claptone-Clapcast_29.mp3",
+      "duration": 3749.720816,
+      "durationFormatted": "1:02:29",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_29.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 3",
+      "file": "Claptone-Clapcast_3",
+      "audioFile": "Claptone-Clapcast_3.mp3",
+      "duration": 3683.474286,
+      "durationFormatted": "1:01:23",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_3.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 30",
+      "file": "Claptone-Clapcast_30",
+      "audioFile": "Claptone-Clapcast_30.mp3",
+      "duration": 3625.325714,
+      "durationFormatted": "1:00:25",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_30.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 31",
+      "file": "Claptone-Clapcast_31",
+      "audioFile": "Claptone-Clapcast_31.mp3",
+      "duration": 3803.08898,
+      "durationFormatted": "1:03:23",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_31.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 32",
+      "file": "Claptone-Clapcast_32",
+      "audioFile": "Claptone-Clapcast_32.mp3",
+      "duration": 3612.316735,
+      "durationFormatted": "1:00:12",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_32.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 33",
+      "file": "Claptone-Clapcast_33",
+      "audioFile": "Claptone-Clapcast_33.mp3",
+      "duration": 3639.666939,
+      "durationFormatted": "1:00:39",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_33.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 34",
+      "file": "Claptone-Clapcast_34",
+      "audioFile": "Claptone-Clapcast_34.mp3",
+      "duration": 3680.679184,
+      "durationFormatted": "1:01:20",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_34.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 35",
+      "file": "Claptone-Clapcast_35",
+      "audioFile": "Claptone-Clapcast_35.mp3",
+      "duration": 3635.879184,
+      "durationFormatted": "1:00:35",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_35.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 36",
+      "file": "Claptone-Clapcast_36",
+      "audioFile": "Claptone-Clapcast_36.mp3",
+      "duration": 3685.511837,
+      "durationFormatted": "1:01:25",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_36.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 37",
+      "file": "Claptone-Clapcast_37",
+      "audioFile": "Claptone-Clapcast_37.mp3",
+      "duration": 3725.792653,
+      "durationFormatted": "1:02:05",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_37.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 38",
+      "file": "Claptone-Clapcast_38",
+      "audioFile": "Claptone-Clapcast_38.mp3",
+      "duration": 3709.44,
+      "durationFormatted": "1:01:49",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_38.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 39",
+      "file": "Claptone-Clapcast_39",
+      "audioFile": "Claptone-Clapcast_39.mp3",
+      "duration": 3748.101224,
+      "durationFormatted": "1:02:28",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_39.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 4",
+      "file": "Claptone-Clapcast_4",
+      "audioFile": "Claptone-Clapcast_4.mp3",
+      "duration": 3708.839184,
+      "durationFormatted": "1:01:48",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_4.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 40",
+      "file": "Claptone-Clapcast_40",
+      "audioFile": "Claptone-Clapcast_40.mp3",
+      "duration": 3688.96,
+      "durationFormatted": "1:01:28",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_40.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 41",
+      "file": "Claptone-Clapcast_41",
+      "audioFile": "Claptone-Clapcast_41.mp3",
+      "duration": 3734.386939,
+      "durationFormatted": "1:02:14",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_41.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 42",
+      "file": "Claptone-Clapcast_42",
+      "audioFile": "Claptone-Clapcast_42.mp3",
+      "duration": 3713.619592,
+      "durationFormatted": "1:01:53",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_42.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 43",
+      "file": "Claptone-Clapcast_43",
+      "audioFile": "Claptone-Clapcast_43.mp3",
+      "duration": 3621.381224,
+      "durationFormatted": "1:00:21",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_43.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 44",
+      "file": "Claptone-Clapcast_44",
+      "audioFile": "Claptone-Clapcast_44.mp3",
+      "duration": 3617.07102,
+      "durationFormatted": "1:00:17",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_44.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 45",
+      "file": "Claptone-Clapcast_45",
+      "audioFile": "Claptone-Clapcast_45.mp3",
+      "duration": 3624.437551,
+      "durationFormatted": "1:00:24",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_45.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 46",
+      "file": "Claptone-Clapcast_46",
+      "audioFile": "Claptone-Clapcast_46.mp3",
+      "duration": 3721.691429,
+      "durationFormatted": "1:02:01",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_46.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 47",
+      "file": "Claptone-Clapcast_47",
+      "audioFile": "Claptone-Clapcast_47.mp3",
+      "duration": 3713.776327,
+      "durationFormatted": "1:01:53",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_47.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 48",
+      "file": "Claptone-Clapcast_48",
+      "audioFile": "Claptone-Clapcast_48.mp3",
+      "duration": 3655.732245,
+      "durationFormatted": "1:00:55",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_48.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 49",
+      "file": "Claptone-Clapcast_49",
+      "audioFile": "Claptone-Clapcast_49.mp3",
+      "duration": 3704.894694,
+      "durationFormatted": "1:01:44",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_49.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 5",
+      "file": "Claptone-Clapcast_5",
+      "audioFile": "Claptone-Clapcast_5.mp3",
+      "duration": 3598.706939,
+      "durationFormatted": "0:59:58",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_5.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 50",
+      "file": "Claptone-Clapcast_50",
+      "audioFile": "Claptone-Clapcast_50.mp3",
+      "duration": 3606.099592,
+      "durationFormatted": "1:00:06",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_50.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 51",
+      "file": "Claptone-Clapcast_51",
+      "audioFile": "Claptone-Clapcast_51.mp3",
+      "duration": 3631.882449,
+      "durationFormatted": "1:00:31",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_51.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 52",
+      "file": "Claptone-Clapcast_52",
+      "audioFile": "Claptone-Clapcast_52.mp3",
+      "duration": 3613.074286,
+      "durationFormatted": "1:00:13",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_52.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 53",
+      "file": "Claptone-Clapcast_53",
+      "audioFile": "Claptone-Clapcast_53.mp3",
+      "duration": 3715.108571,
+      "durationFormatted": "1:01:55",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_53.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 54",
+      "file": "Claptone-Clapcast_54",
+      "audioFile": "Claptone-Clapcast_54.mp3",
+      "duration": 3721.012245,
+      "durationFormatted": "1:02:01",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_54.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 55",
+      "file": "Claptone-Clapcast_55",
+      "audioFile": "Claptone-Clapcast_55.mp3",
+      "duration": 3614.275918,
+      "durationFormatted": "1:00:14",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_55.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 56",
+      "file": "Claptone-Clapcast_56",
+      "audioFile": "Claptone-Clapcast_56.mp3",
+      "duration": 3604.140408,
+      "durationFormatted": "1:00:04",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_56.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 57",
+      "file": "Claptone-Clapcast_57",
+      "audioFile": "Claptone-Clapcast_57.mp3",
+      "duration": 3680.10449,
+      "durationFormatted": "1:01:20",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_57.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 58",
+      "file": "Claptone-Clapcast_58",
+      "audioFile": "Claptone-Clapcast_58.mp3",
+      "duration": 3627.075918,
+      "durationFormatted": "1:00:27",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_58.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 59",
+      "file": "Claptone-Clapcast_59",
+      "audioFile": "Claptone-Clapcast_59.mp3",
+      "duration": 3646.537143,
+      "durationFormatted": "1:00:46",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_59.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 6",
+      "file": "Claptone-Clapcast_6",
+      "audioFile": "Claptone-Clapcast_6.mp3",
+      "duration": 3712.261224,
+      "durationFormatted": "1:01:52",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_6.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 60",
+      "file": "Claptone-Clapcast_60",
+      "audioFile": "Claptone-Clapcast_60.mp3",
+      "duration": 3617.358367,
+      "durationFormatted": "1:00:17",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_60.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 61",
+      "file": "Claptone-Clapcast_61",
+      "audioFile": "Claptone-Clapcast_61.mp3",
+      "duration": 3665.005714,
+      "durationFormatted": "1:01:05",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_61.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 62",
+      "file": "Claptone-Clapcast_62",
+      "audioFile": "Claptone-Clapcast_62.mp3",
+      "duration": 3609.155918,
+      "durationFormatted": "1:00:09",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_62.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 63",
+      "file": "Claptone-Clapcast_63",
+      "audioFile": "Claptone-Clapcast_63.mp3",
+      "duration": 3616.757551,
+      "durationFormatted": "1:00:16",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_63.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 64",
+      "file": "Claptone-Clapcast_64",
+      "audioFile": "Claptone-Clapcast_64.mp3",
+      "duration": 3686.896327,
+      "durationFormatted": "1:01:26",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_64.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 65",
+      "file": "Claptone-Clapcast_65",
+      "audioFile": "Claptone-Clapcast_65.mp3",
+      "duration": 3660.382041,
+      "durationFormatted": "1:01:00",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_65.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 66",
+      "file": "Claptone-Clapcast_66",
+      "audioFile": "Claptone-Clapcast_66.mp3",
+      "duration": 3652.649796,
+      "durationFormatted": "1:00:52",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_66.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 67",
+      "file": "Claptone-Clapcast_67",
+      "audioFile": "Claptone-Clapcast_67.mp3",
+      "duration": 3642.67102,
+      "durationFormatted": "1:00:42",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_67.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 68",
+      "file": "Claptone-Clapcast_68",
+      "audioFile": "Claptone-Clapcast_68.mp3",
+      "duration": 3618.35102,
+      "durationFormatted": "1:00:18",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_68.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 69",
+      "file": "Claptone-Clapcast_69",
+      "audioFile": "Claptone-Clapcast_69.mp3",
+      "duration": 3617.17551,
+      "durationFormatted": "1:00:17",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_69.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 7",
+      "file": "Claptone-Clapcast_7",
+      "audioFile": "Claptone-Clapcast_7.mp3",
+      "duration": 3602.02449,
+      "durationFormatted": "1:00:02",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_7.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 70",
+      "file": "Claptone-Clapcast_70",
+      "audioFile": "Claptone-Clapcast_70.mp3",
+      "duration": 3628.460408,
+      "durationFormatted": "1:00:28",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_70.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 71",
+      "file": "Claptone-Clapcast_71",
+      "audioFile": "Claptone-Clapcast_71.mp3",
+      "duration": 3638.021224,
+      "durationFormatted": "1:00:38",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_71.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 72",
+      "file": "Claptone-Clapcast_72",
+      "audioFile": "Claptone-Clapcast_72.mp3",
+      "duration": 3667.957551,
+      "durationFormatted": "1:01:07",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_72.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 73",
+      "file": "Claptone-Clapcast_73",
+      "audioFile": "Claptone-Clapcast_73.mp3",
+      "duration": 3634.886531,
+      "durationFormatted": "1:00:34",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_73.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 74",
+      "file": "Claptone-Clapcast_74",
+      "audioFile": "Claptone-Clapcast_74.mp3",
+      "duration": 3635.748571,
+      "durationFormatted": "1:00:35",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_74.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 75",
+      "file": "Claptone-Clapcast_75",
+      "audioFile": "Claptone-Clapcast_75.mp3",
+      "duration": 3611.454694,
+      "durationFormatted": "1:00:11",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_75.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 76",
+      "file": "Claptone-Clapcast_76",
+      "audioFile": "Claptone-Clapcast_76.mp3",
+      "duration": 3662.733061,
+      "durationFormatted": "1:01:02",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_76.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 77",
+      "file": "Claptone-Clapcast_77",
+      "audioFile": "Claptone-Clapcast_77.mp3",
+      "duration": 3652.832653,
+      "durationFormatted": "1:00:52",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_77.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 78",
+      "file": "Claptone-Clapcast_78",
+      "audioFile": "Claptone-Clapcast_78.mp3",
+      "duration": 3676.029388,
+      "durationFormatted": "1:01:16",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_78.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 79",
+      "file": "Claptone-Clapcast_79",
+      "audioFile": "Claptone-Clapcast_79.mp3",
+      "duration": 3659.154286,
+      "durationFormatted": "1:00:59",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_79.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 8",
+      "file": "Claptone-Clapcast_8",
+      "audioFile": "Claptone-Clapcast_8.mp3",
+      "duration": 3601.397551,
+      "durationFormatted": "1:00:01",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_8.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 80",
+      "file": "Claptone-Clapcast_80",
+      "audioFile": "Claptone-Clapcast_80.mp3",
+      "duration": 3665.893878,
+      "durationFormatted": "1:01:05",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_80.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 81",
+      "file": "Claptone-Clapcast_81",
+      "audioFile": "Claptone-Clapcast_81.mp3",
+      "duration": 3679.79102,
+      "durationFormatted": "1:01:19",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_81.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 82",
+      "file": "Claptone-Clapcast_82",
+      "audioFile": "Claptone-Clapcast_82.mp3",
+      "duration": 3609.234286,
+      "durationFormatted": "1:00:09",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_82.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 83",
+      "file": "Claptone-Clapcast_83",
+      "audioFile": "Claptone-Clapcast_83.mp3",
+      "duration": 3607.640816,
+      "durationFormatted": "1:00:07",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_83.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 84",
+      "file": "Claptone-Clapcast_84",
+      "audioFile": "Claptone-Clapcast_84.mp3",
+      "duration": 3599.647347,
+      "durationFormatted": "0:59:59",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_84.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 85",
+      "file": "Claptone-Clapcast_85",
+      "audioFile": "Claptone-Clapcast_85.mp3",
+      "duration": 3600.274286,
+      "durationFormatted": "1:00:00",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_85.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 86",
+      "file": "Claptone-Clapcast_86",
+      "audioFile": "Claptone-Clapcast_86.mp3",
+      "duration": 3601.057959,
+      "durationFormatted": "1:00:01",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_86.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 87",
+      "file": "Claptone-Clapcast_87",
+      "audioFile": "Claptone-Clapcast_87.mp3",
+      "duration": 3659.598367,
+      "durationFormatted": "1:00:59",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_87.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 88",
+      "file": "Claptone-Clapcast_88",
+      "audioFile": "Claptone-Clapcast_88.mp3",
+      "duration": 3667.40898,
+      "durationFormatted": "1:01:07",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_88.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 89",
+      "file": "Claptone-Clapcast_89",
+      "audioFile": "Claptone-Clapcast_89.mp3",
+      "duration": 3682.638367,
+      "durationFormatted": "1:01:22",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_89.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 9",
+      "file": "Claptone-Clapcast_9",
+      "audioFile": "Claptone-Clapcast_9.mp3",
+      "duration": 3649.567347,
+      "durationFormatted": "1:00:49",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_9.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 90",
+      "file": "Claptone-Clapcast_90",
+      "audioFile": "Claptone-Clapcast_90.mp3",
+      "duration": 3683.213061,
+      "durationFormatted": "1:01:23",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_90.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 91",
+      "file": "Claptone-Clapcast_91",
+      "audioFile": "Claptone-Clapcast_91.mp3",
+      "duration": 3619.082449,
+      "durationFormatted": "1:00:19",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_91.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 92",
+      "file": "Claptone-Clapcast_92",
+      "audioFile": "Claptone-Clapcast_92.mp3",
+      "duration": 3612.656327,
+      "durationFormatted": "1:00:12",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_92.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 93",
+      "file": "Claptone-Clapcast_93",
+      "audioFile": "Claptone-Clapcast_93.mp3",
+      "duration": 3704.737959,
+      "durationFormatted": "1:01:44",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_93.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 94",
+      "file": "Claptone-Clapcast_94",
+      "audioFile": "Claptone-Clapcast_94.mp3",
+      "duration": 3679.190204,
+      "durationFormatted": "1:01:19",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_94.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 95",
+      "file": "Claptone-Clapcast_95",
+      "audioFile": "Claptone-Clapcast_95.mp3",
+      "duration": 3879.967347,
+      "durationFormatted": "1:04:39",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_95.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 96",
+      "file": "Claptone-Clapcast_96",
+      "audioFile": "Claptone-Clapcast_96.mp3",
+      "duration": 3652.545306,
+      "durationFormatted": "1:00:52",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_96.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 97",
+      "file": "Claptone-Clapcast_97",
+      "audioFile": "Claptone-Clapcast_97.mp3",
+      "duration": 3636.662857,
+      "durationFormatted": "1:00:36",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_97.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 98",
+      "file": "Claptone-Clapcast_98",
+      "audioFile": "Claptone-Clapcast_98.mp3",
+      "duration": 3608.267755,
+      "durationFormatted": "1:00:08",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_98.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Clapcast 99",
+      "file": "Claptone-Clapcast_99",
+      "audioFile": "Claptone-Clapcast_99.mp3",
+      "duration": 3612.003265,
+      "durationFormatted": "1:00:12",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Clapcast_99.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Claptone ESSENTIAL MIX (BBC Radio 1)",
+      "file": "Claptone ESSENTIAL MIX (BBC Radio 1)",
+      "audioFile": "Claptone ESSENTIAL MIX (BBC Radio 1).mp3",
+      "duration": 7094.70355,
+      "durationFormatted": "1:58:14",
+      "artist": "Claptone",
+      "downloads": [
+        {
+          "file": "Claptone ESSENTIAL MIX (BBC Radio 1).mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Fifty Thousand Mix",
+      "file": "Claptone-Fifty-Thousand-Mix",
+      "audioFile": "Claptone-Fifty-Thousand-Mix.mp3",
+      "duration": 3683.369796,
+      "durationFormatted": "1:01:23",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Fifty-Thousand-Mix.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Halloween Mix",
+      "file": "Claptone-Halloween_Mix",
+      "audioFile": "Claptone-Halloween_Mix.mp3",
+      "duration": 7188.166531,
+      "durationFormatted": "1:59:48",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Halloween_Mix.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Live @ Exploited Nights Prince Charles Berlin",
+      "file": "Claptone-Live_@_Exploited_Nights_Prince_Charles_Berlin",
+      "audioFile": "Claptone-Live_@_Exploited_Nights_Prince_Charles_Berlin.mp3",
+      "duration": 3863.066122,
+      "durationFormatted": "1:04:23",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Claptone-Live_@_Exploited_Nights_Prince_Charles_Berlin.mp3",
+          "label": "MP3"
+        }
+      ]
+    }
+  ]
+}

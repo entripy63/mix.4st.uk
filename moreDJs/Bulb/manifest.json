@@ -2,7 +2,7 @@
   "generated": true,
   "mixes": [
     {
-      "name": "Bulb - Into the deep 001",
+      "name": "Into the deep 001",
       "file": "Bulb - Into the deep 001",
       "audioFile": "Bulb - Into the deep 001.mp3",
       "duration": 3339.4187,
@@ -90,6 +90,23 @@
       "date": "2010",
       "comment": "into-the-deep.rpod.ru",
       "peaksFile": "Bulb - Into the deep 005.peaks.json"
+    },
+    {
+      "name": "Into the deep 006",
+      "file": "Bulb - Into the deep 006",
+      "audioFile": "Bulb - Into the deep 006.mp3",
+      "duration": 2702.2138,
+      "durationFormatted": "0:45:02",
+      "artist": "Bulb",
+      "downloads": [
+        {
+          "file": "Bulb - Into the deep 006.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2010",
+      "comment": "into-the-deep.rpod.ru",
+      "peaksFile": "Bulb - Into the deep 006.peaks.json"
     },
     {
       "name": "Into the deep 007",

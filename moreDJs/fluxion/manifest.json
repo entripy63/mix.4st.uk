@@ -1,0 +1,24 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "Secret Thirteen Mix 211 - Fluxion",
+      "file": "Fluxion-Secret-Thirteen-Mix-211",
+      "audioFile": "Fluxion-Secret-Thirteen-Mix-211.mp3",
+      "duration": 4028.577925,
+      "durationFormatted": "1:07:08",
+      "artist": "Fluxion",
+      "downloads": [
+        {
+          "file": "Fluxion-Secret-Thirteen-Mix-211.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "podcast",
+      "date": "2017",
+      "comment": "http://secretthirteen.org/mixes",
+      "peaksFile": "Fluxion-Secret-Thirteen-Mix-211.peaks.json",
+      "coverFile": "Fluxion-Secret-Thirteen-Mix-211.jpg"
+    }
+  ]
+}

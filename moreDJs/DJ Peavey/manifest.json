@@ -1,0 +1,209 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "My Deep House Forever Radio Show Ed.025",
+      "file": "peavey_mdhf025_soundcloud",
+      "audioFile": "peavey_mdhf025_soundcloud.mp3",
+      "duration": 3441.502025,
+      "durationFormatted": "0:57:21",
+      "artist": "Peavey",
+      "downloads": [
+        {
+          "file": "peavey_mdhf025_soundcloud.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2011",
+      "comment": "compiled & recorded 29/01/11",
+      "peaksFile": "peavey_mdhf025_soundcloud.peaks.json"
+    },
+    {
+      "name": "My Deep House Forever Radio Show Ed.026",
+      "file": "peavey_mdhf026",
+      "audioFile": "peavey_mdhf026.mp3",
+      "duration": 3604.271,
+      "durationFormatted": "1:00:04",
+      "artist": "Peavey",
+      "downloads": [
+        {
+          "file": "peavey_mdhf026.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2011",
+      "comment": "compiled & recorded 27/03/11",
+      "peaksFile": "peavey_mdhf026.peaks.json"
+    },
+    {
+      "name": "My Deep House Forever Radio Show Ed.027",
+      "file": "peavey_mdhf027",
+      "audioFile": "peavey_mdhf027.mp3",
+      "duration": 3599.986925,
+      "durationFormatted": "0:59:59",
+      "artist": "Peavey",
+      "downloads": [
+        {
+          "file": "peavey_mdhf027.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2011",
+      "comment": "compiled & mixed 01/05/11",
+      "peaksFile": "peavey_mdhf027.peaks.json"
+    },
+    {
+      "name": "My Deep House Forever Radio Show Ed.028",
+      "file": "peavey_mdhf028",
+      "audioFile": "peavey_mdhf028.mp3",
+      "duration": 3600.065278,
+      "durationFormatted": "1:00:00",
+      "artist": "Peavey",
+      "downloads": [
+        {
+          "file": "peavey_mdhf028.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2011",
+      "comment": "compiled & mixed 01/06/11",
+      "peaksFile": "peavey_mdhf028.peaks.json"
+    },
+    {
+      "name": "My Deep House Forever Radio Show Ed.029",
+      "file": "peavey_mdhf029",
+      "audioFile": "peavey_mdhf029.mp3",
+      "duration": 3602.8865,
+      "durationFormatted": "1:00:02",
+      "artist": "Peavey",
+      "downloads": [
+        {
+          "file": "peavey_mdhf029.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2011",
+      "comment": "compiled & mixed 30/06/2011",
+      "peaksFile": "peavey_mdhf029.peaks.json"
+    },
+    {
+      "name": "My Deep House Forever Radio Show Ed.030",
+      "file": "peavey_mdhf030",
+      "audioFile": "peavey_mdhf030.mp3",
+      "duration": 3600.7706,
+      "durationFormatted": "1:00:00",
+      "artist": "Peavey",
+      "downloads": [
+        {
+          "file": "peavey_mdhf030.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2011",
+      "comment": "compiled & mixed 31/07/11",
+      "peaksFile": "peavey_mdhf030.peaks.json"
+    },
+    {
+      "name": "My Deep House Forever Radio Show Ed.031",
+      "file": "peavey_mdhf031",
+      "audioFile": "peavey_mdhf031.mp3",
+      "duration": 3600.300378,
+      "durationFormatted": "1:00:00",
+      "artist": "Peavey",
+      "downloads": [
+        {
+          "file": "peavey_mdhf031.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2011",
+      "comment": "compiled & mixed 06/10/11",
+      "peaksFile": "peavey_mdhf031.peaks.json"
+    },
+    {
+      "name": "My Deep House Forever Radio Show Ed.032",
+      "file": "peavey_mdhf032",
+      "audioFile": "peavey_mdhf032.mp3",
+      "duration": 3600.065278,
+      "durationFormatted": "1:00:00",
+      "artist": "Peavey",
+      "downloads": [
+        {
+          "file": "peavey_mdhf032.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2011",
+      "comment": "compiled & mixed 01/12/11",
+      "peaksFile": "peavey_mdhf032.peaks.json"
+    },
+    {
+      "name": "My Deep House Forever Radio Show Ed.033",
+      "file": "peavey_mdhf033",
+      "audioFile": "peavey_mdhf033.mp3",
+      "duration": 3600.065278,
+      "durationFormatted": "1:00:00",
+      "artist": "Peavey",
+      "downloads": [
+        {
+          "file": "peavey_mdhf033.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2012",
+      "comment": "compiled & mixed 01/02/12",
+      "peaksFile": "peavey_mdhf033.peaks.json"
+    },
+    {
+      "name": "My Deep House Forever Radio Show Ed.034",
+      "file": "peavey_mdhf034",
+      "audioFile": "peavey_mdhf034.mp3",
+      "duration": 3600.013025,
+      "durationFormatted": "1:00:00",
+      "artist": "Peavey",
+      "downloads": [
+        {
+          "file": "peavey_mdhf034.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2012",
+      "comment": "compiled & mixed 04/04/12",
+      "peaksFile": "peavey_mdhf034.peaks.json"
+    },
+    {
+      "name": "My Deep House Forever Radio Show Ed.035",
+      "file": "peavey_mdhf035",
+      "audioFile": "peavey_mdhf035.mp3",
+      "duration": 3600.065278,
+      "durationFormatted": "1:00:00",
+      "artist": "Peavey",
+      "downloads": [
+        {
+          "file": "peavey_mdhf035.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2012",
+      "comment": "compiled & mixed 04/07/12",
+      "peaksFile": "peavey_mdhf035.peaks.json"
+    },
+    {
+      "name": "My Deep House forever 007, deeprhythms guest mix #25",
+      "file": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808",
+      "audioFile": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808.mp3",
+      "duration": 3830.078878,
+      "durationFormatted": "1:03:50",
+      "artist": "DJ Peavey",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2008",
+      "peaksFile": "deeprhythms_guestmix_25_mdhf007_by_peavey_110808.peaks.json"
+    }
+  ]
+}

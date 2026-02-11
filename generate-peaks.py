@@ -74,7 +74,7 @@ def get_audio_peaks(audio_path, num_peaks=SAMPLES_PER_PEAK):
 def process_directory(directory):
     """Process all audio files in directory."""
     
-    extensions = ('.mp3', '.flac', '.m4a', '.wav')
+    extensions = ('.mp3', '.flac', '.m4a', '.wav', '.opus')
     
     for filename in sorted(os.listdir(directory)):
         if not filename.lower().endswith(extensions):
@@ -103,7 +103,7 @@ def process_directory(directory):
 def find_dj_directories(base_directory):
     """Find all directories containing audio files, including nested ones in moreDJs/."""
     dj_dirs = []
-    extensions = ('.mp3', '.flac', '.m4a', '.wav')
+    extensions = ('.mp3', '.flac', '.m4a', '.wav', '.opus')
     
     for entry in sorted(os.listdir(base_directory)):
         path = os.path.join(base_directory, entry)
@@ -126,7 +126,7 @@ def find_dj_directories(base_directory):
 
 if __name__ == '__main__':
     directory = sys.argv[1] if len(sys.argv) > 1 else '.'
-    extensions = ('.mp3', '.flac', '.m4a', '.wav')
+    extensions = ('.mp3', '.flac', '.m4a', '.wav', '.opus')
     
     # Check if a specific DJ directory is given
     if len(sys.argv) > 1 and any(f.lower().endswith(extensions) for f in os.listdir(directory)):

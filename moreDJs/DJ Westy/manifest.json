@@ -1,0 +1,50 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "Soulful House   The Very Best Of",
+      "file": "Soulful House - The Very Best Of",
+      "audioFile": "Soulful House - The Very Best Of.mp3",
+      "duration": 4619.911837,
+      "durationFormatted": "1:16:59",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Soulful House - The Very Best Of.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Soulful House - The Very Best Of.peaks.json"
+    },
+    {
+      "name": "Soulful House   Uplifting Soulful House Favourites",
+      "file": "Soulful House - Uplifting Soulful House Favourites",
+      "audioFile": "Soulful House - Uplifting Soulful House Favourites.mp3",
+      "duration": 3758.393469,
+      "durationFormatted": "1:02:38",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Soulful House - Uplifting Soulful House Favourites.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Soulful House - Uplifting Soulful House Favourites.peaks.json"
+    },
+    {
+      "name": "Soulful House The Soulful Lounge Classics Mix",
+      "file": "Soulful House-The Soulful Lounge Classics Mix",
+      "audioFile": "Soulful House-The Soulful Lounge Classics Mix.mp3",
+      "duration": 5360.300408,
+      "durationFormatted": "1:29:20",
+      "artist": "",
+      "downloads": [
+        {
+          "file": "Soulful House-The Soulful Lounge Classics Mix.mp3",
+          "label": "MP3"
+        }
+      ],
+      "peaksFile": "Soulful House-The Soulful Lounge Classics Mix.peaks.json"
+    }
+  ]
+}
