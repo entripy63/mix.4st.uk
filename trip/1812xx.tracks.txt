@@ -1,0 +1,15 @@
+# Track list
+# Format: time,title,artist
+
+,Something Just Like This,The Chainsmokers & Coldplay
+,Finders Keepers ft. Kojo Funds,Mabel
+,Girlfriend (feat. Dâm-Funk),Christine and The Queens
+,Get Lucky feat. Pharrell Williams,Daft Punk
+,Perfect Strangers ft. JP Cooper-Ey,Jonas Blue
+,My Love ft. Jess Glynne,Route 94
+,Hideaway,Kiesza
+,Lola's Theme (Album version),The Shapeshifters
+,Make Luv (Extended Version),Room 5 feat. Oliver Cheatham
+,Big Love,Pete Heller
+,Your Love (Club Mix),Mark Knight
+,Where Love Lives,Alison Limerick

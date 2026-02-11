@@ -668,6 +668,7 @@ table.border {
   border-collapse: separate;
   border-spacing: 0 4px;
   border: none;
+  margin-top: 1em;
 }
 th {
   font-weight: bold;

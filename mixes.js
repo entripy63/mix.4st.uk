@@ -1,61 +1,21 @@
 async function fetchDJMixes(djPath) {
-  // Try manifest.json first (new metadata-based approach)
-  try {
-    const response = await fetch(`${djPath}/manifest.json`);
-    if (response.ok) {
-      const manifest = await response.json();
-      return manifest.mixes.map(mix => ({
-        name: mix.name,
-        file: mix.file,
-        audioFile: mix.audioFile,
-        duration: mix.durationFormatted,
-        durationSeconds: mix.duration,
-        artist: mix.artist,
-        genre: mix.genre,
-        date: mix.date,
-        comment: mix.comment,
-        downloads: mix.downloads,
-        peaksFile: mix.peaksFile,
-        coverFile: mix.coverFile,
-        djPath: djPath
-      }));
-    }
-  } catch (e) {
-    // Fall back to HTML parsing
-  }
-  
-  // Fallback: parse legacy index.html
-  const response = await fetch(`${djPath}/index.html`);
-  const html = await response.text();
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-  
-  const mixes = [];
-  const rows = doc.querySelectorAll('table.border tr');
-  
-  rows.forEach(row => {
-    const cells = row.querySelectorAll('td');
-    const link = row.querySelector('td a');
-    if (link && cells.length >= 2) {
-      const durationRaw = cells[0].textContent.trim();
-      mixes.push({
-        name: link.textContent,
-        htmlPath: `${djPath}/${link.getAttribute('href')}`,
-        duration: formatDuration(durationRaw),
-        djPath: djPath
-      });
-    }
-  });
-  
-  return mixes;
-}
-
-function formatDuration(raw) {
-  const hMatch = raw.match(/(\d+)h/);
-  const mMatch = raw.match(/(\d+)m/);
-  const hours = hMatch ? parseInt(hMatch[1]) : 0;
-  const minutes = mMatch ? parseInt(mMatch[1]) : 0;
-  return `${hours}:${minutes.toString().padStart(2, '0')}:00`;
+  const response = await fetch(`${djPath}/manifest.json`);
+  const manifest = await response.json();
+  return manifest.mixes.map(mix => ({
+    name: mix.name,
+    file: mix.file,
+    audioFile: mix.audioFile,
+    duration: mix.durationFormatted,
+    durationSeconds: mix.duration,
+    artist: mix.artist,
+    genre: mix.genre,
+    date: mix.date,
+    comment: mix.comment,
+    downloads: mix.downloads,
+    peaksFile: mix.peaksFile,
+    coverFile: mix.coverFile,
+    djPath: djPath
+  }));
 }
 
 // Universal selection phrases (DJ-agnostic common terms)
@@ -222,102 +182,13 @@ function encodeFilename(filename) {
 }
 
 async function fetchMixDetails(mix) {
-  // If mix came from manifest, we already have most details
-  if (mix.audioFile) {
-    const dir = `${mix.djPath}/`;
-    
-    // Load peaks if available
-    let peaks = null;
-    if (mix.peaksFile) {
-      try {
-        const peaksResponse = await fetch(dir + encodeFilename(mix.peaksFile));
-        if (peaksResponse.ok) {
-          const peaksData = await peaksResponse.json();
-          peaks = peaksData.peaks;
-        }
-      } catch (e) {
-        // Peaks file doesn't exist, that's fine
-      }
-    }
-    
-    // Build download links
-    const downloadLinks = (mix.downloads || []).map(d => ({
-      href: dir + encodeFilename(d.file),
-      label: d.label
-    }));
-    
-    // Try to load track list from .tracks.txt (CSV) or .html file
-    let trackListTable = '';
-    const txtPath = `${dir}${encodeFilename(mix.file)}.tracks.txt`;
-    const htmlPath = `${dir}${encodeFilename(mix.file)}.html`;
-    
-    // Try CSV track list first
-    try {
-      const txtResponse = await fetch(txtPath);
-      if (txtResponse.ok) {
-        const txt = await txtResponse.text();
-        trackListTable = parseTrackListCSV(txt);
-      }
-    } catch (e) {
-      // No txt file, try HTML
-    }
-    
-    // Fall back to HTML track list
-    if (!trackListTable) {
-      try {
-        const htmlResponse = await fetch(htmlPath);
-        if (htmlResponse.ok) {
-          const html = await htmlResponse.text();
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, 'text/html');
-          const table = doc.querySelector('table.border');
-          trackListTable = table ? table.outerHTML : '';
-        }
-      } catch (e) {
-        // No HTML file, that's fine
-      }
-    }
-    
-    // Cover art URL
-    const coverSrc = mix.coverFile ? dir + encodeFilename(mix.coverFile) : null;
-    
-    return {
-      audioSrc: dir + encodeFilename(mix.audioFile),
-      trackListTable,
-      peaks,
-      downloadLinks,
-      coverSrc
-    };
-  }
+  const dir = `${mix.djPath}/`;
   
-  // Fallback: legacy HTML-based approach
-  const htmlPath = mix.htmlPath;
-  const response = await fetch(htmlPath);
-  const html = await response.text();
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-  
-  const audio = doc.querySelector('audio');
-  const audioSrc = audio ? audio.getAttribute('src') : null;
-  
-  const table = doc.querySelector('table.border');
-  const trackListTable = table ? table.outerHTML : '';
-  
-  const dir = htmlPath.substring(0, htmlPath.lastIndexOf('/') + 1);
-  
-  // Extract download links
-  const downloadLinks = Array.from(doc.querySelectorAll('a.download-link')).map(a => ({
-    href: dir + a.getAttribute('href'),
-    label: a.textContent
-  }));
-  const fullAudioSrc = audioSrc ? dir + audioSrc : null;
-  
-  // Try to load peaks file
+  // Load peaks if available
   let peaks = null;
-  if (audioSrc) {
-    const peaksPath = dir + audioSrc.replace(/\.[^/.]+$/, '.peaks.json');
+  if (mix.peaksFile) {
     try {
-      const peaksResponse = await fetch(peaksPath);
+      const peaksResponse = await fetch(dir + encodeFilename(mix.peaksFile));
       if (peaksResponse.ok) {
         const peaksData = await peaksResponse.json();
         peaks = peaksData.peaks;
@@ -327,25 +198,91 @@ async function fetchMixDetails(mix) {
     }
   }
   
-  return { audioSrc: fullAudioSrc, trackListTable, peaks, downloadLinks };
+  // Build download links
+  const downloadLinks = (mix.downloads || []).map(d => ({
+    href: dir + encodeFilename(d.file),
+    label: d.label
+  }));
+  
+  // Try to load track list from .tracks.txt (CSV)
+  let trackListTable = '';
+  const txtPath = `${dir}${encodeFilename(mix.file)}.tracks.txt`;
+  
+  try {
+    const txtResponse = await fetch(txtPath);
+    if (txtResponse.ok) {
+      const txt = await txtResponse.text();
+      trackListTable = parseTrackListCSV(txt);
+    }
+  } catch (e) {
+    // No track list file, that's fine
+  }
+  
+  // Cover art URL
+  const coverSrc = mix.coverFile ? dir + encodeFilename(mix.coverFile) : null;
+  
+  return {
+    audioSrc: dir + encodeFilename(mix.audioFile),
+    trackListTable,
+    peaks,
+    downloadLinks,
+    coverSrc
+  };
+}
+
+function parseCSVLine(line) {
+  const fields = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (inQuotes) {
+      if (c === '"' && line[i + 1] === '"') {
+        current += '"';
+        i++;
+      } else if (c === '"') {
+        inQuotes = false;
+      } else {
+        current += c;
+      }
+    } else if (c === '"') {
+      inQuotes = true;
+    } else if (c === ',') {
+      fields.push(current.trim());
+      current = '';
+    } else {
+      current += c;
+    }
+  }
+  fields.push(current.trim());
+  return fields;
 }
 
 function parseTrackListCSV(txt) {
   const lines = txt.split('\n').filter(line => line.trim() && !line.startsWith('#'));
   if (lines.length === 0) return '';
   
+  const hasTime = lines.some(line => parseCSVLine(line)[0]);
+  const hasRemixer = lines.some(line => parseCSVLine(line)[3]);
+  
   const rows = lines.map(line => {
-    const parts = line.split(',').map(p => p.trim());
+    const parts = parseCSVLine(line);
     const time = parts[0] || '';
     const title = parts[1] || '';
     const artist = parts[2] || '';
-    return `<tr>${time ? `<td>${escapeHtml(time)}</td>` : ''}<td>${escapeHtml(title)}</td><td>${escapeHtml(artist)}</td></tr>`;
+    const remixer = parts[3] || '';
+    let cells = '';
+    if (hasTime) cells += `<td>${escapeHtml(time)}</td>`;
+    cells += `<td>${escapeHtml(title)}</td><td>${escapeHtml(artist)}</td>`;
+    if (hasRemixer) cells += `<td>${escapeHtml(remixer)}</td>`;
+    return `<tr>${cells}</tr>`;
   });
   
-  const hasTime = lines.some(line => line.split(',')[0]?.trim());
-  const header = hasTime 
-    ? '<tr><th>Time</th><th>Title</th><th>Artist</th></tr>'
-    : '<tr><th>Title</th><th>Artist</th></tr>';
+  let header = '<tr>';
+  if (hasTime) header += '<th>Time</th>';
+  header += '<th>Title</th><th>Artist</th>';
+  if (hasRemixer) header += '<th>Remixer</th>';
+  header += '</tr>';
   
   return `<table class="border">${header}${rows.join('')}</table>`;
 }

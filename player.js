@@ -507,7 +507,7 @@ function displayTrackList(mix, table, downloadLinks, coverSrc) {
     </div>`;
   }
   
-  const trackListSection = table ? `<h2>Track List</h2>${table}` : '';
+  const trackListSection = table || '';
   trackListDiv.innerHTML = trackListSection + actionBar;
   
   // Show cover art only if there's no track list (track list takes precedence)
