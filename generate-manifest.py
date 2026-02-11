@@ -261,9 +261,21 @@ def find_dj_directories(base_directory):
     
     return sorted(dj_dirs, key=lambda p: p.name.lower())
 
+def load_config():
+    """Load audio source configuration if it exists."""
+    config_path = Path('audio-source-config.json')
+    if config_path.exists():
+        try:
+            with open(config_path) as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Warning: Could not load config: {e}")
+    return None
+
 def main():
     source_dir = None
     output_dir = None
+    config = load_config()
     
     # Parse arguments
     if len(sys.argv) > 1 and sys.argv[1] == '--source':
@@ -276,32 +288,48 @@ def main():
         if not source_dir.exists():
             print(f"Error: source directory {source_dir} does not exist")
             sys.exit(1)
+    elif config and 'source_directory' in config:
+        # Use config file if no --source argument
+        source_dir = Path(config['source_directory'])
+        output_dir = Path('.')
+        if not source_dir.exists():
+            print(f"Error: source directory in config {source_dir} does not exist")
+            sys.exit(1)
     else:
         # Original behavior: read and write from same location
         output_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path('.')
     
-    # If source_dir is set, link output directories to source directories
+    # If source_dir is set, use config mappings if available
     if source_dir:
         print(f"Reading audio from: {source_dir}")
         print(f"Writing manifests to: {output_dir}")
         
         # Find all DJ directories in source
-        dj_dirs = find_dj_directories(source_dir)
+        all_source_dirs = [d for d in sorted(source_dir.iterdir()) if d.is_dir() and not d.name.startswith('.')]
         
-        for dj_dir in dj_dirs:
-            relative = dj_dir.relative_to(source_dir)
-            
-            # Create corresponding output directory structure
-            if relative.parts[0] == 'moreDJs':
-                output_path = output_dir / 'moreDJs' / relative.parts[1]
-            else:
+        # If we have mappings, use them; otherwise try to auto-match
+        if config and 'folder_mappings' in config:
+            mappings = config['folder_mappings']
+            for source_folder in all_source_dirs:
+                source_name = source_folder.name
+                if source_name not in mappings:
+                    print(f"Warning: {source_name} not in config mappings, skipping")
+                    continue
+                
+                output_path = output_dir / mappings[source_name]
+                output_path.mkdir(parents=True, exist_ok=True)
+                
+                print(f"\n=== {source_name} → {mappings[source_name]} ===")
+                process_directory_split(source_folder, output_path)
+        else:
+            # Fallback: just mirror structure (old behavior)
+            for dj_dir in all_source_dirs:
+                relative = dj_dir.name
                 output_path = output_dir / relative
-            
-            output_path.mkdir(parents=True, exist_ok=True)
-            
-            print(f"\n=== {relative} ===")
-            # Process directory, reading from source, writing to output
-            process_directory_split(dj_dir, output_path)
+                output_path.mkdir(parents=True, exist_ok=True)
+                
+                print(f"\n=== {relative} ===")
+                process_directory_split(dj_dir, output_path)
     else:
         # Original behavior: find and process all DJ directories in place
         if len(sys.argv) > 1 and (output_dir / 'manifest.json').parent != output_dir.parent:

@@ -135,9 +135,21 @@ def process_folder_split(source_folder, output_folder):
     
     return extracted, skipped, no_art
 
+def load_config():
+    """Load audio source configuration if it exists."""
+    config_path = Path('audio-source-config.json')
+    if config_path.exists():
+        try:
+            with open(config_path) as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Warning: Could not load config: {e}")
+    return None
+
 def main():
     source_dir = None
     output_dir = None
+    config = load_config()
     
     # Parse arguments
     if len(sys.argv) > 1 and sys.argv[1] == '--source':
@@ -149,6 +161,13 @@ def main():
         
         if not source_dir.exists():
             print(f"Error: source directory {source_dir} does not exist")
+            sys.exit(1)
+    elif config and 'source_directory' in config:
+        # Use config file if no --source argument
+        source_dir = Path(config['source_directory'])
+        output_dir = Path.cwd()
+        if not source_dir.exists():
+            print(f"Error: source directory in config {source_dir} does not exist")
             sys.exit(1)
     else:
         root_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path.cwd()
@@ -163,32 +182,48 @@ def main():
         print(f"Reading audio from: {source_dir}")
         print(f"Writing covers to: {output_dir}")
         
-        dj_folders = find_dj_folders(source_dir)
+        all_source_dirs = [d for d in sorted(source_dir.iterdir()) if d.is_dir() and not d.name.startswith('.')]
         total_extracted = 0
         total_skipped = 0
         total_no_art = 0
         
-        for source_folder in dj_folders:
-            relative = source_folder.relative_to(source_dir)
-            
-            # Create corresponding output directory
-            if relative.parts[0] == 'moreDJs':
-                output_folder = output_dir / 'moreDJs' / relative.parts[1]
-            else:
-                output_folder = output_dir / relative
-            
-            output_folder.mkdir(parents=True, exist_ok=True)
-            
-            print(f"\nProcessing {relative}/")
-            extracted, skipped, no_art = process_folder_split(source_folder, output_folder)
-            total_extracted += extracted
-            total_skipped += skipped
-            total_no_art += no_art
-            
-            if extracted == 0 and skipped == 0 and no_art > 0:
-                print(f"  No embedded cover art found")
-            elif extracted == 0 and skipped > 0:
-                print(f"  All covers already extracted ({skipped} files)")
+        if config and 'folder_mappings' in config:
+            mappings = config['folder_mappings']
+            for source_folder in all_source_dirs:
+                source_name = source_folder.name
+                if source_name not in mappings:
+                    print(f"Warning: {source_name} not in config mappings, skipping")
+                    continue
+                
+                output_folder = output_dir / mappings[source_name]
+                output_folder.mkdir(parents=True, exist_ok=True)
+                
+                print(f"\nProcessing {source_name} → {mappings[source_name]}/")
+                extracted, skipped, no_art = process_folder_split(source_folder, output_folder)
+                total_extracted += extracted
+                total_skipped += skipped
+                total_no_art += no_art
+                
+                if extracted == 0 and skipped == 0 and no_art > 0:
+                    print(f"  No embedded cover art found")
+                elif extracted == 0 and skipped > 0:
+                    print(f"  All covers already extracted ({skipped} files)")
+        else:
+            # Fallback: just mirror structure
+            for source_folder in all_source_dirs:
+                output_folder = output_dir / source_folder.name
+                output_folder.mkdir(parents=True, exist_ok=True)
+                
+                print(f"\nProcessing {source_folder.name}/")
+                extracted, skipped, no_art = process_folder_split(source_folder, output_folder)
+                total_extracted += extracted
+                total_skipped += skipped
+                total_no_art += no_art
+                
+                if extracted == 0 and skipped == 0 and no_art > 0:
+                    print(f"  No embedded cover art found")
+                elif extracted == 0 and skipped > 0:
+                    print(f"  All covers already extracted ({skipped} files)")
         
         print(f"\nSummary: {total_extracted} extracted, {total_skipped} skipped, {total_no_art} without art")
         return

@@ -133,9 +133,23 @@ def find_dj_directories(base_directory):
     
     return dj_dirs
 
+def load_config():
+    """Load audio source configuration if it exists."""
+    import json
+    config_path = 'audio-source-config.json'
+    if os.path.exists(config_path):
+        try:
+            with open(config_path) as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Warning: Could not load config: {e}")
+    return None
+
 if __name__ == '__main__':
+    import json
     source_dir = None
     output_dir = None
+    config = load_config()
     
     # Parse arguments
     if len(sys.argv) > 1 and sys.argv[1] == '--source':
@@ -148,6 +162,12 @@ if __name__ == '__main__':
         if not os.path.exists(source_dir):
             print(f"Error: source directory {source_dir} does not exist")
             sys.exit(1)
+    elif config and 'source_directory' in config:
+        source_dir = config['source_directory']
+        output_dir = '.'
+        if not os.path.exists(source_dir):
+            print(f"Error: source directory in config {source_dir} does not exist")
+            sys.exit(1)
     else:
         directory = sys.argv[1] if len(sys.argv) > 1 else '.'
         output_dir = directory
@@ -159,19 +179,32 @@ if __name__ == '__main__':
         print(f"Reading audio from: {source_dir}")
         print(f"Writing peaks to: {output_dir}")
         
-        dj_dirs = find_dj_directories(source_dir)
-        for name, source_path in dj_dirs:
-            # Create corresponding output directory
-            if name.startswith('moreDJs/'):
-                dj_name = name.split('/')[1]
-                output_path = os.path.join(output_dir, 'moreDJs', dj_name)
-            else:
-                output_path = os.path.join(output_dir, name)
-            
-            os.makedirs(output_path, exist_ok=True)
-            
-            print(f"\n=== {name} ===")
-            process_directory_split(source_path, output_path)
+        all_source_dirs = sorted([d for d in os.listdir(source_dir) 
+                                  if os.path.isdir(os.path.join(source_dir, d)) 
+                                  and not d.startswith('.')])
+        
+        if config and 'folder_mappings' in config:
+            mappings = config['folder_mappings']
+            for source_name in all_source_dirs:
+                if source_name not in mappings:
+                    print(f"Warning: {source_name} not in config mappings, skipping")
+                    continue
+                
+                source_path = os.path.join(source_dir, source_name)
+                output_path = os.path.join(output_dir, mappings[source_name])
+                os.makedirs(output_path, exist_ok=True)
+                
+                print(f"\n=== {source_name} → {mappings[source_name]} ===")
+                process_directory_split(source_path, output_path)
+        else:
+            # Fallback: just mirror structure
+            for source_name in all_source_dirs:
+                source_path = os.path.join(source_dir, source_name)
+                output_path = os.path.join(output_dir, source_name)
+                os.makedirs(output_path, exist_ok=True)
+                
+                print(f"\n=== {source_name} ===")
+                process_directory_split(source_path, output_path)
     else:
         # Original behavior: check if a specific DJ directory is given
         if len(sys.argv) > 1 and any(f.lower().endswith(extensions) for f in os.listdir(output_dir)):
