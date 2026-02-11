@@ -3,9 +3,14 @@
 Generate waveform peaks JSON files from audio files.
 Requires: ffmpeg
 
-Usage: python3 generate-peaks.py [directory]
+Usage: 
+    python3 generate-peaks.py [directory]
+    python3 generate-peaks.py --source /path/to/audio [output_directory]
+
 Default directory is current directory.
 Processes all .mp3 and .flac files, creates .peaks.json files.
+
+If --source is specified, reads audio from source and writes peaks to output directory.
 """
 
 import subprocess
@@ -72,16 +77,20 @@ def get_audio_peaks(audio_path, num_peaks=SAMPLES_PER_PEAK):
     return peaks, duration
 
 def process_directory(directory):
-    """Process all audio files in directory."""
+    """Process all audio files in directory (read and write in same directory)."""
+    process_directory_split(directory, directory)
+
+def process_directory_split(source_directory, output_directory):
+    """Process audio files from source directory, write peaks to output directory."""
     
     extensions = ('.mp3', '.flac', '.m4a', '.wav', '.opus')
     
-    for filename in sorted(os.listdir(directory)):
+    for filename in sorted(os.listdir(source_directory)):
         if not filename.lower().endswith(extensions):
             continue
             
-        audio_path = os.path.join(directory, filename)
-        peaks_path = os.path.splitext(audio_path)[0] + '.peaks.json'
+        source_path = os.path.join(source_directory, filename)
+        peaks_path = os.path.join(output_directory, os.path.splitext(filename)[0] + '.peaks.json')
         
         if os.path.exists(peaks_path):
             print(f"Skipping {filename} (peaks file exists)")
@@ -90,7 +99,7 @@ def process_directory(directory):
         print(f"Processing {filename}...", end=' ', flush=True)
         
         try:
-            peaks, duration = get_audio_peaks(audio_path)
+            peaks, duration = get_audio_peaks(source_path)
             if peaks:
                 with open(peaks_path, 'w') as f:
                     json.dump({'peaks': peaks, 'duration': duration}, f)
@@ -125,16 +134,52 @@ def find_dj_directories(base_directory):
     return dj_dirs
 
 if __name__ == '__main__':
-    directory = sys.argv[1] if len(sys.argv) > 1 else '.'
+    source_dir = None
+    output_dir = None
+    
+    # Parse arguments
+    if len(sys.argv) > 1 and sys.argv[1] == '--source':
+        if len(sys.argv) < 3:
+            print("Error: --source requires a path argument")
+            sys.exit(1)
+        source_dir = sys.argv[2]
+        output_dir = sys.argv[3] if len(sys.argv) > 3 else '.'
+        
+        if not os.path.exists(source_dir):
+            print(f"Error: source directory {source_dir} does not exist")
+            sys.exit(1)
+    else:
+        directory = sys.argv[1] if len(sys.argv) > 1 else '.'
+        output_dir = directory
+    
     extensions = ('.mp3', '.flac', '.m4a', '.wav', '.opus')
     
-    # Check if a specific DJ directory is given
-    if len(sys.argv) > 1 and any(f.lower().endswith(extensions) for f in os.listdir(directory)):
-        print(f"\n=== {os.path.basename(directory)} ===")
-        process_directory(directory)
-    else:
-        # Process all DJ directories
-        dj_dirs = find_dj_directories(directory)
-        for name, path in dj_dirs:
+    # If source specified, process from source to output
+    if source_dir:
+        print(f"Reading audio from: {source_dir}")
+        print(f"Writing peaks to: {output_dir}")
+        
+        dj_dirs = find_dj_directories(source_dir)
+        for name, source_path in dj_dirs:
+            # Create corresponding output directory
+            if name.startswith('moreDJs/'):
+                dj_name = name.split('/')[1]
+                output_path = os.path.join(output_dir, 'moreDJs', dj_name)
+            else:
+                output_path = os.path.join(output_dir, name)
+            
+            os.makedirs(output_path, exist_ok=True)
+            
             print(f"\n=== {name} ===")
-            process_directory(path)
+            process_directory_split(source_path, output_path)
+    else:
+        # Original behavior: check if a specific DJ directory is given
+        if len(sys.argv) > 1 and any(f.lower().endswith(extensions) for f in os.listdir(output_dir)):
+            print(f"\n=== {os.path.basename(output_dir)} ===")
+            process_directory(output_dir)
+        else:
+            # Process all DJ directories
+            dj_dirs = find_dj_directories(output_dir)
+            for name, path in dj_dirs:
+                print(f"\n=== {name} ===")
+                process_directory(path)

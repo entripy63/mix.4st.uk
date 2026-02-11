@@ -7,8 +7,10 @@ with the same basename as the audio file.
 
 Usage:
     python generate-covers.py [root_dir]
+    python generate-covers.py --source /path/to/audio [output_dir]
     
 If root_dir is not specified, uses the current directory.
+If --source is specified, reads audio from source and writes covers to output directory.
 """
 
 import subprocess
@@ -86,9 +88,13 @@ def find_dj_folders(root_dir):
     return dj_folders
 
 def process_folder(folder):
-    """Process all audio files in a folder, extracting cover art."""
+    """Process all audio files in a folder, extracting cover art (read and write in same folder)."""
+    return process_folder_split(folder, folder)
+
+def process_folder_split(source_folder, output_folder):
+    """Process audio files from source folder, write covers to output folder."""
     audio_files = sorted([
-        f for f in folder.iterdir() 
+        f for f in source_folder.iterdir() 
         if f.is_file() and f.suffix.lower() in AUDIO_EXTENSIONS
     ])
     
@@ -99,10 +105,10 @@ def process_folder(folder):
     for audio_file in audio_files:
         base_name = audio_file.stem
         
-        # Check if cover already exists
+        # Check if cover already exists in output folder
         existing_cover = None
         for ext in ['.jpg', '.png', '.bmp', '.gif']:
-            potential = folder / f"{base_name}{ext}"
+            potential = output_folder / f"{base_name}{ext}"
             if potential.exists():
                 existing_cover = potential
                 break
@@ -119,7 +125,7 @@ def process_folder(folder):
         
         # Extract cover art
         ext = get_image_extension(codec)
-        output_path = folder / f"{base_name}{ext}"
+        output_path = output_folder / f"{base_name}{ext}"
         
         if extract_cover(audio_file, output_path):
             print(f"  Extracted: {output_path.name}")
@@ -130,27 +136,78 @@ def process_folder(folder):
     return extracted, skipped, no_art
 
 def main():
-    root_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path.cwd()
+    source_dir = None
+    output_dir = None
     
-    if not root_dir.exists():
-        print(f"Error: {root_dir} does not exist")
+    # Parse arguments
+    if len(sys.argv) > 1 and sys.argv[1] == '--source':
+        if len(sys.argv) < 3:
+            print("Error: --source requires a path argument")
+            sys.exit(1)
+        source_dir = Path(sys.argv[2])
+        output_dir = Path(sys.argv[3]) if len(sys.argv) > 3 else Path.cwd()
+        
+        if not source_dir.exists():
+            print(f"Error: source directory {source_dir} does not exist")
+            sys.exit(1)
+    else:
+        root_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path.cwd()
+        output_dir = root_dir
+    
+    if not output_dir.exists():
+        print(f"Error: {output_dir} does not exist")
         sys.exit(1)
     
-    # Check if a specific DJ directory is given (has audio files directly)
+    # If source specified, process from source to output
+    if source_dir:
+        print(f"Reading audio from: {source_dir}")
+        print(f"Writing covers to: {output_dir}")
+        
+        dj_folders = find_dj_folders(source_dir)
+        total_extracted = 0
+        total_skipped = 0
+        total_no_art = 0
+        
+        for source_folder in dj_folders:
+            relative = source_folder.relative_to(source_dir)
+            
+            # Create corresponding output directory
+            if relative.parts[0] == 'moreDJs':
+                output_folder = output_dir / 'moreDJs' / relative.parts[1]
+            else:
+                output_folder = output_dir / relative
+            
+            output_folder.mkdir(parents=True, exist_ok=True)
+            
+            print(f"\nProcessing {relative}/")
+            extracted, skipped, no_art = process_folder_split(source_folder, output_folder)
+            total_extracted += extracted
+            total_skipped += skipped
+            total_no_art += no_art
+            
+            if extracted == 0 and skipped == 0 and no_art > 0:
+                print(f"  No embedded cover art found")
+            elif extracted == 0 and skipped > 0:
+                print(f"  All covers already extracted ({skipped} files)")
+        
+        print(f"\nSummary: {total_extracted} extracted, {total_skipped} skipped, {total_no_art} without art")
+        return
+    
+    # Original behavior: check if a specific DJ directory is given (has audio files directly)
     has_audio = any(
         f.suffix.lower() in AUDIO_EXTENSIONS 
-        for f in root_dir.iterdir() if f.is_file()
+        for f in output_dir.iterdir() if f.is_file()
     )
     
     if has_audio:
         # Process just this directory
-        print(f"\nProcessing {root_dir.name}/")
-        extracted, skipped, no_art = process_folder(root_dir)
+        print(f"\nProcessing {output_dir.name}/")
+        extracted, skipped, no_art = process_folder(output_dir)
         print(f"\nSummary: {extracted} extracted, {skipped} skipped, {no_art} without art")
         return
     
     # Otherwise find and process all DJ folders
-    dj_folders = find_dj_folders(root_dir)
+    dj_folders = find_dj_folders(output_dir)
     
     if not dj_folders:
         print("No DJ folders found")

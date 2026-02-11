@@ -2,9 +2,15 @@
 """
 Generate search-index.json from all DJ manifest.json files.
 
-Usage: python3 generate-search-index.py [directory]
+Usage: 
+    python3 generate-search-index.py [directory]
+
 Default directory is current directory.
 Reads manifest.json from each DJ subdirectory, outputs combined search-index.json.
+
+Note: This script reads manifests from the specified directory (or current directory)
+and writes search-index.json there. It doesn't need source/output separation since
+manifests are generated artifacts, not audio files.
 """
 
 import json

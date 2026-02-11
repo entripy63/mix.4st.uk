@@ -3,9 +3,16 @@
 Generate manifest.json files from audio file metadata.
 Requires: ffprobe (part of ffmpeg)
 
-Usage: python3 generate-manifest.py [directory]
+Usage: 
+    python3 generate-manifest.py [directory]
+    python3 generate-manifest.py --source /path/to/audio [output_directory]
+
 Default directory is current directory.
 Scans DJ subdirectories, reads metadata from audio files, writes manifest.json.
+
+If --source is specified, reads audio files from source directory and writes
+manifests to the output directory (or current directory if not specified).
+This allows separating audio files from generated artifacts.
 """
 
 import subprocess
@@ -134,13 +141,18 @@ def find_download_files(directory, base_name):
     return downloads
 
 def process_directory(directory):
-    """Process a DJ directory and generate manifest.json."""
-    directory = Path(directory)
+    """Process a DJ directory and generate manifest.json (read and write in same directory)."""
+    process_directory_split(directory, directory)
+
+def process_directory_split(source_directory, output_directory):
+    """Process a DJ directory, reading audio from source, writing manifest to output."""
+    source_directory = Path(source_directory)
+    output_directory = Path(output_directory)
     extensions = {'.mp3', '.flac', '.m4a', '.opus'}
     
-    # Find unique base names (without extension)
+    # Find unique base names (without extension) in source directory
     base_names = set()
-    for f in directory.iterdir():
+    for f in source_directory.iterdir():
         if f.suffix.lower() in extensions:
             base_names.add(f.stem)
     
@@ -151,7 +163,7 @@ def process_directory(directory):
     mixes = []
     
     for base_name in sorted(base_names):
-        audio_file = find_best_audio_file(directory, base_name)
+        audio_file = find_best_audio_file(source_directory, base_name)
         if not audio_file:
             continue
         
@@ -164,29 +176,29 @@ def process_directory(directory):
             title = meta['title']
         else:
             # Fallback: extract from filename
-            _, mix_name = extract_dj_and_mix_from_filename(base_name, directory.name)
+            _, mix_name = extract_dj_and_mix_from_filename(base_name, source_directory.name)
             title = mix_name
         
-        # Check for peaks file
-        peaks_file = directory / f"{base_name}.peaks.json"
+        # Check for peaks file in output directory
+        peaks_file = output_directory / f"{base_name}.peaks.json"
         has_peaks = peaks_file.exists()
         
-        # Check for cover art file
+        # Check for cover art file in output directory
         cover_file = None
         for ext in ['.jpg', '.png', '.gif']:
-            potential = directory / f"{base_name}{ext}"
+            potential = output_directory / f"{base_name}{ext}"
             if potential.exists():
                 cover_file = f"{base_name}{ext}"
                 break
         
-        # Find available download formats
-        downloads = find_download_files(directory, base_name)
+        # Find available download formats (check source directory)
+        downloads = find_download_files(source_directory, base_name)
         
         # Determine primary audio file (prefer MP3 for streaming)
-        primary_audio = f"{base_name}.mp3" if (directory / f"{base_name}.mp3").exists() else audio_file.name
+        primary_audio = f"{base_name}.mp3" if (source_directory / f"{base_name}.mp3").exists() else audio_file.name
         
         # Use artist from metadata, fall back to folder name if empty
-        artist = meta['artist'] or directory.name
+        artist = meta['artist'] or source_directory.name
         
         mix_entry = {
             'name': title,
@@ -221,7 +233,7 @@ def process_directory(directory):
         'mixes': mixes
     }
     
-    manifest_path = directory / 'manifest.json'
+    manifest_path = output_directory / 'manifest.json'
     with open(manifest_path, 'w') as f:
         json.dump(manifest, f, indent=2)
     
@@ -250,25 +262,64 @@ def find_dj_directories(base_directory):
     return sorted(dj_dirs, key=lambda p: p.name.lower())
 
 def main():
-    base_directory = Path(sys.argv[1]) if len(sys.argv) > 1 else Path('.')
+    source_dir = None
+    output_dir = None
     
-    # If a specific directory is given, process just that one
-    if len(sys.argv) > 1 and (base_directory / 'manifest.json').parent != base_directory.parent:
-        # Check if it's a DJ directory (has audio files)
-        extensions = {'.mp3', '.flac', '.m4a', '.opus'}
-        has_audio = any(f.suffix.lower() in extensions for f in base_directory.iterdir() if f.is_file())
-        if has_audio:
-            print(f"\n=== {base_directory.name} ===")
-            process_directory(base_directory)
-            return
+    # Parse arguments
+    if len(sys.argv) > 1 and sys.argv[1] == '--source':
+        if len(sys.argv) < 3:
+            print("Error: --source requires a path argument")
+            sys.exit(1)
+        source_dir = Path(sys.argv[2])
+        output_dir = Path(sys.argv[3]) if len(sys.argv) > 3 else Path('.')
+        
+        if not source_dir.exists():
+            print(f"Error: source directory {source_dir} does not exist")
+            sys.exit(1)
+    else:
+        # Original behavior: read and write from same location
+        output_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path('.')
     
-    # Otherwise, find and process all DJ directories
-    dj_dirs = find_dj_directories(base_directory)
-    
-    for dj_dir in dj_dirs:
-        relative = dj_dir.relative_to(base_directory)
-        print(f"\n=== {relative} ===")
-        process_directory(dj_dir)
+    # If source_dir is set, link output directories to source directories
+    if source_dir:
+        print(f"Reading audio from: {source_dir}")
+        print(f"Writing manifests to: {output_dir}")
+        
+        # Find all DJ directories in source
+        dj_dirs = find_dj_directories(source_dir)
+        
+        for dj_dir in dj_dirs:
+            relative = dj_dir.relative_to(source_dir)
+            
+            # Create corresponding output directory structure
+            if relative.parts[0] == 'moreDJs':
+                output_path = output_dir / 'moreDJs' / relative.parts[1]
+            else:
+                output_path = output_dir / relative
+            
+            output_path.mkdir(parents=True, exist_ok=True)
+            
+            print(f"\n=== {relative} ===")
+            # Process directory, reading from source, writing to output
+            process_directory_split(dj_dir, output_path)
+    else:
+        # Original behavior: find and process all DJ directories in place
+        if len(sys.argv) > 1 and (output_dir / 'manifest.json').parent != output_dir.parent:
+            # Check if it's a DJ directory (has audio files)
+            extensions = {'.mp3', '.flac', '.m4a', '.opus'}
+            has_audio = any(f.suffix.lower() in extensions for f in output_dir.iterdir() if f.is_file())
+            if has_audio:
+                print(f"\n=== {output_dir.name} ===")
+                process_directory(output_dir)
+                return
+        
+        # Otherwise, find and process all DJ directories
+        dj_dirs = find_dj_directories(output_dir)
+        
+        for dj_dir in dj_dirs:
+            relative = dj_dir.relative_to(output_dir)
+            print(f"\n=== {relative} ===")
+            process_directory(dj_dir)
 
 if __name__ == '__main__':
     main()
