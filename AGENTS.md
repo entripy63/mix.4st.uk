@@ -43,4 +43,4 @@
 
 ## Git
 - Remote: git@github.com:entripy63/mix.4st.uk.git
-- Push: `git push origin master:main`
+- Push: `git push origin main`
