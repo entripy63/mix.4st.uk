@@ -1,7 +1,9 @@
 *.mp3
 *.m4a
 *.flac
-*.wavBH4WNF~8
+*.wav
+*.opus
+*.peaks.json
 *.mediaartlocal
 .directory
 **/BH4WNF~8
