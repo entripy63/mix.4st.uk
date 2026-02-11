@@ -62,28 +62,39 @@ function formatDuration(raw) {
 const UNIVERSAL_SELECTIONS = ['guest mix'];
 
 function detectGroups(mixes) {
+  // Skip heuristics if 7 or fewer mixes
+  if (mixes.length <= 7) {
+    return [];
+  }
+  
   const names = mixes.map(m => m.name.toLowerCase());
   const originalNames = mixes.map(m => m.name);
   const djName = mixes[0]?.dj?.toLowerCase() || '';
-  const candidates = new Map(); // keyword -> count
+  const candidates = new Map(); // keyword -> Set of mix indices
   
   // Check for universal selection phrases first
   for (const phrase of UNIVERSAL_SELECTIONS) {
-    const count = names.filter(n => n.includes(phrase)).length;
-    if (count >= 3) {
-      candidates.set(phrase, count);
+    const mixIndices = new Set(
+      names.map((n, i) => n.includes(phrase) ? i : -1).filter(i => i !== -1)
+    );
+    if (mixIndices.size >= 3) {
+      candidates.set(phrase, mixIndices);
     }
   }
   
   // Extract potential group keywords from each name
-  for (const name of names) {
+  for (let mixIdx = 0; mixIdx < names.length; mixIdx++) {
+    const name = names[mixIdx];
     // Split into words (letters only, 3+ chars)
     const words = name.match(/[a-z]{3,}/g) || [];
+    const seenInThisMix = new Set(); // avoid double-counting within same mix
     
     // Single words (4+ chars) as candidates, excluding DJ name
     for (const word of words) {
-      if (word.length >= 4 && word !== djName) {
-        candidates.set(word, (candidates.get(word) || 0) + 1);
+      if (word.length >= 4 && word !== djName && !seenInThisMix.has(word)) {
+        if (!candidates.has(word)) candidates.set(word, new Set());
+        candidates.get(word).add(mixIdx);
+        seenInThisMix.add(word);
       }
     }
     
@@ -97,7 +108,11 @@ function detectGroups(mixes) {
           const lastWord = words[i + len - 1];
           if (lastWord.length >= 4 || lastWord === 'mix') {
             const phrase = words.slice(i, i + len).join(' ');
-            candidates.set(phrase, (candidates.get(phrase) || 0) + 1);
+            if (!seenInThisMix.has(phrase)) {
+              if (!candidates.has(phrase)) candidates.set(phrase, new Set());
+              candidates.get(phrase).add(mixIdx);
+              seenInThisMix.add(phrase);
+            }
           }
         }
       }
@@ -105,10 +120,15 @@ function detectGroups(mixes) {
   }
   
   // Filter to candidates appearing in 3+ mixes, sort by count descending
+  // Reject candidates that match ALL mixes (duplicative of All selection)
+  // Reject single-mix candidates (not worthwhile as a selection)
   let groups = Array.from(candidates.entries())
-    .filter(([_, count]) => count >= 3)
-    .sort((a, b) => b[1] - a[1])
-    .map(([keyword, count]) => ({ keyword, count }));
+    .filter(([_, mixIndices]) => {
+      const count = mixIndices.size;
+      return count >= 3 && count > 1 && count < mixes.length;
+    })
+    .sort((a, b) => b[1].size - a[1].size)
+    .map(([keyword, mixIndices]) => ({ keyword, count: mixIndices.size }));
   
   // Remove redundant groups (but preserve universal selections)
   const getMatches = (kw) => new Set(names.filter(n => n.includes(kw)));
