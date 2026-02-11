@@ -12,12 +12,35 @@
         {
           "file": "Izmar_Kokopelli_10_August_2019.flac",
           "label": "FLAC"
+        },
+        {
+          "file": "Izmar_Kokopelli_10_August_2019.m4a",
+          "label": "M4A"
         }
       ],
       "peaksFile": "Izmar_Kokopelli_10_August_2019.peaks.json"
     },
     {
-      "name": "Kokopelli 14 March 2020",
+      "name": "Kokopelli 19 January 2020",
+      "file": "Izmar_Kokopelli_19_January_2020",
+      "audioFile": "Izmar_Kokopelli_19_January_2020.flac",
+      "duration": 10087.584218,
+      "durationFormatted": "2:48:07",
+      "artist": "Izmar",
+      "downloads": [
+        {
+          "file": "Izmar_Kokopelli_19_January_2020.flac",
+          "label": "FLAC"
+        },
+        {
+          "file": "Izmar_Kokopelli_19_January_2020.m4a",
+          "label": "M4A"
+        }
+      ],
+      "peaksFile": "Izmar_Kokopelli_19_January_2020.peaks.json"
+    },
+    {
+      "name": "Kokopelli-DJ-mix 2020-03-14",
       "file": "Izmar-Kokopelli-DJ-mix-2020-03-14",
       "audioFile": "Izmar-Kokopelli-DJ-mix-2020-03-14.mp3",
       "duration": 14615.510204,
@@ -31,21 +54,6 @@
       ],
       "date": "2020",
       "peaksFile": "Izmar-Kokopelli-DJ-mix-2020-03-14.peaks.json"
-    },
-    {
-      "name": "Kokopelli 19 January 2020",
-      "file": "Izmar_Kokopelli_19_January_2020",
-      "audioFile": "Izmar_Kokopelli_19_January_2020.flac",
-      "duration": 10087.584218,
-      "durationFormatted": "2:48:07",
-      "artist": "Izmar",
-      "downloads": [
-        {
-          "file": "Izmar_Kokopelli_19_January_2020.flac",
-          "label": "FLAC"
-        }
-      ],
-      "peaksFile": "Izmar_Kokopelli_19_January_2020.peaks.json"
     }
   ]
 }

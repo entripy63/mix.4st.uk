@@ -137,6 +137,7 @@ def process_folder_split(source_folder, output_folder):
 
 def load_config():
     """Load audio source configuration if it exists."""
+    import json
     config_path = Path('audio-source-config.json')
     if config_path.exists():
         try:

@@ -1,0 +1,21 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "May 08 Mix",
+      "file": "skoozbot-may08mix",
+      "audioFile": "skoozbot-may08mix.mp3",
+      "duration": 4206.654694,
+      "durationFormatted": "1:10:06",
+      "artist": "Skoozbot",
+      "downloads": [
+        {
+          "file": "skoozbot-may08mix.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Techno",
+      "date": "2008"
+    }
+  ]
+}

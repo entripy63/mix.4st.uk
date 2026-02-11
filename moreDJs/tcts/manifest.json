@@ -1,0 +1,61 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "Kiss Fresh",
+      "file": "TCTS-Kiss_Fresh",
+      "audioFile": "TCTS-Kiss_Fresh.mp3",
+      "duration": 3698.390204,
+      "durationFormatted": "1:01:38",
+      "artist": "tcts",
+      "downloads": [
+        {
+          "file": "TCTS-Kiss_Fresh.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Thump",
+      "file": "TCTS-Thump",
+      "audioFile": "TCTS-Thump.mp3",
+      "duration": 3683.996735,
+      "durationFormatted": "1:01:23",
+      "artist": "tcts",
+      "downloads": [
+        {
+          "file": "TCTS-Thump.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Triple J",
+      "file": "TCTS-Triple_J",
+      "audioFile": "TCTS-Triple_J.mp3",
+      "duration": 3871.320816,
+      "durationFormatted": "1:04:31",
+      "artist": "tcts",
+      "downloads": [
+        {
+          "file": "TCTS-Triple_J.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Triple J Lena Vegas",
+      "file": "TCTS-Triple_J_Lena_Vegas",
+      "audioFile": "TCTS-Triple_J_Lena_Vegas.mp3",
+      "duration": 3553.48898,
+      "durationFormatted": "0:59:13",
+      "artist": "tcts",
+      "downloads": [
+        {
+          "file": "TCTS-Triple_J_Lena_Vegas.mp3",
+          "label": "MP3"
+        }
+      ]
+    }
+  ]
+}

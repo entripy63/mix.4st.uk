@@ -1,0 +1,93 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "essential mix part1",
+      "file": "essential mix part1",
+      "audioFile": "essential mix part1.mp3",
+      "duration": 2182.771042,
+      "durationFormatted": "0:36:22",
+      "artist": "Future Sound Of London",
+      "downloads": [
+        {
+          "file": "essential mix part1.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "essential mix part2",
+      "file": "essential mix part2",
+      "audioFile": "essential mix part2.mp3",
+      "duration": 700.452667,
+      "durationFormatted": "0:11:40",
+      "artist": "Future Sound Of London",
+      "downloads": [
+        {
+          "file": "essential mix part2.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "essential mix part3",
+      "file": "essential mix part3",
+      "audioFile": "essential mix part3.mp3",
+      "duration": 572.243667,
+      "durationFormatted": "0:09:32",
+      "artist": "Future Sound Of London",
+      "downloads": [
+        {
+          "file": "essential mix part3.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "essential mix part4",
+      "file": "essential mix part4",
+      "audioFile": "essential mix part4.mp3",
+      "duration": 1477.866667,
+      "durationFormatted": "0:24:37",
+      "artist": "Future Sound Of London",
+      "downloads": [
+        {
+          "file": "essential mix part4.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "FSOL - MindMaps 2",
+      "file": "01 FSOL - MindMaps 2",
+      "audioFile": "01 FSOL - MindMaps 2.m4a",
+      "duration": 3427.546667,
+      "durationFormatted": "0:57:07",
+      "artist": "Future Sound Of London",
+      "downloads": [
+        {
+          "file": "01 FSOL - MindMaps 2.m4a",
+          "label": "M4A"
+        }
+      ],
+      "genre": "Electronica",
+      "date": "2021"
+    },
+    {
+      "name": "Mind Maps",
+      "file": "01 Mind Maps",
+      "audioFile": "01 Mind Maps.m4a",
+      "duration": 3652.906667,
+      "durationFormatted": "1:00:52",
+      "artist": "FSOLdigital",
+      "downloads": [
+        {
+          "file": "01 Mind Maps.m4a",
+          "label": "M4A"
+        }
+      ],
+      "genre": "Electronica",
+      "date": "2021"
+    }
+  ]
+}

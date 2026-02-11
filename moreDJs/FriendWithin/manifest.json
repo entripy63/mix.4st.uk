@@ -1,0 +1,47 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "Essential Mix",
+      "file": "Friend Within - Essential Mix",
+      "audioFile": "Friend Within - Essential Mix.mp3",
+      "duration": 7178.788571,
+      "durationFormatted": "1:59:38",
+      "artist": "FriendWithin",
+      "downloads": [
+        {
+          "file": "Friend Within - Essential Mix.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Live @ Stealth January 2017",
+      "file": "Friend Within - Live @ Stealth January 2017",
+      "audioFile": "Friend Within - Live @ Stealth January 2017.mp3",
+      "duration": 6678.465306,
+      "durationFormatted": "1:51:18",
+      "artist": "FriendWithin",
+      "downloads": [
+        {
+          "file": "Friend Within - Live @ Stealth January 2017.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Live @ Stealth Residency 01",
+      "file": "Friend Within - Live @ Stealth Residency 01",
+      "audioFile": "Friend Within - Live @ Stealth Residency 01.mp3",
+      "duration": 4776.045714,
+      "durationFormatted": "1:19:36",
+      "artist": "FriendWithin",
+      "downloads": [
+        {
+          "file": "Friend Within - Live @ Stealth Residency 01.mp3",
+          "label": "MP3"
+        }
+      ]
+    }
+  ]
+}

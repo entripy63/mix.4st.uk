@@ -1,0 +1,22 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "Marcus Stork presents 'Deep Dirty Summer'",
+      "file": "Marcus_Stork_presents_Deep_Dirty_Summer",
+      "audioFile": "Marcus_Stork_presents_Deep_Dirty_Summer.mp3",
+      "duration": 4493.923265,
+      "durationFormatted": "1:14:53",
+      "artist": "Marcus Stork",
+      "downloads": [
+        {
+          "file": "Marcus_Stork_presents_Deep_Dirty_Summer.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Techno",
+      "date": "2006",
+      "comment": "                            "
+    }
+  ]
+}

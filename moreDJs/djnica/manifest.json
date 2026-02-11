@@ -1,0 +1,67 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "DeepRhythms guest mix 3 - \"I cry out to you\"",
+      "file": "i_cry_out_to_you",
+      "audioFile": "i_cry_out_to_you.mp3",
+      "duration": 4780.783,
+      "durationFormatted": "1:19:40",
+      "artist": "Dj Nica",
+      "downloads": [
+        {
+          "file": "i_cry_out_to_you.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "House",
+      "date": "2002",
+      "comment": "more mixes @ http://deeprhythms.com"
+    },
+    {
+      "name": "www.deepselect.com",
+      "file": "do_what_comes_natural",
+      "audioFile": "do_what_comes_natural.mp3",
+      "duration": 2966.41945,
+      "durationFormatted": "0:49:26",
+      "artist": "Nica",
+      "downloads": [
+        {
+          "file": "do_what_comes_natural.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "HouseMix"
+    },
+    {
+      "name": "www.deepselect.com",
+      "file": "look_and_you_will_find",
+      "audioFile": "look_and_you_will_find.mp3",
+      "duration": 3141.576313,
+      "durationFormatted": "0:52:21",
+      "artist": "Nica",
+      "downloads": [
+        {
+          "file": "look_and_you_will_find.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "HouseMix"
+    },
+    {
+      "name": "www.deepselect.com",
+      "file": "waiting_in_vain",
+      "audioFile": "waiting_in_vain.mp3",
+      "duration": 3341.402938,
+      "durationFormatted": "0:55:41",
+      "artist": "Nica",
+      "downloads": [
+        {
+          "file": "waiting_in_vain.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "HouseMix"
+    }
+  ]
+}

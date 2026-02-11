@@ -1,0 +1,21 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "Richie Hawtin - Live @ Beatport Pool Party [WMC 2007]",
+      "file": "Richie_Hawtin_-_Live_@_Beatport_Pool_Party_[WMC_2007]",
+      "audioFile": "Richie_Hawtin_-_Live_@_Beatport_Pool_Party_[WMC_2007].mp3",
+      "duration": 3817.247333,
+      "durationFormatted": "1:03:37",
+      "artist": "Richie Hawtin",
+      "downloads": [
+        {
+          "file": "Richie_Hawtin_-_Live_@_Beatport_Pool_Party_[WMC_2007].mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Techno",
+      "date": "2007"
+    }
+  ]
+}

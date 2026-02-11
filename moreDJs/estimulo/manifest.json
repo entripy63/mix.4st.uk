@@ -1,0 +1,4519 @@
+{
+  "generated": true,
+  "mixes": [
+    {
+      "name": "13. Visa Card (Bonus)",
+      "file": "EstimuloShow_2014-06-06_FryDay_Makarov",
+      "audioFile": "EstimuloShow_2014-06-06_FryDay_Makarov.mp3",
+      "duration": 16500.52025,
+      "durationFormatted": "4:35:00",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-06-06_FryDay_Makarov.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "23 Mike Bishop Mster Pablo",
+      "file": "EstimuloShow_2014-02-23_Mike_Bishop_Mster_Pablo",
+      "audioFile": "EstimuloShow_2014-02-23_Mike_Bishop_Mster_Pablo.mp3",
+      "duration": 28079.994938,
+      "durationFormatted": "7:47:59",
+      "artist": "EstimuloShow 2014",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-02-23_Mike_Bishop_Mster_Pablo.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2009-01-03 Pt2",
+      "file": "EstimuloShow_2009-01-03_Pt2",
+      "audioFile": "EstimuloShow_2009-01-03_Pt2.mp3",
+      "duration": 5418.012938,
+      "durationFormatted": "1:30:18",
+      "artist": "Pinky Chukkles",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-01-03_Pt2.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2009-01-03 Pt3",
+      "file": "EstimuloShow_2009-01-03_Pt3",
+      "audioFile": "EstimuloShow_2009-01-03_Pt3.mp3",
+      "duration": 5457.248813,
+      "durationFormatted": "1:30:57",
+      "artist": "Pinky Chukkles",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-01-03_Pt3.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2009-01-03 Pt.1",
+      "file": "EstimuloShow_2009-01-03_Pt1",
+      "audioFile": "EstimuloShow_2009-01-03_Pt1.mp3",
+      "duration": 5515.684688,
+      "durationFormatted": "1:31:55",
+      "artist": "Pinky Chukkles",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-01-03_Pt1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "comment": "http://www.mixomat.org/estimuloshow/index.php?id=1"
+    },
+    {
+      "name": "2009-02-07 Pt1",
+      "file": "EstimuloShow_2009-02-07_Pt1",
+      "audioFile": "EstimuloShow_2009-02-07_Pt1.mp3",
+      "duration": 9655.126375,
+      "durationFormatted": "2:40:55",
+      "artist": "pinky, truly & conradio",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-02-07_Pt1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "comment": "http://www.mixomat.org/estimuloshow"
+    },
+    {
+      "name": "2009-02-07 Pt2",
+      "file": "EstimuloShow_2009-02-07_Pt2",
+      "audioFile": "EstimuloShow_2009-02-07_Pt2.mp3",
+      "duration": 5750.41945,
+      "durationFormatted": "1:35:50",
+      "artist": "pinky, truly & conradio",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-02-07_Pt2.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "comment": "http://www.mixomat.org/estimuloshow"
+    },
+    {
+      "name": "2009-02-07 Pt3",
+      "file": "EstimuloShow_2009-02-07_Pt3",
+      "audioFile": "EstimuloShow_2009-02-07_Pt3.mp3",
+      "duration": 6521.2668,
+      "durationFormatted": "1:48:41",
+      "artist": "pinky, truly & conradio",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-02-07_Pt3.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "comment": "http://www.mixomat.org/estimuloshow"
+    },
+    {
+      "name": "2009-02-14 Pt1",
+      "file": "EstimuloShow_2009-02-14_Pt1",
+      "audioFile": "EstimuloShow_2009-02-14_Pt1.mp3",
+      "duration": 5472.940408,
+      "durationFormatted": "1:31:12",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-02-14_Pt1.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2009-02-14 Pt2",
+      "file": "EstimuloShow_2009-02-14_Pt2",
+      "audioFile": "EstimuloShow_2009-02-14_Pt2.mp3",
+      "duration": 5303.562449,
+      "durationFormatted": "1:28:23",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-02-14_Pt2.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2009-02-14 Pt3",
+      "file": "EstimuloShow_2009-02-14_Pt3",
+      "audioFile": "EstimuloShow_2009-02-14_Pt3.mp3",
+      "duration": 5556.610612,
+      "durationFormatted": "1:32:36",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-02-14_Pt3.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2009-02-21 Pt2",
+      "file": "EstimuloShow_2009-02-21_Pt2",
+      "audioFile": "EstimuloShow_2009-02-21_Pt2.mp3",
+      "duration": 7223.405714,
+      "durationFormatted": "2:00:23",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-02-21_Pt2.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2009-02-28 Pt1",
+      "file": "EstimuloShow_2009-02-28_Pt1",
+      "audioFile": "EstimuloShow_2009-02-28_Pt1.mp3",
+      "duration": 6950.196417,
+      "durationFormatted": "1:55:50",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-02-28_Pt1.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2009-02-28 Pt2",
+      "file": "EstimuloShow_2009-02-28_Pt2",
+      "audioFile": "EstimuloShow_2009-02-28_Pt2.mp3",
+      "duration": 7036.6105,
+      "durationFormatted": "1:57:16",
+      "artist": "Makarov",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-02-28_Pt2.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2009-02-28 Pt3",
+      "file": "EstimuloShow_2009-02-28_Pt3",
+      "audioFile": "EstimuloShow_2009-02-28_Pt3.mp3",
+      "duration": 7134.057833,
+      "durationFormatted": "1:58:54",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-02-28_Pt3.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2009-02-28 Pt4",
+      "file": "EstimuloShow_2009-02-28_Pt4",
+      "audioFile": "EstimuloShow_2009-02-28_Pt4.mp3",
+      "duration": 10315.64975,
+      "durationFormatted": "2:51:55",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-02-28_Pt4.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2009-03-07",
+      "file": "EstimuloShow_2009-03-07_Pt1",
+      "audioFile": "EstimuloShow_2009-03-07_Pt1.mp3",
+      "duration": 7177.333688,
+      "durationFormatted": "1:59:37",
+      "artist": "Pinky, Truly & Conradio",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-03-07_Pt1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "comment": "http://www.mixomat.org/estimuloshow"
+    },
+    {
+      "name": "2009-03-07 Pt2",
+      "file": "EstimuloShow_2009-03-07_Pt2",
+      "audioFile": "EstimuloShow_2009-03-07_Pt2.mp3",
+      "duration": 7189.846375,
+      "durationFormatted": "1:59:49",
+      "artist": "Pinky, Truly & Conradio",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-03-07_Pt2.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "comment": "http://www.mixomat.org/estimuloshow"
+    },
+    {
+      "name": "2009-03-07 Pt3",
+      "file": "EstimuloShow_2009-03-07_Pt3",
+      "audioFile": "EstimuloShow_2009-03-07_Pt3.mp3",
+      "duration": 7161.2945,
+      "durationFormatted": "1:59:21",
+      "artist": "Pinky, Truly & Conradio",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-03-07_Pt3.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "comment": "http://www.mixomat.org/estimuloshow"
+    },
+    {
+      "name": "2009-03-07 Pt4",
+      "file": "EstimuloShow_2009-03-07_Pt4",
+      "audioFile": "EstimuloShow_2009-03-07_Pt4.mp3",
+      "duration": 4877.934708,
+      "durationFormatted": "1:21:17",
+      "artist": "Conradio, Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-03-07_Pt4.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House"
+    },
+    {
+      "name": "2009-03-14 (Part 1)",
+      "file": "EstimuloShow_2009-03-14_Pt1",
+      "audioFile": "EstimuloShow_2009-03-14_Pt1.mp3",
+      "duration": 5558.4712,
+      "durationFormatted": "1:32:38",
+      "artist": "Mike Bishop, Linley & Daniela",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-03-14_Pt1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "http://www.mixomat.org/estimuloshow"
+    },
+    {
+      "name": "2009-03-14 (Part 2)",
+      "file": "EstimuloShow_2009-03-14_Pt2",
+      "audioFile": "EstimuloShow_2009-03-14_Pt2.mp3",
+      "duration": 7075.351,
+      "durationFormatted": "1:57:55",
+      "artist": "Mike Bishop, Linley & Daniela",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-03-14_Pt2.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "http://www.mixomat.org/estimuloshow"
+    },
+    {
+      "name": "2009-03-14 (Part 3)",
+      "file": "EstimuloShow_2009-03-14_Pt3",
+      "audioFile": "EstimuloShow_2009-03-14_Pt3.mp3",
+      "duration": 7212.3499,
+      "durationFormatted": "2:00:12",
+      "artist": "Mike Bishop, Linley & Daniela",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-03-14_Pt3.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "http://www.mixomat.org/estimuloshow"
+    },
+    {
+      "name": "2009-03-14 (Part 4)",
+      "file": "EstimuloShow_2009-03-14_Pt4",
+      "audioFile": "EstimuloShow_2009-03-14_Pt4.mp3",
+      "duration": 8746.273,
+      "durationFormatted": "2:25:46",
+      "artist": "Mike Bishop, Linley & Daniela",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-03-14_Pt4.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "http://www.mixomat.org/estimuloshow"
+    },
+    {
+      "name": "2014-06-27 FryDay",
+      "file": "EstimuloShow_2014-06-27_Makarov",
+      "audioFile": "EstimuloShow_2014-06-27_Makarov.mp3",
+      "duration": 10967.023438,
+      "durationFormatted": "3:02:47",
+      "artist": "Makarov, Phillip Boa And The Voodooclu?",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-06-27_Makarov.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2014-06-27_FryDay",
+      "file": "EstimuloShow_2014-06-27_Estimulo",
+      "audioFile": "EstimuloShow_2014-06-27_Estimulo.mp3",
+      "duration": 10132.68898,
+      "durationFormatted": "2:48:52",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-06-27_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2014-06-29",
+      "file": "EstimuloShow_2014-06-29_Andy_Green_Truly_Madly_Mick_Welch_Chris_Chip_Leigh_Dickson_Jules_Giles_Luke_Spinks_Dan_Mugen_E",
+      "audioFile": "EstimuloShow_2014-06-29_Andy_Green_Truly_Madly_Mick_Welch_Chris_Chip_Leigh_Dickson_Jules_Giles_Luke_Spinks_Dan_Mugen_E.mp3",
+      "duration": 28886.413061,
+      "durationFormatted": "8:01:26",
+      "artist": "Andy Green Truly Madly Mick Welch Chris Chip Leigh Dickson Jules Giles Luke Spinks Dan Mugen E",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-06-29_Andy_Green_Truly_Madly_Mick_Welch_Chris_Chip_Leigh_Dickson_Jules_Giles_Luke_Spinks_Dan_Mugen_E.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2014-07-20",
+      "file": "EstimuloShow_2014-07-20_Mike_Bishop",
+      "audioFile": "EstimuloShow_2014-07-20_Mike_Bishop.mp3",
+      "duration": 20757.985,
+      "durationFormatted": "5:45:57",
+      "artist": "Mike Bishop",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-07-20_Mike_Bishop.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2014-08-10",
+      "file": "EstimuloShow_2014-08-10_Chicagodeep_Taelue_Specter",
+      "audioFile": "EstimuloShow_2014-08-10_Chicagodeep_Taelue_Specter.mp3",
+      "duration": 22877.152653,
+      "durationFormatted": "6:21:17",
+      "artist": "Chicagodeep Taelue Specter",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-08-10_Chicagodeep_Taelue_Specter.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2014-08-17",
+      "file": "EstimuloShow_2014-08-17_Mike_Bishop_Mster_Pablo_Darand_Land",
+      "audioFile": "EstimuloShow_2014-08-17_Mike_Bishop_Mster_Pablo_Darand_Land.mp3",
+      "duration": 30334.913313,
+      "durationFormatted": "8:25:34",
+      "artist": "Mike Bishop Mster Pablo Darand Land",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-08-17_Mike_Bishop_Mster_Pablo_Darand_Land.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2014-08-24",
+      "file": "EstimuloShow_2014-08-24_Remkowski",
+      "audioFile": "EstimuloShow_2014-08-24_Remkowski.mp3",
+      "duration": 11967.164313,
+      "durationFormatted": "3:19:27",
+      "artist": "Remkowski",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-08-24_Remkowski.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2014-08-31",
+      "file": "EstimuloShow_2014-08-31_Christoph_Nicklas",
+      "audioFile": "EstimuloShow_2014-08-31_Christoph_Nicklas.mp3",
+      "duration": 11977.493063,
+      "durationFormatted": "3:19:37",
+      "artist": "Christoph Nicklas",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-08-31_Christoph_Nicklas.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2014-09-07",
+      "file": "EstimuloShow_2014-09-07_Malcolm_Moore_Diego_Gamez",
+      "audioFile": "EstimuloShow_2014-09-07_Malcolm_Moore_Diego_Gamez.mp3",
+      "duration": 13113.861224,
+      "durationFormatted": "3:38:33",
+      "artist": "Malcolm Moore Diego Gamez",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-09-07_Malcolm_Moore_Diego_Gamez.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2014-09-14",
+      "file": "EstimuloShow_2014-09-14_Truly-Madly_Andrew_James_Gustav",
+      "audioFile": "EstimuloShow_2014-09-14_Truly-Madly_Andrew_James_Gustav.mp3",
+      "duration": 15611.670438,
+      "durationFormatted": "4:20:11",
+      "artist": "Madly Andrew James Gustav",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-09-14_Truly-Madly_Andrew_James_Gustav.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2014-09-19",
+      "file": "EstimuloShow_2014-09-19_C.F",
+      "audioFile": "EstimuloShow_2014-09-19_C.F.mp3",
+      "duration": 12600.119,
+      "durationFormatted": "3:30:00",
+      "artist": "C.F",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-09-19_C.F.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2014-09-28",
+      "file": "EstimuloShow_2014-09-28_Mick_Welch",
+      "audioFile": "EstimuloShow_2014-09-28_Mick_Welch.mp3",
+      "duration": 13968.567063,
+      "durationFormatted": "3:52:48",
+      "artist": "Spectrum",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-09-28_Mick_Welch.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2014-10-05",
+      "file": "EstimuloShow_2014-10-05_SolSon_Chicagodeep_Taelue",
+      "audioFile": "EstimuloShow_2014-10-05_SolSon_Chicagodeep_Taelue.mp3",
+      "duration": 26544.021063,
+      "durationFormatted": "7:22:24",
+      "artist": "SolSon Chicagodeep Taelue",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-10-05_SolSon_Chicagodeep_Taelue.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2014-10-12",
+      "file": "EstimuloShow_2014-10-12_Christoph_Nicklas",
+      "audioFile": "EstimuloShow_2014-10-12_Christoph_Nicklas.mp3",
+      "duration": 12985.37025,
+      "durationFormatted": "3:36:25",
+      "artist": "Christoph Nicklas",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-10-12_Christoph_Nicklas.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2014-10-19",
+      "file": "EstimuloShow_2014-10-19_Remkowski",
+      "audioFile": "EstimuloShow_2014-10-19_Remkowski.mp3",
+      "duration": 11670.7345,
+      "durationFormatted": "3:14:30",
+      "artist": "Remkowski",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-10-19_Remkowski.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2014-10-24",
+      "file": "EstimuloShow_2014-10-24_LukaszMitura_Estimulo_Una",
+      "audioFile": "EstimuloShow_2014-10-24_LukaszMitura_Estimulo_Una.mp3",
+      "duration": 25282.940625,
+      "durationFormatted": "7:01:22",
+      "artist": "LukaszMitura Estimulo Una",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-10-24_LukaszMitura_Estimulo_Una.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2014-10-26",
+      "file": "EstimuloShow_2014-10-26_Truly-Madly",
+      "audioFile": "EstimuloShow_2014-10-26_Truly-Madly.mp3",
+      "duration": 14710.261125,
+      "durationFormatted": "4:05:10",
+      "artist": "Truly-Madly",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-10-26_Truly-Madly.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2014-11-01",
+      "file": "EstimuloShow_2014-11-01_Andy_Green_DJ Julie",
+      "audioFile": "EstimuloShow_2014-11-01_Andy_Green_DJ Julie.mp3",
+      "duration": 18099.487347,
+      "durationFormatted": "5:01:39",
+      "artist": "Andy Green DJ Julie",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-11-01_Andy_Green_DJ Julie.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2014-11-02",
+      "file": "EstimuloShow_2014-11-02_Estimulo",
+      "audioFile": "EstimuloShow_2014-11-02_Estimulo.mp3",
+      "duration": 17092.414694,
+      "durationFormatted": "4:44:52",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-11-02_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2014-11-16",
+      "file": "EstimuloShow_2014-11-16_Remkowski",
+      "audioFile": "EstimuloShow_2014-11-16_Remkowski.mp3",
+      "duration": 13968.535688,
+      "durationFormatted": "3:52:48",
+      "artist": "Remkowski",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-11-16_Remkowski.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2014-11-23",
+      "file": "EstimuloShow_2014-11-23_Remkowski_Estimulo",
+      "audioFile": "EstimuloShow_2014-11-23_Remkowski_Estimulo.mp3",
+      "duration": 16564.5303,
+      "durationFormatted": "4:36:04",
+      "artist": "Remkowski Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-11-23_Remkowski_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2014-11-28",
+      "file": "EstimuloShow_2014-11-28_PJOTR_DJ_Pegasuz_Estimulo",
+      "audioFile": "EstimuloShow_2014-11-28_PJOTR_DJ_Pegasuz_Estimulo.mp3",
+      "duration": 17708.486531,
+      "durationFormatted": "4:55:08",
+      "artist": "PJOTR DJ Pegasuz Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-11-28_PJOTR_DJ_Pegasuz_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2014-11-30",
+      "file": "EstimuloShow_2014-11-30_Truly_Madly",
+      "audioFile": "EstimuloShow_2014-11-30_Truly_Madly.mp3",
+      "duration": 14713.35875,
+      "durationFormatted": "4:05:13",
+      "artist": "Truly Madly",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-11-30_Truly_Madly.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2014-12-07",
+      "file": "EstimuloShow_2014-12-07_Christoph_Nicklas",
+      "audioFile": "EstimuloShow_2014-12-07_Christoph_Nicklas.mp3",
+      "duration": 12339.586813,
+      "durationFormatted": "3:25:39",
+      "artist": "Christoph Nicklas",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-12-07_Christoph_Nicklas.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2014-12-14",
+      "file": "EstimuloShow_2014-12-14_Chicagodeep_Taelue",
+      "audioFile": "EstimuloShow_2014-12-14_Chicagodeep_Taelue.mp3",
+      "duration": 15059.541063,
+      "durationFormatted": "4:10:59",
+      "artist": "Chicagodeep Taelue",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-12-14_Chicagodeep_Taelue.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2014-12-21",
+      "file": "EstimuloShow_2014-12-21_XMas_Santa_Mulo",
+      "audioFile": "EstimuloShow_2014-12-21_XMas_Santa_Mulo.mp3",
+      "duration": 27261.884082,
+      "durationFormatted": "7:34:21",
+      "artist": "XMAS 2014 w/ Santa Mulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-12-21_XMas_Santa_Mulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2014-12-28",
+      "file": "EstimuloShow_2014-12-28_Estimulo",
+      "audioFile": "EstimuloShow_2014-12-28_Estimulo.mp3",
+      "duration": 16898.795102,
+      "durationFormatted": "4:41:38",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-12-28_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Disco"
+    },
+    {
+      "name": "2015-01-18",
+      "file": "EstimuloShow_2015-01-18_Truly-Madly_Chris_Seddon - hearthis.at",
+      "audioFile": "EstimuloShow_2015-01-18_Truly-Madly_Chris_Seddon - hearthis.at.mp3",
+      "duration": 18694.622938,
+      "durationFormatted": "5:11:34",
+      "artist": "Truly-Madly Chris Seddon",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-01-18_Truly-Madly_Chris_Seddon - hearthis.at.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-01-25",
+      "file": "EstimuloShow_2015-01-25_Estimulo_Still_Deep_Makarov - hearthis.at",
+      "audioFile": "EstimuloShow_2015-01-25_Estimulo_Still_Deep_Makarov - hearthis.at.mp3",
+      "duration": 18601.380813,
+      "durationFormatted": "5:10:01",
+      "artist": "Estimulo Still Deep Makarov",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-01-25_Estimulo_Still_Deep_Makarov - hearthis.at.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-02-01",
+      "file": "EstimuloShow_2015-02-01_Estimulo_PJOTR_DJ-Pegasuz",
+      "audioFile": "EstimuloShow_2015-02-01_Estimulo_PJOTR_DJ-Pegasuz.mp3",
+      "duration": 16325.485714,
+      "durationFormatted": "4:32:05",
+      "artist": "Estimulo, PJOTR, DJ Pegasuz",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-02-01_Estimulo_PJOTR_DJ-Pegasuz.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-02-07",
+      "file": "EstimuloShow_2015-02-07_SUNK_Truly-Madly_Andy-Green_Chris-Chip_Saturday",
+      "audioFile": "EstimuloShow_2015-02-07_SUNK_Truly-Madly_Andy-Green_Chris-Chip_Saturday.mp3",
+      "duration": 23287.379592,
+      "durationFormatted": "6:28:07",
+      "artist": "SUNK Crew",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-02-07_SUNK_Truly-Madly_Andy-Green_Chris-Chip_Saturday.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2015"
+    },
+    {
+      "name": "2015-02-08",
+      "file": "EstimuloShow_2015-02-08_Chicagodeep_Taelue",
+      "audioFile": "EstimuloShow_2015-02-08_Chicagodeep_Taelue.mp3",
+      "duration": 14673.256625,
+      "durationFormatted": "4:04:33",
+      "artist": "Chicagodeep Taelue",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-02-08_Chicagodeep_Taelue.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-02-15",
+      "file": "EstimuloShow_2015-02-15_Estimulo",
+      "audioFile": "EstimuloShow_2015-02-15_Estimulo.mp3",
+      "duration": 14669.598781,
+      "durationFormatted": "4:04:29",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-02-15_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-02-20",
+      "file": "EstimuloShow_2015-02-20_Makarov",
+      "audioFile": "EstimuloShow_2015-02-20_Makarov.mp3",
+      "duration": 11798.6023,
+      "durationFormatted": "3:16:38",
+      "artist": "Makarov",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-02-20_Makarov.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-02-22",
+      "file": "EstimuloShow_2015-02-22_Remkowski",
+      "audioFile": "EstimuloShow_2015-02-22_Remkowski.mp3",
+      "duration": 11969.3376,
+      "durationFormatted": "3:19:29",
+      "artist": "Remkowski",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-02-22_Remkowski.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-03-01",
+      "file": "EstimuloShow_2015-03-01_Estimulo",
+      "audioFile": "EstimuloShow_2015-03-01_Estimulo.mp3",
+      "duration": 18241.047406,
+      "durationFormatted": "5:04:01",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-03-01_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-03-08",
+      "file": "EstimuloShow_2015-03-08_Christoph Nicklas",
+      "audioFile": "EstimuloShow_2015-03-08_Christoph Nicklas.mp3",
+      "duration": 11225.782857,
+      "durationFormatted": "3:07:05",
+      "artist": "Christoph Nicklas",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-03-08_Christoph Nicklas.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-03-15",
+      "file": "EstimuloShow_2015-03-15_Makarov",
+      "audioFile": "EstimuloShow_2015-03-15_Makarov.mp3",
+      "duration": 13385.415875,
+      "durationFormatted": "3:43:05",
+      "artist": "Makarov",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-03-15_Makarov.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-03-29",
+      "file": "EstimuloShow_2015-03-29_Truly-Madly_DJ_Ablyss",
+      "audioFile": "EstimuloShow_2015-03-29_Truly-Madly_DJ_Ablyss.mp3",
+      "duration": 15908.290563,
+      "durationFormatted": "4:25:08",
+      "artist": "Truly Madly, DJ Ablyss",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-03-29_Truly-Madly_DJ_Ablyss.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-04-05",
+      "file": "EstimuloShow_2015-04-05_DJ-Pegasuz_Estimulo",
+      "audioFile": "EstimuloShow_2015-04-05_DJ-Pegasuz_Estimulo.mp3",
+      "duration": 18230.86175,
+      "durationFormatted": "5:03:50",
+      "artist": "DJ Pegasuz, Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-04-05_DJ-Pegasuz_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-04-12",
+      "file": "EstimuloShow_2015-04-12_Truly-Madly",
+      "audioFile": "EstimuloShow_2015-04-12_Truly-Madly.mp3",
+      "duration": 8818.66775,
+      "durationFormatted": "2:26:58",
+      "artist": "Truly Madly",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-04-12_Truly-Madly.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-04-19",
+      "file": "EstimuloShow_2015-04-19_Chicagodeep_Taelue",
+      "audioFile": "EstimuloShow_2015-04-19_Chicagodeep_Taelue.mp3",
+      "duration": 17897.669125,
+      "durationFormatted": "4:58:17",
+      "artist": "Chicagodeep, Taelue",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-04-19_Chicagodeep_Taelue.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2015-04-25",
+      "file": "EstimuloShow_2015-04-25_777_Ron_Wilson_DJ_Pegasuz_Ftp-Up_Estimulo",
+      "audioFile": "EstimuloShow_2015-04-25_777_Ron_Wilson_DJ_Pegasuz_Ftp-Up_Estimulo.mp3",
+      "duration": 21477.048,
+      "durationFormatted": "5:57:57",
+      "artist": "777, Ron Wilson, DJ Pegasuz, Ftp-Up, Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-04-25_777_Ron_Wilson_DJ_Pegasuz_Ftp-Up_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-04-26",
+      "file": "EstimuloShow_2015-04-26_Christoph_Nicklas",
+      "audioFile": "EstimuloShow_2015-04-26_Christoph_Nicklas.mp3",
+      "duration": 12544.935875,
+      "durationFormatted": "3:29:04",
+      "artist": "Christoph Nicklas",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-04-26_Christoph_Nicklas.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-05-03",
+      "file": "EstimuloShow_2015-05-03_Makarov_Siggatunez",
+      "audioFile": "EstimuloShow_2015-05-03_Makarov_Siggatunez.mp3",
+      "duration": 15068.037375,
+      "durationFormatted": "4:11:08",
+      "artist": "Makarov, Siggatunez",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-05-03_Makarov_Siggatunez.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-05-10",
+      "file": "EstimuloShow_2015-05-10_Estimulo",
+      "audioFile": "EstimuloShow_2015-05-10_Estimulo.mp3",
+      "duration": 21885.7303,
+      "durationFormatted": "6:04:45",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-05-10_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-05-17",
+      "file": "EstimuloShow_2015-05-17_Maciej_Szalonek_Estimulo",
+      "audioFile": "EstimuloShow_2015-05-17_Maciej_Szalonek_Estimulo.mp3",
+      "duration": 14652.897125,
+      "durationFormatted": "4:04:12",
+      "artist": "Maciej Szalonek, Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-05-17_Maciej_Szalonek_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-05-24",
+      "file": "EstimuloShow_2015-05-24_Chicagodeep_Taelue",
+      "audioFile": "EstimuloShow_2015-05-24_Chicagodeep_Taelue.mp3",
+      "duration": 13723.8675,
+      "durationFormatted": "3:48:43",
+      "artist": "Chicagodeep, Taelue",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-05-24_Chicagodeep_Taelue.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2015-05-31",
+      "file": "EstimuloShow_2015-05-31_Tanzmichmal",
+      "audioFile": "EstimuloShow_2015-05-31_Tanzmichmal.mp3",
+      "duration": 20994.324898,
+      "durationFormatted": "5:49:54",
+      "artist": "Tanzmichmal",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-05-31_Tanzmichmal.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-06-07",
+      "file": "EstimuloShow_2015-06-07_Estimulo",
+      "audioFile": "EstimuloShow_2015-06-07_Estimulo.mp3",
+      "duration": 20237.8832,
+      "durationFormatted": "5:37:17",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-06-07_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-06-14",
+      "file": "EstimuloShow_2015-06-14_Afterafterlife_w_truly-madly_&_Estimulo",
+      "audioFile": "EstimuloShow_2015-06-14_Afterafterlife_w_truly-madly_&_Estimulo.mp3",
+      "duration": 21729.701125,
+      "durationFormatted": "6:02:09",
+      "artist": "Afterafterlife, Truly Madly & Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-06-14_Afterafterlife_w_truly-madly_&_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-06-19",
+      "file": "EstimuloShow_2015-06-19_Warsaw-Una_QBS_Formalina_Estimulo_Ever-Moving",
+      "audioFile": "EstimuloShow_2015-06-19_Warsaw-Una_QBS_Formalina_Estimulo_Ever-Moving.mp3",
+      "duration": 23157.996542,
+      "durationFormatted": "6:25:57",
+      "artist": "Una, QBS, Formalina, Estimulo, Ever Moving",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-06-19_Warsaw-Una_QBS_Formalina_Estimulo_Ever-Moving.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-06-21",
+      "file": "EstimuloShow_2015-06-21_Tomek_Ever-Moving_Estimulo",
+      "audioFile": "EstimuloShow_2015-06-21_Tomek_Ever-Moving_Estimulo.mp3",
+      "duration": 15038.88175,
+      "durationFormatted": "4:10:38",
+      "artist": "Tomek, Ever Moving, Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-06-21_Tomek_Ever-Moving_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-06-28",
+      "file": "EstimuloShow_2015-06-28_Remkowski",
+      "audioFile": "EstimuloShow_2015-06-28_Remkowski.mp3",
+      "duration": 9751.0174,
+      "durationFormatted": "2:42:31",
+      "artist": "Remkowski",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-06-28_Remkowski.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-07-05",
+      "file": "EstimuloShow_2015-07-05_Afterafterlife_truly-madly_Estimulo",
+      "audioFile": "EstimuloShow_2015-07-05_Afterafterlife_truly-madly_Estimulo.mp3",
+      "duration": 22836.088163,
+      "durationFormatted": "6:20:36",
+      "artist": "Afterafterlife, Truly Madly, Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-07-05_Afterafterlife_truly-madly_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-07-12",
+      "file": "EstimuloShow_2015-07-12_Estimulo",
+      "audioFile": "EstimuloShow_2015-07-12_Estimulo.mp3",
+      "duration": 13821.962449,
+      "durationFormatted": "3:50:21",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-07-12_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-07-19",
+      "file": "EstimuloShow_2015-07-19",
+      "audioFile": "EstimuloShow_2015-07-19.mp3",
+      "duration": 15408.169775,
+      "durationFormatted": "4:16:48",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-07-19.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-07-26",
+      "file": "EstimuloShow_2015-07-26_Konstantin_Bazhanov_&_Estimulo",
+      "audioFile": "EstimuloShow_2015-07-26_Konstantin_Bazhanov_&_Estimulo.mp3",
+      "duration": 34515.069388,
+      "durationFormatted": "9:35:15",
+      "artist": "Konstantin Bazhanov & Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-07-26_Konstantin_Bazhanov_&_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-08-16",
+      "file": "EstimuloShow_2015-08-16_Estimulo",
+      "audioFile": "EstimuloShow_2015-08-16_Estimulo.mp3",
+      "duration": 11825.961031,
+      "durationFormatted": "3:17:05",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-08-16_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-08-23",
+      "file": "EstimuloShow_2015-08-23_KonstantinBazhanov_Estimulo",
+      "audioFile": "EstimuloShow_2015-08-23_KonstantinBazhanov_Estimulo.mp3",
+      "duration": 33479.054594,
+      "durationFormatted": "9:17:59",
+      "artist": "Konstantin Bazhanov & Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-08-23_KonstantinBazhanov_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-08-30",
+      "file": "EstimuloShow_2015-08-30_Christoph_Nicklas",
+      "audioFile": "EstimuloShow_2015-08-30_Christoph_Nicklas.mp3",
+      "duration": 11781.011063,
+      "durationFormatted": "3:16:21",
+      "artist": "Christoph Nicklas",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-08-30_Christoph_Nicklas.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-09-06",
+      "file": "EstimuloShow_2015-09-06_Remkowski",
+      "audioFile": "EstimuloShow_2015-09-06_Remkowski.mp3",
+      "duration": 12982.0606,
+      "durationFormatted": "3:36:22",
+      "artist": "Remkowski",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-09-06_Remkowski.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other",
+      "date": "2015"
+    },
+    {
+      "name": "2015-09-20",
+      "file": "EstimuloShow_2015-09-20_Estimulo",
+      "audioFile": "EstimuloShow_2015-09-20_Estimulo.mp3",
+      "duration": 15141.694694,
+      "durationFormatted": "4:12:21",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-09-20_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2015",
+      "comment": "www.mixomat.org"
+    },
+    {
+      "name": "2015-09-27",
+      "file": "EstimuloShow_2015-09-27_PJOTR_DJ_Pegasuz_Estimulo_Marcustic",
+      "audioFile": "EstimuloShow_2015-09-27_PJOTR_DJ_Pegasuz_Estimulo_Marcustic.mp3",
+      "duration": 10945.018776,
+      "durationFormatted": "3:02:25",
+      "artist": "PJOTR DJ Pegasuz Estimulo Marcustic",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-09-27_PJOTR_DJ_Pegasuz_Estimulo_Marcustic.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-10-04",
+      "file": "EstimuloShow_2015-10-04_Estimulo",
+      "audioFile": "EstimuloShow_2015-10-04_Estimulo.mp3",
+      "duration": 10347.990204,
+      "durationFormatted": "2:52:27",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-10-04_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-10-25",
+      "file": "EstimuloShow_2015-10-25_Estimulo_Makarov_SC_MC_HT",
+      "audioFile": "EstimuloShow_2015-10-25_Estimulo_Makarov_SC_MC_HT.mp3",
+      "duration": 14351.098776,
+      "durationFormatted": "3:59:11",
+      "artist": "Estimulo Makarov SC MC HT",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-10-25_Estimulo_Makarov_SC_MC_HT.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-11-01",
+      "file": "EstimuloShow_2015-11-01_DJ_Pegasuz_Estimulo_SC_MC_HT",
+      "audioFile": "EstimuloShow_2015-11-01_DJ_Pegasuz_Estimulo_SC_MC_HT.mp3",
+      "duration": 14382.132245,
+      "durationFormatted": "3:59:42",
+      "artist": "DJ Pegasuz Estimulo SC MC HT",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-11-01_DJ_Pegasuz_Estimulo_SC_MC_HT.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-11-08",
+      "file": "EstimuloShow_2015-11-08_Estimulo_Dope_Of_2015",
+      "audioFile": "EstimuloShow_2015-11-08_Estimulo_Dope_Of_2015.mp3",
+      "duration": 13649.674313,
+      "durationFormatted": "3:47:29",
+      "artist": "Estimulo Dope Of 2015",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-11-08_Estimulo_Dope_Of_2015.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-11-15",
+      "file": "EstimuloShow_2015-11-15_PLO_Man_&_Estimulo",
+      "audioFile": "EstimuloShow_2015-11-15_PLO_Man_&_Estimulo.mp3",
+      "duration": 5967.898188,
+      "durationFormatted": "1:39:27",
+      "artist": "PLO Man & Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-11-15_PLO_Man_&_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-11-22",
+      "file": "EstimuloShow_2015-11-22_Andy_Green_Chris_Chip",
+      "audioFile": "EstimuloShow_2015-11-22_Andy_Green_Chris_Chip.mp3",
+      "duration": 18346.971429,
+      "durationFormatted": "5:05:46",
+      "artist": "Andy Green Chris Chip",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-11-22_Andy_Green_Chris_Chip.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-11-29",
+      "file": "EstimuloShow_2015-11-29_Truly-Madly_Jules",
+      "audioFile": "EstimuloShow_2015-11-29_Truly-Madly_Jules.mp3",
+      "duration": 16124.458625,
+      "durationFormatted": "4:28:44",
+      "artist": "Truly Madly Jules",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-11-29_Truly-Madly_Jules.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2015-12-20",
+      "file": "EstimuloShow_2015-12-20_VIBRAPHONE_TRUE_UNDERGROUND_SOUND_OF_ROME",
+      "audioFile": "EstimuloShow_2015-12-20_VIBRAPHONE_TRUE_UNDERGROUND_SOUND_OF_ROME.mp3",
+      "duration": 10995.957551,
+      "durationFormatted": "3:03:15",
+      "artist": "VIBRAPHONE_TRUE_UNDERGROUND_SOUND_OF_ROME",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-12-20_VIBRAPHONE_TRUE_UNDERGROUND_SOUND_OF_ROME.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2015-12-27",
+      "file": "EstimuloShow_2015-12-27_WarSawXMas_Beetroot_Estimulo",
+      "audioFile": "EstimuloShow_2015-12-27_WarSawXMas_Beetroot_Estimulo.mp3",
+      "duration": 15226.800313,
+      "durationFormatted": "4:13:46",
+      "artist": "WarSawXMas Beetroot Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-12-27_WarSawXMas_Beetroot_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2016-01-17",
+      "file": "EstimuloShow_2016-01-17_Estimulo",
+      "audioFile": "EstimuloShow_2016-01-17_Estimulo.mp3",
+      "duration": 12599.527031,
+      "durationFormatted": "3:29:59",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-01-17_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2016-01-22",
+      "file": "EstimuloShow_2016-01-22_urban_sky",
+      "audioFile": "EstimuloShow_2016-01-22_urban_sky.mp3",
+      "duration": 12826.52225,
+      "durationFormatted": "3:33:46",
+      "artist": "urban sky",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-01-22_urban_sky.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2016-01-24",
+      "file": "EstimuloShow_2016-01-24_truly-madly_Luke_Spinks",
+      "audioFile": "EstimuloShow_2016-01-24_truly-madly_Luke_Spinks.mp3",
+      "duration": 17406.948313,
+      "durationFormatted": "4:50:06",
+      "artist": "Truly Madly Luke Spinks",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-01-24_truly-madly_Luke_Spinks.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "2016-01-31",
+      "file": "EstimuloShow_2016-01-31_Estimulo",
+      "audioFile": "EstimuloShow_2016-01-31_Estimulo.mp3",
+      "duration": 11422.082719,
+      "durationFormatted": "3:10:22",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-01-31_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2016-02-14",
+      "file": "EstimuloShow_2016-02-14_Estimulo",
+      "audioFile": "EstimuloShow_2016-02-14_Estimulo.mp3",
+      "duration": 15760.997425,
+      "durationFormatted": "4:22:40",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-02-14_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2016-02-28",
+      "file": "EstimuloShow_2016-02-28_truly-madly_Estimulo",
+      "audioFile": "EstimuloShow_2016-02-28_truly-madly_Estimulo.mp3",
+      "duration": 11204.026875,
+      "durationFormatted": "3:06:44",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-02-28_truly-madly_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2016-03-13",
+      "file": "EstimuloShow_2016-03-13_DJ_Pegasuz_Estimulo",
+      "audioFile": "EstimuloShow_2016-03-13_DJ_Pegasuz_Estimulo.mp3",
+      "duration": 14169.694625,
+      "durationFormatted": "3:56:09",
+      "artist": "DJ Pegasuz Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-03-13_DJ_Pegasuz_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2016-03-20",
+      "file": "EstimuloShow_2016-03-20_EndaHouse",
+      "audioFile": "EstimuloShow_2016-03-20_EndaHouse.mp3",
+      "duration": 11786.69125,
+      "durationFormatted": "3:16:26",
+      "artist": "EndaHouse",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-03-20_EndaHouse.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2016-03-27",
+      "file": "EstimuloShow_2016-03-27_Remkowski",
+      "audioFile": "EstimuloShow_2016-03-27_Remkowski.mp3",
+      "duration": 7050.064375,
+      "durationFormatted": "1:57:30",
+      "artist": "Remkowski",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-03-27_Remkowski.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2016-04-03",
+      "file": "EstimuloShow_2016-04-03_Estimulo",
+      "audioFile": "EstimuloShow_2016-04-03_Estimulo.mp3",
+      "duration": 11132.36898,
+      "durationFormatted": "3:05:32",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-04-03_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2016-04-10",
+      "file": "EstimuloShow_2016-04-10_truly-madly_Chris_Seddon",
+      "audioFile": "EstimuloShow_2016-04-10_truly-madly_Chris_Seddon.mp3",
+      "duration": 14510.759,
+      "durationFormatted": "4:01:50",
+      "artist": "Truly Madly Chris Seddon",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-04-10_truly-madly_Chris_Seddon.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2016-04-24",
+      "file": "EstimuloShow_2016-04-24_DJ_Pegasuz_(Hamsa_Intenational)_Estimulo",
+      "audioFile": "EstimuloShow_2016-04-24_DJ_Pegasuz_(Hamsa_Intenational)_Estimulo.mp3",
+      "duration": 11445.995102,
+      "durationFormatted": "3:10:45",
+      "artist": "DJ Pegasuz (Hamsa Intenational) Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-04-24_DJ_Pegasuz_(Hamsa_Intenational)_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2016-05-01",
+      "file": "EstimuloShow_2016-05-01_Shusmo_Estimulo_",
+      "audioFile": "EstimuloShow_2016-05-01_Shusmo_Estimulo_.mp3",
+      "duration": 12338.651429,
+      "durationFormatted": "3:25:38",
+      "artist": "Shusmo & Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-05-01_Shusmo_Estimulo_.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2016-05-01"
+    },
+    {
+      "name": "2016-05-08",
+      "file": "EstimuloShow_2016-05-08_truly-madly_Tasty_Treats",
+      "audioFile": "EstimuloShow_2016-05-08_truly-madly_Tasty_Treats.mp3",
+      "duration": 18561.863875,
+      "durationFormatted": "5:09:21",
+      "artist": "Truly Madly, Tasty Treats",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-05-08_truly-madly_Tasty_Treats.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2016-05-15",
+      "file": "EstimuloShow_2016-05-15_Lenny",
+      "audioFile": "EstimuloShow_2016-05-15_Lenny.mp3",
+      "duration": 9922.5632,
+      "durationFormatted": "2:45:22",
+      "artist": "Lenny",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-05-15_Lenny.mp3",
+          "label": "MP3"
+        }
+      ],
+      "comment": "Recorded 20/09/2014 21:59:48"
+    },
+    {
+      "name": "2016-05-27",
+      "file": "EstimuloShow_2016-05-27-makarov",
+      "audioFile": "EstimuloShow_2016-05-27-makarov.mp3",
+      "duration": 12563.571042,
+      "durationFormatted": "3:29:23",
+      "artist": "Makarov",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-05-27-makarov.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "2016-08-14",
+      "file": "EstimuloShow_2016-08-14_DJ_Pegasuz_PJOTR_Duensch_JonasTon_Estimulo",
+      "audioFile": "EstimuloShow_2016-08-14_DJ_Pegasuz_PJOTR_Duensch_JonasTon_Estimulo.mp3",
+      "duration": 15012.6405,
+      "durationFormatted": "4:10:12",
+      "artist": "DJ Pegasuz PJOTR Duensch JonasTon Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-08-14_DJ_Pegasuz_PJOTR_Duensch_JonasTon_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "#gramofonowa. x estimuloshow: DJ Pegasuz",
+      "file": "#gramofonowa. x estimuloshow - dj pegasuz - 2016-11-27",
+      "audioFile": "#gramofonowa. x estimuloshow - dj pegasuz - 2016-11-27.mp3",
+      "duration": 3772.760816,
+      "durationFormatted": "1:02:52",
+      "artist": "DJ Pegasuz",
+      "downloads": [
+        {
+          "file": "#gramofonowa. x estimuloshow - dj pegasuz - 2016-11-27.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "#gramofonowa. x estimuloshow: Estimulo",
+      "file": "#gramofonowa. x estimuloshow - estimulo - 2016-11-27",
+      "audioFile": "#gramofonowa. x estimuloshow - estimulo - 2016-11-27.mp3",
+      "duration": 2806.125714,
+      "durationFormatted": "0:46:46",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "#gramofonowa. x estimuloshow - estimulo - 2016-11-27.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "#gramofonowa. x estimuloshow: Manou",
+      "file": "#gramofonowa. x estimuloshow - manou - 2016-11-27",
+      "audioFile": "#gramofonowa. x estimuloshow - manou - 2016-11-27.mp3",
+      "duration": 4523.885714,
+      "durationFormatted": "1:15:23",
+      "artist": "Manou",
+      "downloads": [
+        {
+          "file": "#gramofonowa. x estimuloshow - manou - 2016-11-27.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "#gramofonowa. x estimuloshow: Sarah For Sure",
+      "file": "#gramofonowa. x estimuloshow - sarah for sure - 2016-11-27",
+      "audioFile": "#gramofonowa. x estimuloshow - sarah for sure - 2016-11-27.mp3",
+      "duration": 3798.804898,
+      "durationFormatted": "1:03:18",
+      "artist": "Sarah For Sure",
+      "downloads": [
+        {
+          "file": "#gramofonowa. x estimuloshow - sarah for sure - 2016-11-27.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "#gramofonowa. x estimuloshow: Thomas Berg",
+      "file": "#gramofonowa. x estimuloshow - thomas berg - 2016-11-27",
+      "audioFile": "#gramofonowa. x estimuloshow - thomas berg - 2016-11-27.mp3",
+      "duration": 4030.641633,
+      "durationFormatted": "1:07:10",
+      "artist": "Thomas Berg",
+      "downloads": [
+        {
+          "file": "#gramofonowa. x estimuloshow - thomas berg - 2016-11-27.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Building Bricks, deeprhythms.com guest mix #34",
+      "file": "deeprhythms_guestmix_34_building_bricks_by_estimulo_120809",
+      "audioFile": "deeprhythms_guestmix_34_building_bricks_by_estimulo_120809.mp3",
+      "duration": 8483.317551,
+      "durationFormatted": "2:21:23",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_34_building_bricks_by_estimulo_120809.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/34_building_bricks_by_estimulo.php. More about Estimulo: http://mixomat.org/estimuloshow"
+    },
+    {
+      "name": "Cashmere Radio   Estimuloshow #1 w Estimulo 05092017",
+      "file": "Cashmere Radio - Estimuloshow #1 w Estimulo 05092017",
+      "audioFile": "Cashmere Radio - Estimuloshow #1 w Estimulo 05092017.m4a",
+      "duration": 5870.283167,
+      "durationFormatted": "1:37:50",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "Cashmere Radio - Estimuloshow #1 w Estimulo 05092017.m4a",
+          "label": "M4A"
+        }
+      ]
+    },
+    {
+      "name": "Cashmere Radio   Estimuloshow #2 w Estimulo 05102017",
+      "file": "Cashmere Radio - Estimuloshow #2 w Estimulo 05102017",
+      "audioFile": "Cashmere Radio - Estimuloshow #2 w Estimulo 05102017.m4a",
+      "duration": 5774.6634,
+      "durationFormatted": "1:36:14",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "Cashmere Radio - Estimuloshow #2 w Estimulo 05102017.m4a",
+          "label": "M4A"
+        }
+      ]
+    },
+    {
+      "name": "Coffee Table Tech - deeprhythms.com guest mix #14",
+      "file": "deeprhythms_guestmix_14_coffee_table_tech_by_estimulo_261005",
+      "audioFile": "deeprhythms_guestmix_14_coffee_table_tech_by_estimulo_261005.mp3",
+      "duration": 4787.819567,
+      "durationFormatted": "1:19:47",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_14_coffee_table_tech_by_estimulo_261005.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2005",
+      "comment": "Guest mix by Andreas Stolzenberg aka Estimulo (http://mixomat-recordings.de/) for deeprhythms.com. Post comments here: http://deeprhythms.com/guest_mixes/14_coffee_table_tech_by_estimulo. All rights reserved by respective artists and labels. Promotional u"
+    },
+    {
+      "name": "Deeprhythms 37 -'In the Open' - 300603 by TIMO",
+      "file": "EstimuloShow_2012-07-22_Chicagodeep_Taelue",
+      "audioFile": "EstimuloShow_2012-07-22_Chicagodeep_Taelue.mp3",
+      "duration": 14397.385125,
+      "durationFormatted": "3:59:57",
+      "artist": "timo@deeprhythms.com",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-07-22_Chicagodeep_Taelue.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Deeprhythms guest mix #22 - 'Beyond Control' - 28122007 ",
+      "file": "deeprhythms_guestmix_22_beyond_control_by_estimulo_281207",
+      "audioFile": "deeprhythms_guestmix_22_beyond_control_by_estimulo_281207.mp3",
+      "duration": 5523.435102,
+      "durationFormatted": "1:32:03",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "deeprhythms_guestmix_22_beyond_control_by_estimulo_281207.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2007",
+      "comment": "Copyright respective artists and labels, for promotional use only. Playlist + comments: http://deeprhythms.com/guest_mixes/22_beyond_control_by_estimulo.php. More mixes from Esti at http://myspace.com/estimulo"
+    },
+    {
+      "name": "estimulo",
+      "file": "estimulo.cavando",
+      "audioFile": "estimulo.cavando.mp3",
+      "duration": 6168.267755,
+      "durationFormatted": "1:42:48",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "estimulo.cavando.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "estimulo",
+      "file": "estimulo.fall_for_you",
+      "audioFile": "estimulo.fall_for_you.mp3",
+      "duration": 5015.013878,
+      "durationFormatted": "1:23:35",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "estimulo.fall_for_you.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "EstimuloShow 2nd May 2009",
+      "file": "EstimuloShow_2009-05-02_Pt1",
+      "audioFile": "EstimuloShow_2009-05-02_Pt1.mp3",
+      "duration": 4769.9917,
+      "durationFormatted": "1:19:29",
+      "artist": "Conradio",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-05-02_Pt1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "http://www.mixomat.org/estimuloshow\r\nhttp://tiptopmusic.com/pinkblog/category/estimuloshow-archive"
+    },
+    {
+      "name": "EstimuloShow 2nd May 2009",
+      "file": "EstimuloShow_2009-05-02_Pt2",
+      "audioFile": "EstimuloShow_2009-05-02_Pt2.mp3",
+      "duration": 5885.1852,
+      "durationFormatted": "1:38:05",
+      "artist": "Pinky & Truly",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-05-02_Pt2.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "http://www.mixomat.org/estimuloshow\r\nhttp://tiptopmusic.com/pinkblog/category/estimuloshow-archive"
+    },
+    {
+      "name": "EstimuloShow 4th April 2009",
+      "file": "EstimuloShow_2009-04-04_Pt1",
+      "audioFile": "EstimuloShow_2009-04-04_Pt1.mp3",
+      "duration": 5551.9672,
+      "durationFormatted": "1:32:31",
+      "artist": "Pinky, Truly & Conradio",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-04-04_Pt1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "http://www.mixomat.org/estimuloshow\r\nhttp://tiptopmusic.com/pinkblog"
+    },
+    {
+      "name": "EstimuloShow 4th April 2009",
+      "file": "EstimuloShow_2009-04-04_Pt2",
+      "audioFile": "EstimuloShow_2009-04-04_Pt2.mp3",
+      "duration": 5941.71415,
+      "durationFormatted": "1:39:01",
+      "artist": "Pinky, Truly & Conradio",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-04-04_Pt2.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "http://www.mixomat.org/estimuloshow\r\nhttp://tiptopmusic.com/pinkblog"
+    },
+    {
+      "name": "EstimuloShow 4th April 2009",
+      "file": "EstimuloShow_2009-04-04_Pt3",
+      "audioFile": "EstimuloShow_2009-04-04_Pt3.mp3",
+      "duration": 4886.28885,
+      "durationFormatted": "1:21:26",
+      "artist": "Pinky, Truly & Conradio",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-04-04_Pt3.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "http://www.mixomat.org/estimuloshow\r\nhttp://tiptopmusic.com/pinkblog"
+    },
+    {
+      "name": "EstimuloShow 4th April 2009",
+      "file": "EstimuloShow_2009-04-04_Pt4",
+      "audioFile": "EstimuloShow_2009-04-04_Pt4.mp3",
+      "duration": 5318.71985,
+      "durationFormatted": "1:28:38",
+      "artist": "Pinky, Truly & Conradio",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-04-04_Pt4.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "http://www.mixomat.org/estimuloshow\r\nhttp://tiptopmusic.com/pinkblog"
+    },
+    {
+      "name": "EstimuloShow 5th September 2009 Pt.1",
+      "file": "EstimuloShow_2009-09-05_Pt1",
+      "audioFile": "EstimuloShow_2009-09-05_Pt1.mp3",
+      "duration": 5365.323938,
+      "durationFormatted": "1:29:25",
+      "artist": "Conradio & Pinky",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-09-05_Pt1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "For additional info and archives http://www.mixomat.org/estimuloshow/ & http://tiptopmusic.com/pinkblog/category/estimuloshow-archive/"
+    },
+    {
+      "name": "EstimuloShow 5th September 2009 Pt.2",
+      "file": "EstimuloShow_2009-09-05_Pt2",
+      "audioFile": "EstimuloShow_2009-09-05_Pt2.mp3",
+      "duration": 5505.705938,
+      "durationFormatted": "1:31:45",
+      "artist": "Conradio & Pinky",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-09-05_Pt2.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "For additional info and archives http://www.mixomat.org/estimuloshow/ & http://tiptopmusic.com/pinkblog/category/estimuloshow-archive/"
+    },
+    {
+      "name": "EstimuloShow 06 October 2013 w/ Stella & Estimulo",
+      "file": "EstimuloShow_2013-10-06_Stella_Estimulo",
+      "audioFile": "EstimuloShow_2013-10-06_Stella_Estimulo.mp3",
+      "duration": 12844.852245,
+      "durationFormatted": "3:34:04",
+      "artist": "EstimuloShow",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-10-06_Stella_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "EstimuloShow 6th June 2009 Pt.1",
+      "file": "EstimuloShow_2009-06-06_Pt1",
+      "audioFile": "EstimuloShow_2009-06-06_Pt1.mp3",
+      "duration": 8382.780256,
+      "durationFormatted": "2:19:42",
+      "artist": "Demizen",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-06-06_Pt1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "comment": "For additional info and archives http://www.mixomat.org/estimuloshow/ & http://tiptopmusic.com/pinkblog/category/estimuloshow-archive/"
+    },
+    {
+      "name": "EstimuloShow 6th June 2009 Pt.2",
+      "file": "EstimuloShow_2009-06-06_Pt2",
+      "audioFile": "EstimuloShow_2009-06-06_Pt2.mp3",
+      "duration": 8126.127189,
+      "durationFormatted": "2:15:26",
+      "artist": "Truly-Madly",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-06-06_Pt2.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "comment": "For additional info and archives http://www.mixomat.org/estimuloshow/ & http://tiptopmusic.com/pinkblog/category/estimuloshow-archive/"
+    },
+    {
+      "name": "EstimuloShow 9 February 2014",
+      "file": "EstimuloShow_2014-02-09_Estimulo",
+      "audioFile": "EstimuloShow_2014-02-09_Estimulo.mp3",
+      "duration": 21373.831837,
+      "durationFormatted": "5:56:13",
+      "artist": "EstimuloShow",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-02-09_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "EstimuloShow 9th May 2009 Pt.1",
+      "file": "EstimuloShow_2009-05-09_Pt1",
+      "audioFile": "EstimuloShow_2009-05-09_Pt1.mp3",
+      "duration": 6642.050612,
+      "durationFormatted": "1:50:42",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-05-09_Pt1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "http://www.mixomat.org/estimuloshow\u2028http://tiptopmusic.com/pinkblog/category/estimuloshow-archive/"
+    },
+    {
+      "name": "EstimuloShow 9th May 2009 Pt.4",
+      "file": "EstimuloShow_2009-05-09_Pt4",
+      "audioFile": "EstimuloShow_2009-05-09_Pt4.mp3",
+      "duration": 5926.713469,
+      "durationFormatted": "1:38:46",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-05-09_Pt4.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "http://www.mixomat.org/estimuloshow/\u2028http://tiptopmusic.com/pinkblog/category/estimuloshow-archive/"
+    },
+    {
+      "name": "EstimuloShow 15 July 2012",
+      "file": "EstimuloShow_2012-07-15_berlin_estimulo",
+      "audioFile": "EstimuloShow_2012-07-15_berlin_estimulo.mp3",
+      "duration": 13914.279184,
+      "durationFormatted": "3:51:54",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-07-15_berlin_estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Estimuloshow 16 March w/ Ari & Estimulo",
+      "file": "EstimuloShow_2014-03-16_Ari_Estimulo",
+      "audioFile": "EstimuloShow_2014-03-16_Ari_Estimulo.mp3",
+      "duration": 15622.29551,
+      "durationFormatted": "4:20:22",
+      "artist": "EstimuloShow",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-03-16_Ari_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "EstimuloShow 17 November 2013",
+      "file": "EstimuloShow_2013-11-17_Estimulo",
+      "audioFile": "EstimuloShow_2013-11-17_Estimulo.mp3",
+      "duration": 21069.400816,
+      "durationFormatted": "5:51:09",
+      "artist": "EstimuloShow",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-11-17_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "EstimuloShow 23rd May 2009 Part 1",
+      "file": "EstimuloShow_2009-05-23_Pt1",
+      "audioFile": "EstimuloShow_2009-05-23_Pt1.mp3",
+      "duration": 5528.163265,
+      "durationFormatted": "1:32:08",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-05-23_Pt1.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "EstimuloShow 23rd May 2009 Part 2",
+      "file": "EstimuloShow_2009-05-23_Pt2",
+      "audioFile": "EstimuloShow_2009-05-23_Pt2.mp3",
+      "duration": 5460.323265,
+      "durationFormatted": "1:31:00",
+      "artist": "Estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-05-23_Pt2.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "EstimuloShow 25th April 2009",
+      "file": "EstimuloShow_2009-04-25_Pt1",
+      "audioFile": "EstimuloShow_2009-04-25_Pt1.mp3",
+      "duration": 5572.00475,
+      "durationFormatted": "1:32:52",
+      "artist": "Mike Bishop",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-04-25_Pt1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "http://www.mixomat.org/estimuloshow\r\nhttp://tiptopmusic.com/pinkblog"
+    },
+    {
+      "name": "EstimuloShow 25th April 2009",
+      "file": "EstimuloShow_2009-04-25_Pt2",
+      "audioFile": "EstimuloShow_2009-04-25_Pt2.mp3",
+      "duration": 5107.991688,
+      "durationFormatted": "1:25:07",
+      "artist": "Mike Bishop",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-04-25_Pt2.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "http://www.mixomat.org/estimuloshow\r\nhttp://tiptopmusic.com/pinkblog"
+    },
+    {
+      "name": "Estimuloshow 27 July 2014 w/ Malcolm Altered Moods Moore and Estimulo",
+      "file": "EstimuloShow_2014-07-27 Malcolm Altered Moods Moore Estimulo",
+      "audioFile": "EstimuloShow_2014-07-27 Malcolm Altered Moods Moore Estimulo.mp3",
+      "duration": 17409.044898,
+      "durationFormatted": "4:50:09",
+      "artist": "Estio & Roxio",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-07-27 Malcolm Altered Moods Moore Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "EstimuloShow 27th June 2009 Pt.1",
+      "file": "EstimuloShow_2009-06-27_Pt1",
+      "audioFile": "EstimuloShow_2009-06-27_Pt1.mp3",
+      "duration": 5380.292125,
+      "durationFormatted": "1:29:40",
+      "artist": "Mike Bishop",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-06-27_Pt1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "For additional info and archives http://www.mixomat.org/estimuloshow/ & http://tiptopmusic.com/pinkblog/category/estimuloshow-archive/"
+    },
+    {
+      "name": "EstimuloShow 27th June 2009 Pt.2",
+      "file": "EstimuloShow_2009-06-27_Pt2",
+      "audioFile": "EstimuloShow_2009-06-27_Pt2.mp3",
+      "duration": 5766.904378,
+      "durationFormatted": "1:36:06",
+      "artist": "Mike Bishop",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-06-27_Pt2.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Deep House",
+      "date": "2009",
+      "comment": "For additional info and archives http://www.mixomat.org/estimuloshow/ & http://tiptopmusic.com/pinkblog/category/estimuloshow-archive/"
+    },
+    {
+      "name": "EstimuloShow Lankwitz",
+      "file": "EstimuloShow_2014-07-13 Estimulo",
+      "audioFile": "EstimuloShow_2014-07-13 Estimulo.mp3",
+      "duration": 12158.746122,
+      "durationFormatted": "3:22:38",
+      "artist": "EstimuloShow",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-07-13 Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Jovonn.mp3",
+      "file": "Jovonn",
+      "audioFile": "Jovonn.mp3",
+      "duration": 3475.226122,
+      "durationFormatted": "0:57:55",
+      "artist": "mixed by Estimulo",
+      "downloads": [
+        {
+          "file": "Jovonn.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Makarov, Estimulo, Denise B., Siggatunez, Tomtomgroove",
+      "file": "EstimuloShow_2014-01-18_Shatterday_Makarov_Estimulo_Denise_B_Siggatunez_Tomtomgroove",
+      "audioFile": "EstimuloShow_2014-01-18_Shatterday_Makarov_Estimulo_Denise_B_Siggatunez_Tomtomgroove.mp3",
+      "duration": 28100.806531,
+      "durationFormatted": "7:48:20",
+      "artist": "EstimuloShow",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-01-18_Shatterday_Makarov_Estimulo_Denise_B_Siggatunez_Tomtomgroove.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Palma39 Estimulo 170802",
+      "file": "Palma39-Estimulo-170802",
+      "audioFile": "Palma39-Estimulo-170802.m4a",
+      "duration": 9676.265933,
+      "durationFormatted": "2:41:16",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "Palma39-Estimulo-170802.m4a",
+          "label": "M4A"
+        }
+      ]
+    },
+    {
+      "name": "Show 2009 03 21 Pt1",
+      "file": "EstimuloShow_2009-03-21_Pt1",
+      "audioFile": "EstimuloShow_2009-03-21_Pt1.mp3",
+      "duration": 7073.149388,
+      "durationFormatted": "1:57:53",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-03-21_Pt1.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2009 03 21 Pt2",
+      "file": "EstimuloShow_2009-03-21_Pt2",
+      "audioFile": "EstimuloShow_2009-03-21_Pt2.mp3",
+      "duration": 5756.682449,
+      "durationFormatted": "1:35:56",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-03-21_Pt2.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2009 03 21 Pt3",
+      "file": "EstimuloShow_2009-03-21_Pt3",
+      "audioFile": "EstimuloShow_2009-03-21_Pt3.mp3",
+      "duration": 7253.69675,
+      "durationFormatted": "2:00:53",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-03-21_Pt3.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2009 03 28 Pt1",
+      "file": "EstimuloShow_2009-03-28_Pt1",
+      "audioFile": "EstimuloShow_2009-03-28_Pt1.mp3",
+      "duration": 6420.035625,
+      "durationFormatted": "1:47:00",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-03-28_Pt1.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2009 03 28 Pt2",
+      "file": "EstimuloShow_2009-03-28_Pt2",
+      "audioFile": "EstimuloShow_2009-03-28_Pt2.mp3",
+      "duration": 6425.711813,
+      "durationFormatted": "1:47:05",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-03-28_Pt2.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2009 03 28 Pt3",
+      "file": "EstimuloShow_2009-03-28_Pt3",
+      "audioFile": "EstimuloShow_2009-03-28_Pt3.mp3",
+      "duration": 7191.72275,
+      "durationFormatted": "1:59:51",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-03-28_Pt3.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2009 03 28 Pt4",
+      "file": "EstimuloShow_2009-03-28_Pt4",
+      "audioFile": "EstimuloShow_2009-03-28_Pt4.mp3",
+      "duration": 5073.104,
+      "durationFormatted": "1:24:33",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-03-28_Pt4.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2009 03 28 Pt5",
+      "file": "EstimuloShow_2009-03-28_Pt5",
+      "audioFile": "EstimuloShow_2009-03-28_Pt5.mp3",
+      "duration": 5367.276875,
+      "durationFormatted": "1:29:27",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-03-28_Pt5.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2009 03 28 Pt6",
+      "file": "EstimuloShow_2009-03-28_Pt6",
+      "audioFile": "EstimuloShow_2009-03-28_Pt6.mp3",
+      "duration": 3238.893875,
+      "durationFormatted": "0:53:58",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-03-28_Pt6.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2009 04 04 Pt5",
+      "file": "EstimuloShow_2009-04-04_Pt5",
+      "audioFile": "EstimuloShow_2009-04-04_Pt5.mp3",
+      "duration": 6934.74975,
+      "durationFormatted": "1:55:34",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-04-04_Pt5.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2009 04 11 Pt1",
+      "file": "EstimuloShow_2009-04-11_Pt1",
+      "audioFile": "EstimuloShow_2009-04-11_Pt1.mp3",
+      "duration": 5608.673083,
+      "durationFormatted": "1:33:28",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-04-11_Pt1.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2009 04 11 Pt2",
+      "file": "EstimuloShow_2009-04-11_Pt2",
+      "audioFile": "EstimuloShow_2009-04-11_Pt2.mp3",
+      "duration": 5524.554333,
+      "durationFormatted": "1:32:04",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-04-11_Pt2.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2009 04 18",
+      "file": "EstimuloShow_2009-04-18",
+      "audioFile": "EstimuloShow_2009-04-18.mp3",
+      "duration": 9707.154286,
+      "durationFormatted": "2:41:47",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-04-18.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2009 07 04 truly madly",
+      "file": "EstimuloShow_2009-07-04_truly-madly",
+      "audioFile": "EstimuloShow_2009-07-04_truly-madly.mp3",
+      "duration": 14363.324063,
+      "durationFormatted": "3:59:23",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2009-07-04_truly-madly.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2011 02 07 Estimulo",
+      "file": "EstimuloShow_2011-02-07_Estimulo",
+      "audioFile": "EstimuloShow_2011-02-07_Estimulo.mp3",
+      "duration": 9680.013063,
+      "durationFormatted": "2:41:20",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2011-02-07_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 07 08 berlin estimulo",
+      "file": "EstimuloShow_2012-07-08_berlin_estimulo",
+      "audioFile": "EstimuloShow_2012-07-08_berlin_estimulo.mp3",
+      "duration": 19630.550204,
+      "durationFormatted": "5:27:10",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-07-08_berlin_estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 07 29 Estimulo",
+      "file": "EstimuloShow_2012-07-29_Estimulo",
+      "audioFile": "EstimuloShow_2012-07-29_Estimulo.mp3",
+      "duration": 9562.409796,
+      "durationFormatted": "2:39:22",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-07-29_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 08 05 Mike Bishop Toronto",
+      "file": "EstimuloShow_2012-08-05_Mike_Bishop_Toronto",
+      "audioFile": "EstimuloShow_2012-08-05_Mike_Bishop_Toronto.mp3",
+      "duration": 15740.397438,
+      "durationFormatted": "4:22:20",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-08-05_Mike_Bishop_Toronto.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 08 19 Malcolm Moore Konstantin Bazhanov Estimulo",
+      "file": "EstimuloShow_2012-08-19_Malcolm_Moore_Konstantin_Bazhanov_Estimulo",
+      "audioFile": "EstimuloShow_2012-08-19_Malcolm_Moore_Konstantin_Bazhanov_Estimulo.mp3",
+      "duration": 31396.858688,
+      "durationFormatted": "8:43:16",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-08-19_Malcolm_Moore_Konstantin_Bazhanov_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 08 26 Truly Madly",
+      "file": "EstimuloShow_2012-08-26_Truly-Madly",
+      "audioFile": "EstimuloShow_2012-08-26_Truly-Madly.mp3",
+      "duration": 10505.304063,
+      "durationFormatted": "2:55:05",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-08-26_Truly-Madly.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 09 02 Mike Bishop",
+      "file": "EstimuloShow_2012-09-02_Mike_Bishop",
+      "audioFile": "EstimuloShow_2012-09-02_Mike_Bishop.mp3",
+      "duration": 17954.28525,
+      "durationFormatted": "4:59:14",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-09-02_Mike_Bishop.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 09 09 BlueJ TyrelWilliams",
+      "file": "EstimuloShow_2012-09-09_BlueJ_TyrelWilliams",
+      "audioFile": "EstimuloShow_2012-09-09_BlueJ_TyrelWilliams.mp3",
+      "duration": 7410.0245,
+      "durationFormatted": "2:03:30",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-09-09_BlueJ_TyrelWilliams.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2012 09 09 Chicagodeep",
+      "file": "EstimuloShow_2012-09-09_Chicagodeep",
+      "audioFile": "EstimuloShow_2012-09-09_Chicagodeep.mp3",
+      "duration": 7757.946875,
+      "durationFormatted": "2:09:17",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-09-09_Chicagodeep.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2012 09 09 Taelue",
+      "file": "EstimuloShow_2012-09-09_Taelue",
+      "audioFile": "EstimuloShow_2012-09-09_Taelue.mp3",
+      "duration": 8036.506125,
+      "durationFormatted": "2:13:56",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-09-09_Taelue.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2012 09 16 AndyGreen TrulyMadly",
+      "file": "EstimuloShow_2012-09-16_AndyGreen_TrulyMadly",
+      "audioFile": "EstimuloShow_2012-09-16_AndyGreen_TrulyMadly.mp3",
+      "duration": 22972.345688,
+      "durationFormatted": "6:22:52",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-09-16_AndyGreen_TrulyMadly.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2012 09 23 Truly Madly",
+      "file": "EstimuloShow_2012-09-23_Truly-Madly",
+      "audioFile": "EstimuloShow_2012-09-23_Truly-Madly.mp3",
+      "duration": 16428.015375,
+      "durationFormatted": "4:33:48",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-09-23_Truly-Madly.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 09 30 Estimulo",
+      "file": "EstimuloShow_2012-09-30_Estimulo",
+      "audioFile": "EstimuloShow_2012-09-30_Estimulo.mp3",
+      "duration": 4304.7445,
+      "durationFormatted": "1:11:44",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-09-30_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 09 30 Malcolm Moore",
+      "file": "EstimuloShow_2012-09-30_Malcolm_Moore",
+      "audioFile": "EstimuloShow_2012-09-30_Malcolm_Moore.mp3",
+      "duration": 4800.287313,
+      "durationFormatted": "1:20:00",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-09-30_Malcolm_Moore.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 09 30 Malcolm Moore Estimulo Back2Back",
+      "file": "EstimuloShow_2012-09-30_Malcolm_Moore_Estimulo_Back2Back",
+      "audioFile": "EstimuloShow_2012-09-30_Malcolm_Moore_Estimulo_Back2Back.mp3",
+      "duration": 4734.406563,
+      "durationFormatted": "1:18:54",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-09-30_Malcolm_Moore_Estimulo_Back2Back.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 10 07 Mike Bishop",
+      "file": "EstimuloShow_2012-10-07_Mike_Bishop",
+      "audioFile": "EstimuloShow_2012-10-07_Mike_Bishop.mp3",
+      "duration": 23030.765625,
+      "durationFormatted": "6:23:50",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-10-07_Mike_Bishop.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 10 14 Chicagodeep",
+      "file": "EstimuloShow_2012-10-14_Chicagodeep",
+      "audioFile": "EstimuloShow_2012-10-14_Chicagodeep.mp3",
+      "duration": 7434.004875,
+      "durationFormatted": "2:03:54",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-10-14_Chicagodeep.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 10 14 Taelue",
+      "file": "EstimuloShow_2012-10-14_Taelue",
+      "audioFile": "EstimuloShow_2012-10-14_Taelue.mp3",
+      "duration": 7461.875063,
+      "durationFormatted": "2:04:21",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-10-14_Taelue.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 10 21 Truly Madly",
+      "file": "EstimuloShow_2012-10-21_Truly-Madly",
+      "audioFile": "EstimuloShow_2012-10-21_Truly-Madly.mp3",
+      "duration": 10823.71925,
+      "durationFormatted": "3:00:23",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-10-21_Truly-Madly.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2012 10 28 Estimulo",
+      "file": "EstimuloShow_2012-10-28_Estimulo",
+      "audioFile": "EstimuloShow_2012-10-28_Estimulo.mp3",
+      "duration": 14512.517188,
+      "durationFormatted": "4:01:52",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-10-28_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2012 11 04 Truly Madly Mike Bishop",
+      "file": "EstimuloShow_2012-11-04_Truly_Madly_Mike_Bishop",
+      "audioFile": "EstimuloShow_2012-11-04_Truly_Madly_Mike_Bishop.mp3",
+      "duration": 19406.265563,
+      "durationFormatted": "5:23:26",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-11-04_Truly_Madly_Mike_Bishop.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2012 11 11 Chicagodeep Taelue",
+      "file": "EstimuloShow_2012-11-11_Chicagodeep_Taelue",
+      "audioFile": "EstimuloShow_2012-11-11_Chicagodeep_Taelue.mp3",
+      "duration": 17075.698938,
+      "durationFormatted": "4:44:35",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-11-11_Chicagodeep_Taelue.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 11 18 Andy Green Truly Madly Part1",
+      "file": "EstimuloShow_2012-11-18_Andy_Green_Truly_Madly_Part1",
+      "audioFile": "EstimuloShow_2012-11-18_Andy_Green_Truly_Madly_Part1.mp3",
+      "duration": 10096.418507,
+      "durationFormatted": "2:48:16",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-11-18_Andy_Green_Truly_Madly_Part1.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 11 18 Andy Green Truly Madly Part2",
+      "file": "EstimuloShow_2012-11-18_Andy_Green_Truly_Madly_Part2",
+      "audioFile": "EstimuloShow_2012-11-18_Andy_Green_Truly_Madly_Part2.mp3",
+      "duration": 11857.919875,
+      "durationFormatted": "3:17:37",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-11-18_Andy_Green_Truly_Madly_Part2.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 11 25 Mike Bishop",
+      "file": "EstimuloShow_2012-11-25_Mike_Bishop",
+      "audioFile": "EstimuloShow_2012-11-25_Mike_Bishop.mp3",
+      "duration": 15255.293313,
+      "durationFormatted": "4:14:15",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-11-25_Mike_Bishop.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 12 02 Chicagodeep",
+      "file": "EstimuloShow_2012-12-02_Chicagodeep",
+      "audioFile": "EstimuloShow_2012-12-02_Chicagodeep.mp3",
+      "duration": 7091.186938,
+      "durationFormatted": "1:58:11",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-12-02_Chicagodeep.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 12 02 Taelue",
+      "file": "EstimuloShow_2012-12-02_Taelue",
+      "audioFile": "EstimuloShow_2012-12-02_Taelue.mp3",
+      "duration": 10854.898875,
+      "durationFormatted": "3:00:54",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-12-02_Taelue.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 12 08 Truly Madly",
+      "file": "EstimuloShow_2012-12-08_Truly-Madly",
+      "audioFile": "EstimuloShow_2012-12-08_Truly-Madly.mp3",
+      "duration": 11825.97225,
+      "durationFormatted": "3:17:05",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-12-08_Truly-Madly.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 12 16 Mike Bishop Darand Land",
+      "file": "EstimuloShow_2012-12-16_Mike_Bishop_Darand_Land",
+      "audioFile": "EstimuloShow_2012-12-16_Mike_Bishop_Darand_Land.mp3",
+      "duration": 16813.831688,
+      "durationFormatted": "4:40:13",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-12-16_Mike_Bishop_Darand_Land.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 12 23 Estimulo",
+      "file": "EstimuloShow_2012-12-23_Estimulo",
+      "audioFile": "EstimuloShow_2012-12-23_Estimulo.mp3",
+      "duration": 23918.785188,
+      "durationFormatted": "6:38:38",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-12-23_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2012 12 30 Estimulo",
+      "file": "EstimuloShow_2012-12-30_Estimulo",
+      "audioFile": "EstimuloShow_2012-12-30_Estimulo.mp3",
+      "duration": 18866.207375,
+      "durationFormatted": "5:14:26",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2012-12-30_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 01 06 Mick Welch",
+      "file": "EstimuloShow_2013-01-06_Mick_Welch",
+      "audioFile": "EstimuloShow_2013-01-06_Mick_Welch.mp3",
+      "duration": 5547.193813,
+      "durationFormatted": "1:32:27",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-01-06_Mick_Welch.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 01 06 Truly Madly",
+      "file": "EstimuloShow_2013-01-06_Truly-Madly",
+      "audioFile": "EstimuloShow_2013-01-06_Truly-Madly.mp3",
+      "duration": 7372.270125,
+      "durationFormatted": "2:02:52",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-01-06_Truly-Madly.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 01 13 Chicagodeep Taelue",
+      "file": "EstimuloShow_2013-01-13_Chicagodeep_Taelue",
+      "audioFile": "EstimuloShow_2013-01-13_Chicagodeep_Taelue.mp3",
+      "duration": 22012.115563,
+      "durationFormatted": "6:06:52",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-01-13_Chicagodeep_Taelue.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 01 20 Mike Bishop Part1",
+      "file": "EstimuloShow_2013-01-20_Mike_Bishop_Part1",
+      "audioFile": "EstimuloShow_2013-01-20_Mike_Bishop_Part1.mp3",
+      "duration": 13405.988571,
+      "durationFormatted": "3:43:25",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-01-20_Mike_Bishop_Part1.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 01 20 Mike Bishop Part2",
+      "file": "EstimuloShow_2013-01-20_Mike_Bishop_Part2",
+      "audioFile": "EstimuloShow_2013-01-20_Mike_Bishop_Part2.mp3",
+      "duration": 7254.256327,
+      "durationFormatted": "2:00:54",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-01-20_Mike_Bishop_Part2.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 01 27 Truly Madly",
+      "file": "EstimuloShow_2013-01-27_Truly-Madly",
+      "audioFile": "EstimuloShow_2013-01-27_Truly-Madly.mp3",
+      "duration": 11388.097438,
+      "durationFormatted": "3:09:48",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-01-27_Truly-Madly.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 02 03 Estimulo",
+      "file": "EstimuloShow_2013-02-03_Estimulo",
+      "audioFile": "EstimuloShow_2013-02-03_Estimulo.mp3",
+      "duration": 17633.266938,
+      "durationFormatted": "4:53:53",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-02-03_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 02 10 Mick Welch",
+      "file": "EstimuloShow_2013-02-10_Mick_Welch",
+      "audioFile": "EstimuloShow_2013-02-10_Mick_Welch.mp3",
+      "duration": 16898.041375,
+      "durationFormatted": "4:41:38",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-02-10_Mick_Welch.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 02 17 Chicagodeep Specter",
+      "file": "EstimuloShow_2013-02-17_Chicagodeep_Specter",
+      "audioFile": "EstimuloShow_2013-02-17_Chicagodeep_Specter.mp3",
+      "duration": 18449.905563,
+      "durationFormatted": "5:07:29",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-02-17_Chicagodeep_Specter.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 02 17 Taelue",
+      "file": "EstimuloShow_2013-02-17_Taelue",
+      "audioFile": "EstimuloShow_2013-02-17_Taelue.mp3",
+      "duration": 7657.472,
+      "durationFormatted": "2:07:37",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-02-17_Taelue.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 02 24 Andy Green DJ Julie",
+      "file": "EstimuloShow_2013-02-24_Andy_Green_DJ_Julie",
+      "audioFile": "EstimuloShow_2013-02-24_Andy_Green_DJ_Julie.mp3",
+      "duration": 22454.558938,
+      "durationFormatted": "6:14:14",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-02-24_Andy_Green_DJ_Julie.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 03 03 Truly Madly",
+      "file": "EstimuloShow_2013-03-03_Truly-Madly",
+      "audioFile": "EstimuloShow_2013-03-03_Truly-Madly.mp3",
+      "duration": 9792.992625,
+      "durationFormatted": "2:43:12",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-03-03_Truly-Madly.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 04 14 Remkowski Estimulo",
+      "file": "EstimuloShow_2013-04-14_Remkowski_Estimulo",
+      "audioFile": "EstimuloShow_2013-04-14_Remkowski_Estimulo.mp3",
+      "duration": 20213.746938,
+      "durationFormatted": "5:36:53",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-04-14_Remkowski_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 04 21 Mick Welch",
+      "file": "EstimuloShow_2013-04-21_Mick_Welch",
+      "audioFile": "EstimuloShow_2013-04-21_Mick_Welch.mp3",
+      "duration": 15771.446938,
+      "durationFormatted": "4:22:51",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-04-21_Mick_Welch.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 04 28 Taelue Chicagodeep Communicator",
+      "file": "EstimuloShow_2013-04-28_Taelue_Chicagodeep_Communicator",
+      "audioFile": "EstimuloShow_2013-04-28_Taelue_Chicagodeep_Communicator.mp3",
+      "duration": 22246.966875,
+      "durationFormatted": "6:10:46",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-04-28_Taelue_Chicagodeep_Communicator.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 05 05 Mike Bishop",
+      "file": "EstimuloShow_2013-05-05_Mike_Bishop",
+      "audioFile": "EstimuloShow_2013-05-05_Mike_Bishop.mp3",
+      "duration": 17015.788938,
+      "durationFormatted": "4:43:35",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-05-05_Mike_Bishop.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 05 12 Christoph Nicklas",
+      "file": "EstimuloShow_2013-05-12_Christoph_Nicklas",
+      "audioFile": "EstimuloShow_2013-05-12_Christoph_Nicklas.mp3",
+      "duration": 11535.490612,
+      "durationFormatted": "3:12:15",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-05-12_Christoph_Nicklas.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 05 12 Remkowski",
+      "file": "EstimuloShow_2013-05-12_Remkowski",
+      "audioFile": "EstimuloShow_2013-05-12_Remkowski.mp3",
+      "duration": 9494.83325,
+      "durationFormatted": "2:38:14",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-05-12_Remkowski.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 05 19 Truly Madly Chris Chippindale",
+      "file": "EstimuloShow_2013-05-19_Truly-Madly_Chris_Chippindale.mp3",
+      "audioFile": "EstimuloShow_2013-05-19_Truly-Madly_Chris_Chippindale.mp3.mp3",
+      "duration": 20220.107755,
+      "durationFormatted": "5:37:00",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-05-19_Truly-Madly_Chris_Chippindale.mp3.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 05 26 Estimulo Jacy",
+      "file": "EstimuloShow_2013-05-26_Estimulo_Jacy",
+      "audioFile": "EstimuloShow_2013-05-26_Estimulo_Jacy.mp3",
+      "duration": 18372.584125,
+      "durationFormatted": "5:06:12",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-05-26_Estimulo_Jacy.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 06 02 Estimulo Steven Tang",
+      "file": "EstimuloShow_2013-06-02_Estimulo_Steven_Tang",
+      "audioFile": "EstimuloShow_2013-06-02_Estimulo_Steven_Tang.mp3",
+      "duration": 20925.62285,
+      "durationFormatted": "5:48:45",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-06-02_Estimulo_Steven_Tang.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 06 09 Chicagodeep Specter",
+      "file": "EstimuloShow_2013-06-09_Chicagodeep_Specter",
+      "audioFile": "EstimuloShow_2013-06-09_Chicagodeep_Specter.mp3",
+      "duration": 19343.345563,
+      "durationFormatted": "5:22:23",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-06-09_Chicagodeep_Specter.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 06 09 Taelue",
+      "file": "EstimuloShow_2013-06-09_Taelue",
+      "audioFile": "EstimuloShow_2013-06-09_Taelue.mp3",
+      "duration": 7603.2,
+      "durationFormatted": "2:06:43",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-06-09_Taelue.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 06 16 Mike Bishop",
+      "file": "EstimuloShow_2013-06-16_Mike_Bishop",
+      "audioFile": "EstimuloShow_2013-06-16_Mike_Bishop.mp3",
+      "duration": 21703.14925,
+      "durationFormatted": "6:01:43",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-06-16_Mike_Bishop.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 06 23 Christoph Nicklas",
+      "file": "EstimuloShow_2013-06-23_Christoph_Nicklas",
+      "audioFile": "EstimuloShow_2013-06-23_Christoph_Nicklas.mp3",
+      "duration": 12921.757,
+      "durationFormatted": "3:35:21",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-06-23_Christoph_Nicklas.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 06 23 Remkowski",
+      "file": "EstimuloShow_2013-06-23_Remkowski",
+      "audioFile": "EstimuloShow_2013-06-23_Remkowski.mp3",
+      "duration": 7645.029938,
+      "durationFormatted": "2:07:25",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-06-23_Remkowski.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 06 30 Truly Madly Jade Seatle",
+      "file": "EstimuloShow_2013-06-30_Truly-Madly_Jade_Seatle",
+      "audioFile": "EstimuloShow_2013-06-30_Truly-Madly_Jade_Seatle.mp3",
+      "duration": 20018.570188,
+      "durationFormatted": "5:33:38",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-06-30_Truly-Madly_Jade_Seatle.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 07 07 Malcolm Moore Estimulo",
+      "file": "EstimuloShow_2013-07-07_Malcolm_Moore_Estimulo",
+      "audioFile": "EstimuloShow_2013-07-07_Malcolm_Moore_Estimulo.mp3",
+      "duration": 21497.0775,
+      "durationFormatted": "5:58:17",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-07-07_Malcolm_Moore_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 07 14 Estimulo 6 Years BD",
+      "file": "EstimuloShow_2013-07-14_Estimulo_6_Years_BD",
+      "audioFile": "EstimuloShow_2013-07-14_Estimulo_6_Years_BD.mp3",
+      "duration": 12232.724875,
+      "durationFormatted": "3:23:52",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-07-14_Estimulo_6_Years_BD.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 07 21 Chicagodeep Taelue",
+      "file": "EstimuloShow_2013-07-21_Chicagodeep_Taelue",
+      "audioFile": "EstimuloShow_2013-07-21_Chicagodeep_Taelue.mp3",
+      "duration": 16461.298875,
+      "durationFormatted": "4:34:21",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-07-21_Chicagodeep_Taelue.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 07 28 Mike Bishop",
+      "file": "EstimuloShow_2013-07-28_Mike_Bishop",
+      "audioFile": "EstimuloShow_2013-07-28_Mike_Bishop.mp3",
+      "duration": 14139.0305,
+      "durationFormatted": "3:55:39",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-07-28_Mike_Bishop.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 08 04 Remkowski Christoph Nicklas",
+      "file": "EstimuloShow_2013-08-04_Remkowski_Christoph_Nicklas",
+      "audioFile": "EstimuloShow_2013-08-04_Remkowski_Christoph_Nicklas.mp3",
+      "duration": 20268.374188,
+      "durationFormatted": "5:37:48",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-08-04_Remkowski_Christoph_Nicklas.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 08 11 Truly Madly Andy Green Chris Chip",
+      "file": "EstimuloShow_2013-08-11_Truly-Madly_Andy_Green_Chris_Chip",
+      "audioFile": "EstimuloShow_2013-08-11_Truly-Madly_Andy_Green_Chris_Chip.mp3",
+      "duration": 18108.27225,
+      "durationFormatted": "5:01:48",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-08-11_Truly-Madly_Andy_Green_Chris_Chip.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 08 18 Malcolm Moore Estimulo",
+      "file": "EstimuloShow_2013-08-18_Malcolm_Moore_Estimulo",
+      "audioFile": "EstimuloShow_2013-08-18_Malcolm_Moore_Estimulo.mp3",
+      "duration": 18599.410938,
+      "durationFormatted": "5:09:59",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-08-18_Malcolm_Moore_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 08 26 Amato Funk Estimulo",
+      "file": "EstimuloShow_2013-08-26_Amato_Funk_Estimulo",
+      "audioFile": "EstimuloShow_2013-08-26_Amato_Funk_Estimulo.mp3",
+      "duration": 28777.22375,
+      "durationFormatted": "7:59:37",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-08-26_Amato_Funk_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 09 01 Chicagodeep Taelue",
+      "file": "EstimuloShow_2013-09-01_Chicagodeep_Taelue",
+      "audioFile": "EstimuloShow_2013-09-01_Chicagodeep_Taelue.mp3",
+      "duration": 21564.780438,
+      "durationFormatted": "5:59:24",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-09-01_Chicagodeep_Taelue.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 09 08 Mike B",
+      "file": "EstimuloShow_2013-09-08_Mike_B",
+      "audioFile": "EstimuloShow_2013-09-08_Mike_B.mp3",
+      "duration": 17302.483063,
+      "durationFormatted": "4:48:22",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-09-08_Mike_B.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 09 15 Remkowski Olli K",
+      "file": "EstimuloShow_2013-09-15_Remkowski_Olli_K",
+      "audioFile": "EstimuloShow_2013-09-15_Remkowski_Olli_K.mp3",
+      "duration": 18041.069688,
+      "durationFormatted": "5:00:41",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-09-15_Remkowski_Olli_K.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 09 22 Malcolm Moore Estimulo",
+      "file": "EstimuloShow_2013-09-22_Malcolm_Moore_Estimulo",
+      "audioFile": "EstimuloShow_2013-09-22_Malcolm_Moore_Estimulo.mp3",
+      "duration": 13691.6245,
+      "durationFormatted": "3:48:11",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-09-22_Malcolm_Moore_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 09 29 Truly Madly Luke Spinks",
+      "file": "EstimuloShow_2013-09-29_Truly-Madly_Luke_Spinks",
+      "audioFile": "EstimuloShow_2013-09-29_Truly-Madly_Luke_Spinks.mp3",
+      "duration": 24320.485125,
+      "durationFormatted": "6:45:20",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-09-29_Truly-Madly_Luke_Spinks.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 10 21 Mike Bishop",
+      "file": "EstimuloShow_2013-10-21_Mike_Bishop",
+      "audioFile": "EstimuloShow_2013-10-21_Mike_Bishop.mp3",
+      "duration": 16199.026938,
+      "durationFormatted": "4:29:59",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-10-21_Mike_Bishop.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 10 27 Remkowski Christoph Nicklas",
+      "file": "EstimuloShow_2013-10-27_Remkowski_Christoph_Nicklas",
+      "audioFile": "EstimuloShow_2013-10-27_Remkowski_Christoph_Nicklas.mp3",
+      "duration": 20382.628563,
+      "durationFormatted": "5:39:42",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-10-27_Remkowski_Christoph_Nicklas.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 11 03 Truly Madly",
+      "file": "EstimuloShow_2013-11-03_Truly-Madly",
+      "audioFile": "EstimuloShow_2013-11-03_Truly-Madly.mp3",
+      "duration": 12915.902438,
+      "durationFormatted": "3:35:15",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-11-03_Truly-Madly.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 11 10 Estimulo",
+      "file": "EstimuloShow_2013-11-10_Estimulo",
+      "audioFile": "EstimuloShow_2013-11-10_Estimulo.mp3",
+      "duration": 22561.332245,
+      "durationFormatted": "6:16:01",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-11-10_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2013 11 24 Chicagodeep Taelue",
+      "file": "EstimuloShow_2013-11-24_Chicagodeep_Taelue",
+      "audioFile": "EstimuloShow_2013-11-24_Chicagodeep_Taelue.mp3",
+      "duration": 15780.835313,
+      "durationFormatted": "4:23:00",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-11-24_Chicagodeep_Taelue.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 12 01 Mike Bishop",
+      "file": "EstimuloShow_2013-12-01_Mike_Bishop",
+      "audioFile": "EstimuloShow_2013-12-01_Mike_Bishop.mp3",
+      "duration": 18668.17575,
+      "durationFormatted": "5:11:08",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-12-01_Mike_Bishop.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 12 08 Remkowski Christoph Nicklas",
+      "file": "EstimuloShow_2013-12-08_Remkowski_Christoph_Nicklas",
+      "audioFile": "EstimuloShow_2013-12-08_Remkowski_Christoph_Nicklas.mp3",
+      "duration": 16208.548563,
+      "durationFormatted": "4:30:08",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-12-08_Remkowski_Christoph_Nicklas.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 12 15 Truly Madly Frank Mitchell",
+      "file": "EstimuloShow_2013-12-15_Truly-Madly_Frank_Mitchell",
+      "audioFile": "EstimuloShow_2013-12-15_Truly-Madly_Frank_Mitchell.mp3",
+      "duration": 19109.982063,
+      "durationFormatted": "5:18:29",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-12-15_Truly-Madly_Frank_Mitchell.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2013 12 22 Estimulo Konstantin Bazhanov",
+      "file": "EstimuloShow_2013-12-22_Estimulo_Konstantin_Bazhanov",
+      "audioFile": "EstimuloShow_2013-12-22_Estimulo_Konstantin_Bazhanov.mp3",
+      "duration": 28750.949813,
+      "durationFormatted": "7:59:10",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2013-12-22_Estimulo_Konstantin_Bazhanov.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 01 05 Chicagodeep Taelue",
+      "file": "EstimuloShow_2014-01-05_Chicagodeep_Taelue",
+      "audioFile": "EstimuloShow_2014-01-05_Chicagodeep_Taelue.mp3",
+      "duration": 18493.426938,
+      "durationFormatted": "5:08:13",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-01-05_Chicagodeep_Taelue.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 01 12 Mike Bishop Darand Land James Duncan Loc Kidman",
+      "file": "EstimuloShow_2014-01-12_Mike_Bishop_Darand_Land_James_Duncan_Loc_Kidman",
+      "audioFile": "EstimuloShow_2014-01-12_Mike_Bishop_Darand_Land_James_Duncan_Loc_Kidman.mp3",
+      "duration": 18216.000938,
+      "durationFormatted": "5:03:36",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-01-12_Mike_Bishop_Darand_Land_James_Duncan_Loc_Kidman.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 01 19 Remkowski Christoph Nicklas",
+      "file": "EstimuloShow_2014-01-19_Remkowski_Christoph_Nicklas",
+      "audioFile": "EstimuloShow_2014-01-19_Remkowski_Christoph_Nicklas.mp3",
+      "duration": 17082.558688,
+      "durationFormatted": "4:44:42",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-01-19_Remkowski_Christoph_Nicklas.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 01 25 Shatterday Konstantin Bazhanov Estimulo",
+      "file": "EstimuloShow_2014-01-25_Shatterday_Konstantin_Bazhanov_Estimulo",
+      "audioFile": "EstimuloShow_2014-01-25_Shatterday_Konstantin_Bazhanov_Estimulo.mp3",
+      "duration": 14994.677551,
+      "durationFormatted": "4:09:54",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-01-25_Shatterday_Konstantin_Bazhanov_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2014 01 26 Truly Madly Andy Green Chris Chip",
+      "file": "EstimuloShow_2014-01-26_Truly_Madly_Andy_Green_Chris_Chip",
+      "audioFile": "EstimuloShow_2014-01-26_Truly_Madly_Andy_Green_Chris_Chip.mp3",
+      "duration": 14651.891188,
+      "durationFormatted": "4:04:11",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-01-26_Truly_Madly_Andy_Green_Chris_Chip.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 02 02 Estimulo Italo House",
+      "file": "EstimuloShow_2014-02-02_Estimulo_Italo_House",
+      "audioFile": "EstimuloShow_2014-02-02_Estimulo_Italo_House.mp3",
+      "duration": 23991.303875,
+      "durationFormatted": "6:39:51",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-02-02_Estimulo_Italo_House.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 02 15 Smasherday Andy Green DJ Julie",
+      "file": "EstimuloShow_2014-02-15_Smasherday_Andy_Green_DJ_Julie",
+      "audioFile": "EstimuloShow_2014-02-15_Smasherday_Andy_Green_DJ_Julie.mp3",
+      "duration": 19218.860408,
+      "durationFormatted": "5:20:18",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-02-15_Smasherday_Andy_Green_DJ_Julie.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2014 02 16 Chicagodeep Taelue",
+      "file": "EstimuloShow_2014-02-16_Chicagodeep_Taelue",
+      "audioFile": "EstimuloShow_2014-02-16_Chicagodeep_Taelue.mp3",
+      "duration": 15222.676875,
+      "durationFormatted": "4:13:42",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-02-16_Chicagodeep_Taelue.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 03 02 Remkowski Christoph Nicklas",
+      "file": "EstimuloShow_2014-03-02_Remkowski_Christoph_Nicklas",
+      "audioFile": "EstimuloShow_2014-03-02_Remkowski_Christoph_Nicklas.mp3",
+      "duration": 17126.792,
+      "durationFormatted": "4:45:26",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-03-02_Remkowski_Christoph_Nicklas.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 03 09 Truly Madly Luke Spinks",
+      "file": "EstimuloShow_2014-03-09_Truly_Madly_Luke_Spinks",
+      "audioFile": "EstimuloShow_2014-03-09_Truly_Madly_Luke_Spinks.mp3",
+      "duration": 19288.040625,
+      "durationFormatted": "5:21:28",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-03-09_Truly_Madly_Luke_Spinks.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 03 23 Mick Welch",
+      "file": "EstimuloShow_2014-03-23_Mick_Welch",
+      "audioFile": "EstimuloShow_2014-03-23_Mick_Welch.mp3",
+      "duration": 19430.3085,
+      "durationFormatted": "5:23:50",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-03-23_Mick_Welch.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 03 30 Chicagodeep Taelue",
+      "file": "EstimuloShow_2014-03-30_Chicagodeep_Taelue",
+      "audioFile": "EstimuloShow_2014-03-30_Chicagodeep_Taelue.mp3",
+      "duration": 17213.061188,
+      "durationFormatted": "4:46:53",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-03-30_Chicagodeep_Taelue.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 04 06 Truly Madly",
+      "file": "EstimuloShow_2014-04-06_Truly-Madly",
+      "audioFile": "EstimuloShow_2014-04-06_Truly-Madly.mp3",
+      "duration": 15997.374188,
+      "durationFormatted": "4:26:37",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-04-06_Truly-Madly.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 04 13 Remkowski Estimulo Nunspeet Attic",
+      "file": "EstimuloShow_2014-04-13_Remkowski_Estimulo_Nunspeet_Attic",
+      "audioFile": "EstimuloShow_2014-04-13_Remkowski_Estimulo_Nunspeet_Attic.mp3",
+      "duration": 17247.45925,
+      "durationFormatted": "4:47:27",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-04-13_Remkowski_Estimulo_Nunspeet_Attic.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 04 20 Christoph Nicklas",
+      "file": "EstimuloShow_2014-04-20_Christoph_Nicklas",
+      "audioFile": "EstimuloShow_2014-04-20_Christoph_Nicklas.mp3",
+      "duration": 13187.022375,
+      "durationFormatted": "3:39:47",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-04-20_Christoph_Nicklas.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 04 27 Rustam BrotherG Estimulo",
+      "file": "EstimuloShow_2014-04-27_Rustam_BrotherG_Estimulo",
+      "audioFile": "EstimuloShow_2014-04-27_Rustam_BrotherG_Estimulo.mp3",
+      "duration": 13115.392,
+      "durationFormatted": "3:38:35",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-04-27_Rustam_BrotherG_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2014 05 04 Mick Welch Leigh Dickson",
+      "file": "EstimuloShow_2014-05-04_Mick_Welch_Leigh_Dickson",
+      "audioFile": "EstimuloShow_2014-05-04_Mick_Welch_Leigh_Dickson.mp3",
+      "duration": 18254.734938,
+      "durationFormatted": "5:04:14",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-05-04_Mick_Welch_Leigh_Dickson.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 05 11 Chicagodeep Taelue",
+      "file": "EstimuloShow_2014-05-11_Chicagodeep_Taelue",
+      "audioFile": "EstimuloShow_2014-05-11_Chicagodeep_Taelue.mp3",
+      "duration": 14384.107188,
+      "durationFormatted": "3:59:44",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-05-11_Chicagodeep_Taelue.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 05 18 Remkowski",
+      "file": "EstimuloShow_2014-05-18_Remkowski",
+      "audioFile": "EstimuloShow_2014-05-18_Remkowski.mp3",
+      "duration": 12785.619563,
+      "durationFormatted": "3:33:05",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-05-18_Remkowski.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 05 25 Christoph Nicklas",
+      "file": "EstimuloShow_2014-05-25_Christoph_Nicklas",
+      "audioFile": "EstimuloShow_2014-05-25_Christoph_Nicklas.mp3",
+      "duration": 13211.122938,
+      "durationFormatted": "3:40:11",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-05-25_Christoph_Nicklas.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 06 01 Truly Madly Ben Parkinson",
+      "file": "EstimuloShow_2014-06-01_Truly-Madly_Ben_Parkinson",
+      "audioFile": "EstimuloShow_2014-06-01_Truly-Madly_Ben_Parkinson.mp3",
+      "duration": 18732.619688,
+      "durationFormatted": "5:12:12",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-06-01_Truly-Madly_Ben_Parkinson.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 06 08 Estimulo 128",
+      "file": "EstimuloShow_2014-06-08_Estimulo_128",
+      "audioFile": "EstimuloShow_2014-06-08_Estimulo_128.mp3",
+      "duration": 20237.298938,
+      "durationFormatted": "5:37:17",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-06-08_Estimulo_128.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 06 15 Estimulo",
+      "file": "EstimuloShow_2014-06-15_Estimulo",
+      "audioFile": "EstimuloShow_2014-06-15_Estimulo.mp3",
+      "duration": 15889.9911,
+      "durationFormatted": "4:24:49",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-06-15_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 06 22 Chicagodeep Taelue Chicago Skyway",
+      "file": "EstimuloShow_2014-06-22_Chicagodeep_Taelue_Chicago_Skyway",
+      "audioFile": "EstimuloShow_2014-06-22_Chicagodeep_Taelue_Chicago_Skyway.mp3",
+      "duration": 16169.788063,
+      "durationFormatted": "4:29:29",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-06-22_Chicagodeep_Taelue_Chicago_Skyway.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 07 06 Christoph Nicklas",
+      "file": "EstimuloShow_2014-07-06_Christoph_Nicklas",
+      "audioFile": "EstimuloShow_2014-07-06_Christoph_Nicklas.mp3",
+      "duration": 12890.051938,
+      "durationFormatted": "3:34:50",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-07-06_Christoph_Nicklas.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 08 08 FryDay Makarov, Estimulo, Malcolm Moore, Marcel",
+      "file": "EstimuloShow_2014-08-08 FryDay Makarov, Estimulo, Malcolm Moore, Marcel",
+      "audioFile": "EstimuloShow_2014-08-08 FryDay Makarov, Estimulo, Malcolm Moore, Marcel.mp3",
+      "duration": 26527.241063,
+      "durationFormatted": "7:22:07",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-08-08 FryDay Makarov, Estimulo, Malcolm Moore, Marcel.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2014 09 05 TomTomGroove Makarov Estimulo",
+      "file": "EstimuloShow_2014-09-05_TomTomGroove_Makarov_Estimulo",
+      "audioFile": "EstimuloShow_2014-09-05_TomTomGroove_Makarov_Estimulo.mp3",
+      "duration": 22801.763265,
+      "durationFormatted": "6:20:01",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-09-05_TomTomGroove_Makarov_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2014 09 21 Estimulo",
+      "file": "EstimuloShow_2014-09-21_Estimulo",
+      "audioFile": "EstimuloShow_2014-09-21_Estimulo.mp3",
+      "duration": 18672.483219,
+      "durationFormatted": "5:11:12",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-09-21_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2014 10 10 Pjotr DJ Pegasuz Estimulo",
+      "file": "EstimuloShow_2014-10-10_Pjotr_DJ_Pegasuz_Estimulo",
+      "audioFile": "EstimuloShow_2014-10-10_Pjotr_DJ_Pegasuz_Estimulo.mp3",
+      "duration": 15450.670969,
+      "durationFormatted": "4:17:30",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-10-10_Pjotr_DJ_Pegasuz_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2014 11 14 Makarov",
+      "file": "EstimuloShow_2014-11-14_Makarov",
+      "audioFile": "EstimuloShow_2014-11-14_Makarov.mp3",
+      "duration": 12743.862857,
+      "durationFormatted": "3:32:23",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2014-11-14_Makarov.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2015 10 11 Truly Madly Chris Seddon",
+      "file": "EstimuloShow_2015-10-11_Truly-Madly_Chris_Seddon",
+      "audioFile": "EstimuloShow_2015-10-11_Truly-Madly_Chris_Seddon.mp3",
+      "duration": 15952.146125,
+      "durationFormatted": "4:25:52",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2015-10-11_Truly-Madly_Chris_Seddon.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2016 05 29 Estimulo 192",
+      "file": "EstimuloShow_2016-05-29_Estimulo_192",
+      "audioFile": "EstimuloShow_2016-05-29_Estimulo_192.mp3",
+      "duration": 14224.875102,
+      "durationFormatted": "3:57:04",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-05-29_Estimulo_192.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2016 06 01 HumpDay",
+      "file": "EstimuloShow_2016-06-01_HumpDay",
+      "audioFile": "EstimuloShow_2016-06-01_HumpDay.mp3",
+      "duration": 9000.0,
+      "durationFormatted": "2:30:00",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-06-01_HumpDay.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2016 06 05 (Excerpt)",
+      "file": "EstimuloShow_2016-06-05_(Excerpt)",
+      "audioFile": "EstimuloShow_2016-06-05_(Excerpt).mp3",
+      "duration": 4254.223673,
+      "durationFormatted": "1:10:54",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-06-05_(Excerpt).mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2016 06 12 DJ Pegasuz PJOTR Estimulo",
+      "file": "EstimuloShow_2016-06-12_DJ_Pegasuz_PJOTR_Estimulo",
+      "audioFile": "EstimuloShow_2016-06-12_DJ_Pegasuz_PJOTR_Estimulo.mp3",
+      "duration": 12391.9546,
+      "durationFormatted": "3:26:31",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-06-12_DJ_Pegasuz_PJOTR_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2016 06 19 Estimulo",
+      "file": "EstimuloShow_2016-06-19_Estimulo",
+      "audioFile": "EstimuloShow_2016-06-19_Estimulo.mp3",
+      "duration": 15457.005975,
+      "durationFormatted": "4:17:37",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-06-19_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2016 06 26 Manel Estimulo 192kbps",
+      "file": "EstimuloShow_2016-06-26_Manel_Estimulo_192kbps",
+      "audioFile": "EstimuloShow_2016-06-26_Manel_Estimulo_192kbps.mp3",
+      "duration": 16922.174694,
+      "durationFormatted": "4:42:02",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-06-26_Manel_Estimulo_192kbps.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2016 07 03 K Magic (GetTheBalanceRight) Una Estimulo",
+      "file": "EstimuloShow_2016-07-03_K_Magic_(GetTheBalanceRight)_Una_Estimulo",
+      "audioFile": "EstimuloShow_2016-07-03_K_Magic_(GetTheBalanceRight)_Una_Estimulo.mp3",
+      "duration": 22125.807375,
+      "durationFormatted": "6:08:45",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-07-03_K_Magic_(GetTheBalanceRight)_Una_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2016 07 10 EndaHouse Conor",
+      "file": "EstimuloShow_2016-07-10_EndaHouse_Conor",
+      "audioFile": "EstimuloShow_2016-07-10_EndaHouse_Conor.mp3",
+      "duration": 10800.963,
+      "durationFormatted": "3:00:00",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-07-10_EndaHouse_Conor.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2016 07 17 Estimulo",
+      "file": "EstimuloShow_2016-07-17_Estimulo",
+      "audioFile": "EstimuloShow_2016-07-17_Estimulo.mp3",
+      "duration": 9058.715175,
+      "durationFormatted": "2:30:58",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-07-17_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2016 07 24 truly madly Mark Limb",
+      "file": "EstimuloShow_2016-07-24_truly-madly_Mark_Limb",
+      "audioFile": "EstimuloShow_2016-07-24_truly-madly_Mark_Limb.mp3",
+      "duration": 15218.513438,
+      "durationFormatted": "4:13:38",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-07-24_truly-madly_Mark_Limb.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2016 07 31 Estimulo",
+      "file": "EstimuloShow_2016-07-31_Estimulo",
+      "audioFile": "EstimuloShow_2016-07-31_Estimulo.mp3",
+      "duration": 7678.89555,
+      "durationFormatted": "2:07:58",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-07-31_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2016 08 21 Estimulo",
+      "file": "EstimuloShow_2016-08-21_Estimulo",
+      "audioFile": "EstimuloShow_2016-08-21_Estimulo.mp3",
+      "duration": 10660.506575,
+      "durationFormatted": "2:57:40",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-08-21_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2016 08 28 JimZ Makarov Estimulo",
+      "file": "EstimuloShow_2016-08-28_JimZ_Makarov_Estimulo",
+      "audioFile": "EstimuloShow_2016-08-28_JimZ_Makarov_Estimulo.mp3",
+      "duration": 17867.1726,
+      "durationFormatted": "4:57:47",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-08-28_JimZ_Makarov_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2016 09 04 DJ Pegasuz Duensch Ed Herbst Estimulo Jonas Ton Marcel Steuer PJOTR",
+      "file": "EstimuloShow_2016-09-04_DJ_Pegasuz_Duensch_Ed_Herbst_Estimulo_Jonas_Ton_Marcel_Steuer_PJOTR",
+      "audioFile": "EstimuloShow_2016-09-04_DJ_Pegasuz_Duensch_Ed_Herbst_Estimulo_Jonas_Ton_Marcel_Steuer_PJOTR.mp3",
+      "duration": 19477.577143,
+      "durationFormatted": "5:24:37",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-09-04_DJ_Pegasuz_Duensch_Ed_Herbst_Estimulo_Jonas_Ton_Marcel_Steuer_PJOTR.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2016 09 18 Estimulo",
+      "file": "EstimuloShow_2016-09-18_Estimulo",
+      "audioFile": "EstimuloShow_2016-09-18_Estimulo.mp3",
+      "duration": 7516.656327,
+      "durationFormatted": "2:05:16",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-09-18_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2016 09 25 Adryiano DJ Pegasuz Jonas Ton",
+      "file": "EstimuloShow_2016-09-25_Adryiano_DJ_Pegasuz_Jonas_Ton",
+      "audioFile": "EstimuloShow_2016-09-25_Adryiano_DJ_Pegasuz_Jonas_Ton.mp3",
+      "duration": 14842.801633,
+      "durationFormatted": "4:07:22",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-09-25_Adryiano_DJ_Pegasuz_Jonas_Ton.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2016 10 22 ADE Special Robin (Klokwerk) Borish Estimulo",
+      "file": "EstimuloShow_2016-10-22_ADE_Special_Robin_(Klokwerk)_Borish_Estimulo",
+      "audioFile": "EstimuloShow_2016-10-22_ADE_Special_Robin_(Klokwerk)_Borish_Estimulo.mp3",
+      "duration": 13897.299592,
+      "durationFormatted": "3:51:37",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-10-22_ADE_Special_Robin_(Klokwerk)_Borish_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2016 11 06 Estimulo",
+      "file": "EstimuloShow_2016-11-06_Estimulo",
+      "audioFile": "EstimuloShow_2016-11-06_Estimulo.mp3",
+      "duration": 7371.168325,
+      "durationFormatted": "2:02:51",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-11-06_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2016 11 06 Makarov",
+      "file": "EstimuloShow_2016-11-06_Makarov",
+      "audioFile": "EstimuloShow_2016-11-06_Makarov.mp3",
+      "duration": 7828.3188,
+      "durationFormatted": "2:10:28",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-11-06_Makarov.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2016 11 20 omni causa Estimulo",
+      "file": "EstimuloShow_2016-11-20_omni_causa_Estimulo",
+      "audioFile": "EstimuloShow_2016-11-20_omni_causa_Estimulo.mp3",
+      "duration": 17361.841633,
+      "durationFormatted": "4:49:21",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-11-20_omni_causa_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2016 12 11 Estimulo",
+      "file": "EstimuloShow_2016-12-11_Estimulo",
+      "audioFile": "EstimuloShow_2016-12-11_Estimulo.mp3",
+      "duration": 13716.546025,
+      "durationFormatted": "3:48:36",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-12-11_Estimulo.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2017 01 29 Going Deeper with Placid 1",
+      "file": "EstimuloShow_2017-01-29_Going_Deeper_with_Placid_1",
+      "audioFile": "EstimuloShow_2017-01-29_Going_Deeper_with_Placid_1.mp3",
+      "duration": 6951.191875,
+      "durationFormatted": "1:55:51",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2017-01-29_Going_Deeper_with_Placid_1.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "Show 2017 02 12 Vigera(Cashmere Radio) Estimulo Makarov",
+      "file": "EstimuloShow_2017-02-12_Vigera(Cashmere_Radio)_Estimulo_Makarov_",
+      "audioFile": "EstimuloShow_2017-02-12_Vigera(Cashmere_Radio)_Estimulo_Makarov_.mp3",
+      "duration": 17459.40898,
+      "durationFormatted": "4:50:59",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2017-02-12_Vigera(Cashmere_Radio)_Estimulo_Makarov_.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2017 02 27 Going Deeper with Placid 2",
+      "file": "EstimuloShow_2017-02-27_Going_Deeper_with_Placid_2",
+      "audioFile": "EstimuloShow_2017-02-27_Going_Deeper_with_Placid_2.mp3",
+      "duration": 7704.711837,
+      "durationFormatted": "2:08:24",
+      "artist": "Placid",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2017-02-27_Going_Deeper_with_Placid_2.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2017 03 05 Estimulo Spring",
+      "file": "EstimuloShow_2017-03-05_Estimulo_Spring",
+      "audioFile": "EstimuloShow_2017-03-05_Estimulo_Spring.mp3",
+      "duration": 10843.782625,
+      "durationFormatted": "3:00:43",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2017-03-05_Estimulo_Spring.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show 2017 03 12 Mick Welch Chris Seddon",
+      "file": "EstimuloShow_2017-03-12_Mick_Welch_Chris_Seddon",
+      "audioFile": "EstimuloShow_2017-03-12_Mick_Welch_Chris_Seddon.mp3",
+      "duration": 14431.99075,
+      "durationFormatted": "4:00:31",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2017-03-12_Mick_Welch_Chris_Seddon.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "show 2017 12 xmas",
+      "file": "estimuloshow_2017-12-xmas",
+      "audioFile": "estimuloshow_2017-12-xmas.mp3",
+      "duration": 6719.529796,
+      "durationFormatted": "1:51:59",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "estimuloshow_2017-12-xmas.mp3",
+          "label": "MP3"
+        }
+      ]
+    },
+    {
+      "name": "Show  2018 01 26",
+      "file": "EstimuloShow _2018-01-26",
+      "audioFile": "EstimuloShow _2018-01-26.m4a",
+      "duration": 5423.4848,
+      "durationFormatted": "1:30:23",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow _2018-01-26.m4a",
+          "label": "M4A"
+        }
+      ]
+    },
+    {
+      "name": "Touched By Magic [Estimulo]",
+      "file": "EstimuloShow_2016-02-21 w EndaHouse",
+      "audioFile": "EstimuloShow_2016-02-21 w EndaHouse.mp3",
+      "duration": 13219.999438,
+      "durationFormatted": "3:40:19",
+      "artist": "estimulo",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-02-21 w EndaHouse.mp3",
+          "label": "MP3"
+        }
+      ],
+      "genre": "Other"
+    },
+    {
+      "name": "w/ EndaHouse",
+      "file": "EstimuloShow_2016-01-10_EndaHouse",
+      "audioFile": "EstimuloShow_2016-01-10_EndaHouse.mp3",
+      "duration": 14257.586375,
+      "durationFormatted": "3:57:37",
+      "artist": "EstimuloShow",
+      "downloads": [
+        {
+          "file": "EstimuloShow_2016-01-10_EndaHouse.mp3",
+          "label": "MP3"
+        }
+      ],
+      "date": "2016-01-10"
+    }
+  ]
+}
