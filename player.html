@@ -12,7 +12,15 @@
     <div class="left-column">
       <canvas id="waveform"></canvas>
       <div id="waveformResizeHandle"></div>
-      <audio id="audioPlayer" class="audioPlayer" controls></audio>
+      <audio id="audioPlayer"></audio>
+      <div id="audioControls">
+        <button id="playPauseBtn" class="control-btn" title="Play/Pause (Space)">▶</button>
+        <span id="timeDisplay">0:00 / 0:00</span>
+        <div id="volumeControl">
+          <button id="muteBtn" class="control-btn" title="Mute">🔊</button>
+          <input type="range" id="volumeSlider" min="0" max="100" value="50" title="Volume">
+        </div>
+      </div>
       <div id="nowPlaying"></div>
       <div id="coverArt"></div>
       <div id="trackList"></div>

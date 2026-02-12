@@ -221,13 +221,96 @@ function loadPeaks(peaks) {
   }
 }
 
+// Custom audio controls
+const playPauseBtn = document.getElementById('playPauseBtn');
+const muteBtn = document.getElementById('muteBtn');
+const volumeSlider = document.getElementById('volumeSlider');
+const timeDisplay = document.getElementById('timeDisplay');
+
 // Restore volume from localStorage, default to 50%
 aud.volume = storage.getNum('playerVolume', 0.5);
+volumeSlider.value = aud.volume * 100;
 
-// Save volume on change
+// Format time as M:SS or H:MM:SS
+function formatTime(seconds) {
+  if (!isFinite(seconds) || seconds < 0) return '0:00';
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+  if (h > 0) {
+    return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  }
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+// Update time display
+function updateTimeDisplay() {
+  const current = formatTime(aud.currentTime);
+  const duration = formatTime(aud.duration);
+  timeDisplay.textContent = `${current} / ${duration}`;
+}
+
+// Update play/pause button icon
+function updatePlayPauseBtn() {
+  playPauseBtn.textContent = aud.paused ? '▶' : '⏸';
+  playPauseBtn.className = 'control-btn ' + (aud.paused ? 'paused' : 'playing');
+}
+
+// Update mute button icon
+function updateMuteBtn() {
+  if (aud.muted || aud.volume === 0) {
+    muteBtn.textContent = '🔇';
+  } else if (aud.volume < 0.5) {
+    muteBtn.textContent = '🔉';
+  } else {
+    muteBtn.textContent = '🔊';
+  }
+}
+
+// Play/Pause button click
+playPauseBtn.addEventListener('click', function() {
+  if (aud.paused) {
+    aud.play();
+  } else {
+    aud.pause();
+  }
+});
+
+// Mute button click
+let volumeBeforeMute = 0.5;
+muteBtn.addEventListener('click', function() {
+  if (aud.muted) {
+    aud.muted = false;
+  } else {
+    volumeBeforeMute = aud.volume;
+    aud.muted = true;
+  }
+});
+
+// Volume slider change
+volumeSlider.addEventListener('input', function() {
+  aud.volume = this.value / 100;
+  aud.muted = false;
+});
+
+// Audio element events
+aud.addEventListener('play', updatePlayPauseBtn);
+aud.addEventListener('pause', updatePlayPauseBtn);
+aud.addEventListener('timeupdate', updateTimeDisplay);
+aud.addEventListener('loadedmetadata', updateTimeDisplay);
+aud.addEventListener('durationchange', updateTimeDisplay);
+
+// Save volume on change and update UI
 aud.addEventListener("volumechange", function () {
   storage.set('playerVolume', aud.volume);
+  volumeSlider.value = aud.volume * 100;
+  updateMuteBtn();
 });
+
+// Initialize UI state
+updatePlayPauseBtn();
+updateMuteBtn();
+updateTimeDisplay();
 
 // Save position periodically
 setInterval(function () {
@@ -1184,25 +1267,18 @@ updateFavouritesButton();
   try {
     const savedPath = storage.get('currentMixPath');
     if (savedPath) {
-      // savedPath could be "dj/file.html" (legacy) or "dj/file" (manifest)
-      const isLegacy = savedPath.endsWith('.html');
+      const parts = savedPath.split('/');
+      const file = parts.pop();
+      const djPath = parts.join('/');
       let mix;
-      if (isLegacy) {
-        mix = { htmlPath: savedPath, name: savedPath.split('/').pop().replace('.html', '') };
-      } else {
-        const parts = savedPath.split('/');
-        const file = parts.pop();
-        const djPath = parts.join('/');
-        // Try to get full mix data from manifest
-        try {
-          const mixes = await fetchDJMixes(djPath);
-          mix = mixes.find(m => m.file === file);
-        } catch (e) {
-          // Manifest not available, build minimal object
-        }
-        if (!mix) {
-          mix = { djPath, file, audioFile: `${file}.mp3`, peaksFile: `${file}.peaks.json`, name: file };
-        }
+      try {
+        const mixes = await fetchDJMixes(djPath);
+        mix = mixes.find(m => m.file === file);
+      } catch (e) {
+        // Manifest not available, build minimal object
+      }
+      if (!mix) {
+        mix = { djPath, file, audioFile: `${file}.mp3`, peaksFile: `${file}.peaks.json`, name: file };
       }
       const details = await fetchMixDetails(mix);
       if (details.audioSrc) {
@@ -1213,7 +1289,6 @@ updateFavouritesButton();
         state.currentCoverSrc = details.coverSrc;
         displayTrackList(mix, details.trackListTable, details.downloadLinks, details.coverSrc);
         loadPeaks(details.peaks);
-        // Ensure waveform draws after layout is ready
         requestAnimationFrame(resizeWaveformCanvas);
       }
     }
