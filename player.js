@@ -50,7 +50,9 @@ const state = {
    playingFromPlayNow: false,
    previousQueueIndex: -1,
    previousQueueTime: 0,
-   showHiddenMixes: false  // Ephemeral, not persisted
+   showHiddenMixes: false,  // Ephemeral, not persisted
+   isLive: false,           // Currently playing a live stream
+   liveStreamUrl: null      // URL to restore on live resume
 };
 
 // Mix flags (favourites/hidden) - stored as arrays, used as Sets for O(1) lookup
@@ -245,15 +247,23 @@ function formatTime(seconds) {
 
 // Update time display
 function updateTimeDisplay() {
-  const current = formatTime(aud.currentTime);
-  const duration = formatTime(aud.duration);
-  timeDisplay.textContent = `${current} / ${duration}`;
+  if (state.isLive) {
+    const isPaused = aud.paused || !aud.src;
+    timeDisplay.textContent = isPaused ? 'PAUSED' : 'LIVE';
+    timeDisplay.classList.toggle('live', !isPaused);
+  } else {
+    const current = formatTime(aud.currentTime);
+    const duration = formatTime(aud.duration);
+    timeDisplay.textContent = `${current} / ${duration}`;
+    timeDisplay.classList.remove('live');
+  }
 }
 
 // Update play/pause button icon
 function updatePlayPauseBtn() {
-  playPauseBtn.textContent = aud.paused ? '▶' : '⏸';
-  playPauseBtn.className = 'control-btn ' + (aud.paused ? 'paused' : 'playing');
+  const isPaused = state.isLive ? (aud.paused || !aud.src) : aud.paused;
+  playPauseBtn.textContent = isPaused ? '▶' : '⏸';
+  playPauseBtn.className = 'control-btn ' + (isPaused ? 'paused' : 'playing');
 }
 
 // Update mute button icon
@@ -267,12 +277,63 @@ function updateMuteBtn() {
   }
 }
 
+// Live stream pause: stop downloading by clearing src
+function pauseLive() {
+  aud.pause();
+  aud.src = '';
+  aud.removeAttribute('src');
+  setTimeout(() => aud.load(), 0);
+}
+
+// Live stream resume: restore src and play
+function resumeLive() {
+  if (state.liveStreamUrl) {
+    aud.src = state.liveStreamUrl;
+    aud.load();
+    aud.play();
+  }
+}
+
+// Start playing a live stream
+function playLive(url, displayText) {
+  state.isLive = true;
+  state.liveStreamUrl = url;
+  aud.src = url;
+  aud.load();
+  aud.play();
+  document.getElementById('nowPlaying').innerHTML = `<h1>${escapeHtml(displayText)}</h1>`;
+  document.getElementById('coverArt').innerHTML = '';
+  document.getElementById('trackList').innerHTML = '';
+  loadPeaks(null);
+  updateTimeDisplay();
+  updatePlayPauseBtn();
+}
+
+// Stop live stream and return to normal mode
+function stopLive() {
+  if (state.isLive) {
+    pauseLive();
+    state.isLive = false;
+    state.liveStreamUrl = null;
+    updateTimeDisplay();
+    updatePlayPauseBtn();
+  }
+}
+
 // Play/Pause button click
 playPauseBtn.addEventListener('click', function() {
-  if (aud.paused) {
-    aud.play();
+  if (state.isLive) {
+    if (aud.paused && !aud.src) {
+      resumeLive();
+    } else {
+      pauseLive();
+    }
   } else {
-    aud.pause();
+    if (aud.paused) {
+      aud.play();
+    } else {
+      aud.pause();
+    }
   }
 });
 
@@ -879,6 +940,46 @@ const searchIndex = {
 };
 
 // Browser mode switching
+// Live streams configuration
+// HTTP streams use Cloudflare Worker proxy to avoid mixed content issues
+// HTTPS streams connect directly
+const STREAM_PROXY = 'https://stream-proxy.round-bar-e93e.workers.dev';
+const liveStreams = [
+  { name: 'Sleepbot Environmental Broadcast', url: `${STREAM_PROXY}?stream=sleepbot`, genre: 'Ambient' },
+  { name: 'Jungletrain.net', url: `${STREAM_PROXY}?stream=jungletrain`, genre: 'Jungle/Drum & Bass' },
+  { name: 'SomaFM Drone Zone', url: 'https://ice1.somafm.com/dronezone-128-mp3', genre: 'Ambient/Space' },
+  { name: 'SomaFM Groove Salad', url: 'https://ice1.somafm.com/groovesalad-128-mp3', genre: 'Ambient/Downtempo' }
+];
+
+function displayLiveStreams() {
+  const mixList = document.getElementById('mixList');
+  
+  if (liveStreams.length === 0) {
+    mixList.innerHTML = '<div style="padding: 20px; color: #888;">No live streams configured</div>';
+    return;
+  }
+  
+  let html = '';
+  liveStreams.forEach((stream, index) => {
+    html += `
+      <div class="mix-item">
+        <span class="mix-name">${escapeHtml(stream.name)}</span>
+        <span class="mix-duration">${escapeHtml(stream.genre)}</span>
+        <button class="play-btn" onclick="playLiveStream(${index})" title="Play Now">▶</button>
+      </div>
+    `;
+  });
+  
+  mixList.innerHTML = html;
+}
+
+function playLiveStream(index) {
+  const stream = liveStreams[index];
+  if (stream) {
+    playLive(stream.url, `Live from ${stream.name}`);
+  }
+}
+
 const browserModes = {
   current: 'dj',
   
@@ -945,6 +1046,12 @@ const browserModes = {
       searchBox.style.display = 'none';
       groupFilters.innerHTML = '';
       displayFavourites();
+    } else if (mode === 'live') {
+      djButtons.style.display = 'none';
+      djDropdown.style.display = 'none';
+      searchBox.style.display = 'none';
+      groupFilters.innerHTML = '';
+      displayLiveStreams();
     }
   }
 };
@@ -1089,11 +1196,7 @@ document.addEventListener('keydown', function(e) {
   if (e.target.tagName === 'INPUT') return;
   if (e.code === 'Space') {
     e.preventDefault();
-    if (aud.paused) {
-      aud.play();
-    } else {
-      aud.pause();
-    }
+    playPauseBtn.click();
   } else if (e.code === 'ArrowDown' && e.ctrlKey) {
     e.preventDefault();
     skipNext();
@@ -1112,6 +1215,9 @@ document.addEventListener('keydown', function(e) {
   } else if (e.code === 'KeyV' && e.ctrlKey) {
     e.preventDefault();
     browserModes.switch('favourites');
+  } else if (e.code === 'KeyL' && e.ctrlKey) {
+    e.preventDefault();
+    browserModes.switch('live');
   } else if (e.code === 'Escape') {
     hideSettings();
     hideHelp();

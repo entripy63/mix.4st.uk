@@ -753,6 +753,11 @@ td:last-child {
   text-align: center;
 }
 
+#timeDisplay.live {
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
 #volumeControl {
   display: flex;
   align-items: center;
