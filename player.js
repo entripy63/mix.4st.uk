@@ -429,6 +429,12 @@ aud.addEventListener("play", updateQueueInfo);
 aud.addEventListener("pause", updateQueueInfo);
 
 function load(url) {
+  // Exit live mode when loading regular content
+  if (state.isLive) {
+    state.isLive = false;
+    state.liveStreamUrl = null;
+    updateTimeDisplay();
+  }
   aud.src = url;
   aud.currentTime = 0;
 }
@@ -946,9 +952,9 @@ const searchIndex = {
 const STREAM_PROXY = 'https://stream-proxy.round-bar-e93e.workers.dev';
 const liveStreams = [
   { name: 'Sleepbot Environmental Broadcast', url: `${STREAM_PROXY}?stream=sleepbot`, genre: 'Ambient' },
-  { name: 'Jungletrain.net', url: `${STREAM_PROXY}?stream=jungletrain`, genre: 'Jungle/Drum & Bass' },
   { name: 'SomaFM Drone Zone', url: 'https://ice1.somafm.com/dronezone-128-mp3', genre: 'Ambient/Space' },
-  { name: 'SomaFM Groove Salad', url: 'https://ice1.somafm.com/groovesalad-128-mp3', genre: 'Ambient/Downtempo' }
+  { name: 'SomaFM Groove Salad', url: 'https://ice1.somafm.com/groovesalad-128-mp3', genre: 'Ambient/Downtempo' },
+  { name: 'SomaFM DEF CON Radio', url: 'https://ice1.somafm.com/defcon-128-mp3', genre: 'Electronic/Techno' }
 ];
 
 function displayLiveStreams() {

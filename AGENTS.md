@@ -5,7 +5,7 @@
 - DON'T USE `python3 -m http.server 8000` to test locally, too flakey
 
 ## Architecture
-- Static website for DJ mixes at mix.4st.uk
+- Static website for DJ mixes at mixes.4st.uk
 - SPA using `player.html` as entry point
 - `player.html` - Landing page, Player, Queue, Browser columns, responsive design
 - `player.css` - Stylesheet
