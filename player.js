@@ -965,15 +965,49 @@ const searchIndex = {
 // HTTPS streams connect directly
 const STREAM_PROXY = 'https://stream-proxy.round-bar-e93e.workers.dev';
 
-// Stream configuration - supports direct URLs and M3U files
+// Built-in stream configuration - supports direct URLs and M3U files
 // shoutcast: true means append '/;' to URLs for Shoutcast compatibility
-const liveStreamConfig = [
-  { name: 'Sleepbot Environmental Broadcast', url: `${STREAM_PROXY}?stream=sleepbot`, genre: 'Ambient' },
-  { name: 'Jungletrain.net', m3u: 'https://jungletrain.net/static/256kbps.m3u', fallbackUrl: 'http://stream5.jungletrain.net:8000/;', genre: 'Jungle/Drum & Bass', shoutcast: true },
+const builtInStreams = [
+  { name: 'Sleepbot Environmental Broadcast', url: `${STREAM_PROXY}?url=${encodeURIComponent('http://primarystream.sleepbot.com:8218/seb')}`, genre: 'Ambient' },
+  { name: 'Jungletrain.net', m3u: 'https://jungletrain.net/static/256kbps.m3u', fallbackUrl: 'http://stream5.jungletrain.net:8000/;', genre: 'Jungle/Drum & Bass' },
   { name: 'SomaFM Drone Zone', url: 'https://ice1.somafm.com/dronezone-128-mp3', genre: 'Ambient/Space' },
   { name: 'SomaFM Groove Salad', url: 'https://ice1.somafm.com/groovesalad-128-mp3', genre: 'Ambient/Downtempo' },
   { name: 'SomaFM DEF CON Radio', url: 'https://ice1.somafm.com/defcon-128-mp3', genre: 'Electronic/Techno' }
 ];
+
+// User-added streams stored in localStorage
+// Format: [{ name, m3u, genre, shoutcast? }]
+function getUserStreams() {
+  return storage.getJSON('userStreams', []);
+}
+
+function saveUserStreams(streams) {
+  storage.set('userStreams', streams);
+}
+
+function addUserStream(name, m3u, genre) {
+  const streams = getUserStreams();
+  streams.push({ name, m3u, genre, userAdded: true });
+  saveUserStreams(streams);
+  // Reset initialization to re-probe streams
+  liveStreamsInitialized = false;
+  liveStreams = [];
+}
+
+function removeUserStream(index) {
+  const streams = getUserStreams();
+  // Index is relative to user streams (after built-in streams)
+  streams.splice(index, 1);
+  saveUserStreams(streams);
+  // Reset initialization to re-probe streams
+  liveStreamsInitialized = false;
+  liveStreams = [];
+}
+
+// Combined stream config (built-in + user)
+function getLiveStreamConfig() {
+  return [...builtInStreams, ...getUserStreams()];
+}
 
 // Resolved streams with availability status (populated by initLiveStreams)
 let liveStreams = [];
@@ -1023,13 +1057,14 @@ async function initLiveStreams() {
   
   const results = [];
   
-  for (const config of liveStreamConfig) {
+  for (const config of getLiveStreamConfig()) {
     const stream = { 
       name: config.name, 
       genre: config.genre, 
       url: null, 
       available: false,
-      reason: null
+      reason: null,
+      userAdded: config.userAdded || false
     };
     
     if (config.url) {
@@ -1037,20 +1072,39 @@ async function initLiveStreams() {
       stream.available = await probeStream(config.url);
       if (!stream.available) {
         if (config.url.startsWith('http://') && location.protocol === 'https:') {
-          stream.reason = 'HTTP stream unavailable on HTTPS site';
+          stream.reason = `HTTP stream unavailable on HTTPS site: ${config.url}`;
         } else {
-          stream.reason = 'Stream unreachable';
+          stream.reason = `Stream unreachable: ${config.url}`;
         }
       }
     } else if (config.m3u) {
       const urls = await fetchM3U(config.m3u);
-      for (let url of urls) {
-        if (config.shoutcast) url += '/;';
-        if (await probeStream(url)) {
-          stream.url = url;
-          stream.available = true;
-          break;
+      for (let baseUrl of urls) {
+        // Try URL variants: direct, with /; (Shoutcast), and via proxy
+        const variants = [baseUrl];
+        // Add Shoutcast variant if not already ending with /;
+        if (!baseUrl.endsWith('/;')) {
+          variants.push(baseUrl + '/;');
         }
+        
+        for (const url of variants) {
+          // Try direct first
+          if (await probeStream(url)) {
+            stream.url = url;
+            stream.available = true;
+            break;
+          }
+          // For HTTP streams on HTTPS site, try via proxy
+          if (url.startsWith('http://') && location.protocol === 'https:') {
+            const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(url)}`;
+            if (await probeStream(proxyUrl)) {
+              stream.url = proxyUrl;
+              stream.available = true;
+              break;
+            }
+          }
+        }
+        if (stream.available) break;
       }
       // Fall back to hardcoded URL if M3U fails (e.g., CORS)
       if (!stream.available && config.fallbackUrl) {
@@ -1062,10 +1116,10 @@ async function initLiveStreams() {
       if (!stream.available) {
         const testUrl = config.fallbackUrl || (urls.length > 0 ? urls[0] : null);
         if (testUrl && testUrl.startsWith('http://') && location.protocol === 'https:') {
-          stream.reason = 'HTTP stream unavailable on HTTPS site';
-          stream.url = config.fallbackUrl || (urls[0] + (config.shoutcast ? '/;' : ''));
+          stream.reason = `HTTP stream unavailable on HTTPS site: ${testUrl}`;
+          stream.url = config.fallbackUrl || urls[0];
         } else {
-          stream.reason = 'No working stream found';
+          stream.reason = `No working stream found (M3U: ${config.m3u})`;
         }
       }
     }
@@ -1086,26 +1140,83 @@ function displayLiveStreams() {
     return;
   }
   
+  let html = '';
+  
+  // Add stream form
+  html += `
+    <div class="add-stream-form">
+      <div class="add-stream-header" onclick="toggleAddStreamForm()">
+        <span>+ Add Stream</span>
+      </div>
+      <div class="add-stream-fields" id="addStreamFields" style="display: none;">
+        <input type="text" id="newStreamName" placeholder="Stream name" />
+        <input type="text" id="newStreamM3U" placeholder="M3U URL (https://...)" />
+        <input type="text" id="newStreamGenre" placeholder="Genre (optional)" />
+        <button onclick="handleAddStream()">Add</button>
+      </div>
+    </div>
+  `;
+  
   if (liveStreams.length === 0) {
-    mixList.innerHTML = '<div style="padding: 20px; color: #888;">No live streams configured</div>';
+    html += '<div style="padding: 20px; color: #888;">No live streams configured</div>';
+    mixList.innerHTML = html;
     return;
   }
   
-  let html = '';
+  // Track user stream index for delete button
+  let userStreamIndex = 0;
+  
   liveStreams.forEach((stream, index) => {
     const unavailableClass = stream.available ? '' : ' unavailable';
     const tooltip = stream.available ? 'Play Now' : (stream.reason || 'Unavailable');
     const disabled = stream.available ? '' : ' disabled';
+    const deleteBtn = stream.userAdded 
+      ? `<button class="icon-btn delete-stream-btn" onclick="handleRemoveStream(${userStreamIndex})" title="Remove stream">✕</button>`
+      : '';
+    if (stream.userAdded) userStreamIndex++;
+    
     html += `
       <div class="mix-item${unavailableClass}">
         <button class="icon-btn" onclick="playLiveStream(${index})"${disabled} title="${escapeHtml(tooltip)}">▶</button>
         <span class="mix-name">${escapeHtml(stream.name)}</span>
         <span class="mix-duration">${escapeHtml(stream.genre)}</span>
+        ${deleteBtn}
       </div>
     `;
   });
   
   mixList.innerHTML = html;
+}
+
+function toggleAddStreamForm() {
+  const fields = document.getElementById('addStreamFields');
+  fields.style.display = fields.style.display === 'none' ? 'block' : 'none';
+}
+
+function handleAddStream() {
+  const name = document.getElementById('newStreamName').value.trim();
+  const m3u = document.getElementById('newStreamM3U').value.trim();
+  const genre = document.getElementById('newStreamGenre').value.trim() || 'Unknown';
+  
+  if (!name || !m3u) {
+    alert('Name and M3U URL are required');
+    return;
+  }
+  
+  if (!m3u.startsWith('http://') && !m3u.startsWith('https://')) {
+    alert('M3U URL must start with http:// or https://');
+    return;
+  }
+  
+  addUserStream(name, m3u, genre);
+  displayLiveStreams();
+}
+
+function handleRemoveStream(userIndex) {
+  if (confirm('Remove this stream?')) {
+    removeUserStream(userIndex);
+    displayLiveStreams();
+  }
 }
 
 function playLiveStream(index) {
