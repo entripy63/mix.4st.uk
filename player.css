@@ -739,6 +739,7 @@ td:last-child {
 
 #playPauseBtn.playing {
   padding: 0;
+  padding-bottom: 3px;
 }
 
 #playPauseBtn.paused {

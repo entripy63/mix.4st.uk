@@ -262,7 +262,7 @@ function updateTimeDisplay() {
 // Update play/pause button icon
 function updatePlayPauseBtn() {
   const isPaused = state.isLive ? (aud.paused || !aud.src) : aud.paused;
-  playPauseBtn.textContent = isPaused ? '▶' : '⏸';
+  playPauseBtn.textContent = isPaused ? '▶' : '❚❚';
   playPauseBtn.className = 'control-btn ' + (isPaused ? 'paused' : 'playing');
 }
 
