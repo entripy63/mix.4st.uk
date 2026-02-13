@@ -283,6 +283,8 @@ function pauseLive() {
   aud.src = '';
   aud.removeAttribute('src');
   setTimeout(() => aud.load(), 0);
+  updatePlayPauseBtn();
+  updateTimeDisplay();
 }
 
 // Live stream resume: restore src and play
@@ -291,6 +293,8 @@ function resumeLive() {
     aud.src = state.liveStreamUrl;
     aud.load();
     aud.play();
+    updatePlayPauseBtn();
+    updateTimeDisplay();
   }
 }
 
@@ -969,9 +973,9 @@ function displayLiveStreams() {
   liveStreams.forEach((stream, index) => {
     html += `
       <div class="mix-item">
+        <button class="icon-btn" onclick="playLiveStream(${index})" title="Play Now">▶</button>
         <span class="mix-name">${escapeHtml(stream.name)}</span>
         <span class="mix-duration">${escapeHtml(stream.genre)}</span>
-        <button class="play-btn" onclick="playLiveStream(${index})" title="Play Now">▶</button>
       </div>
     `;
   });
