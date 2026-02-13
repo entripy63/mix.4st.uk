@@ -26,6 +26,8 @@ html, body {
   display: flex;
   flex-direction: column;
   min-height: 0;
+  min-width: 0;
+  overflow: hidden;
 }
 
 #coverArt {
@@ -55,12 +57,16 @@ html, body {
   flex-direction: column;
   flex: 1;
   min-height: 0;
+  min-width: 0;
+  overflow: hidden;
 }
 
 #mixList {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   min-height: 0;
+  min-width: 0;
 }
 
 #waveform {
@@ -453,6 +459,17 @@ kbd {
 
 .mix-item {
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mix-item .mix-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .mix-item:hover {

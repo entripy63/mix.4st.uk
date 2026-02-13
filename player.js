@@ -988,7 +988,8 @@ function saveUserStreams(streams) {
 
 function addUserStream(name, m3u, genre) {
   const streams = getUserStreams();
-  streams.push({ name, m3u, genre, userAdded: true });
+  // Name can be empty - will be filled from playlist title during probe
+  streams.push({ name: name || null, m3u, genre, userAdded: true });
   saveUserStreams(streams);
   // Reset initialization to re-probe streams
   liveStreamsInitialized = false;
@@ -1039,14 +1040,61 @@ function probeStream(url, timeoutMs = 5000) {
   });
 }
 
-// Fetch and parse M3U, return array of stream URLs
-async function fetchM3U(m3uUrl) {
+// Parse PLS format, return array of {url, title} objects
+function parsePLS(text) {
+  const entries = [];
+  const lines = text.split('\n');
+  const files = {};
+  const titles = {};
+  
+  for (const line of lines) {
+    const fileMatch = line.match(/^File(\d+)=(.+)$/i);
+    if (fileMatch) {
+      files[fileMatch[1]] = fileMatch[2].trim();
+    }
+    const titleMatch = line.match(/^Title(\d+)=(.+)$/i);
+    if (titleMatch) {
+      titles[titleMatch[1]] = titleMatch[2].trim();
+    }
+  }
+  
+  for (const num of Object.keys(files).sort((a, b) => a - b)) {
+    entries.push({ url: files[num], title: titles[num] || null });
+  }
+  return entries;
+}
+
+// Parse M3U format, return array of {url, title} objects
+function parseM3U(text) {
+  const entries = [];
+  const lines = text.split('\n').map(line => line.trim());
+  let pendingTitle = null;
+  
+  for (const line of lines) {
+    if (line.startsWith('#EXTINF:')) {
+      // Format: #EXTINF:duration,title
+      const commaIndex = line.indexOf(',');
+      if (commaIndex !== -1) {
+        pendingTitle = line.substring(commaIndex + 1).trim();
+      }
+    } else if (line && !line.startsWith('#')) {
+      entries.push({ url: line, title: pendingTitle });
+      pendingTitle = null;
+    }
+  }
+  return entries;
+}
+
+// Fetch and parse playlist (M3U or PLS), return array of {url, title} objects
+async function fetchPlaylist(playlistUrl) {
   try {
-    const resp = await fetch(m3uUrl);
+    const resp = await fetch(playlistUrl);
     const text = await resp.text();
-    return text.split('\n')
-      .map(line => line.trim())
-      .filter(line => line && !line.startsWith('#'));
+    // Detect format by content
+    if (text.trim().toLowerCase().startsWith('[playlist]')) {
+      return parsePLS(text);
+    }
+    return parseM3U(text);
   } catch {
     return [];
   }
@@ -1079,8 +1127,9 @@ async function initLiveStreams() {
         }
       }
     } else if (config.m3u) {
-      const urls = await fetchM3U(config.m3u);
-      for (let baseUrl of urls) {
+      const entries = await fetchPlaylist(config.m3u);
+      for (const entry of entries) {
+        const baseUrl = entry.url;
         // Try URL variants: direct, with /; (Shoutcast), and via proxy
         const variants = [baseUrl];
         // Add Shoutcast variant if not already ending with /;
@@ -1092,6 +1141,7 @@ async function initLiveStreams() {
           // Try direct first
           if (await probeStream(url)) {
             stream.url = url;
+            stream.playlistTitle = entry.title;
             stream.available = true;
             break;
           }
@@ -1100,6 +1150,7 @@ async function initLiveStreams() {
             const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(url)}`;
             if (await probeStream(proxyUrl)) {
               stream.url = proxyUrl;
+              stream.playlistTitle = entry.title;
               stream.available = true;
               break;
             }
@@ -1115,14 +1166,23 @@ async function initLiveStreams() {
         }
       }
       if (!stream.available) {
-        const testUrl = config.fallbackUrl || (urls.length > 0 ? urls[0] : null);
+        const testUrl = config.fallbackUrl || (entries.length > 0 ? entries[0].url : null);
         if (testUrl && testUrl.startsWith('http://') && location.protocol === 'https:') {
           stream.reason = `HTTP stream unavailable on HTTPS site: ${testUrl}`;
-          stream.url = config.fallbackUrl || urls[0];
+          stream.url = config.fallbackUrl || entries[0].url;
         } else {
-          stream.reason = `No working stream found (M3U: ${config.m3u})`;
+          stream.reason = `No working stream found (playlist: ${config.m3u})`;
         }
       }
+      // Use playlist title as name if no name provided
+      if (!stream.name && stream.playlistTitle) {
+        stream.name = stream.playlistTitle;
+      }
+    }
+    
+    // Final fallback for name
+    if (!stream.name) {
+      stream.name = config.m3u || config.url || 'Unknown Stream';
     }
     
     results.push(stream);
@@ -1150,8 +1210,8 @@ function displayLiveStreams() {
         <span>+ Add Stream</span>
       </div>
       <div class="add-stream-fields" id="addStreamFields" style="display: none;">
-        <input type="text" id="newStreamName" placeholder="Stream name" />
-        <input type="text" id="newStreamM3U" placeholder="M3U URL (https://...)" />
+        <input type="text" id="newStreamName" placeholder="Stream name (optional)" />
+        <input type="text" id="newStreamM3U" placeholder="Playlist URL (M3U or PLS)" />
         <input type="text" id="newStreamGenre" placeholder="Genre (optional)" />
         <button onclick="handleAddStream()">Add</button>
       </div>
@@ -1199,13 +1259,13 @@ function handleAddStream() {
   const m3u = document.getElementById('newStreamM3U').value.trim();
   const genre = document.getElementById('newStreamGenre').value.trim() || 'Unknown';
   
-  if (!name || !m3u) {
-    alert('Name and M3U URL are required');
+  if (!m3u) {
+    alert('Playlist URL is required');
     return;
   }
   
   if (!m3u.startsWith('http://') && !m3u.startsWith('https://')) {
-    alert('M3U URL must start with http:// or https://');
+    alert('Playlist URL must start with http:// or https://');
     return;
   }
   
