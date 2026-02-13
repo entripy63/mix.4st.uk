@@ -1240,7 +1240,7 @@ function displayLiveStreams() {
       <div class="mix-item${unavailableClass}">
         <button class="icon-btn" onclick="playLiveStream(${index})"${disabled} title="${escapeHtml(tooltip)}">▶</button>
         <span class="mix-name">${escapeHtml(stream.name)}</span>
-        <span class="mix-duration">${escapeHtml(stream.genre)}</span>
+        <span class="mix-duration">${stream.genre && stream.genre !== 'Unknown' ? escapeHtml(stream.genre) : ''}</span>
         ${deleteBtn}
       </div>
     `;
@@ -1257,7 +1257,7 @@ function toggleAddStreamForm() {
 function handleAddStream() {
   const name = document.getElementById('newStreamName').value.trim();
   const m3u = document.getElementById('newStreamM3U').value.trim();
-  const genre = document.getElementById('newStreamGenre').value.trim() || 'Unknown';
+  const genre = document.getElementById('newStreamGenre').value.trim();
   
   if (!m3u) {
     alert('Playlist URL is required');
