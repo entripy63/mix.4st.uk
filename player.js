@@ -52,7 +52,8 @@ const state = {
    previousQueueTime: 0,
    showHiddenMixes: false,  // Ephemeral, not persisted
    isLive: false,           // Currently playing a live stream
-   liveStreamUrl: null      // URL to restore on live resume
+   liveStreamUrl: null,     // URL to restore on live resume
+   liveDisplayText: null    // Display text for current live stream
 };
 
 // Mix flags (favourites/hidden) - stored as arrays, used as Sets for O(1) lookup
@@ -302,6 +303,9 @@ function resumeLive() {
 function playLive(url, displayText) {
   state.isLive = true;
   state.liveStreamUrl = url;
+  state.liveDisplayText = displayText;
+  storage.set('liveStreamUrl', url);
+  storage.set('liveDisplayText', displayText);
   aud.src = url;
   aud.load();
   aud.play();
@@ -319,6 +323,9 @@ function stopLive() {
     pauseLive();
     state.isLive = false;
     state.liveStreamUrl = null;
+    state.liveDisplayText = null;
+    storage.remove('liveStreamUrl');
+    storage.remove('liveDisplayText');
     updateTimeDisplay();
     updatePlayPauseBtn();
   }
@@ -437,6 +444,9 @@ function load(url) {
   if (state.isLive) {
     state.isLive = false;
     state.liveStreamUrl = null;
+    state.liveDisplayText = null;
+    storage.remove('liveStreamUrl');
+    storage.remove('liveDisplayText');
     updateTimeDisplay();
   }
   aud.src = url;
@@ -1496,6 +1506,36 @@ updateFavouritesButton();
 
 (async function restorePlayer() {
   try {
+    // Check if we were in live mode
+    const savedLiveUrl = storage.get('liveStreamUrl');
+    const savedLiveText = storage.get('liveDisplayText');
+    
+    if (savedLiveUrl && savedLiveText) {
+      // Restore live mode - switch browser to live mode and restore stream display
+      browserModes.switch('live');
+      // Wait for streams to initialize before checking availability
+      await initLiveStreams();
+      // Find if this stream is available
+      const stream = liveStreams.find(s => s.url === savedLiveUrl);
+      if (stream && stream.available) {
+        // Restore live stream state (paused)
+        state.isLive = true;
+        state.liveStreamUrl = savedLiveUrl;
+        state.liveDisplayText = savedLiveText;
+        document.getElementById('nowPlaying').innerHTML = `<h1>${escapeHtml(savedLiveText)}</h1>`;
+        document.getElementById('coverArt').innerHTML = '';
+        document.getElementById('trackList').innerHTML = '';
+        loadPeaks(null);
+        updateTimeDisplay();
+        updatePlayPauseBtn();
+      } else {
+        // Stream no longer available, clear saved state
+        storage.remove('liveStreamUrl');
+        storage.remove('liveDisplayText');
+      }
+      return;
+    }
+    
     const savedPath = storage.get('currentMixPath');
     if (savedPath) {
       const parts = savedPath.split('/');
