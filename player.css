@@ -459,6 +459,14 @@ kbd {
   background: #2d2d50;
 }
 
+.mix-item.unavailable {
+  opacity: 0.5;
+}
+
+.mix-item.unavailable .icon-btn {
+  cursor: not-allowed;
+}
+
 .mix-extra-info {
   margin-top: 8px;
   padding: 8px 10px;

@@ -954,15 +954,127 @@ const searchIndex = {
 // HTTP streams use Cloudflare Worker proxy to avoid mixed content issues
 // HTTPS streams connect directly
 const STREAM_PROXY = 'https://stream-proxy.round-bar-e93e.workers.dev';
-const liveStreams = [
+
+// Stream configuration - supports direct URLs and M3U files
+// shoutcast: true means append '/;' to URLs for Shoutcast compatibility
+const liveStreamConfig = [
   { name: 'Sleepbot Environmental Broadcast', url: `${STREAM_PROXY}?stream=sleepbot`, genre: 'Ambient' },
+  { name: 'Jungletrain.net', m3u: 'https://jungletrain.net/static/256kbps.m3u', fallbackUrl: 'http://stream5.jungletrain.net:8000/;', genre: 'Jungle/Drum & Bass', shoutcast: true },
   { name: 'SomaFM Drone Zone', url: 'https://ice1.somafm.com/dronezone-128-mp3', genre: 'Ambient/Space' },
   { name: 'SomaFM Groove Salad', url: 'https://ice1.somafm.com/groovesalad-128-mp3', genre: 'Ambient/Downtempo' },
   { name: 'SomaFM DEF CON Radio', url: 'https://ice1.somafm.com/defcon-128-mp3', genre: 'Electronic/Techno' }
 ];
 
+// Resolved streams with availability status (populated by initLiveStreams)
+let liveStreams = [];
+let liveStreamsInitialized = false;
+
+// Probe a stream URL - returns promise resolving to true/false
+function probeStream(url, timeoutMs = 5000) {
+  return new Promise(resolve => {
+    const audio = new Audio();
+    const timer = setTimeout(() => {
+      audio.src = '';
+      resolve(false);
+    }, timeoutMs);
+    
+    audio.addEventListener('canplay', () => {
+      clearTimeout(timer);
+      audio.src = '';
+      resolve(true);
+    }, { once: true });
+    
+    audio.addEventListener('error', () => {
+      clearTimeout(timer);
+      resolve(false);
+    }, { once: true });
+    
+    audio.src = url;
+    audio.load();
+  });
+}
+
+// Fetch and parse M3U, return array of stream URLs
+async function fetchM3U(m3uUrl) {
+  try {
+    const resp = await fetch(m3uUrl);
+    const text = await resp.text();
+    return text.split('\n')
+      .map(line => line.trim())
+      .filter(line => line && !line.startsWith('#'));
+  } catch {
+    return [];
+  }
+}
+
+// Initialize live streams - resolves M3U URLs and probes availability
+async function initLiveStreams() {
+  if (liveStreamsInitialized) return;
+  
+  const results = [];
+  
+  for (const config of liveStreamConfig) {
+    const stream = { 
+      name: config.name, 
+      genre: config.genre, 
+      url: null, 
+      available: false,
+      reason: null
+    };
+    
+    if (config.url) {
+      stream.url = config.url;
+      stream.available = await probeStream(config.url);
+      if (!stream.available) {
+        if (config.url.startsWith('http://') && location.protocol === 'https:') {
+          stream.reason = 'HTTP stream unavailable on HTTPS site';
+        } else {
+          stream.reason = 'Stream unreachable';
+        }
+      }
+    } else if (config.m3u) {
+      const urls = await fetchM3U(config.m3u);
+      for (let url of urls) {
+        if (config.shoutcast) url += '/;';
+        if (await probeStream(url)) {
+          stream.url = url;
+          stream.available = true;
+          break;
+        }
+      }
+      // Fall back to hardcoded URL if M3U fails (e.g., CORS)
+      if (!stream.available && config.fallbackUrl) {
+        if (await probeStream(config.fallbackUrl)) {
+          stream.url = config.fallbackUrl;
+          stream.available = true;
+        }
+      }
+      if (!stream.available) {
+        const testUrl = config.fallbackUrl || (urls.length > 0 ? urls[0] : null);
+        if (testUrl && testUrl.startsWith('http://') && location.protocol === 'https:') {
+          stream.reason = 'HTTP stream unavailable on HTTPS site';
+          stream.url = config.fallbackUrl || (urls[0] + (config.shoutcast ? '/;' : ''));
+        } else {
+          stream.reason = 'No working stream found';
+        }
+      }
+    }
+    
+    results.push(stream);
+  }
+  
+  liveStreams = results;
+  liveStreamsInitialized = true;
+}
+
 function displayLiveStreams() {
   const mixList = document.getElementById('mixList');
+  
+  if (!liveStreamsInitialized) {
+    mixList.innerHTML = '<div style="padding: 20px; color: #888;">Checking stream availability...</div>';
+    initLiveStreams().then(() => displayLiveStreams());
+    return;
+  }
   
   if (liveStreams.length === 0) {
     mixList.innerHTML = '<div style="padding: 20px; color: #888;">No live streams configured</div>';
@@ -971,9 +1083,12 @@ function displayLiveStreams() {
   
   let html = '';
   liveStreams.forEach((stream, index) => {
+    const unavailableClass = stream.available ? '' : ' unavailable';
+    const tooltip = stream.available ? 'Play Now' : (stream.reason || 'Unavailable');
+    const disabled = stream.available ? '' : ' disabled';
     html += `
-      <div class="mix-item">
-        <button class="icon-btn" onclick="playLiveStream(${index})" title="Play Now">▶</button>
+      <div class="mix-item${unavailableClass}">
+        <button class="icon-btn" onclick="playLiveStream(${index})"${disabled} title="${escapeHtml(tooltip)}">▶</button>
         <span class="mix-name">${escapeHtml(stream.name)}</span>
         <span class="mix-duration">${escapeHtml(stream.genre)}</span>
       </div>
@@ -985,7 +1100,7 @@ function displayLiveStreams() {
 
 function playLiveStream(index) {
   const stream = liveStreams[index];
-  if (stream) {
+  if (stream && stream.available) {
     playLive(stream.url, `Live from ${stream.name}`);
   }
 }
