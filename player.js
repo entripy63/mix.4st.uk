@@ -983,7 +983,7 @@ function saveUserStreams(streams) {
   storage.set('userStreams', streams);
 }
 
-function addUserStream(name, m3u, genre) {
+async function addUserStream(name, m3u, genre) {
    const streams = getUserStreams();
    const config = { name: name || null, m3u, genre, userAdded: true };
    streams.push(config);
@@ -991,7 +991,7 @@ function addUserStream(name, m3u, genre) {
    
    // Only probe the new stream if already initialized
    if (liveStreamsInitialized) {
-     probeAndAddStream(config);
+     await probeAndAddStream(config);
    }
 }
 
@@ -1260,23 +1260,23 @@ function toggleAddStreamForm() {
   fields.style.display = fields.style.display === 'none' ? 'block' : 'none';
 }
 
-function handleAddStream() {
-  const name = document.getElementById('newStreamName').value.trim();
-  const m3u = document.getElementById('newStreamM3U').value.trim();
-  const genre = document.getElementById('newStreamGenre').value.trim();
-  
-  if (!m3u) {
-    alert('Playlist URL is required');
-    return;
-  }
-  
-  if (!m3u.startsWith('http://') && !m3u.startsWith('https://')) {
-    alert('Playlist URL must start with http:// or https://');
-    return;
-  }
-  
-  addUserStream(name, m3u, genre);
-  displayLiveStreams();
+async function handleAddStream() {
+   const name = document.getElementById('newStreamName').value.trim();
+   const m3u = document.getElementById('newStreamM3U').value.trim();
+   const genre = document.getElementById('newStreamGenre').value.trim();
+   
+   if (!m3u) {
+     alert('Playlist URL is required');
+     return;
+   }
+   
+   if (!m3u.startsWith('http://') && !m3u.startsWith('https://')) {
+     alert('Playlist URL must start with http:// or https://');
+     return;
+   }
+   
+   await addUserStream(name, m3u, genre);
+   displayLiveStreams();
 }
 
 function handleRemoveStream(userIndex) {
