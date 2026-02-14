@@ -9,8 +9,12 @@
 - SPA using `player.html` as entry point
 - `player.html` - Landing page, Player, Queue, Browser columns, responsive design
 - `player.css` - Stylesheet
-- `player.js` - Main Javascript
-- `mixes.js` - Loads mix data from `manifest.json` files
+- **JavaScript modules** (no bundler, simple script loading):
+  - `core.js` - Shared utilities, global state, DOM references
+  - `queue.js` - Queue management, drag-drop, queue operations
+  - `player.js` - Playback controls, waveform rendering, audio handling
+  - `browser.js` - Mix browser, search, live streams, settings, page restoration
+  - `mixes.js` - Loads mix data from `manifest.json` files
 - `.htaccess` - DirectoryIndex and MP3 download forcing
 - DJ folders contain `manifest.json`, `.tracks.txt` files, `.peaks.json` files, and cover images
 - `trip/`, `izmar/`, `aboo/`, `jx3p/`, `gmanual/`, `haze/`, `rpfr/` - Main DJ folders
