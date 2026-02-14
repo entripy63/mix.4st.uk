@@ -984,22 +984,102 @@ function saveUserStreams(streams) {
 }
 
 function addUserStream(name, m3u, genre) {
-  const streams = getUserStreams();
-  // Name can be empty - will be filled from playlist title during probe
-  streams.push({ name: name || null, m3u, genre, userAdded: true });
-  saveUserStreams(streams);
-  // Reset initialization to re-probe streams
-  liveStreamsInitialized = false;
-  liveStreams = [];
+   const streams = getUserStreams();
+   const config = { name: name || null, m3u, genre, userAdded: true };
+   streams.push(config);
+   saveUserStreams(streams);
+   
+   // Only probe the new stream if already initialized
+   if (liveStreamsInitialized) {
+     probeAndAddStream(config);
+   }
+}
+
+// Probe a single stream config and add to liveStreams array
+async function probeAndAddStream(config) {
+   const stream = {
+     name: config.name,
+     genre: config.genre,
+     url: null,
+     available: false,
+     reason: null,
+     userAdded: config.userAdded || false
+   };
+   
+   if (config.url) {
+     stream.url = config.url;
+     stream.available = await probeStream(config.url);
+     if (!stream.available) {
+       if (config.url.startsWith('http://') && location.protocol === 'https:') {
+         stream.reason = `HTTP stream unavailable on HTTPS site: ${config.url}`;
+       } else {
+         stream.reason = `Stream unreachable: ${config.url}`;
+       }
+     }
+   } else if (config.m3u) {
+     const entries = await fetchPlaylist(config.m3u);
+     for (const entry of entries) {
+       const baseUrl = entry.url;
+       const variants = [baseUrl];
+       if (!baseUrl.endsWith('/;')) {
+         variants.push(baseUrl + '/;');
+       }
+       
+       for (const url of variants) {
+         if (await probeStream(url)) {
+           stream.url = url;
+           stream.playlistTitle = entry.title;
+           stream.available = true;
+           break;
+         }
+         if (url.startsWith('http://') && location.protocol === 'https:') {
+           const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(url)}`;
+           if (await probeStream(proxyUrl)) {
+             stream.url = proxyUrl;
+             stream.playlistTitle = entry.title;
+             stream.available = true;
+             break;
+           }
+         }
+       }
+       if (stream.available) break;
+     }
+     if (!stream.available && config.fallbackUrl) {
+       if (await probeStream(config.fallbackUrl)) {
+         stream.url = config.fallbackUrl;
+         stream.available = true;
+       }
+     }
+     if (!stream.available) {
+       const testUrl = config.fallbackUrl || (entries.length > 0 ? entries[0].url : null);
+       if (testUrl && testUrl.startsWith('http://') && location.protocol === 'https:') {
+         stream.reason = `HTTP stream unavailable on HTTPS site: ${testUrl}`;
+         stream.url = config.fallbackUrl || entries[0].url;
+       } else {
+         stream.reason = `No working stream found (playlist: ${config.m3u})`;
+       }
+     }
+     if (!stream.name && stream.playlistTitle) {
+       stream.name = stream.playlistTitle;
+     }
+   }
+   
+   if (!stream.name) {
+     stream.name = config.m3u || config.url || 'Unknown Stream';
+   }
+   
+   liveStreams.push(stream);
 }
 
 function removeUserStream(index) {
    const streams = getUserStreams();
    streams.splice(index, 1);
    saveUserStreams(streams);
-   // Reset initialization to re-probe streams
-   liveStreamsInitialized = false;
-   liveStreams = [];
+   
+   // Only remove from liveStreams if already initialized
+   if (liveStreamsInitialized && index < liveStreams.length) {
+     liveStreams.splice(index, 1);
+   }
 }
 
 // Initialize built-in streams as user streams on first site load
@@ -1107,95 +1187,14 @@ async function fetchPlaylist(playlistUrl) {
   }
 }
 
-// Initialize live streams - resolves M3U URLs and probes availability
+// Initialize live streams - resolves M3U URLs and probes availability (full initialization only)
 async function initLiveStreams() {
   if (liveStreamsInitialized) return;
   
-  const results = [];
-  
+  liveStreams = [];
   for (const config of getLiveStreamConfig()) {
-    const stream = { 
-      name: config.name, 
-      genre: config.genre, 
-      url: null, 
-      available: false,
-      reason: null,
-      userAdded: config.userAdded || false
-    };
-    
-    if (config.url) {
-      stream.url = config.url;
-      stream.available = await probeStream(config.url);
-      if (!stream.available) {
-        if (config.url.startsWith('http://') && location.protocol === 'https:') {
-          stream.reason = `HTTP stream unavailable on HTTPS site: ${config.url}`;
-        } else {
-          stream.reason = `Stream unreachable: ${config.url}`;
-        }
-      }
-    } else if (config.m3u) {
-      const entries = await fetchPlaylist(config.m3u);
-      for (const entry of entries) {
-        const baseUrl = entry.url;
-        // Try URL variants: direct, with /; (Shoutcast), and via proxy
-        const variants = [baseUrl];
-        // Add Shoutcast variant if not already ending with /;
-        if (!baseUrl.endsWith('/;')) {
-          variants.push(baseUrl + '/;');
-        }
-        
-        for (const url of variants) {
-          // Try direct first
-          if (await probeStream(url)) {
-            stream.url = url;
-            stream.playlistTitle = entry.title;
-            stream.available = true;
-            break;
-          }
-          // For HTTP streams on HTTPS site, try via proxy
-          if (url.startsWith('http://') && location.protocol === 'https:') {
-            const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(url)}`;
-            if (await probeStream(proxyUrl)) {
-              stream.url = proxyUrl;
-              stream.playlistTitle = entry.title;
-              stream.available = true;
-              break;
-            }
-          }
-        }
-        if (stream.available) break;
-      }
-      // Fall back to hardcoded URL if M3U fails (e.g., CORS)
-      if (!stream.available && config.fallbackUrl) {
-        if (await probeStream(config.fallbackUrl)) {
-          stream.url = config.fallbackUrl;
-          stream.available = true;
-        }
-      }
-      if (!stream.available) {
-        const testUrl = config.fallbackUrl || (entries.length > 0 ? entries[0].url : null);
-        if (testUrl && testUrl.startsWith('http://') && location.protocol === 'https:') {
-          stream.reason = `HTTP stream unavailable on HTTPS site: ${testUrl}`;
-          stream.url = config.fallbackUrl || entries[0].url;
-        } else {
-          stream.reason = `No working stream found (playlist: ${config.m3u})`;
-        }
-      }
-      // Use playlist title as name if no name provided
-      if (!stream.name && stream.playlistTitle) {
-        stream.name = stream.playlistTitle;
-      }
-    }
-    
-    // Final fallback for name
-    if (!stream.name) {
-      stream.name = config.m3u || config.url || 'Unknown Stream';
-    }
-    
-    results.push(stream);
+    await probeAndAddStream(config);
   }
-  
-  liveStreams = results;
   liveStreamsInitialized = true;
 }
 
