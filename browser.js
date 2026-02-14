@@ -79,6 +79,53 @@ function toggleMixInfo(btn) {
   }
 }
 
+async function displayFavourites() {
+  const mixList = document.getElementById('mixList');
+  const favouriteIds = [...mixFlags._favourites];
+  
+  if (favouriteIds.length === 0) {
+    mixList.innerHTML = '<div style="color: #888; padding: 20px;">No favourites yet. Play a mix and click the Fav button to add it here.</div>';
+    return;
+  }
+  
+  // Load search index to get mix metadata
+  if (!searchIndex.data) {
+    mixList.innerHTML = '<div style="color: #888; padding: 20px;">Loading...</div>';
+    await searchIndex.load();
+  }
+  
+  // Build mixes from favourited IDs using search index
+  const mixes = [];
+  for (const mixId of favouriteIds) {
+    // mixId is like "trip/mix-name" or "haze/mix-name"
+    const match = searchIndex.data.find(m => `${m.dj}/${m.file}` === mixId);
+    if (match) {
+      mixes.push({
+        name: match.name,
+        file: match.file,
+        audioFile: match.audioFile,
+        duration: match.duration,
+        artist: match.artist,
+        genre: match.genre,
+        comment: match.comment,
+        peaksFile: match.peaksFile,
+        coverFile: match.coverFile,
+        downloads: match.downloads,
+        djPath: match.dj,
+        djLabel: match.dj
+      });
+    }
+  }
+  
+  if (mixes.length === 0) {
+    mixList.innerHTML = '<div style="color: #888; padding: 20px;">No favourites found in search index.</div>';
+    return;
+  }
+  
+  // Use the DJ-badged display (same as search results)
+  displayMixListWithDJ(mixes);
+}
+
 // Search index cache
 const searchIndex = {
   data: null,

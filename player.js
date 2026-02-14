@@ -478,7 +478,7 @@ function refreshBrowserList() {
     displayMixList(filterMixes(state.currentMixes, state.currentFilter, state.currentGroups));
   } else if (mode === 'search') {
     const query = document.getElementById('searchInput')?.value;
-    if (query) performSearch(query);
+    if (query) displaySearchResults(searchIndex.search(query), query);
   } else if (mode === 'favourites') {
     displayFavourites();
   }
