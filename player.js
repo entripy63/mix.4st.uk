@@ -1216,11 +1216,11 @@ function displayLiveStreams() {
         <span>+ Add Stream</span>
       </div>
       <div class="add-stream-fields" id="addStreamFields" style="display: none;">
-        <input type="text" id="newStreamName" placeholder="Stream name (optional)" />
-        <input type="text" id="newStreamM3U" placeholder="Playlist URL (M3U or PLS)" />
-        <input type="text" id="newStreamGenre" placeholder="Genre (optional)" />
-        <button onclick="handleAddStream()">Add</button>
-      </div>
+         <input type="text" id="newStreamM3U" placeholder="Playlist URL (M3U or PLS)" />
+         <input type="text" id="newStreamName" placeholder="Stream name (optional)" />
+         <input type="text" id="newStreamGenre" placeholder="Genre (optional)" />
+         <button onclick="handleAddStream()">Add</button>
+       </div>
     </div>
   `;
   
