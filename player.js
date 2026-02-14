@@ -966,14 +966,11 @@ const searchIndex = {
 // HTTPS streams connect directly
 const STREAM_PROXY = 'https://stream-proxy.round-bar-e93e.workers.dev';
 
-// Built-in stream configuration - supports direct URLs and M3U files
-// shoutcast: true means append '/;' to URLs for Shoutcast compatibility
-const builtInStreams = [
-  { name: 'Sleepbot Environmental Broadcast', url: `${STREAM_PROXY}?url=${encodeURIComponent('http://primarystream.sleepbot.com:8218/seb')}`, genre: 'Ambient' },
-  { name: 'Jungletrain.net', m3u: 'https://jungletrain.net/static/256kbps.m3u', fallbackUrl: 'http://stream5.jungletrain.net:8000/;', genre: 'Jungle/Drum & Bass' },
-  { name: 'SomaFM Drone Zone', url: 'https://ice1.somafm.com/dronezone-128-mp3', genre: 'Ambient/Space' },
-  { name: 'SomaFM Groove Salad', url: 'https://ice1.somafm.com/groovesalad-128-mp3', genre: 'Ambient/Downtempo' },
-  { name: 'SomaFM DEF CON Radio', url: 'https://ice1.somafm.com/defcon-128-mp3', genre: 'Electronic/Techno' }
+// Built-in stream definitions - converted to user streams on first use
+// Using M3U and PLS sources instead of direct MP3 URLs
+const BUILTIN_STREAM_DEFS = [
+  { name: 'Sleepbot Environmental Broadcast', m3u: 'http://sleepbot.com/ambience/cgi/listen.m3u', genre: 'Ambient' },
+  { name: 'Jungletrain.net', m3u: 'https://jungletrain.net/static/256kbps.m3u', genre: 'Jungle/Drum & Bass' }
 ];
 
 // User-added streams stored in localStorage
@@ -997,18 +994,28 @@ function addUserStream(name, m3u, genre) {
 }
 
 function removeUserStream(index) {
-  const streams = getUserStreams();
-  // Index is relative to user streams (after built-in streams)
-  streams.splice(index, 1);
-  saveUserStreams(streams);
-  // Reset initialization to re-probe streams
-  liveStreamsInitialized = false;
-  liveStreams = [];
+   const streams = getUserStreams();
+   streams.splice(index, 1);
+   saveUserStreams(streams);
+   // Reset initialization to re-probe streams
+   liveStreamsInitialized = false;
+   liveStreams = [];
 }
 
-// Combined stream config (built-in + user)
+// Initialize built-in streams as user streams on first site load
+function initializeBuiltinStreams() {
+  const initialized = storage.getBool('builtinStreamsInitialized', false);
+  if (!initialized) {
+    for (const stream of BUILTIN_STREAM_DEFS) {
+      addUserStream(stream.name, stream.m3u, stream.genre);
+    }
+    storage.set('builtinStreamsInitialized', true);
+  }
+}
+
+// Combined stream config (all from user streams after initialization)
 function getLiveStreamConfig() {
-  return [...builtInStreams, ...getUserStreams()];
+  return getUserStreams();
 }
 
 // Resolved streams with availability status (populated by initLiveStreams)
@@ -1675,6 +1682,9 @@ function probeAudioPlayback(file) {
 // Restore last playing mix on page load
 // Initialize favourites button state
 updateFavouritesButton();
+
+// Initialize built-in streams on first site load
+initializeBuiltinStreams();
 
 (async function restorePlayer() {
   try {
