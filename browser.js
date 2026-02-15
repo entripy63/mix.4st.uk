@@ -61,7 +61,7 @@ function displayMixList(mixes) {
        const hiddenIcon = isHidden ? '<span class="hidden-icon" title="Hidden">🚫</span>' : '';
        const genre = mix.genre ? ` · ${escapeHtml(mix.genre)}` : '';
        const hasExtra = mix.date || mix.comment;
-       const extraBtn = hasExtra ? `<button class="icon-btn info-btn" onclick="event.stopPropagation(); toggleMixInfo(this)" title="More info">ⓘ</button>` : '';
+       const extraBtn = hasExtra ? `<button class="icon-btn info-btn" onclick="event.stopPropagation(); toggleExtraInfo(this)" title="More info">ⓘ</button>` : '';
        const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.date ? `<div><strong>Date:</strong> ${escapeHtml(mix.date)}</div>` : ''}${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
        return `<div class="mix-item">
        <button class="icon-btn" onclick="addToQueue('${mixId}')" title="Add to queue">+</button>
@@ -72,11 +72,11 @@ function displayMixList(mixes) {
      }).join('');
 }
 
-function toggleMixInfo(btn) {
-  const info = btn.parentElement.querySelector('.mix-extra-info');
-  if (info) {
-    info.style.display = info.style.display === 'none' ? 'block' : 'none';
-  }
+function toggleExtraInfo(btn) {
+   const info = btn.parentElement.querySelector('.mix-extra-info');
+   if (info) {
+     info.style.display = info.style.display === 'none' ? 'block' : 'none';
+   }
 }
 
 async function displayFavourites() {
@@ -658,7 +658,7 @@ function displayMixListWithDJ(mixes) {
       const genre = mix.genre ? ` · ${escapeHtml(mix.genre)}` : '';
       const duration = mix.duration ? `(${mix.duration}${genre})` : '';
       const hasExtra = mix.comment;
-      const extraBtn = hasExtra ? `<button class="icon-btn info-btn" onclick="event.stopPropagation(); toggleSearchMixInfo(this)" title="More info">ⓘ</button>` : '';
+      const extraBtn = hasExtra ? `<button class="icon-btn info-btn" onclick="event.stopPropagation(); toggleExtraInfo(this)" title="More info">ⓘ</button>` : '';
       const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
       
       return `<div class="mix-item">
@@ -668,13 +668,6 @@ function displayMixListWithDJ(mixes) {
         ${extraBtn}${favIcon}${hiddenIcon}${extraInfo}
       </div>`;
    }).join('');
-}
-
-function toggleSearchMixInfo(btn) {
-  const info = btn.parentElement.querySelector('.mix-extra-info');
-  if (info) {
-    info.style.display = info.style.display === 'none' ? 'block' : 'none';
-  }
 }
 
 function addSearchResultToQueue(index) {

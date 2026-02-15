@@ -1,8 +1,12 @@
 // core.js - Shared utilities, global state, and DOM references
 
 function escapeHtml(str) {
-  if (!str) return '';
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+   if (!str) return '';
+   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function getMixId(mix) {
+   return mix.htmlPath || `${mix.djPath}/${mix.file}`;
 }
 
 const storage = {

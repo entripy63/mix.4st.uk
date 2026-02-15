@@ -346,10 +346,6 @@ function play(url) {
   aud.play();
 }
 
-function getMixId(mix) {
-  return mix.htmlPath || `${mix.djPath}/${mix.file}`;
-}
-
 function getDJName(htmlPath) {
   if (!htmlPath) return '';
   const dir = htmlPath.split('/')[0];
