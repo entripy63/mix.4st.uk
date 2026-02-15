@@ -51,8 +51,9 @@ function updateWaveformCursor() {
   }
 }
 
-// Update waveform cursor during playback
-setInterval(updateWaveformCursor, 100);
+// Update waveform cursor on audio events
+aud.addEventListener('timeupdate', updateWaveformCursor);
+aud.addEventListener('seeked', updateWaveformCursor);
 
 // Click on waveform to seek
 waveformCanvas.addEventListener('click', function(e) {

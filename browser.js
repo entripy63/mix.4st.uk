@@ -1,12 +1,28 @@
 // browser.js - Browser, Search, Live Streams, and Page Restoration
 
-// Browser UI functions
-async function loadDJ(djPath) {
+// State setters - keep state and UI in sync
+async function setCurrentDJ(djPath) {
   state.currentDJ = djPath;
   state.currentMixes = await fetchDJMixes(djPath);
+  state.currentFilter = '';
+  state.currentGroups = detectGroups(state.currentMixes);
   updateDJButtons();
   displayGroupFilters(state.currentMixes);
   displayMixList(state.currentMixes);
+}
+
+function setShowHiddenMixes(show) {
+  state.showHiddenMixes = show;
+  if (state.currentDJ) {
+    displayMixList(state.currentMixes);
+  } else if (state.displayedMixes) {
+    displayMixList(state.displayedMixes);
+  }
+}
+
+// Browser UI functions
+async function loadDJ(djPath) {
+  await setCurrentDJ(djPath);
 }
 
 function updateDJButtons() {
@@ -73,19 +89,21 @@ function displayMixList(mixes) {
 }
 
 function toggleExtraInfo(btn) {
-   const info = btn.parentElement.querySelector('.mix-extra-info');
+   const info = btn.closest('.mix-item').querySelector('.mix-extra-info');
    if (info) {
      info.style.display = info.style.display === 'none' ? 'block' : 'none';
    }
 }
 
-// Delegated event handler for mix list
+// Delegated event handler for mix list (handles all modes)
 document.getElementById('mixList').addEventListener('click', (e) => {
    const actionBtn = e.target.closest('[data-action]');
    if (!actionBtn) return;
    
    const action = actionBtn.dataset.action;
    const mixItem = actionBtn.closest('.mix-item');
+   const searchIndex = mixItem?.dataset.searchIndex;
+   
    const mixId = mixItem?.dataset.mixId;
    
    switch (action) {
@@ -95,39 +113,26 @@ document.getElementById('mixList').addEventListener('click', (e) => {
       case 'play-now':
          if (mixId) playNow(mixId);
          break;
-      case 'toggle-info':
-         toggleExtraInfo(actionBtn);
-         break;
-      case 'add-all-queue':
-         addAllToQueue();
-         break;
-   }
-});
-
-// Delegated event handler for search/favourites mix list
-document.getElementById('mixList').addEventListener('click', (e) => {
-   const actionBtn = e.target.closest('[data-action]');
-   if (!actionBtn) return;
-   
-   const action = actionBtn.dataset.action;
-   const mixItem = actionBtn.closest('.mix-item');
-   const searchIndex = mixItem?.dataset.searchIndex;
-   
-   switch (action) {
       case 'search-queue-add':
          if (searchIndex !== undefined) addSearchResultToQueue(parseInt(searchIndex));
          break;
       case 'search-play-now':
          if (searchIndex !== undefined) playSearchResult(parseInt(searchIndex));
          break;
+      case 'search-play-stream':
+         if (searchIndex !== undefined) playSearchStream(parseInt(searchIndex));
+         break;
       case 'toggle-info':
          toggleExtraInfo(actionBtn);
+         break;
+      case 'add-all-queue':
+         addAllToQueue();
          break;
       case 'add-all-search-results':
          addAllSearchResultsToQueue();
          break;
    }
-});
+   });
 
 async function displayFavourites() {
   const mixList = document.getElementById('mixList');
@@ -144,11 +149,11 @@ async function displayFavourites() {
     await searchIndex.load();
   }
   
-  // Build mixes from favourited IDs using search index
+  // Build mixes from favourited IDs using search index Map (O(1) lookup)
   const mixes = [];
   for (const mixId of favouriteIds) {
     // mixId is like "trip/mix-name" or "haze/mix-name"
-    const match = searchIndex.data.find(m => `${m.dj}/${m.file}` === mixId);
+    const match = searchIndex.byId.get(mixId);
     if (match) {
       mixes.push({
         name: match.name,
@@ -178,37 +183,52 @@ async function displayFavourites() {
 
 // Search index cache
 const searchIndex = {
-  data: null,
-  loading: false,
-  
-  async load() {
-    if (this.data) return this.data;
-    if (this.loading) {
-      // Wait for existing load to complete
-      while (this.loading) await new Promise(r => setTimeout(r, 50));
-      return this.data;
-    }
-    
-    this.loading = true;
-    try {
-      const response = await fetch('search-index.json');
-      this.data = await response.json();
-    } catch (e) {
-      console.error('Failed to load search index:', e);
-      this.data = [];
-    }
-    this.loading = false;
-    return this.data;
-  },
+   data: null,
+   byId: null,
+   loading: false,
+   
+   async load() {
+     if (this.data) return this.data;
+     if (this.loading) {
+       // Wait for existing load to complete
+       while (this.loading) await new Promise(r => setTimeout(r, 50));
+       return this.data;
+     }
+     
+     this.loading = true;
+     try {
+       const response = await fetch('search-index.json');
+       this.data = await response.json();
+       // Build Map for O(1) lookups: dj/file -> mixData
+       this.byId = new Map(this.data.map(m => [`${m.dj}/${m.file}`, m]));
+     } catch (e) {
+       console.error('Failed to load search index:', e);
+       this.data = [];
+       this.byId = new Map();
+     }
+     this.loading = false;
+     return this.data;
+   },
   
   search(query) {
     if (!this.data || !query.trim()) return [];
     const terms = query.toLowerCase().split(/\s+/).filter(t => t.length > 0);
     
-    return this.data.filter(mix => {
+    // Search mixes
+    const mixResults = this.data.filter(mix => {
       const searchable = `${mix.name} ${mix.artist} ${mix.genre} ${mix.comment} ${mix.dj}`.toLowerCase();
       return terms.every(term => searchable.includes(term));
-    });
+    }).map(m => ({ ...m, type: 'mix' }));
+    
+    // Search live streams
+    const streamResults = (liveStreams || []).filter(stream => {
+      if (!stream.available) return false;
+      const searchable = `${stream.name} ${stream.genre || ''}`.toLowerCase();
+      return terms.every(term => searchable.includes(term));
+    }).map(s => ({ ...s, type: 'stream' }));
+    
+    // Combine results (mixes first, then streams)
+    return [...mixResults, ...streamResults];
   }
 };
 
@@ -439,13 +459,16 @@ async function initLiveStreams() {
 }
 
 function displayLiveStreams() {
-  const mixList = document.getElementById('mixList');
-  
-  if (!liveStreamsInitialized) {
-    mixList.innerHTML = '<div style="padding: 20px; color: #888;">Checking stream availability...</div>';
-    initLiveStreams().then(() => displayLiveStreams());
-    return;
-  }
+   // Don't update DOM if we're no longer on Live mode
+   if (browserModes.current !== 'live') return;
+   
+   const mixList = document.getElementById('mixList');
+   
+   if (!liveStreamsInitialized) {
+     mixList.innerHTML = '<div style="padding: 20px; color: #888;">Checking stream availability...</div>';
+     initLiveStreams().then(() => displayLiveStreams());
+     return;
+   }
   
   let html = '';
   
@@ -653,41 +676,65 @@ document.getElementById('searchInput').addEventListener('input', function() {
 });
 
 function displaySearchResults(results, query) {
-  const mixList = document.getElementById('mixList');
-  const searchInfo = document.getElementById('searchInfo');
-  
-  if (!query.trim()) {
-    mixList.innerHTML = '';
-    searchInfo.textContent = `${searchIndex.data?.length || 0} mixes available`;
-    return;
-  }
-  
-  searchInfo.textContent = `${results.length} result${results.length !== 1 ? 's' : ''} for "${query}"`;
-  
-  if (results.length === 0) {
-    mixList.innerHTML = '<div style="color: #888; padding: 20px;">No mixes found</div>';
-    return;
-  }
-  
-  const mixes = results.map(r => ({
-    name: r.name,
-    file: r.file,
-    audioFile: r.audioFile,
-    duration: r.duration,
-    artist: r.artist,
-    genre: r.genre,
-    comment: r.comment,
-    peaksFile: r.peaksFile,
-    coverFile: r.coverFile,
-    downloads: r.downloads,
-    djPath: r.dj,
-    djLabel: r.dj
-  }));
-  
-  displayMixListWithDJ(mixes);
-}
+   const mixList = document.getElementById('mixList');
+   const searchInfo = document.getElementById('searchInfo');
+   
+   if (!query.trim()) {
+     mixList.innerHTML = '';
+     searchInfo.textContent = `${searchIndex.data?.length || 0} mixes available`;
+     return;
+   }
+   
+   searchInfo.textContent = `${results.length} result${results.length !== 1 ? 's' : ''} for "${query}"`;
+   
+   if (results.length === 0) {
+     mixList.innerHTML = '<div style="color: #888; padding: 20px;">No results found</div>';
+     return;
+   }
+   
+   displayMixedSearchResults(results);
+   }
 
-function displayMixListWithDJ(mixes) {
+   function displayMixedSearchResults(results) {
+   const mixList = document.getElementById('mixList');
+   window.currentSearchResults = results;
+   
+   const html = results.map((item, i) => {
+     if (item.type === 'stream') {
+       // Live stream result with 📡 badge
+       const genre = item.genre ? ` · ${escapeHtml(item.genre)}` : '';
+       return `<div class="mix-item" data-search-index="${i}">
+         <button class="icon-btn" style="visibility: hidden; cursor: default;" disabled>+</button>
+         <button class="icon-btn" data-action="search-play-stream" title="Play stream">▶</button>
+         <span class="mix-name"><span style="font-size: 0.85em;">📡</span> ${escapeHtml(item.name)}${genre}</span>
+       </div>`;
+     } else {
+       // Mix result with ♪ badge
+       const mixId = `${item.dj}/${item.file}`;
+       const isFav = mixFlags.isFavourite(mixId);
+       const isHidden = mixFlags.isHidden(mixId);
+       const favIcon = isFav ? '<span class="fav-icon" title="Favourite">❤️</span>' : '';
+       const hiddenIcon = isHidden ? '<span class="hidden-icon" title="Hidden">🚫</span>' : '';
+       const genre = item.genre ? ` · ${escapeHtml(item.genre)}` : '';
+       const duration = item.duration ? `(${item.duration}${genre})` : '';
+       const hasExtra = item.comment;
+       const extraBtn = hasExtra ? `<button class="icon-btn info-btn" data-action="toggle-info" title="More info">ⓘ</button>` : '';
+       const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none"><div><strong>Notes:</strong> ${escapeHtml(item.comment)}</div></div>` : '';
+       const djLabel = item.dj ? ` - ${escapeHtml(item.dj)}` : '';
+       
+       return `<div class="mix-item" data-search-index="${i}">
+         <button class="icon-btn" data-action="search-queue-add" title="Add to queue">+</button>
+         <button class="icon-btn" data-action="search-play-now" title="Play now">▶</button>
+         <span class="mix-name">♪ ${escapeHtml(item.name)}${djLabel} <span class="mix-duration">${duration}</span></span>
+         ${extraBtn}${favIcon}${hiddenIcon}${extraInfo}
+       </div>`;
+     }
+   }).join('');
+   
+   mixList.innerHTML = html;
+   }
+   
+   function displayMixListWithDJ(mixes) {
      const visibleMixes = mixes.filter(mix => {
        const isHidden = mixFlags.isHidden(getMixId(mix));
        return !isHidden || state.showHiddenMixes;
@@ -752,6 +799,28 @@ async function playSearchResult(index) {
    }
 }
 
+async function playSearchStream(index) {
+   const item = window.currentSearchResults?.[index];
+   if (item && item.type === 'stream') {
+     state.isLive = true;
+     state.liveStreamUrl = item.url;
+     state.liveDisplayText = item.name;
+     storage.set('liveStreamUrl', item.url);
+     storage.set('liveDisplayText', item.name);
+     
+     document.getElementById('nowPlaying').innerHTML = `<h1>${escapeHtml(item.name)}</h1>`;
+     document.getElementById('coverArt').innerHTML = '';
+     document.getElementById('trackList').innerHTML = '';
+     document.title = 'Live - Player';
+     loadPeaks(null);
+     updateTimeDisplay();
+     
+     aud.src = item.url;
+     aud.play();
+     updatePlayPauseBtn();
+   }
+}
+
 // Playlist guide modal
 function showPlaylistGuide() {
   document.getElementById('playlistGuideModal').style.display = 'flex';
@@ -812,14 +881,7 @@ function updateSetting(key, value) {
 }
 
 function updateShowHiddenMixes(checked) {
-   state.showHiddenMixes = checked;
-   if (state.currentDJ) {
-     loadDJ(state.currentDJ);
-   } else {
-     if (state.displayedMixes) {
-       displayMixList(state.currentMixes);
-     }
-   }
+   setShowHiddenMixes(checked);
 }
 
 document.getElementById('settingsModal')?.addEventListener('click', function(e) {
@@ -876,6 +938,9 @@ updateFavouritesButton();
 
 // Initialize built-in streams on first site load
 initializeBuiltinStreams();
+
+// Initialize live streams in background on page load
+initLiveStreams().catch(e => console.error('Failed to initialize live streams:', e));
 
 // Page restoration
 (async function restorePlayer() {

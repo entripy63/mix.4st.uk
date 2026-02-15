@@ -543,10 +543,11 @@ kbd {
 }
 
 .mix-item {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+   position: relative;
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   flex-wrap: wrap;
 }
 
 .mix-item .mix-name {
@@ -643,12 +644,15 @@ kbd {
 }
 
 .mix-extra-info {
-  margin-top: 8px;
-  padding: 8px 10px;
-  background: #1a1a2e;
-  border-radius: 4px;
-  font-size: 13px;
-  line-height: 1.5;
+   flex-basis: 100%;
+   width: 100%;
+   margin-top: 8px;
+   margin-left: 0;
+   padding: 8px 10px;
+   background: #1a1a2e;
+   border-radius: 4px;
+   font-size: 13px;
+   line-height: 1.5;
 }
 
 .mix-extra-info div {
@@ -660,12 +664,15 @@ kbd {
 }
 
 .info-btn {
-  margin-left: 6px;
-  opacity: 0.6;
+   margin-left: auto;
+   margin-right: 8px;
+   opacity: 0.7;
+   cursor: pointer;
+   pointer-events: auto;
 }
 
 .info-btn:hover {
-  opacity: 1;
+   opacity: 1;
 }
 
 .queue-item {

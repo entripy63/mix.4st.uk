@@ -62,6 +62,13 @@ const state = {
    liveDisplayText: null    // Display text for current live stream
 };
 
+// State setters - ensure state and UI stay in sync
+function setQueue(newQueue) {
+  state.queue = newQueue;
+  saveQueue();
+  displayQueue();
+}
+
 // Mix flags (favourites/hidden) - stored as arrays, used as Sets for O(1) lookup
 const mixFlags = {
   _favourites: new Set(storage.getJSON('mixFavourites', [])),
