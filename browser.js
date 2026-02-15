@@ -254,7 +254,11 @@ async function probeAndAddStream(config) {
        }
      }
      if (!stream.name && stream.playlistTitle) {
-       stream.name = stream.playlistTitle;
+       const parsed = parseSomaFMStream(stream.playlistTitle, stream.genre);
+       stream.name = parsed.name;
+       if (!stream.genre) {
+         stream.genre = parsed.genre;
+       }
      }
    }
    
@@ -428,8 +432,10 @@ function displayLiveStreams() {
     html += `
       <div class="mix-item${unavailableClass}">
         <button class="icon-btn" onclick="playLiveStream(${index})"${disabled} title="${escapeHtml(tooltip)}">▶</button>
-        <span class="mix-name">${escapeHtml(stream.name)}</span>
-        <span class="mix-duration">${stream.genre && stream.genre !== 'Unknown' ? escapeHtml(stream.genre) : ''}</span>
+        <div class="stream-info">
+          <span class="mix-name">${escapeHtml(stream.name)}</span>
+          ${stream.genre && stream.genre !== 'Unknown' ? `<span class="stream-genre">${escapeHtml(stream.genre)}</span>` : ''}
+        </div>
         ${deleteBtn}
       </div>
     `;
@@ -439,27 +445,57 @@ function displayLiveStreams() {
 }
 
 function toggleAddStreamForm() {
-  const fields = document.getElementById('addStreamFields');
-  fields.style.display = fields.style.display === 'none' ? 'block' : 'none';
+   const fields = document.getElementById('addStreamFields');
+   fields.style.display = fields.style.display === 'none' ? 'block' : 'none';
+}
+
+// Parse SomaFM stream names to extract shorter name and genre
+function parseSomaFMStream(name, genre) {
+   if (!name || !name.startsWith('SomaFM:')) {
+      return { name, genre };
+   }
+   
+   // Find the second colon in the name
+   const firstColonIdx = name.indexOf(':');
+   const secondColonIdx = name.indexOf(':', firstColonIdx + 1);
+   
+   if (secondColonIdx === -1) {
+      // No second colon, return as-is
+      return { name, genre };
+   }
+   
+   // Extract name up to second colon, and genre from after it
+   const parsedName = name.substring(0, secondColonIdx).trim();
+   const parsedGenre = name.substring(secondColonIdx + 1).trim();
+   
+   // Use parsed genre if provided genre is empty or 'Unknown'
+   const finalGenre = (!genre || genre === 'Unknown') ? parsedGenre : genre;
+   
+   return { name: parsedName, genre: finalGenre };
 }
 
 async function handleAddStream() {
-   const name = document.getElementById('newStreamName').value.trim();
-   const m3u = document.getElementById('newStreamM3U').value.trim();
-   const genre = document.getElementById('newStreamGenre').value.trim();
-   
-   if (!m3u) {
-     alert('Playlist URL is required');
-     return;
-   }
-   
-   if (!m3u.startsWith('http://') && !m3u.startsWith('https://')) {
-     alert('Playlist URL must start with http:// or https://');
-     return;
-   }
-   
-   await addUserStream(name, m3u, genre);
-   displayLiveStreams();
+    let name = document.getElementById('newStreamName').value.trim();
+    const m3u = document.getElementById('newStreamM3U').value.trim();
+    let genre = document.getElementById('newStreamGenre').value.trim();
+    
+    if (!m3u) {
+      alert('Playlist URL is required');
+      return;
+    }
+    
+    if (!m3u.startsWith('http://') && !m3u.startsWith('https://')) {
+      alert('Playlist URL must start with http:// or https://');
+      return;
+    }
+    
+    // Parse SomaFM streams to extract shorter name and genre
+    const parsed = parseSomaFMStream(name, genre);
+    name = parsed.name;
+    genre = parsed.genre;
+    
+    await addUserStream(name, m3u, genre);
+    displayLiveStreams();
 }
 
 function handleRemoveStream(userIndex) {
