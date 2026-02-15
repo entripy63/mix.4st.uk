@@ -570,6 +570,7 @@ const browserModes = {
   switch(mode) {
     if (mode === this.current) return;
     this.current = mode;
+    storage.set('browserMode', mode);
     
     document.querySelectorAll('.mode-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.mode === mode);
@@ -934,7 +935,6 @@ initLiveStreams().catch(e => console.error('Failed to initialize live streams:',
     const savedLiveText = storage.get('liveDisplayText');
     
     if (savedLiveUrl && savedLiveText) {
-      browserModes.switch('live');
       await initLiveStreams();
       const stream = liveStreams.find(s => s.url === savedLiveUrl);
       if (stream && stream.available) {
@@ -952,7 +952,6 @@ initLiveStreams().catch(e => console.error('Failed to initialize live streams:',
         storage.remove('liveStreamUrl');
         storage.remove('liveDisplayText');
       }
-      return;
     }
     
     const savedPath = storage.get('currentMixPath');
@@ -985,4 +984,8 @@ initLiveStreams().catch(e => console.error('Failed to initialize live streams:',
   } catch (e) {
     console.error('Error restoring player:', e);
   }
-})();
+  
+  // Restore browser mode regardless of player contents
+  const savedBrowserMode = storage.get('browserMode', 'dj');
+  browserModes.switch(savedBrowserMode);
+  })();
