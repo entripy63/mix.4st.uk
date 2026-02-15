@@ -400,15 +400,10 @@ function displayLiveStreams() {
   
   html += `
     <div class="add-stream-form">
-      <div class="add-stream-header" onclick="toggleAddStreamForm()">
-        <span>+ Add Stream</span>
-      </div>
-      <div class="add-stream-fields" id="addStreamFields" style="display: none;">
+      <div class="add-stream-fields">
          <input type="text" id="newStreamM3U" placeholder="Playlist URL (M3U or PLS)" />
-         <input type="text" id="newStreamName" placeholder="Stream name (optional)" />
-         <input type="text" id="newStreamGenre" placeholder="Genre (optional)" />
          <button onclick="handleAddStream()">Add</button>
-       </div>
+      </div>
     </div>
   `;
   
@@ -444,11 +439,6 @@ function displayLiveStreams() {
   mixList.innerHTML = html;
 }
 
-function toggleAddStreamForm() {
-   const fields = document.getElementById('addStreamFields');
-   fields.style.display = fields.style.display === 'none' ? 'block' : 'none';
-}
-
 // Parse SomaFM stream names to extract shorter name and genre
 function parseSomaFMStream(name, genre) {
    if (!name || !name.startsWith('SomaFM:')) {
@@ -475,9 +465,7 @@ function parseSomaFMStream(name, genre) {
 }
 
 async function handleAddStream() {
-    let name = document.getElementById('newStreamName').value.trim();
     const m3u = document.getElementById('newStreamM3U').value.trim();
-    let genre = document.getElementById('newStreamGenre').value.trim();
     
     if (!m3u) {
       alert('Playlist URL is required');
@@ -489,12 +477,9 @@ async function handleAddStream() {
       return;
     }
     
-    // Parse SomaFM streams to extract shorter name and genre
-    const parsed = parseSomaFMStream(name, genre);
-    name = parsed.name;
-    genre = parsed.genre;
-    
-    await addUserStream(name, m3u, genre);
+    // Add stream with no name, let playlist title be parsed from m3u
+    await addUserStream(null, m3u, null);
+    document.getElementById('newStreamM3U').value = '';
     displayLiveStreams();
 }
 
