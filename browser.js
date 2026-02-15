@@ -404,6 +404,7 @@ function displayLiveStreams() {
       <div class="add-stream-fields">
          <input type="text" id="newStreamM3U" placeholder="Playlist URL (M3U or PLS)" />
          <button onclick="handleAddStream()">Add</button>
+         <button onclick="reloadLiveStreams()" class="reload-btn" title="Reload all streams">⟳</button>
       </div>
     </div>
   `;
@@ -485,10 +486,16 @@ async function handleAddStream() {
 }
 
 function handleRemoveStream(userIndex) {
-  if (confirm('Remove this stream?')) {
-    removeUserStream(userIndex);
-    displayLiveStreams();
-  }
+   if (confirm('Remove this stream?')) {
+     removeUserStream(userIndex);
+     displayLiveStreams();
+   }
+}
+
+async function reloadLiveStreams() {
+   liveStreamsInitialized = false;
+   liveStreams = [];
+   displayLiveStreams();
 }
 
 function playLiveStream(index) {

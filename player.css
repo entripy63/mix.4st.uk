@@ -528,6 +528,25 @@ kbd {
    background: #00b8d9;
 }
 
+.add-stream-fields .reload-btn {
+   padding: 8px 10px;
+   background: #3d3d5c;
+   color: #888;
+   font-size: 28px !important;
+   font-weight: bold;
+   line-height: 1;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   min-width: 44px;
+   height: 44px;
+}
+
+.add-stream-fields .reload-btn:hover {
+   background: #4d4d7c;
+   color: #e0e0e0;
+}
+
 .delete-stream-btn {
   margin-left: auto;
   color: #888;
