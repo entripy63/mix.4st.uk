@@ -378,13 +378,13 @@ async function fetchPlaylist(playlistUrl) {
 }
 
 async function initLiveStreams() {
-  if (liveStreamsInitialized) return;
-  
-  liveStreams = [];
-  for (const config of getLiveStreamConfig()) {
-    await probeAndAddStream(config);
-  }
-  liveStreamsInitialized = true;
+   if (liveStreamsInitialized) return;
+   
+   liveStreamsInitialized = true;
+   liveStreams = [];
+   for (const config of getLiveStreamConfig()) {
+     await probeAndAddStream(config);
+   }
 }
 
 function displayLiveStreams() {
