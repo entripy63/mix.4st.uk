@@ -233,6 +233,7 @@ const searchIndex = {
 };
 
 // Live streams configuration
+// We can't always use the proxy because it hates jungletrain.net
 const STREAM_PROXY = 'https://stream-proxy.round-bar-e93e.workers.dev';
 
 const BUILTIN_STREAM_DEFS = [
@@ -935,23 +936,12 @@ initLiveStreams().catch(e => console.error('Failed to initialize live streams:',
     const savedLiveText = storage.get('liveDisplayText');
     
     if (savedLiveUrl && savedLiveText) {
+      playLive(savedLiveUrl, savedLiveText);
       await initLiveStreams();
-      const stream = liveStreams.find(s => s.url === savedLiveUrl);
-      if (stream && stream.available) {
-        state.isLive = true;
-        state.liveStreamUrl = savedLiveUrl;
-        state.liveDisplayText = savedLiveText;
-        document.getElementById('nowPlaying').innerHTML = `<h1>${escapeHtml(savedLiveText)}</h1>`;
-        document.getElementById('coverArt').innerHTML = '';
-        document.getElementById('trackList').innerHTML = '';
-        document.title = 'Live - Player';
-        loadPeaks(null);
-        updateTimeDisplay();
-        updatePlayPauseBtn();
-      } else {
-        storage.remove('liveStreamUrl');
-        storage.remove('liveDisplayText');
-      }
+      // Restore browser mode and return - don't restore mix
+      const savedBrowserMode = storage.get('browserMode', 'live');
+      browserModes.switch(savedBrowserMode);
+      return;
     }
     
     const savedPath = storage.get('currentMixPath');
@@ -985,7 +975,7 @@ initLiveStreams().catch(e => console.error('Failed to initialize live streams:',
     console.error('Error restoring player:', e);
   }
   
-  // Restore browser mode regardless of player contents
+  // Restore browser mode for non-live restoration
   const savedBrowserMode = storage.get('browserMode', 'dj');
   browserModes.switch(savedBrowserMode);
   })();

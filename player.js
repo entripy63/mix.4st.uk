@@ -181,7 +181,17 @@ function resumeLive() {
   if (state.liveStreamUrl) {
     aud.src = state.liveStreamUrl;
     aud.load();
-    aud.play();
+    // Wait for canplay before playing
+    const handleCanPlay = () => {
+      aud.play();
+      aud.removeEventListener('canplay', handleCanPlay);
+    };
+    aud.addEventListener('canplay', handleCanPlay, { once: true });
+    // Fallback in case canplay never fires
+    setTimeout(() => {
+      if (!aud.paused) return;
+      aud.play().catch(() => {});
+    }, 100);
     updatePlayPauseBtn();
     updateTimeDisplay();
   }
@@ -194,9 +204,9 @@ function playLive(url, displayText) {
   state.liveDisplayText = displayText;
   storage.set('liveStreamUrl', url);
   storage.set('liveDisplayText', displayText);
+  storage.remove('currentMixPath');
   aud.src = url;
   aud.load();
-  aud.play();
   document.getElementById('nowPlaying').innerHTML = `<h1>${escapeHtml(displayText)}</h1>`;
   document.getElementById('coverArt').innerHTML = '';
   document.getElementById('trackList').innerHTML = '';
@@ -223,7 +233,7 @@ function stopLive() {
 // Play/Pause button click
 playPauseBtn.addEventListener('click', function() {
   if (state.isLive) {
-    if (aud.paused && !aud.src) {
+    if (aud.paused) {
       resumeLive();
     } else {
       pauseLive();
