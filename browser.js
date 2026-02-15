@@ -308,20 +308,8 @@ async function probeAndAddStream(config) {
        }
        if (stream.available) break;
      }
-     if (!stream.available && config.fallbackUrl) {
-       if (await probeStream(config.fallbackUrl)) {
-         stream.url = config.fallbackUrl;
-         stream.available = true;
-       }
-     }
      if (!stream.available) {
-       const testUrl = config.fallbackUrl || (entries.length > 0 ? entries[0].url : null);
-       if (testUrl && testUrl.startsWith('http://') && location.protocol === 'https:') {
-         stream.reason = `HTTP stream unavailable on HTTPS site: ${testUrl}`;
-         stream.url = config.fallbackUrl || entries[0].url;
-       } else {
-         stream.reason = `No working stream found (playlist: ${config.m3u})`;
-       }
+       stream.reason = `No working stream found (playlist: ${config.m3u})`;
      }
      if (!stream.name && stream.playlistTitle) {
        const parsed = parseSomaFMStream(stream.playlistTitle, stream.genre);
