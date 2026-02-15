@@ -523,6 +523,8 @@ const browserModes = {
     const groupFilters = document.getElementById('groupFilters');
     const mixList = document.getElementById('mixList');
     
+    document.getElementById('findPlaylistsBtn').style.display = 'none';
+    
     if (mode === 'dj') {
       djButtons.style.display = 'flex';
       djDropdown.style.display = 'none';
@@ -573,6 +575,7 @@ const browserModes = {
       djDropdown.style.display = 'none';
       searchBox.style.display = 'none';
       groupFilters.innerHTML = '';
+      document.getElementById('findPlaylistsBtn').style.display = 'flex';
       displayLiveStreams();
     }
   }
@@ -704,6 +707,15 @@ async function playSearchResult(index) {
      displayQueue();
      await playMix(mix);
    }
+}
+
+// Playlist guide modal
+function showPlaylistGuide() {
+  document.getElementById('playlistGuideModal').style.display = 'flex';
+}
+
+function hidePlaylistGuide() {
+  document.getElementById('playlistGuideModal').style.display = 'none';
 }
 
 // Keyboard shortcuts
