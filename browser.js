@@ -250,12 +250,12 @@ function saveUserStreams(streams) {
 
 async function addUserStream(name, m3u, genre) {
    const streams = getUserStreams();
-   const config = { name: name || null, m3u, genre, userAdded: true };
+   const config = { name: name || null, m3u, genre };
    streams.push(config);
    saveUserStreams(streams);
    
    if (liveStreamsInitialized) {
-     await probeAndAddStream(config);
+      await probeAndAddStream(config);
    }
 }
 
@@ -265,8 +265,7 @@ async function probeAndAddStream(config) {
      genre: config.genre,
      url: null,
      available: false,
-     reason: null,
-     userAdded: config.userAdded || false
+     reason: null
    };
    
    if (config.url) {
@@ -338,13 +337,13 @@ function removeUserStream(index) {
 }
 
 function initializeBuiltinStreams() {
-  const initialized = storage.getBool('builtinStreamsInitialized', false);
-  if (!initialized) {
-    for (const stream of BUILTIN_STREAM_DEFS) {
-      addUserStream(stream.name, stream.m3u, stream.genre);
-    }
-    storage.set('builtinStreamsInitialized', true);
-  }
+   const initialized = storage.getBool('builtinStreamsInitialized', false);
+   if (!initialized) {
+     for (const stream of BUILTIN_STREAM_DEFS) {
+       addUserStream(stream.name, stream.m3u, stream.genre);
+     }
+     storage.set('builtinStreamsInitialized', true);
+   }
 }
 
 function getLiveStreamConfig() {
@@ -482,10 +481,8 @@ function displayLiveStreams() {
     const unavailableClass = stream.available ? '' : ' unavailable';
     const tooltip = stream.available ? 'Play Now' : (stream.reason || 'Unavailable');
     const disabled = stream.available ? '' : ' disabled';
-    const deleteBtn = stream.userAdded 
-      ? `<button class="icon-btn delete-stream-btn" onclick="handleRemoveStream(${userStreamIndex})" title="Remove stream">✕</button>`
-      : '';
-    if (stream.userAdded) userStreamIndex++;
+    const deleteBtn = `<button class="icon-btn delete-stream-btn" onclick="handleRemoveStream(${userStreamIndex})" title="Remove stream">✕</button>`;
+    userStreamIndex++;
     
     html += `
       <div class="mix-item${unavailableClass}">
