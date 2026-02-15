@@ -384,6 +384,7 @@ async function initLiveStreams() {
    liveStreams = [];
    for (const config of getLiveStreamConfig()) {
      await probeAndAddStream(config);
+     displayLiveStreams();
    }
 }
 
