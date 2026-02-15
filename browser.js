@@ -215,7 +215,8 @@ async function probeAndAddStream(config) {
        const baseUrl = entry.url;
        const variants = [baseUrl];
        if (!baseUrl.endsWith('/;')) {
-         variants.push(baseUrl + '/;');
+         const urlWithoutTrailingSlash = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+         variants.push(urlWithoutTrailingSlash + '/;');
        }
        
        for (const url of variants) {
@@ -359,7 +360,9 @@ function parseM3U(text) {
 
 async function fetchPlaylist(playlistUrl) {
   try {
-    const resp = await fetch(playlistUrl);
+    // Use proxy to avoid CORS errors on M3U and PLS playlists
+    const url = `${STREAM_PROXY}?url=${encodeURIComponent(playlistUrl)}`;
+    const resp = await fetch(url);
     const text = await resp.text();
     if (text.trim().toLowerCase().startsWith('[playlist]')) {
       return parsePLS(text);
