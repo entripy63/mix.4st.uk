@@ -44,32 +44,32 @@ function applyFilter(group) {
 }
 
 function displayMixList(mixes) {
-   // Filter out hidden mixes (unless showing hidden mixes)
-   const visibleMixes = mixes.filter(mix => {
-     const isHidden = mixFlags.isHidden(getMixId(mix));
-     return !isHidden || state.showHiddenMixes;
-   });
-   state.displayedMixes = visibleMixes;
-   const mixList = document.getElementById('mixList');
-   const header = visibleMixes.length > 1 ? `<div class="mix-list-header"><button onclick="addAllToQueue()">Add All to Queue</button></div>` : '';
-   mixList.innerHTML = header +
-     visibleMixes.map((mix, i) => {
-       const mixId = getMixId(mix);
-       const isFav = mixFlags.isFavourite(mixId);
-       const isHidden = mixFlags.isHidden(mixId);
-       const favIcon = isFav ? '<span class="fav-icon" title="Favourite">❤️</span>' : '';
-       const hiddenIcon = isHidden ? '<span class="hidden-icon" title="Hidden">🚫</span>' : '';
-       const genre = mix.genre ? ` · ${escapeHtml(mix.genre)}` : '';
-       const hasExtra = mix.date || mix.comment;
-       const extraBtn = hasExtra ? `<button class="icon-btn info-btn" onclick="event.stopPropagation(); toggleExtraInfo(this)" title="More info">ⓘ</button>` : '';
-       const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.date ? `<div><strong>Date:</strong> ${escapeHtml(mix.date)}</div>` : ''}${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
-       return `<div class="mix-item">
-       <button class="icon-btn" onclick="addToQueue('${mixId}')" title="Add to queue">+</button>
-       <button class="icon-btn" onclick="playNow('${mixId}')" title="Play now">▶</button>
-       <span class="mix-name">${escapeHtml(mix.name)} <span class="mix-duration">(${mix.duration}${genre})</span></span>
-       ${extraBtn}${favIcon}${hiddenIcon}${extraInfo}
-     </div>`;
-     }).join('');
+    // Filter out hidden mixes (unless showing hidden mixes)
+    const visibleMixes = mixes.filter(mix => {
+      const isHidden = mixFlags.isHidden(getMixId(mix));
+      return !isHidden || state.showHiddenMixes;
+    });
+    state.displayedMixes = visibleMixes;
+    const mixList = document.getElementById('mixList');
+    const header = visibleMixes.length > 1 ? `<div class="mix-list-header"><button data-action="add-all-queue" class="mix-list-btn" title="Add all to queue">Add All to Queue</button></div>` : '';
+    mixList.innerHTML = header +
+      visibleMixes.map((mix, i) => {
+        const mixId = getMixId(mix);
+        const isFav = mixFlags.isFavourite(mixId);
+        const isHidden = mixFlags.isHidden(mixId);
+        const favIcon = isFav ? '<span class="fav-icon" title="Favourite">❤️</span>' : '';
+        const hiddenIcon = isHidden ? '<span class="hidden-icon" title="Hidden">🚫</span>' : '';
+        const genre = mix.genre ? ` · ${escapeHtml(mix.genre)}` : '';
+        const hasExtra = mix.date || mix.comment;
+        const extraBtn = hasExtra ? `<button class="icon-btn info-btn" data-action="toggle-info" title="More info">ⓘ</button>` : '';
+        const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.date ? `<div><strong>Date:</strong> ${escapeHtml(mix.date)}</div>` : ''}${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
+        return `<div class="mix-item" data-mix-id="${escapeHtml(mixId)}">
+        <button class="icon-btn" data-action="queue-add" title="Add to queue">+</button>
+        <button class="icon-btn" data-action="play-now" title="Play now">▶</button>
+        <span class="mix-name">${escapeHtml(mix.name)} <span class="mix-duration">(${mix.duration}${genre})</span></span>
+        ${extraBtn}${favIcon}${hiddenIcon}${extraInfo}
+      </div>`;
+      }).join('');
 }
 
 function toggleExtraInfo(btn) {
@@ -78,6 +78,56 @@ function toggleExtraInfo(btn) {
      info.style.display = info.style.display === 'none' ? 'block' : 'none';
    }
 }
+
+// Delegated event handler for mix list
+document.getElementById('mixList').addEventListener('click', (e) => {
+   const actionBtn = e.target.closest('[data-action]');
+   if (!actionBtn) return;
+   
+   const action = actionBtn.dataset.action;
+   const mixItem = actionBtn.closest('.mix-item');
+   const mixId = mixItem?.dataset.mixId;
+   
+   switch (action) {
+      case 'queue-add':
+         if (mixId) addToQueue(mixId);
+         break;
+      case 'play-now':
+         if (mixId) playNow(mixId);
+         break;
+      case 'toggle-info':
+         toggleExtraInfo(actionBtn);
+         break;
+      case 'add-all-queue':
+         addAllToQueue();
+         break;
+   }
+});
+
+// Delegated event handler for search/favourites mix list
+document.getElementById('mixList').addEventListener('click', (e) => {
+   const actionBtn = e.target.closest('[data-action]');
+   if (!actionBtn) return;
+   
+   const action = actionBtn.dataset.action;
+   const mixItem = actionBtn.closest('.mix-item');
+   const searchIndex = mixItem?.dataset.searchIndex;
+   
+   switch (action) {
+      case 'search-queue-add':
+         if (searchIndex !== undefined) addSearchResultToQueue(parseInt(searchIndex));
+         break;
+      case 'search-play-now':
+         if (searchIndex !== undefined) playSearchResult(parseInt(searchIndex));
+         break;
+      case 'toggle-info':
+         toggleExtraInfo(actionBtn);
+         break;
+      case 'add-all-search-results':
+         addAllSearchResultsToQueue();
+         break;
+   }
+});
 
 async function displayFavourites() {
   const mixList = document.getElementById('mixList');
@@ -638,36 +688,36 @@ function displaySearchResults(results, query) {
 }
 
 function displayMixListWithDJ(mixes) {
-    const visibleMixes = mixes.filter(mix => {
-      const isHidden = mixFlags.isHidden(getMixId(mix));
-      return !isHidden || state.showHiddenMixes;
-    });
-    
-    window.currentSearchMixes = visibleMixes;
-    
-    const mixList = document.getElementById('mixList');
-    const header = visibleMixes.length > 1 ? `<div class="mix-list-header"><button onclick="addAllSearchResultsToQueue()">Add All to Queue</button></div>` : '';
-    
-    mixList.innerHTML = header + visibleMixes.map((mix, i) => {
-      const mixId = getMixId(mix);
-      const isFav = mixFlags.isFavourite(mixId);
-      const isHidden = mixFlags.isHidden(mixId);
-      const favIcon = isFav ? '<span class="fav-icon" title="Favourite">❤️</span>' : '';
-      const hiddenIcon = isHidden ? '<span class="hidden-icon" title="Hidden">🚫</span>' : '';
-      const djSuffix = mix.djLabel ? ` - ${escapeHtml(mix.djLabel.split('/').pop())}` : '';
-      const genre = mix.genre ? ` · ${escapeHtml(mix.genre)}` : '';
-      const duration = mix.duration ? `(${mix.duration}${genre})` : '';
-      const hasExtra = mix.comment;
-      const extraBtn = hasExtra ? `<button class="icon-btn info-btn" onclick="event.stopPropagation(); toggleExtraInfo(this)" title="More info">ⓘ</button>` : '';
-      const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
-      
-      return `<div class="mix-item">
-        <button class="icon-btn" onclick="addSearchResultToQueue(${i})" title="Add to queue">+</button>
-        <button class="icon-btn" onclick="playSearchResult(${i})" title="Play now">▶</button>
-        <span class="mix-name">${escapeHtml(mix.name)}${djSuffix} <span class="mix-duration">${duration}</span></span>
-        ${extraBtn}${favIcon}${hiddenIcon}${extraInfo}
-      </div>`;
-   }).join('');
+     const visibleMixes = mixes.filter(mix => {
+       const isHidden = mixFlags.isHidden(getMixId(mix));
+       return !isHidden || state.showHiddenMixes;
+     });
+     
+     window.currentSearchMixes = visibleMixes;
+     
+     const mixList = document.getElementById('mixList');
+     const header = visibleMixes.length > 1 ? `<div class="mix-list-header"><button data-action="add-all-search-results" class="mix-list-btn" title="Add all to queue">Add All to Queue</button></div>` : '';
+     
+     mixList.innerHTML = header + visibleMixes.map((mix, i) => {
+       const mixId = getMixId(mix);
+       const isFav = mixFlags.isFavourite(mixId);
+       const isHidden = mixFlags.isHidden(mixId);
+       const favIcon = isFav ? '<span class="fav-icon" title="Favourite">❤️</span>' : '';
+       const hiddenIcon = isHidden ? '<span class="hidden-icon" title="Hidden">🚫</span>' : '';
+       const djSuffix = mix.djLabel ? ` - ${escapeHtml(mix.djLabel.split('/').pop())}` : '';
+       const genre = mix.genre ? ` · ${escapeHtml(mix.genre)}` : '';
+       const duration = mix.duration ? `(${mix.duration}${genre})` : '';
+       const hasExtra = mix.comment;
+       const extraBtn = hasExtra ? `<button class="icon-btn info-btn" data-action="toggle-info" title="More info">ⓘ</button>` : '';
+       const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
+       
+       return `<div class="mix-item" data-search-index="${i}">
+         <button class="icon-btn" data-action="search-queue-add" title="Add to queue">+</button>
+         <button class="icon-btn" data-action="search-play-now" title="Play now">▶</button>
+         <span class="mix-name">${escapeHtml(mix.name)}${djSuffix} <span class="mix-duration">${duration}</span></span>
+         ${extraBtn}${favIcon}${hiddenIcon}${extraInfo}
+       </div>`;
+    }).join('');
 }
 
 function addSearchResultToQueue(index) {
