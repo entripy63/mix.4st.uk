@@ -247,14 +247,22 @@ playPauseBtn.addEventListener('click', function() {
   if (state.isLive) {
     if (aud.paused) {
       resumeLive();
+      console.log('User clicked play (live), saving wasPlaying=true');
+      storage.set('wasPlaying', true);
     } else {
       pauseLive();
+      console.log('User clicked pause (live), saving wasPlaying=false');
+      storage.set('wasPlaying', false);
     }
   } else {
     if (aud.paused) {
       aud.play();
+      console.log('User clicked play (mix), saving wasPlaying=true');
+      storage.set('wasPlaying', true);
     } else {
       aud.pause();
+      console.log('User clicked pause (mix), saving wasPlaying=false');
+      storage.set('wasPlaying', false);
     }
   }
 });
@@ -276,16 +284,12 @@ volumeSlider.addEventListener('input', function() {
   aud.muted = false;
 });
 
-// Audio element events
+// Audio element events (just for UI, not for state tracking)
 aud.addEventListener('play', () => {
   updatePlayPauseBtn();
-  console.log('Play event, setting wasPlaying=true');
-  storage.set('wasPlaying', true);
 });
 aud.addEventListener('pause', () => {
   updatePlayPauseBtn();
-  console.log('Pause event, setting wasPlaying=false');
-  storage.set('wasPlaying', false);
 });
 aud.addEventListener('timeupdate', updateTimeDisplay);
 aud.addEventListener('loadedmetadata', updateTimeDisplay);
@@ -316,7 +320,7 @@ aud.addEventListener("pause", function () {
 });
 window.addEventListener("beforeunload", function () {
   storage.set('playerTime', aud.currentTime);
-  storage.set('wasPlaying', !aud.paused);
+  // wasPlaying already saved by play/pause button handler
 });
 
 aud.addEventListener("ended", async function () {
