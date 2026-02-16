@@ -261,70 +261,57 @@ async function addUserStream(name, m3u, genre) {
 }
 
 async function probeAndAddStream(config) {
-   const stream = {
-     name: config.name,
-     genre: config.genre,
-     url: null,
-     available: false,
-     reason: null
-   };
-   
-   if (config.url) {
-     stream.url = config.url;
-     stream.available = await probeStream(config.url);
-     if (!stream.available) {
-       if (config.url.startsWith('http://') && location.protocol === 'https:') {
-         stream.reason = `HTTP stream unavailable on HTTPS site: ${config.url}`;
-       } else {
-         stream.reason = `Stream unreachable: ${config.url}`;
-       }
-     }
-   } else if (config.m3u) {
-     const entries = await fetchPlaylist(config.m3u);
-     for (const entry of entries) {
-       const baseUrl = entry.url;
-       const variants = [baseUrl];
-       if (!baseUrl.endsWith('/;')) {
-         const urlWithoutTrailingSlash = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-         variants.push(urlWithoutTrailingSlash + '/;');
-       }
-       
-       for (const url of variants) {
-         if (await probeStream(url)) {
-           stream.url = url;
-           stream.playlistTitle = entry.title;
-           stream.available = true;
-           break;
-         }
-         if (url.startsWith('http://') && location.protocol === 'https:') {
-           const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(url)}`;
-           if (await probeStream(proxyUrl)) {
-             stream.url = proxyUrl;
-             stream.playlistTitle = entry.title;
-             stream.available = true;
-             break;
-           }
-         }
-       }
-       if (stream.available) break;
-     }
-     if (!stream.available) {
-       stream.reason = `No working stream found (playlist: ${config.m3u})`;
-     }
-     if (!stream.name && stream.playlistTitle) {
-       const parsed = parseSomaFMStream(stream.playlistTitle, stream.genre);
-       stream.name = parsed.name;
-       if (!stream.genre) {
-         stream.genre = parsed.genre;
-       }
-     }
-   }
-   
-   if (!stream.name) {
-     stream.name = config.m3u || config.url || 'Unknown Stream';
-   }
-   
-   liveStreams.push(stream);
+    const stream = {
+      name: config.name,
+      genre: config.genre,
+      url: null,
+      available: false,
+      reason: null
+    };
+    
+    const entries = await fetchPlaylist(config.m3u);
+    for (const entry of entries) {
+      let url = entry.url;
+      // Shoutcast servers use port 8000; append ';' variant for them
+      if (url.includes(':8000/')) {
+        if (!url.endsWith('/')) {
+          url += '/';
+        }
+        url += ';';
+      }
+      
+      if (await probeStream(url)) {
+        stream.url = url;
+        stream.playlistTitle = entry.title;
+        stream.available = true;
+        break;
+      }
+      if (url.startsWith('http://') && location.protocol === 'https:') {
+        const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(url)}`;
+        if (await probeStream(proxyUrl)) {
+          stream.url = proxyUrl;
+          stream.playlistTitle = entry.title;
+          stream.available = true;
+          break;
+        }
+      }
+    }
+    if (!stream.available) {
+      stream.reason = `No working stream found (playlist: ${config.m3u})`;
+    }
+    if (!stream.name && stream.playlistTitle) {
+      const parsed = parseSomaFMStream(stream.playlistTitle, stream.genre);
+      stream.name = parsed.name;
+      if (!stream.genre) {
+        stream.genre = parsed.genre;
+      }
+    }
+    
+    if (!stream.name) {
+      stream.name = config.m3u || 'Unknown Stream';
+    }
+    
+    liveStreams.push(stream);
 }
 
 function removeUserStream(index) {
@@ -560,7 +547,7 @@ async function reloadLiveStreams() {
 function playLiveStream(index) {
   const stream = liveStreams[index];
   if (stream && stream.available) {
-    playLive(stream.url, `Live from ${stream.name}`);
+    playLive(stream.url, `Live from ${stream.name}`, true);
   }
 }
 
