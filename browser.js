@@ -125,6 +125,9 @@ document.getElementById('mixList').addEventListener('click', (e) => {
       case 'toggle-info':
          toggleExtraInfo(actionBtn);
          break;
+      case 'toggle-stream-info':
+         toggleStreamInfo(actionBtn);
+         break;
       case 'add-all-queue':
          addAllToQueue();
          break;
@@ -133,6 +136,56 @@ document.getElementById('mixList').addEventListener('click', (e) => {
          break;
    }
    });
+
+   // Event delegation for stream edit fields - update display on input, save on blur
+   document.getElementById('mixList').addEventListener('input', (e) => {
+      if (e.target.classList.contains('stream-edit-name')) {
+         const index = parseInt(e.target.dataset.index);
+         const stream = liveStreams[index];
+         if (stream) {
+            stream.name = e.target.value;
+            const mixName = e.target.closest('.mix-item').querySelector('.mix-name');
+            if (mixName) mixName.textContent = e.target.value;
+         }
+      } else if (e.target.classList.contains('stream-edit-genre')) {
+         const index = parseInt(e.target.dataset.index);
+         const stream = liveStreams[index];
+         if (stream) {
+            stream.genre = e.target.value;
+            // Update or create genre display in row
+            const streamInfo = e.target.closest('.mix-item').querySelector('.stream-info');
+            let genreSpan = streamInfo?.querySelector('.stream-genre');
+            if (e.target.value) {
+               if (!genreSpan) {
+                  genreSpan = document.createElement('span');
+                  genreSpan.className = 'stream-genre';
+                  streamInfo?.appendChild(genreSpan);
+               }
+               genreSpan.textContent = e.target.value;
+            } else if (genreSpan) {
+               genreSpan.remove();
+            }
+         }
+      }
+   });
+
+   // Save to storage on blur
+   document.getElementById('mixList').addEventListener('blur', (e) => {
+      if (e.target.classList.contains('stream-edit-name') || e.target.classList.contains('stream-edit-genre')) {
+         const index = parseInt(e.target.dataset.index);
+         const field = e.target.classList.contains('stream-edit-name') ? 'name' : 'genre';
+         const stream = liveStreams[index];
+         if (stream) {
+            // Get current config, modify it, then save the modified array
+            const configs = getLiveStreamConfig();
+            const config = configs.find(cfg => cfg.m3u === stream.m3u);
+            if (config) {
+               config[field] = e.target.value;
+               saveUserStreams(configs);
+            }
+         }
+      }
+   }, true);
 
 async function displayFavourites() {
   const mixList = document.getElementById('mixList');
@@ -424,14 +477,14 @@ async function fetchPlaylist(playlistUrl) {
 }
 
 async function initLiveStreams() {
-   if (liveStreamsInitialized) return;
-   
-   liveStreamsInitialized = true;
-   liveStreams = [];
-   for (const config of getLiveStreamConfig()) {
-     await probeAndAddStream(config);
-     displayLiveStreams();
-   }
+    if (liveStreamsInitialized) return;
+    
+    liveStreamsInitialized = true;
+    liveStreams = [];
+    for (const config of getLiveStreamConfig()) {
+      await probeAndAddStream(config);
+      displayLiveStreams();
+    }
 }
 
 function displayLiveStreams() {
@@ -471,22 +524,35 @@ function displayLiveStreams() {
      const tooltip = stream.available ? 'Play Now' : (stream.reason || 'Unavailable');
      const disabled = stream.available ? '' : ' disabled';
      const deleteBtn = `<button class="icon-btn delete-stream-btn" onclick="handleRemoveStream(${userStreamIndex})" title="Remove stream">✕</button>`;
+     const infoBtn = `<button class="icon-btn info-btn" data-action="toggle-stream-info" title="More info">ⓘ</button>`;
+     const infoPopout = `<div class="stream-extra-info" style="display:none">
+       <div class="stream-info-field">
+         <strong>Stream URL:</strong>
+         <a href="${escapeHtml(stream.url || stream.m3u)}" target="_blank" rel="noopener">${escapeHtml(stream.url || stream.m3u)}</a>
+       </div>
+       <div class="stream-info-field">
+         <strong>Name:</strong>
+         <input type="text" class="stream-edit-name" value="${escapeHtml(stream.name)}" placeholder="Stream name" data-index="${index}" draggable="false" />
+       </div>
+       <div class="stream-info-field">
+         <strong>Genre:</strong>
+         <input type="text" class="stream-edit-genre" value="${escapeHtml(stream.genre || '')}" placeholder="Genre" data-index="${index}" draggable="false" />
+       </div>
+     </div>`;
      userStreamIndex++;
      
      html += `
        <div class="mix-item${unavailableClass}" 
-            draggable="true" 
-            ondragstart="onLiveStreamDragStart(event, ${index})" 
             ondragover="onLiveStreamDragOver(event)" 
-            ondrop="onLiveStreamDrop(event, ${index})"
-            ondragend="onLiveStreamDragEnd()">
-         <span class="drag-handle">☰</span>
+            ondrop="onLiveStreamDrop(event, ${index})">
+         <span class="drag-handle" draggable="true" ondragstart="onLiveStreamDragStart(event, ${index})" ondragend="onLiveStreamDragEnd()">☰</span>
          <button class="icon-btn" onclick="playLiveStream(${index})"${disabled} title="${escapeHtml(tooltip)}">▶</button>
          <div class="stream-info">
            <span class="mix-name">${escapeHtml(stream.name)}</span>
            ${stream.genre && stream.genre !== 'Unknown' ? `<span class="stream-genre">${escapeHtml(stream.genre)}</span>` : ''}
          </div>
-         ${deleteBtn}
+         ${infoBtn}${deleteBtn}
+         ${infoPopout}
        </div>
      `;
    });
@@ -560,6 +626,13 @@ function playLiveStream(index) {
 
 // Live stream drag-and-drop handlers
 function onLiveStreamDragStart(e, index) {
+  // Don't drag if user is interacting with input fields, links, or popout
+  const target = e.target;
+  if (target.tagName === 'INPUT' || target.tagName === 'A' || 
+      target.closest('.stream-extra-info')) {
+    e.dataTransfer.effectAllowed = 'none';
+    return;
+  }
   state.draggedStreamIndex = index;
   e.currentTarget.classList.add('dragging');
 }
@@ -598,6 +671,13 @@ function saveLiveStreamOrder() {
   }).filter(cfg => cfg.m3u); // Only save configs with valid m3u URLs
   
   saveUserStreams(orderedStreams);
+}
+
+function toggleStreamInfo(btn) {
+  const info = btn.closest('.mix-item').querySelector('.stream-extra-info');
+  if (info) {
+    info.style.display = info.style.display === 'none' ? 'block' : 'none';
+  }
 }
 
 // Browser modes coordinator

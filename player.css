@@ -728,6 +728,65 @@ kbd {
    word-break: break-word;
 }
 
+.stream-extra-info {
+   flex-basis: 100%;
+   width: calc(100% - 16px);
+   order: 100;
+   margin-top: 8px;
+   margin-left: 0;
+   margin-right: 0;
+   padding: 8px 10px;
+   background: #1a1a2e;
+   border-radius: 4px;
+   font-size: 13px;
+   line-height: 1.5;
+}
+
+.stream-info-field {
+   display: grid;
+   grid-template-columns: 110px 1fr;
+   gap: 8px;
+   align-items: center;
+   margin-bottom: 6px;
+}
+
+.stream-info-field:last-child {
+   margin-bottom: 0;
+}
+
+.stream-info-field strong {
+   color: #ccc;
+   white-space: nowrap;
+}
+
+.stream-info-field a {
+   color: #4a9eff;
+   text-decoration: none;
+   word-break: break-all;
+   min-width: 0;
+}
+
+.stream-info-field a:hover {
+   text-decoration: underline;
+}
+
+.stream-info-field input {
+   padding: 4px 6px;
+   background: #222;
+   border: 1px solid #333;
+   border-radius: 3px;
+   color: #ccc;
+   font-family: inherit;
+   font-size: 13px;
+   min-width: 0;
+}
+
+.stream-info-field input:focus {
+   outline: none;
+   border-color: #4a9eff;
+   background: #1a1a2e;
+}
+
 .dj-badge {
   display: inline-block;
   background: #3d3d5c;
