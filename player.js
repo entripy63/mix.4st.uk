@@ -130,6 +130,9 @@ const muteBtn = document.getElementById('muteBtn');
 const volumeSlider = document.getElementById('volumeSlider');
 const timeDisplay = document.getElementById('timeDisplay');
 
+console.log('playPauseBtn element:', playPauseBtn);
+console.log('muteBtn element:', muteBtn);
+
 // Restore volume from localStorage, default to 50%
 aud.volume = storage.getNum('playerVolume', 0.5);
 volumeSlider.value = aud.volume * 100;
