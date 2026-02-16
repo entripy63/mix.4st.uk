@@ -277,6 +277,7 @@ playPauseBtn?.addEventListener('click', function(e) {
 // Mute button click
 let volumeBeforeMute = 0.5;
 muteBtn.addEventListener('click', function() {
+  console.log('Mute button clicked');
   if (aud.muted) {
     aud.muted = false;
   } else {
