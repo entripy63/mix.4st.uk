@@ -740,6 +740,8 @@ kbd {
    border-radius: 4px;
    font-size: 13px;
    line-height: 1.5;
+   user-select: text;
+   -webkit-user-select: text;
 }
 
 .stream-info-field {
@@ -779,6 +781,8 @@ kbd {
    font-family: inherit;
    font-size: 13px;
    min-width: 0;
+   user-select: text;
+   -webkit-user-select: text;
 }
 
 .stream-info-field input:focus {

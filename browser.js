@@ -137,6 +137,32 @@ document.getElementById('mixList').addEventListener('click', (e) => {
    }
    });
 
+   // Track pointer origin and temporarily disable dragging when in popout inputs
+   window.lastPointerDownTarget = null;
+   document.getElementById('mixList').addEventListener('pointerdown', (e) => {
+      window.lastPointerDownTarget = e.target;
+      
+      // Temporarily disable dragging if pointer is down in input/popout
+      const inputInPopout = e.target.closest('.stream-extra-info input, .stream-extra-info textarea');
+      if (inputInPopout) {
+         const row = e.target.closest('.mix-item');
+         if (row && row.draggable) {
+            row.dataset.wasDraggable = '1';
+            row.draggable = false;
+         }
+      }
+   }, true);
+   document.getElementById('mixList').addEventListener('pointerup', () => {
+      window.lastPointerDownTarget = null;
+      
+      // Re-enable dragging
+      const rows = document.querySelectorAll('.mix-item[data-was-draggable="1"]');
+      rows.forEach(row => {
+         row.draggable = true;
+         delete row.dataset.wasDraggable;
+      });
+   }, true);
+
    // Event delegation for stream edit fields - update display on input, save on blur
    document.getElementById('mixList').addEventListener('input', (e) => {
       if (e.target.classList.contains('stream-edit-name')) {
@@ -532,21 +558,23 @@ function displayLiveStreams() {
        </div>
        <div class="stream-info-field">
          <strong>Name:</strong>
-         <input type="text" class="stream-edit-name" value="${escapeHtml(stream.name)}" placeholder="Stream name" data-index="${index}" draggable="false" />
+         <input type="text" class="stream-edit-name" value="${escapeHtml(stream.name)}" placeholder="Stream name" data-index="${index}" />
        </div>
        <div class="stream-info-field">
          <strong>Genre:</strong>
-         <input type="text" class="stream-edit-genre" value="${escapeHtml(stream.genre || '')}" placeholder="Genre" data-index="${index}" draggable="false" />
+         <input type="text" class="stream-edit-genre" value="${escapeHtml(stream.genre || '')}" placeholder="Genre" data-index="${index}" />
        </div>
      </div>`;
      userStreamIndex++;
      
      html += `
        <div class="mix-item${unavailableClass}" 
+            draggable="true"
+            ondragstart="onLiveStreamDragStart(event, ${index})" 
             ondragover="onLiveStreamDragOver(event)" 
-            ondrop="onLiveStreamDrop(event, ${index})">
-         <span class="drag-handle" draggable="true" ondragstart="onLiveStreamDragStart(event, ${index})" ondragend="onLiveStreamDragEnd()">☰</span>
-         <button class="icon-btn" onclick="playLiveStream(${index})"${disabled} title="${escapeHtml(tooltip)}">▶</button>
+            ondrop="onLiveStreamDrop(event, ${index})"
+            ondragend="onLiveStreamDragEnd()">
+        <button class="icon-btn" onclick="playLiveStream(${index})"${disabled} title="${escapeHtml(tooltip)}">▶</button>
          <div class="stream-info">
            <span class="mix-name">${escapeHtml(stream.name)}</span>
            ${stream.genre && stream.genre !== 'Unknown' ? `<span class="stream-genre">${escapeHtml(stream.genre)}</span>` : ''}
@@ -626,13 +654,6 @@ function playLiveStream(index) {
 
 // Live stream drag-and-drop handlers
 function onLiveStreamDragStart(e, index) {
-  // Don't drag if user is interacting with input fields, links, or popout
-  const target = e.target;
-  if (target.tagName === 'INPUT' || target.tagName === 'A' || 
-      target.closest('.stream-extra-info')) {
-    e.dataTransfer.effectAllowed = 'none';
-    return;
-  }
   state.draggedStreamIndex = index;
   e.currentTarget.classList.add('dragging');
 }
