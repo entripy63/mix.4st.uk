@@ -143,8 +143,8 @@ button:active {
 #browserModeSelector {
   display: flex;
   gap: 4px;
-  margin-bottom: 12px;
-  padding-bottom: 10px;
+  margin-bottom: 6px;
+  padding-bottom: 6px;
   border-bottom: 1px solid #3d3d5c;
 }
 
@@ -571,12 +571,13 @@ kbd {
 }
 
 .add-stream-form {
-   margin-bottom: 10px;
-   border-bottom: 1px solid #333;
+    margin-top: 0;
+    margin-bottom: 0;
+    border-bottom: 1px solid #333;
 }
 
 .add-stream-fields {
-    padding: 10px 15px;
+    padding: 6px 15px;
     display: flex;
     gap: 4px;
     align-items: center;

@@ -781,6 +781,7 @@ const browserModes = {
       djDropdown.style.display = 'none';
       searchBox.style.display = 'none';
       groupFilters.innerHTML = '';
+      groupFilters.style.display = 'none';
       document.getElementById('findPlaylistsBtn').style.display = 'flex';
       displayLiveStreams();
     }
