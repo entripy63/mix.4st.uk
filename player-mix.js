@@ -1,13 +1,63 @@
 // player-mix.js - Mix Playback, Queue Integration, Waveform, Favourites
-// Dependencies: core.js (state, storage, getMixId, escapeHtml, mixFlags, waveformCanvas, waveformCtx)
-//               player.js (play, load, displayQueue, updateTimeDisplay, updatePlayPauseBtn, updateMuteBtn, aud)
+// Dependencies: core.js (state, storage, getMixId, escapeHtml)
+//               player.js (play, load, updateTimeDisplay, updatePlayPauseBtn, updateMuteBtn, aud)
 //               mixes.js (fetchMixDetails, state.currentMixes)
 //               queue.js (playFromQueue, saveQueue, displayQueue, updateQueueInfo)
 //               browser.js (filterMixes, displayMixList, displaySearchResults, displayFavourites)
 
 // ============================================
+// MIX FLAGS (player.html only)
+// ============================================
+
+const mixFlags = {
+  _favourites: new Set(storage.getJSON('mixFavourites', [])),
+  _hidden: new Set(storage.getJSON('mixHidden', [])),
+  
+  isFavourite(mixId) { return this._favourites.has(mixId); },
+  isHidden(mixId) { return this._hidden.has(mixId); },
+  hasFavourites() { return this._favourites.size > 0; },
+  
+  toggleFavourite(mixId) {
+    if (this._favourites.has(mixId)) {
+      this._favourites.delete(mixId);
+    } else {
+      this._favourites.add(mixId);
+      // Can't be both favourite and hidden
+      this._hidden.delete(mixId);
+    }
+    this._save();
+    return this._favourites.has(mixId);
+  },
+  
+  toggleHidden(mixId) {
+    if (this._hidden.has(mixId)) {
+      this._hidden.delete(mixId);
+    } else {
+      this._hidden.add(mixId);
+      // Can't be both favourite and hidden
+      this._favourites.delete(mixId);
+    }
+    this._save();
+    return this._hidden.has(mixId);
+  },
+  
+  _save() {
+    storage.set('mixFavourites', [...this._favourites]);
+    storage.set('mixHidden', [...this._hidden]);
+    updateFavouritesButton();
+  }
+};
+
+function updateFavouritesButton() {
+  const btn = document.querySelector('.mode-btn[data-mode="favourites"]');
+  if (btn) btn.disabled = !mixFlags.hasFavourites();
+}
+
+// ============================================
 // WAVEFORM CODE (player.html only)
 // ============================================
+
+const waveformCtx = waveformCanvas.getContext("2d");
 
 // Set canvas resolution to match CSS size
 function resizeWaveformCanvas() {

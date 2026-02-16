@@ -36,8 +36,7 @@ const storage = {
 };
 
 const aud = document.getElementById("audioPlayer");
-const waveformCanvas = document.getElementById("waveform");
-const waveformCtx = waveformCanvas ? waveformCanvas.getContext("2d") : null; // Only in player.html via player-mix.js
+const waveformCanvas = document.getElementById("waveform"); // Only in player.html
 
 const state = {
    currentPeaks: null,
@@ -62,58 +61,6 @@ const state = {
    liveStreamUrl: null,     // URL to restore on live resume
    liveDisplayText: null    // Display text for current live stream
 };
-
-// State setters - ensure state and UI stay in sync
-function setQueue(newQueue) {
-  state.queue = newQueue;
-  saveQueue();
-  displayQueue();
-}
-
-// Mix flags (favourites/hidden) - stored as arrays, used as Sets for O(1) lookup
-const mixFlags = {
-  _favourites: new Set(storage.getJSON('mixFavourites', [])),
-  _hidden: new Set(storage.getJSON('mixHidden', [])),
-  
-  isFavourite(mixId) { return this._favourites.has(mixId); },
-  isHidden(mixId) { return this._hidden.has(mixId); },
-  hasFavourites() { return this._favourites.size > 0; },
-  
-  toggleFavourite(mixId) {
-    if (this._favourites.has(mixId)) {
-      this._favourites.delete(mixId);
-    } else {
-      this._favourites.add(mixId);
-      // Can't be both favourite and hidden
-      this._hidden.delete(mixId);
-    }
-    this._save();
-    return this._favourites.has(mixId);
-  },
-  
-  toggleHidden(mixId) {
-    if (this._hidden.has(mixId)) {
-      this._hidden.delete(mixId);
-    } else {
-      this._hidden.add(mixId);
-      // Can't be both favourite and hidden
-      this._favourites.delete(mixId);
-    }
-    this._save();
-    return this._hidden.has(mixId);
-  },
-  
-  _save() {
-    storage.set('mixFavourites', [...this._favourites]);
-    storage.set('mixHidden', [...this._hidden]);
-    updateFavouritesButton();
-  }
-};
-
-function updateFavouritesButton() {
-  const btn = document.querySelector('.mode-btn[data-mode="favourites"]');
-  if (btn) btn.disabled = !mixFlags.hasFavourites();
-}
 
 // Format time as M:SS or H:MM:SS
 function formatTime(seconds) {
