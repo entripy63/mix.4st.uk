@@ -1,5 +1,7 @@
 // player.js - Playback Controls & Waveform
 
+console.log('player.js loading...');
+
 // Set canvas resolution to match CSS size
 function resizeWaveformCanvas() {
   const w = waveformCanvas.offsetWidth || 500;
