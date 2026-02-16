@@ -262,6 +262,7 @@ async function addUserStream(name, m3u, genre) {
 
 async function probeAndAddStream(config) {
     const stream = {
+      m3u: config.m3u,
       name: config.name,
       genre: config.genre,
       url: null,
@@ -434,57 +435,63 @@ async function initLiveStreams() {
 }
 
 function displayLiveStreams() {
-   // Don't update DOM if we're no longer on Live mode
-   if (browserModes.current !== 'live') return;
+    // Don't update DOM if we're no longer on Live mode
+    if (browserModes.current !== 'live') return;
+    
+    const mixList = document.getElementById('mixList');
+    
+    if (!liveStreamsInitialized) {
+      mixList.innerHTML = '<div style="padding: 20px; color: #888;">Checking stream availability...</div>';
+      initLiveStreams().then(() => displayLiveStreams());
+      return;
+    }
    
-   const mixList = document.getElementById('mixList');
+   let html = '';
    
-   if (!liveStreamsInitialized) {
-     mixList.innerHTML = '<div style="padding: 20px; color: #888;">Checking stream availability...</div>';
-     initLiveStreams().then(() => displayLiveStreams());
+   html += `
+     <div class="add-stream-form">
+       <div class="add-stream-fields">
+          <input type="text" id="newStreamM3U" placeholder="Playlist URL (M3U or PLS)" />
+          <button onclick="handleAddStream()">Add</button>
+          <button onclick="reloadLiveStreams()" class="reload-btn" title="Reload all streams">⟳</button>
+       </div>
+     </div>
+   `;
+   
+   if (liveStreams.length === 0) {
+     html += '<div style="padding: 20px; color: #888;">No live streams configured</div>';
+     mixList.innerHTML = html;
      return;
    }
-  
-  let html = '';
-  
-  html += `
-    <div class="add-stream-form">
-      <div class="add-stream-fields">
-         <input type="text" id="newStreamM3U" placeholder="Playlist URL (M3U or PLS)" />
-         <button onclick="handleAddStream()">Add</button>
-         <button onclick="reloadLiveStreams()" class="reload-btn" title="Reload all streams">⟳</button>
-      </div>
-    </div>
-  `;
-  
-  if (liveStreams.length === 0) {
-    html += '<div style="padding: 20px; color: #888;">No live streams configured</div>';
-    mixList.innerHTML = html;
-    return;
-  }
-  
-  let userStreamIndex = 0;
-  
-  liveStreams.forEach((stream, index) => {
-    const unavailableClass = stream.available ? '' : ' unavailable';
-    const tooltip = stream.available ? 'Play Now' : (stream.reason || 'Unavailable');
-    const disabled = stream.available ? '' : ' disabled';
-    const deleteBtn = `<button class="icon-btn delete-stream-btn" onclick="handleRemoveStream(${userStreamIndex})" title="Remove stream">✕</button>`;
-    userStreamIndex++;
-    
-    html += `
-      <div class="mix-item${unavailableClass}">
-        <button class="icon-btn" onclick="playLiveStream(${index})"${disabled} title="${escapeHtml(tooltip)}">▶</button>
-        <div class="stream-info">
-          <span class="mix-name">${escapeHtml(stream.name)}</span>
-          ${stream.genre && stream.genre !== 'Unknown' ? `<span class="stream-genre">${escapeHtml(stream.genre)}</span>` : ''}
-        </div>
-        ${deleteBtn}
-      </div>
-    `;
-  });
-  
-  mixList.innerHTML = html;
+   
+   let userStreamIndex = 0;
+   
+   liveStreams.forEach((stream, index) => {
+     const unavailableClass = stream.available ? '' : ' unavailable';
+     const tooltip = stream.available ? 'Play Now' : (stream.reason || 'Unavailable');
+     const disabled = stream.available ? '' : ' disabled';
+     const deleteBtn = `<button class="icon-btn delete-stream-btn" onclick="handleRemoveStream(${userStreamIndex})" title="Remove stream">✕</button>`;
+     userStreamIndex++;
+     
+     html += `
+       <div class="mix-item${unavailableClass}" 
+            draggable="true" 
+            ondragstart="onLiveStreamDragStart(event, ${index})" 
+            ondragover="onLiveStreamDragOver(event)" 
+            ondrop="onLiveStreamDrop(event, ${index})"
+            ondragend="onLiveStreamDragEnd()">
+         <span class="drag-handle">☰</span>
+         <button class="icon-btn" onclick="playLiveStream(${index})"${disabled} title="${escapeHtml(tooltip)}">▶</button>
+         <div class="stream-info">
+           <span class="mix-name">${escapeHtml(stream.name)}</span>
+           ${stream.genre && stream.genre !== 'Unknown' ? `<span class="stream-genre">${escapeHtml(stream.genre)}</span>` : ''}
+         </div>
+         ${deleteBtn}
+       </div>
+     `;
+   });
+   
+   mixList.innerHTML = html;
 }
 
 // Parse SomaFM stream names to extract shorter name and genre
@@ -549,6 +556,48 @@ function playLiveStream(index) {
   if (stream && stream.available) {
     playLive(stream.url, `Live from ${stream.name}`, true);
   }
+}
+
+// Live stream drag-and-drop handlers
+function onLiveStreamDragStart(e, index) {
+  state.draggedStreamIndex = index;
+  e.currentTarget.classList.add('dragging');
+}
+
+function onLiveStreamDragOver(e) {
+  e.preventDefault();
+}
+
+function onLiveStreamDrop(e, dropIndex) {
+  e.preventDefault();
+  if (state.draggedStreamIndex === null || state.draggedStreamIndex === dropIndex) return;
+  
+  const draggedStream = liveStreams.splice(state.draggedStreamIndex, 1)[0];
+  liveStreams.splice(dropIndex, 0, draggedStream);
+  
+  saveLiveStreamOrder();
+  displayLiveStreams();
+}
+
+function onLiveStreamDragEnd() {
+  state.draggedStreamIndex = null;
+  document.querySelectorAll('.mix-item').forEach(el => el.classList.remove('dragging'));
+}
+
+function saveLiveStreamOrder() {
+  // Save the full reordered stream list (each stream has m3u stored on it)
+  const configMap = new Map(getLiveStreamConfig().map(cfg => [cfg.m3u, cfg]));
+  
+  const orderedStreams = liveStreams.map(stream => {
+    // Look up original config by m3u (unique identifier)
+    if (configMap.has(stream.m3u)) {
+      return configMap.get(stream.m3u);
+    }
+    // Fallback (shouldn't happen - all streams should have m3u)
+    return { name: stream.name, m3u: stream.m3u, genre: stream.genre };
+  }).filter(cfg => cfg.m3u); // Only save configs with valid m3u URLs
+  
+  saveUserStreams(orderedStreams);
 }
 
 // Browser modes coordinator

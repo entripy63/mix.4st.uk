@@ -198,7 +198,7 @@ function resumeLive() {
 }
 
 // Start playing a live stream
-function playLive(url, displayText) {
+function playLive(url, displayText, autoplay = false) {
   state.isLive = true;
   state.liveStreamUrl = url;
   state.liveDisplayText = displayText;
@@ -207,6 +207,18 @@ function playLive(url, displayText) {
   storage.remove('currentMixPath');
   aud.src = url;
   aud.load();
+  if (autoplay) {
+    const handleCanPlay = () => {
+      aud.play();
+      aud.removeEventListener('canplay', handleCanPlay);
+    };
+    aud.addEventListener('canplay', handleCanPlay, { once: true });
+    // Fallback in case canplay never fires
+    setTimeout(() => {
+      if (!aud.paused) return;
+      aud.play().catch(() => {});
+    }, 100);
+  }
   document.getElementById('nowPlaying').innerHTML = `<h1>${escapeHtml(displayText)}</h1>`;
   document.getElementById('coverArt').innerHTML = '';
   document.getElementById('trackList').innerHTML = '';

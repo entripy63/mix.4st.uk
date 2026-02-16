@@ -48,6 +48,7 @@ const state = {
    currentGroups: [],
    displayedMixes: [],
    draggedIndex: null,
+   draggedStreamIndex: null,
    queue: storage.getJSON('queue', []),
    currentQueueIndex: storage.getNum('currentQueueIndex', -1),
    loopQueue: storage.getBool('loopQueue'),
