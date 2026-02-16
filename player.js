@@ -2,6 +2,7 @@
 
 // Set canvas resolution to match CSS size
 function resizeWaveformCanvas() {
+  if (!waveformCanvas) return; // No waveform in live.html
   const w = waveformCanvas.offsetWidth || 500;
   const h = waveformCanvas.offsetHeight || 60;
   if (waveformCanvas.width !== w) waveformCanvas.width = w;
@@ -11,10 +12,13 @@ function resizeWaveformCanvas() {
     drawWaveform(state.currentPeaks, progress);
   }
 }
-resizeWaveformCanvas();
-window.addEventListener('load', resizeWaveformCanvas);
+if (waveformCanvas) {
+  resizeWaveformCanvas();
+  window.addEventListener('load', resizeWaveformCanvas);
+}
 
 function drawWaveform(peaks, progress = 0) {
+  if (!waveformCanvas || !waveformCtx) return; // No waveform in live.html
   const w = waveformCanvas.width;
   const h = waveformCanvas.height;
   const barWidth = w / peaks.length;
@@ -56,32 +60,38 @@ aud.addEventListener('timeupdate', updateWaveformCursor);
 aud.addEventListener('seeked', updateWaveformCursor);
 
 // Click on waveform to seek
-waveformCanvas.addEventListener('click', function(e) {
-  if (aud.duration) {
-    const rect = waveformCanvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const progress = x / waveformCanvas.width;
-    aud.currentTime = progress * aud.duration;
-    updateWaveformCursor();
-  }
-});
+if (waveformCanvas) {
+  waveformCanvas.addEventListener('click', function(e) {
+    if (aud.duration) {
+      const rect = waveformCanvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const progress = x / waveformCanvas.width;
+      aud.currentTime = progress * aud.duration;
+      updateWaveformCursor();
+    }
+  });
+}
 
 // Initialize with empty waveform
 state.currentPeaks = null;
-drawWaveform([], 0);
+if (waveformCanvas) drawWaveform([], 0);
 
 // Waveform resize handling
 const resizeHandle = document.getElementById('waveformResizeHandle');
 
 // Restore saved height
-const savedHeight = storage.getNum('waveformHeight', 0);
-if (savedHeight) {
-  waveformCanvas.style.height = savedHeight + 'px';
-  waveformCanvas.height = savedHeight;
+if (waveformCanvas) {
+  const savedHeight = storage.getNum('waveformHeight', 0);
+  if (savedHeight) {
+    waveformCanvas.style.height = savedHeight + 'px';
+    waveformCanvas.height = savedHeight;
+  }
 }
 
-resizeHandle.addEventListener('mousedown', startResize);
-resizeHandle.addEventListener('touchstart', startResize, { passive: false });
+if (resizeHandle) {
+  resizeHandle.addEventListener('mousedown', startResize);
+  resizeHandle.addEventListener('touchstart', startResize, { passive: false });
+}
 
 function startResize(e) {
   e.preventDefault();
@@ -93,7 +103,7 @@ function startResize(e) {
 }
 
 function doResize(e) {
-  if (!state.isResizing) return;
+  if (!state.isResizing || !waveformCanvas) return;
   e.preventDefault();
   const clientY = e.touches ? e.touches[0].clientY : e.clientY;
   const rect = waveformCanvas.getBoundingClientRect();
@@ -111,7 +121,7 @@ function stopResize() {
   document.removeEventListener('mouseup', stopResize);
   document.removeEventListener('touchmove', doResize);
   document.removeEventListener('touchend', stopResize);
-  storage.set('waveformHeight', waveformCanvas.height);
+  if (waveformCanvas) storage.set('waveformHeight', waveformCanvas.height);
 }
 
 function loadPeaks(peaks) {
@@ -120,7 +130,7 @@ function loadPeaks(peaks) {
     drawWaveform(state.currentPeaks, 0);
   } else {
     state.currentPeaks = null;
-    waveformCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
+    if (waveformCtx && waveformCanvas) waveformCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
   }
 }
 
