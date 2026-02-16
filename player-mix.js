@@ -1,9 +1,12 @@
 // player-mix.js - Mix Playback, Queue Integration, Waveform, Favourites
-// Dependencies: core.js (state, storage, getMixId, escapeHtml)
-//               player.js (play, load, updateTimeDisplay, updatePlayPauseBtn, updateMuteBtn, aud)
+// Dependencies: core.js (state, storage, getMixId, escapeHtml, aud)
+//               player.js (play, load, updateTimeDisplay, updatePlayPauseBtn, updateMuteBtn)
 //               mixes.js (fetchMixDetails, state.currentMixes)
 //               queue.js (playFromQueue, saveQueue, displayQueue, updateQueueInfo)
 //               browser.js (filterMixes, displayMixList, displaySearchResults, displayFavourites)
+
+// DOM references (player.html only)
+const waveformCanvas = document.getElementById("waveform");
 
 // ============================================
 // MIX FLAGS (player.html only)
@@ -182,6 +185,10 @@ function loadPeaks(peaks) {
     waveformCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
   }
 }
+
+// Update queue info on play/pause (queue.js functions)
+aud.addEventListener("play", updateQueueInfo);
+aud.addEventListener("pause", updateQueueInfo);
 
 // ============================================
 // MIX PLAYBACK CODE

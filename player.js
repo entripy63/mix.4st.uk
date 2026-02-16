@@ -244,9 +244,6 @@ aud.addEventListener("ended", async function () {
    }
 });
 
-aud.addEventListener("play", updateQueueInfo);
-aud.addEventListener("pause", updateQueueInfo);
-
 function load(url) {
   // Exit live mode when loading regular content
   if (state.isLive) {

@@ -36,7 +36,6 @@ const storage = {
 };
 
 const aud = document.getElementById("audioPlayer");
-const waveformCanvas = document.getElementById("waveform"); // Only in player.html
 
 const state = {
    currentPeaks: null,
