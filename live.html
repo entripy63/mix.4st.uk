@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Live Streams</title>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+    <link rel="stylesheet" href="live.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>">
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="player-column">
+        <audio id="audioPlayer"></audio>
+        <div id="audioControls">
+          <button id="playPauseBtn" class="control-btn" title="Play/Pause (Space)">▶</button>
+          <span id="timeDisplay">PAUSED</span>
+          <div id="volumeControl">
+            <button id="muteBtn" class="control-btn" title="Mute">🔊</button>
+            <input type="range" id="volumeSlider" min="0" max="100" value="50" title="Volume">
+          </div>
+        </div>
+        <div id="nowPlaying"></div>
+      </div>
+      <div class="streams-column">
+        <div id="mixBrowser">
+          <h2 style="margin: 0 0 10px 0; flex-shrink: 0;">Live Streams</h2>
+          <div id="mixList"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="core.js"></script>
+    <script src="player.js"></script>
+    <script src="live.js"></script>
+  </body>
+
+</html>
