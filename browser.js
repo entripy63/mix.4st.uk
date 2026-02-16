@@ -648,6 +648,8 @@ async function reloadLiveStreams() {
 function playLiveStream(index) {
   const stream = liveStreams[index];
   if (stream && stream.available) {
+    console.log('playLiveStream called, saving wasPlaying=true');
+    storage.set('wasPlaying', true);
     playLive(stream.url, `Live from ${stream.name}`, true);
   }
 }
@@ -909,18 +911,20 @@ function addAllSearchResultsToQueue() {
 }
 
 async function playSearchResult(index) {
-   const mix = window.currentSearchMixes[index];
-   if (mix) {
-     state.previousQueueIndex = state.currentQueueIndex;
-     state.previousQueueTime = aud.currentTime;
-     state.playingFromPlayNow = true;
-     
-     state.queue.push({ ...mix, queueId: generateQueueId() });
-     state.currentQueueIndex = state.queue.length - 1;
-     saveQueue();
-     displayQueue();
-     await playMix(mix);
-   }
+    const mix = window.currentSearchMixes[index];
+    if (mix) {
+      console.log('playSearchResult called, saving wasPlaying=true');
+      storage.set('wasPlaying', true);
+      state.previousQueueIndex = state.currentQueueIndex;
+      state.previousQueueTime = aud.currentTime;
+      state.playingFromPlayNow = true;
+      
+      state.queue.push({ ...mix, queueId: generateQueueId() });
+      state.currentQueueIndex = state.queue.length - 1;
+      saveQueue();
+      displayQueue();
+      await playMix(mix);
+    }
 }
 
 async function playSearchStream(index) {

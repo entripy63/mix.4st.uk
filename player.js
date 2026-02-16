@@ -244,6 +244,7 @@ function stopLive() {
 
 // Play/Pause button click
 playPauseBtn.addEventListener('click', function() {
+  console.log('Play/Pause button clicked');
   if (state.isLive) {
     if (aud.paused) {
       resumeLive();
@@ -417,6 +418,8 @@ async function playMix(mix) {
 }
 
 async function playNow(mixId) {
+   console.log('playNow called, saving wasPlaying=true');
+   storage.set('wasPlaying', true);
    // Save current queue position before Play Now overwrites it
    state.previousQueueIndex = state.currentQueueIndex;
    state.previousQueueTime = aud.currentTime;
