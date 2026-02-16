@@ -277,8 +277,16 @@ volumeSlider.addEventListener('input', function() {
 });
 
 // Audio element events
-aud.addEventListener('play', updatePlayPauseBtn);
-aud.addEventListener('pause', updatePlayPauseBtn);
+aud.addEventListener('play', () => {
+  updatePlayPauseBtn();
+  console.log('Play event, setting wasPlaying=true');
+  storage.set('wasPlaying', true);
+});
+aud.addEventListener('pause', () => {
+  updatePlayPauseBtn();
+  console.log('Pause event, setting wasPlaying=false');
+  storage.set('wasPlaying', false);
+});
 aud.addEventListener('timeupdate', updateTimeDisplay);
 aud.addEventListener('loadedmetadata', updateTimeDisplay);
 aud.addEventListener('durationchange', updateTimeDisplay);
@@ -308,6 +316,7 @@ aud.addEventListener("pause", function () {
 });
 window.addEventListener("beforeunload", function () {
   storage.set('playerTime', aud.currentTime);
+  storage.set('wasPlaying', !aud.paused);
 });
 
 aud.addEventListener("ended", async function () {

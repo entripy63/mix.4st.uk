@@ -1073,7 +1073,9 @@ initLiveStreams().catch(e => console.error('Failed to initialize live streams:',
     const savedLiveText = storage.get('liveDisplayText');
     
     if (savedLiveUrl && savedLiveText) {
-      playLive(savedLiveUrl, savedLiveText);
+      const wasPlaying = storage.getBool('wasPlaying', false);
+      console.log('Restoring live stream, wasPlaying:', wasPlaying);
+      playLive(savedLiveUrl, savedLiveText, wasPlaying);
       await initLiveStreams();
       // Restore browser mode and return - don't restore mix
       const savedBrowserMode = storage.get('browserMode', 'live');
@@ -1097,16 +1099,32 @@ initLiveStreams().catch(e => console.error('Failed to initialize live streams:',
         mix = { djPath, file, audioFile: `${file}.mp3`, peaksFile: `${file}.peaks.json`, name: file };
       }
       const details = await fetchMixDetails(mix);
-      if (details.audioSrc) {
-        load(details.audioSrc);
-        aud.currentTime = storage.getNum('playerTime', 0);
-        state.currentMix = mix;
-        state.currentDownloadLinks = details.downloadLinks || [];
-        state.currentCoverSrc = details.coverSrc;
-        displayTrackList(mix, details.trackListTable, details.downloadLinks, details.coverSrc);
-        loadPeaks(details.peaks);
-        requestAnimationFrame(resizeWaveformCanvas);
-      }
+       if (details.audioSrc) {
+         load(details.audioSrc);
+         aud.currentTime = storage.getNum('playerTime', 0);
+         const wasPlaying = storage.getBool('wasPlaying', false);
+         console.log('Restoring mix, wasPlaying:', wasPlaying);
+         if (wasPlaying) {
+           console.log('Attempting autoplay for mix');
+           const handleCanPlay = () => {
+             console.log('canplay event fired, playing');
+             aud.play().catch(() => {});
+             aud.removeEventListener('canplay', handleCanPlay);
+           };
+           aud.addEventListener('canplay', handleCanPlay, { once: true });
+           // Fallback in case canplay never fires
+           setTimeout(() => {
+             if (!aud.paused) return;
+             aud.play().catch(() => {});
+           }, 500);
+         }
+         state.currentMix = mix;
+         state.currentDownloadLinks = details.downloadLinks || [];
+         state.currentCoverSrc = details.coverSrc;
+         displayTrackList(mix, details.trackListTable, details.downloadLinks, details.coverSrc);
+         loadPeaks(details.peaks);
+         requestAnimationFrame(resizeWaveformCanvas);
+       }
     }
   } catch (e) {
     console.error('Error restoring player:', e);
