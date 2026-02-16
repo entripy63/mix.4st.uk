@@ -648,7 +648,6 @@ async function reloadLiveStreams() {
 function playLiveStream(index) {
   const stream = liveStreams[index];
   if (stream && stream.available) {
-    console.log('playLiveStream called, saving wasPlaying=true');
     storage.set('wasPlaying', true);
     playLive(stream.url, `Live from ${stream.name}`, true);
   }
@@ -913,7 +912,6 @@ function addAllSearchResultsToQueue() {
 async function playSearchResult(index) {
     const mix = window.currentSearchMixes[index];
     if (mix) {
-      console.log('playSearchResult called, saving wasPlaying=true');
       storage.set('wasPlaying', true);
       state.previousQueueIndex = state.currentQueueIndex;
       state.previousQueueTime = aud.currentTime;
@@ -1078,7 +1076,6 @@ initLiveStreams().catch(e => console.error('Failed to initialize live streams:',
     
     if (savedLiveUrl && savedLiveText) {
       const wasPlaying = storage.getBool('wasPlaying', false);
-      console.log('Restoring live stream, wasPlaying:', wasPlaying);
       playLive(savedLiveUrl, savedLiveText, wasPlaying);
       await initLiveStreams();
       // Restore browser mode and return - don't restore mix
@@ -1107,11 +1104,8 @@ initLiveStreams().catch(e => console.error('Failed to initialize live streams:',
          load(details.audioSrc);
          aud.currentTime = storage.getNum('playerTime', 0);
          const wasPlaying = storage.getBool('wasPlaying', false);
-         console.log('Restoring mix, wasPlaying:', wasPlaying);
          if (wasPlaying) {
-           console.log('Attempting autoplay for mix');
            const handleCanPlay = () => {
-             console.log('canplay event fired, playing');
              aud.play().catch(() => {});
              aud.removeEventListener('canplay', handleCanPlay);
            };

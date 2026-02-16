@@ -1,7 +1,5 @@
 // player.js - Playback Controls & Waveform
 
-console.log('player.js loading...');
-
 // Set canvas resolution to match CSS size
 function resizeWaveformCanvas() {
   const w = waveformCanvas.offsetWidth || 500;
@@ -132,9 +130,6 @@ const muteBtn = document.getElementById('muteBtn');
 const volumeSlider = document.getElementById('volumeSlider');
 const timeDisplay = document.getElementById('timeDisplay');
 
-console.log('playPauseBtn element:', playPauseBtn);
-console.log('muteBtn element:', muteBtn);
-
 // Restore volume from localStorage, default to 50%
 aud.volume = storage.getNum('playerVolume', 0.5);
 volumeSlider.value = aud.volume * 100;
@@ -247,28 +242,22 @@ function stopLive() {
   }
 }
 
-// Play/Pause button click - use capture phase
-console.log('Attaching click listener to playPauseBtn');
+// Play/Pause button click
 playPauseBtn?.addEventListener('click', function(e) {
-  console.log('Play/Pause button clicked, e.target:', e.target, 'this:', this);
   if (state.isLive) {
     if (aud.paused) {
       resumeLive();
-      console.log('User clicked play (live), saving wasPlaying=true');
       storage.set('wasPlaying', true);
     } else {
       pauseLive();
-      console.log('User clicked pause (live), saving wasPlaying=false');
       storage.set('wasPlaying', false);
     }
   } else {
     if (aud.paused) {
       aud.play();
-      console.log('User clicked play (mix), saving wasPlaying=true');
       storage.set('wasPlaying', true);
     } else {
       aud.pause();
-      console.log('User clicked pause (mix), saving wasPlaying=false');
       storage.set('wasPlaying', false);
     }
   }
@@ -277,7 +266,6 @@ playPauseBtn?.addEventListener('click', function(e) {
 // Mute button click
 let volumeBeforeMute = 0.5;
 muteBtn.addEventListener('click', function() {
-  console.log('Mute button clicked');
   if (aud.muted) {
     aud.muted = false;
   } else {
@@ -425,7 +413,6 @@ async function playMix(mix) {
 }
 
 async function playNow(mixId) {
-   console.log('playNow called, saving wasPlaying=true');
    storage.set('wasPlaying', true);
    // Save current queue position before Play Now overwrites it
    state.previousQueueIndex = state.currentQueueIndex;
