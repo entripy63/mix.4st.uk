@@ -37,7 +37,7 @@ const storage = {
 
 const aud = document.getElementById("audioPlayer");
 const waveformCanvas = document.getElementById("waveform");
-const waveformCtx = waveformCanvas ? waveformCanvas.getContext("2d") : null;
+const waveformCtx = waveformCanvas ? waveformCanvas.getContext("2d") : null; // Only in player.html via player-mix.js
 
 const state = {
    currentPeaks: null,
