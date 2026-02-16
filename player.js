@@ -248,6 +248,7 @@ function stopLive() {
 }
 
 // Play/Pause button click - use capture phase
+console.log('Attaching click listener to playPauseBtn');
 playPauseBtn?.addEventListener('click', function(e) {
   console.log('Play/Pause button clicked, e.target:', e.target, 'this:', this);
   if (state.isLive) {
