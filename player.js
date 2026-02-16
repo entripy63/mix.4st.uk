@@ -242,9 +242,9 @@ function stopLive() {
   }
 }
 
-// Play/Pause button click
-playPauseBtn.addEventListener('click', function() {
-  console.log('Play/Pause button clicked');
+// Play/Pause button click - use capture phase
+playPauseBtn?.addEventListener('click', function(e) {
+  console.log('Play/Pause button clicked, e.target:', e.target, 'this:', this);
   if (state.isLive) {
     if (aud.paused) {
       resumeLive();
