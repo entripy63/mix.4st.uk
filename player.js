@@ -174,6 +174,9 @@ function pauseLive() {
   setTimeout(() => aud.load(), 0);
   updatePlayPauseBtn();
   updateTimeDisplay();
+  if (!state.isRestoring) {
+    storage.set('wasPlaying', false);
+  }
 }
 
 // Live stream resume: restore src and play
@@ -194,6 +197,9 @@ function resumeLive() {
     }, 100);
     updatePlayPauseBtn();
     updateTimeDisplay();
+    if (!state.isRestoring) {
+      storage.set('wasPlaying', true);
+    }
   }
 }
 
@@ -244,24 +250,20 @@ function stopLive() {
 
 // Play/Pause button click
 playPauseBtn?.addEventListener('click', function(e) {
-  if (state.isLive) {
-    if (aud.paused) {
-      resumeLive();
-      storage.set('wasPlaying', true);
-    } else {
-      pauseLive();
-      storage.set('wasPlaying', false);
-    }
-  } else {
-    if (aud.paused) {
-      aud.play();
-      storage.set('wasPlaying', true);
-    } else {
-      aud.pause();
-      storage.set('wasPlaying', false);
-    }
-  }
-});
+   if (state.isLive) {
+     if (aud.paused) {
+       resumeLive();
+     } else {
+       pauseLive();
+     }
+   } else {
+     if (aud.paused) {
+       aud.play();
+     } else {
+       aud.pause();
+     }
+   }
+ });
 
 // Mute button click
 let volumeBeforeMute = 0.5;
@@ -283,9 +285,17 @@ volumeSlider.addEventListener('input', function() {
 // Audio element events (just for UI, not for state tracking)
 aud.addEventListener('play', () => {
   updatePlayPauseBtn();
+  updateTimeDisplay();
+  if (!state.isRestoring) {
+    storage.set('wasPlaying', true);
+  }
 });
 aud.addEventListener('pause', () => {
   updatePlayPauseBtn();
+  updateTimeDisplay();
+  if (!state.isRestoring) {
+    storage.set('wasPlaying', false);
+  }
 });
 aud.addEventListener('timeupdate', updateTimeDisplay);
 aud.addEventListener('loadedmetadata', updateTimeDisplay);
@@ -413,8 +423,7 @@ async function playMix(mix) {
 }
 
 async function playNow(mixId) {
-   storage.set('wasPlaying', true);
-   // Save current queue position before Play Now overwrites it
+    // Save current queue position before Play Now overwrites it
    state.previousQueueIndex = state.currentQueueIndex;
    state.previousQueueTime = aud.currentTime;
    state.playingFromPlayNow = true;

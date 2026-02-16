@@ -910,10 +910,9 @@ function addAllSearchResultsToQueue() {
 }
 
 async function playSearchResult(index) {
-    const mix = window.currentSearchMixes[index];
-    if (mix) {
-      storage.set('wasPlaying', true);
-      state.previousQueueIndex = state.currentQueueIndex;
+     const mix = window.currentSearchMixes[index];
+     if (mix) {
+       state.previousQueueIndex = state.currentQueueIndex;
       state.previousQueueTime = aud.currentTime;
       state.playingFromPlayNow = true;
       
@@ -1075,8 +1074,13 @@ initLiveStreams().catch(e => console.error('Failed to initialize live streams:',
     const savedLiveText = storage.get('liveDisplayText');
     
     if (savedLiveUrl && savedLiveText) {
+      state.isRestoring = true;
       const wasPlaying = storage.getBool('wasPlaying', false);
       playLive(savedLiveUrl, savedLiveText, wasPlaying);
+      // Keep isRestoring true until after playLive's async setup (canplay listener, timeouts, etc.)
+      setTimeout(() => {
+        state.isRestoring = false;
+      }, 200);
       await initLiveStreams();
       // Restore browser mode and return - don't restore mix
       const savedBrowserMode = storage.get('browserMode', 'live');
@@ -1101,21 +1105,33 @@ initLiveStreams().catch(e => console.error('Failed to initialize live streams:',
       }
       const details = await fetchMixDetails(mix);
        if (details.audioSrc) {
+         state.isRestoring = true;
          load(details.audioSrc);
-         aud.currentTime = storage.getNum('playerTime', 0);
+         const savedTime = storage.getNum('playerTime', 0);
          const wasPlaying = storage.getBool('wasPlaying', false);
-         if (wasPlaying) {
-           const handleCanPlay = () => {
+         
+         // Set currentTime after metadata is loaded
+         const handleMetadataLoaded = () => {
+           aud.currentTime = savedTime;
+           aud.removeEventListener('loadedmetadata', handleMetadataLoaded);
+           state.isRestoring = false;
+           
+           if (wasPlaying) {
              aud.play().catch(() => {});
-             aud.removeEventListener('canplay', handleCanPlay);
-           };
-           aud.addEventListener('canplay', handleCanPlay, { once: true });
-           // Fallback in case canplay never fires
-           setTimeout(() => {
-             if (!aud.paused) return;
-             aud.play().catch(() => {});
-           }, 500);
-         }
+           }
+         };
+         aud.addEventListener('loadedmetadata', handleMetadataLoaded, { once: true });
+         
+         // Fallback in case loadedmetadata never fires
+         setTimeout(() => {
+           if (state.isRestoring) {
+             state.isRestoring = false;
+             if (wasPlaying && aud.paused) {
+               aud.play().catch(() => {});
+             }
+           }
+         }, 2000);
+         
          state.currentMix = mix;
          state.currentDownloadLinks = details.downloadLinks || [];
          state.currentCoverSrc = details.coverSrc;
