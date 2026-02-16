@@ -576,10 +576,10 @@ kbd {
 }
 
 .add-stream-fields {
-   padding: 10px 15px;
-   display: flex;
-   gap: 8px;
-   align-items: center;
+    padding: 10px 15px;
+    display: flex;
+    gap: 4px;
+    align-items: center;
 }
 
 .add-stream-fields input[type="text"] {
@@ -598,39 +598,44 @@ kbd {
 }
 
 .add-stream-fields button {
-   padding: 8px 16px;
-   background: #00d9ff;
-   color: #000;
-   border: none;
-   border-radius: 4px;
-   cursor: pointer;
-   font-size: 14px;
-   font-weight: bold;
-   flex-shrink: 0;
-   white-space: nowrap;
+    padding: 8px 16px;
+    background: transparent;
+    color: #888;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    flex-shrink: 0;
+    white-space: nowrap;
+    transition: all 0.2s;
 }
 
 .add-stream-fields button:hover {
-   background: #00b8d9;
+    background: rgba(92, 107, 192, 0.2);
+    color: #e0e0e0;
 }
 
 .add-stream-fields .reload-btn {
-   padding: 8px 10px;
-   background: #3d3d5c;
-   color: #888;
-   font-size: 28px !important;
-   font-weight: bold;
-   line-height: 1;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   min-width: 44px;
-   height: 44px;
+    padding: 8px 10px;
+    background: transparent;
+    color: #888;
+    font-size: 28px !important;
+    font-weight: bold;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    height: 44px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    transition: all 0.2s;
 }
 
 .add-stream-fields .reload-btn:hover {
-   background: #4d4d7c;
-   color: #e0e0e0;
+    background: rgba(92, 107, 192, 0.2);
+    color: #e0e0e0;
 }
 
 .delete-stream-btn {
@@ -1085,4 +1090,66 @@ td:last-child {
 
 #nowPlaying h1 {
   margin: 0;
+}
+
+/* Stream collections menu */
+.stream-menu-container {
+  position: relative;
+}
+
+.stream-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: #888;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.stream-menu-btn:hover {
+  background: rgba(92, 107, 192, 0.2);
+  color: #e0e0e0;
+}
+
+.stream-collections-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #252538;
+  border: 1px solid #3d3d5c;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  min-width: 140px;
+  z-index: 100;
+  margin-top: 4px;
+}
+
+.stream-collections-menu button {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  background: none;
+  border: none;
+  color: #e0e0e0;
+  text-align: left;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+
+.stream-collections-menu button:first-child {
+  border-radius: 5px 5px 0 0;
+}
+
+.stream-collections-menu button:last-child {
+  border-radius: 0 0 5px 5px;
+}
+
+.stream-collections-menu button:hover {
+  background: #3d3d5c;
 }

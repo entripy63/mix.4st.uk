@@ -531,8 +531,16 @@ function displayLiveStreams() {
      <div class="add-stream-form">
        <div class="add-stream-fields">
           <input type="text" id="newStreamM3U" placeholder="Playlist URL (M3U or PLS)" />
-          <button onclick="handleAddStream()">Add</button>
+          <button class="add-stream-btn" onclick="handleAddStream()">Add</button>
           <button onclick="reloadLiveStreams()" class="reload-btn" title="Reload all streams">⟳</button>
+          <div class="stream-menu-container">
+            <button class="stream-menu-btn" onclick="toggleStreamCollectionsMenu()" title="Save/Load streams">☰</button>
+            <div id="streamCollectionsMenu" class="stream-collections-menu" style="display: none;">
+              <button onclick="loadCollectionFromFile()">📂 Load from File</button>
+              <button onclick="saveCollectionToFile()">💾 Save to File</button>
+              <button onclick="clearAllStreams()" style="color: #ff6b6b;">🗑️ Clear All</button>
+            </div>
+          </div>
        </div>
      </div>
    `;
@@ -1148,3 +1156,101 @@ initLiveStreams().catch(e => console.error('Failed to initialize live streams:',
   const savedBrowserMode = storage.get('browserMode', 'dj');
   browserModes.switch(savedBrowserMode);
   })();
+
+// Stream collections management
+function toggleStreamCollectionsMenu() {
+  const menu = document.getElementById('streamCollectionsMenu');
+  if (menu) {
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  }
+}
+
+function hideStreamCollectionsMenu() {
+  const menu = document.getElementById('streamCollectionsMenu');
+  if (menu) {
+    menu.style.display = 'none';
+  }
+}
+
+function saveCollectionToFile() {
+  const name = prompt('Save collection as:', 'My Streams');
+  if (!name) return;
+  
+  const collection = {
+    name: name,
+    version: 1,
+    savedAt: new Date().toISOString(),
+    streams: getUserStreams()
+  };
+  
+  const blob = new Blob([JSON.stringify(collection, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${name.replace(/[^a-z0-9-]/gi, '_')}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  
+  hideStreamCollectionsMenu();
+  showToast('Collection saved');
+}
+
+function loadCollectionFromFile() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  
+  input.onchange = async (e) => {
+    try {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      
+      const text = await file.text();
+      const data = JSON.parse(text);
+      
+      if (!Array.isArray(data.streams)) {
+        throw new Error('Invalid collection file: missing "streams" array');
+      }
+      
+      // Replace current streams
+      saveUserStreams(data.streams);
+      
+      // Re-initialize live streams
+      liveStreamsInitialized = false;
+      liveStreams = [];
+      await initLiveStreams();
+      displayLiveStreams();
+      
+      hideStreamCollectionsMenu();
+      showToast(`Loaded ${data.name || 'collection'}`);
+    } catch (err) {
+      console.error('Failed to load collection:', err);
+      alert(`Error loading collection: ${err.message}`);
+    }
+  };
+  
+  input.click();
+}
+
+function clearAllStreams() {
+  if (!confirm('Clear all streams? This cannot be undone.')) return;
+  
+  saveUserStreams([]);
+  liveStreamsInitialized = false;
+  liveStreams = [];
+  displayLiveStreams();
+  
+  hideStreamCollectionsMenu();
+  showToast('All streams cleared');
+}
+
+// Close menu when clicking outside
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('streamCollectionsMenu');
+  const btn = document.querySelector('.stream-menu-btn');
+  if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
+    hideStreamCollectionsMenu();
+  }
+});
