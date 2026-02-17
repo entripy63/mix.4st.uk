@@ -552,6 +552,22 @@ document.addEventListener('click', (e) => {
    }
 });
 
+// Delegated event handler for stream list buttons
+const mixList = document.getElementById('mixList');
+if (mixList) {
+   mixList.addEventListener('click', (e) => {
+      const actionBtn = e.target.closest('[data-action]');
+      if (!actionBtn) return;
+      
+      const action = actionBtn.dataset.action;
+      switch (action) {
+         case 'toggle-stream-info':
+            toggleStreamInfo(actionBtn);
+            break;
+      }
+   });
+}
+
 // Live stream restoration for both SPAs
 async function restoreLivePlayer() {
   try {

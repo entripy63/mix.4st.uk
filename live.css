@@ -175,14 +175,15 @@ html, body {
 
 /* Stream list styles */
 .add-stream-form {
-  flex-shrink: 0;
-  padding: 10px 0 0 0;
+   flex-shrink: 0;
+   padding: 10px 15px 10px 15px;
+   margin-bottom: 10px;
 }
 
 .add-stream-fields {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+   display: flex;
+   gap: 8px;
+   flex-wrap: wrap;
 }
 
 #newStreamM3U {
@@ -284,15 +285,15 @@ html, body {
 
 /* Stream items */
 .mix-item {
-  padding: 12px;
-  background: #252542;
-  border-radius: 6px;
-  margin-bottom: 8px;
-  cursor: pointer;
-  transition: background 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 12px;
+   padding: 5px 10px;
+   font-size: 14px;
+   background: #252542;
+   border-radius: 6px;
+   margin-bottom: 4px;
+   transition: background 0.2s;
+   display: flex;
+   align-items: center;
+   gap: 8px;
 }
 
 .mix-item:hover {
@@ -367,24 +368,14 @@ html, body {
 }
 
 .icon-btn {
-  flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
-  background: #3d3d5c;
-  border: none;
-  color: #888;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s, color 0.2s;
+   padding: 6px 10px;
+   margin-right: 6px;
+   background: transparent;
+   border-radius: 4px;
 }
 
 .icon-btn:hover {
-  background: #5c6bc0;
-  color: #fff;
+   background: rgba(92, 107, 192, 0.3);
 }
 
 .delete-stream-btn {
