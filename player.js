@@ -105,10 +105,9 @@ function playLive(url, displayText, autoplay = false) {
   }
   document.getElementById('nowPlaying').innerHTML = `<h1>${escapeHtml(displayText)}</h1>`;
   document.title = 'Live - Player';
-  loadPeaks(null);
   updateTimeDisplay();
   updatePlayPauseBtn();
-}
+  }
 
 // Stop live stream and return to normal mode
 function stopLive() {

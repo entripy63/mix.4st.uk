@@ -562,6 +562,10 @@ async function restoreLivePlayer() {
       state.isRestoring = true;
       const wasPlaying = storage.getBool('wasPlaying', false);
       playLive(savedLiveUrl, savedLiveText, wasPlaying);
+      // Clear waveform (player.html only)
+      if (typeof loadPeaks === 'function') {
+        loadPeaks(null);
+      }
       // Keep isRestoring true until after playLive's async setup (canplay listener, timeouts, etc.)
       setTimeout(() => {
         state.isRestoring = false;

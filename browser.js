@@ -633,6 +633,7 @@ updateFavouritesButton();
      const liveRestored = await restoreLivePlayer();
      if (liveRestored) {
        // Clear player.html-specific DOM after playLive() call
+       // (loadPeaks already cleared by restoreLivePlayer in live.js)
        document.getElementById('coverArt').innerHTML = '';
        document.getElementById('trackList').innerHTML = '';
        // Restore browser mode and return - don't restore mix
