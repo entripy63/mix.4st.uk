@@ -366,9 +366,9 @@ html, body {
    border-radius: 4px;
    font-size: 12px;
    color: #aaa;
-   display: grid;
-   grid-template-columns: 1fr 1fr;
-   gap: 12px;
+   display: flex;
+   flex-direction: column;
+   gap: 8px;
 }
 
 .stream-extra-info p {
@@ -376,19 +376,24 @@ html, body {
 }
 
 .stream-info-field {
-   margin-bottom: 0;
-   padding-bottom: 0;
-}
-
-.stream-info-field:first-child {
-   grid-column: 1 / -1;
+   display: flex;
+   align-items: center;
+   gap: 12px;
+   margin: 0;
+   padding: 0;
 }
 
 .stream-info-field strong {
-   display: block;
-   margin-bottom: 4px;
+   flex-shrink: 0;
+   min-width: 80px;
    color: #ccc;
    font-weight: 500;
+}
+
+.stream-info-field a {
+   color: #5c6bc0;
+   text-decoration: none;
+   word-break: break-all;
 }
 
 .stream-edit-name,
