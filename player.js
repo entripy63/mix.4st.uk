@@ -104,8 +104,6 @@ function playLive(url, displayText, autoplay = false) {
     }, 100);
   }
   document.getElementById('nowPlaying').innerHTML = `<h1>${escapeHtml(displayText)}</h1>`;
-  document.getElementById('coverArt').innerHTML = '';
-  document.getElementById('trackList').innerHTML = '';
   document.title = 'Live - Player';
   loadPeaks(null);
   updateTimeDisplay();

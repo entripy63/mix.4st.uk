@@ -626,32 +626,20 @@ document.getElementById('fileInput').addEventListener('change', async function(e
 // Initialize favourites button state
 updateFavouritesButton();
 
-// Initialize built-in streams on first site load
-initializeBuiltinStreams();
-
-// Initialize live streams in background on page load
-initLiveStreams().catch(e => console.error('Failed to initialize live streams:', e));
-
 // Page restoration
 (async function restorePlayer() {
-  try {
-    const savedLiveUrl = storage.get('liveStreamUrl');
-    const savedLiveText = storage.get('liveDisplayText');
-    
-    if (savedLiveUrl && savedLiveText) {
-      state.isRestoring = true;
-      const wasPlaying = storage.getBool('wasPlaying', false);
-      playLive(savedLiveUrl, savedLiveText, wasPlaying);
-      // Keep isRestoring true until after playLive's async setup (canplay listener, timeouts, etc.)
-      setTimeout(() => {
-        state.isRestoring = false;
-      }, 200);
-      await initLiveStreams();
-      // Restore browser mode and return - don't restore mix
-      const savedBrowserMode = storage.get('browserMode', 'live');
-      browserModes.switch(savedBrowserMode);
-      return;
-    }
+   try {
+     // Try restoring live stream first (handles both mix and live restoration)
+     const liveRestored = await restoreLivePlayer();
+     if (liveRestored) {
+       // Clear player.html-specific DOM after playLive() call
+       document.getElementById('coverArt').innerHTML = '';
+       document.getElementById('trackList').innerHTML = '';
+       // Restore browser mode and return - don't restore mix
+       const savedBrowserMode = storage.get('browserMode', 'live');
+       browserModes.switch(savedBrowserMode);
+       return;
+     }
     
     const savedPath = storage.get('currentMixPath');
     if (savedPath) {

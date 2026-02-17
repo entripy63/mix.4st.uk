@@ -545,12 +545,35 @@ function clearAllStreams() {
 
 // Close menu when clicking outside
 document.addEventListener('click', (e) => {
-  const menu = document.getElementById('streamCollectionsMenu');
-  const btn = document.querySelector('.stream-menu-btn');
-  if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
-    hideStreamCollectionsMenu();
-  }
+   const menu = document.getElementById('streamCollectionsMenu');
+   const btn = document.querySelector('.stream-menu-btn');
+   if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
+     hideStreamCollectionsMenu();
+   }
 });
+
+// Live stream restoration for both SPAs
+async function restoreLivePlayer() {
+  try {
+    const savedLiveUrl = storage.get('liveStreamUrl');
+    const savedLiveText = storage.get('liveDisplayText');
+    
+    if (savedLiveUrl && savedLiveText) {
+      state.isRestoring = true;
+      const wasPlaying = storage.getBool('wasPlaying', false);
+      playLive(savedLiveUrl, savedLiveText, wasPlaying);
+      // Keep isRestoring true until after playLive's async setup (canplay listener, timeouts, etc.)
+      setTimeout(() => {
+        state.isRestoring = false;
+      }, 200);
+      await initLiveStreams();
+      return true; // Restored live stream
+    }
+  } catch (e) {
+    console.error('Error restoring live stream:', e);
+  }
+  return false; // Did not restore
+}
 
 // Initialize builtin streams on first load
 initializeBuiltinStreams();

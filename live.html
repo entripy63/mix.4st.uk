@@ -32,6 +32,16 @@
     <script src="core.js"></script>
     <script src="player.js"></script>
     <script src="live.js"></script>
+    <script>
+      // live.html restoration - restore live stream if available
+      (async function restoreLiveApp() {
+        const restored = await restoreLivePlayer();
+        if (!restored) {
+          // No live stream to restore, initialize display
+          displayLiveStreams();
+        }
+      })();
+    </script>
   </body>
 
 </html>
