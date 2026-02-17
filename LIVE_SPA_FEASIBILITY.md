@@ -651,7 +651,7 @@ Local file support (~20 lines):
 
 ### Option A: Side-by-Side (Recommended)
 - Deploy live.html alongside player.html
-- **URL**: `mixes.4st.uk/live.html` (or `live.mixes.4st.uk`)
+- **URL**: `mixes.4st.uk/live.html` (or `live.4st.uk`)
 - **Benefits**: 
   - Zero impact on existing player.html users
   - Can A/B test both deployments

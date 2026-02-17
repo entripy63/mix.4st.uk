@@ -1,31 +1,51 @@
 # AGENTS.md
 
+## Documentation
+- **[ASSETS.md](ASSETS.md)** — Comprehensive asset documentation (HTML, CSS, JavaScript modules, data files)
+- This file — Development instructions and architecture overview
+
 ## Build/Test Commands
 - No build system - static HTML/CSS website
 - DON'T USE `python3 -m http.server 8000` to test locally, too flakey
 
 ## Architecture
-- Static website for DJ mixes at mixes.4st.uk
-- SPA using `player.html` as entry point
-- `player.html` - Landing page, Player, Queue, Browser columns, responsive design
-- `player.css` - Stylesheet
+- Static website with two SPAs: DJ mixes (mixes.4st.uk) and live streams (live.4st.uk)
+
+### player.html (DJ Mixes SPA)
+- **Location**: mixes.4st.uk
+- **Layout**: Landing page, Player, Queue, Browser columns, responsive design
+- **Stylesheet**: `player.css`
 - **JavaScript modules** (no bundler, simple script loading):
   - `core.js` - Shared utilities, global state, DOM references
+  - `mixes.js` - Loads mix data from `manifest.json` files
   - `queue.js` - Queue management, drag-drop, queue operations
   - `player.js` - Playback controls, waveform rendering, audio handling
+  - `player-mix.js` - Mix-specific playback logic
   - `browser.js` - Mix browser, search, live streams, settings, page restoration
-  - `mixes.js` - Loads mix data from `manifest.json` files
-- `.htaccess` - DirectoryIndex and MP3 download forcing
+
+### live.html (Live Streams SPA)
+- **Location**: live.4st.uk (independent hosting)
+- **Layout**: Single column, mobile-first
+- **Stylesheet**: `live.css`
+- **JavaScript modules**:
+  - `core.js` - Shared utilities (same as player.html)
+  - `player.js` - Playback controls (same as player.html)
+  - `live.js` - Live stream management, collections, drag-drop reordering
+
+### Data & Configuration
 - DJ folders contain `manifest.json`, `.tracks.txt` files, `.peaks.json` files, and cover images
 - `trip/`, `izmar/`, `aboo/`, `jx3p/`, `gmanual/`, `haze/`, `rpfr/` - Main DJ folders
 - `moreDJs/` - Additional DJ folders
+- `.htaccess` - DirectoryIndex and MP3 download forcing
+- `audio-source-config.json` - External audio source configuration
+
+**For complete asset documentation, see [ASSETS.md](ASSETS.md)**
 
 ## Python Scripts
 - `generate-covers.py` - Run after adding audio files to extract embedded cover art images
 - `generate-manifest.py` - Run after adding/updating audio files to regenerate `manifest.json` in each DJ folder
 - `generate-peaks.py` - Run after adding audio files to generate `.peaks.json` waveform data
 - `generate-search-index.py` - Run after manifest changes to regenerate `search-index.json` for search mode
-- `extract-tracklists.py` - One-time migration: extracts track lists from legacy HTML files to `.tracks.txt` CSV format
 
 ## Code Style
 - HTML: HTML5 doctype, UTF-8, 2-space indent, external stylesheet
