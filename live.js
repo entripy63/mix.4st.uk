@@ -393,10 +393,10 @@ function saveLiveStreamOrder() {
 }
 
 function toggleStreamInfo(btn) {
-  const info = btn.closest('.mix-item').querySelector('.stream-extra-info');
-  if (info) {
-    info.style.display = info.style.display === 'none' ? 'block' : 'none';
-  }
+   const info = btn.closest('.mix-item').querySelector('.stream-extra-info');
+   if (info) {
+     info.style.display = info.style.display === 'none' ? 'grid' : 'none';
+   }
 }
 
 // Stream edit event handlers - update display on input
