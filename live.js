@@ -552,10 +552,19 @@ document.addEventListener('click', (e) => {
    }
 });
 
+// Show playlist guide / help
+function showPlaylistGuide() {
+    document.getElementById('playlistGuideModal').style.display = 'flex';
+}
+
+function hidePlaylistGuide() {
+    document.getElementById('playlistGuideModal').style.display = 'none';
+}
+
 // Delegated event handler for stream list buttons
 const mixList = document.getElementById('mixList');
 if (mixList) {
-   mixList.addEventListener('click', (e) => {
+    mixList.addEventListener('click', (e) => {
       const actionBtn = e.target.closest('[data-action]');
       if (!actionBtn) return;
       

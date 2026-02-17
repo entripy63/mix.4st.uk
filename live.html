@@ -22,9 +22,50 @@
         <div id="nowPlaying"></div>
       </div>
       <div class="streams-column">
-        <div id="mixBrowser">
-          <h2 style="margin: 0 0 10px 0; flex-shrink: 0;">Live Streams</h2>
-          <div id="mixList"></div>
+         <div id="mixBrowser">
+           <h2 style="margin: 0 0 10px 0; flex-shrink: 0;">Live Streams</h2>
+           <div id="mixList"></div>
+           <button id="findPlaylistsBtn" onclick="showPlaylistGuide()" style="width: 100%; padding: 12px 16px; font-size: 14px; font-weight: bold; margin-top: 10px; flex-shrink: 0;">Find Playlists...</button>
+         </div>
+       </div>
+    </div>
+
+    <div id="playlistGuideModal" class="modal" onclick="hidePlaylistGuide()" style="display: none;">
+      <div class="modal-content slide-up" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="hidePlaylistGuide()">×</button>
+        <h2>Find Stream Playlists</h2>
+        <div class="playlist-guide">
+          <div class="guide-section">
+            <h3>SomaFM</h3>
+            <p><a href="https://somafm.com/listen/" target="_blank" onclick="hidePlaylistGuide()">somafm.com/listen/</a></p>
+            <ol>
+              <li>Click on a station you like</li>
+              <li>Right-click on the <strong>AAC 128K</strong> link</li>
+              <li>Select "Copy link" or "Copy link address"</li>
+              <li>Paste into the Playlist URL box above</li>
+            </ol>
+          </div>
+          <div class="guide-section">
+            <h3>Shoutcast</h3>
+            <p><a href="https://directory.shoutcast.com/" target="_blank" onclick="hidePlaylistGuide()">directory.shoutcast.com</a></p>
+            <ol>
+              <li>Browse or search for a station or genre</li>
+              <li>Click the <strong>download icon</strong> next to the station</li>
+              <li>Right-click on <strong>Winamp (.pls)</strong></li>
+              <li>Select "Copy link" or "Copy link address"</li>
+              <li>Paste into the Playlist URL box above</li>
+            </ol>
+          </div>
+          <div class="guide-section">
+            <h3>Finding Streams Online</h3>
+            <ul>
+              <li>Search <strong>"[station name] m3u"</strong> or <strong>"[station name] playlist"</strong> in Google</li>
+              <li>Look for links ending in <code>.m3u</code> or <code>.pls</code></li>
+              <li>These are playlist files that work with our player</li>
+              <li>If you find a direct stream URL (http/https), paste it in the box above</li>
+              <li>Many streaming sites use walled gardens - look for independent radio directories</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
