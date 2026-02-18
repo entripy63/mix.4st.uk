@@ -211,6 +211,17 @@
         </div>
         </div>
 
+        <div id="confirmDialog" class="modal" style="display: none;">
+        <div class="confirm-content modal-content" onclick="event.stopPropagation()" style="background: #252542; border-radius: 10px; padding: 24px; max-width: 320px;">
+        <h2 class="confirm-title" style="margin-top: 0; margin-bottom: 12px; font-size: 16px;"></h2>
+        <p class="confirm-message" style="margin: 0 0 20px 0; color: #ccc; font-size: 14px;"></p>
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button class="confirm-cancel" style="padding: 10px 16px; background: #3d3d5c; border: none; border-radius: 6px; color: #e0e0e0; cursor: pointer; transition: background 0.2s; font-size: 14px;">Cancel</button>
+          <button class="confirm-confirm" style="padding: 10px 16px; background: #c0475c; border: none; border-radius: 6px; color: #fff; cursor: pointer; transition: background 0.2s; font-size: 14px; font-weight: bold;">Delete</button>
+        </div>
+        </div>
+        </div>
+
         <script src="core.js"></script>
   <script src="mixes.js"></script>
   <script src="queue.js"></script>

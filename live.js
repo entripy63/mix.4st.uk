@@ -353,11 +353,12 @@ async function handleAddStream() {
     displayLiveStreams();
 }
 
-function handleRemoveStream(userIndex) {
-   if (confirm('Remove this stream?')) {
-     removeUserStream(userIndex);
-     displayLiveStreams();
-   }
+async function handleRemoveStream(userIndex) {
+    const confirmed = await showConfirmDialog('Remove Stream', 'Are you sure you want to remove this stream?');
+    if (confirmed) {
+      removeUserStream(userIndex);
+      displayLiveStreams();
+    }
 }
 
 async function reloadLiveStreams() {
@@ -576,16 +577,17 @@ function loadCollectionFromFile() {
   input.click();
 }
 
-function clearAllStreams() {
-  if (!confirm('Clear all streams? This cannot be undone.')) return;
-  
-  saveUserStreams([]);
-  liveStreamsInitialized = false;
-  liveStreams = [];
-  displayLiveStreams();
-  
-  hideStreamCollectionsMenu();
-  showToast('All streams cleared');
+async function clearAllStreams() {
+   const confirmed = await showConfirmDialog('Clear All Streams', 'This will delete all streams. This cannot be undone.');
+   if (!confirmed) return;
+   
+   saveUserStreams([]);
+   liveStreamsInitialized = false;
+   liveStreams = [];
+   displayLiveStreams();
+   
+   hideStreamCollectionsMenu();
+   showToast('All streams cleared');
 }
 
 // Close menu when clicking outside

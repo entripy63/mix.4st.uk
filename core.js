@@ -84,3 +84,68 @@ function showToast(message) {
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 5000);
 }
+
+function showConfirmDialog(title, message) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById('confirmDialog');
+    if (!modal) {
+      console.error('confirmDialog modal not found');
+      resolve(false);
+      return;
+    }
+    
+    const titleEl = modal.querySelector('.confirm-title');
+    const messageEl = modal.querySelector('.confirm-message');
+    const cancelBtn = modal.querySelector('.confirm-cancel');
+    const confirmBtn = modal.querySelector('.confirm-confirm');
+    
+    if (!titleEl || !messageEl || !cancelBtn || !confirmBtn) {
+      console.error('confirmDialog elements not found');
+      resolve(false);
+      return;
+    }
+    
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+    
+    // Position near cursor or center
+    const content = modal.querySelector('.confirm-content');
+    content.style.position = '';
+    content.style.left = '';
+    content.style.top = '';
+    
+    // Handler functions
+    const cleanup = () => {
+      cancelBtn.removeEventListener('click', onCancel);
+      confirmBtn.removeEventListener('click', onConfirm);
+      document.removeEventListener('keydown', onKeydown);
+    };
+    
+    const onCancel = () => {
+      cleanup();
+      modal.style.display = 'none';
+      resolve(false);
+    };
+    
+    const onConfirm = () => {
+      cleanup();
+      modal.style.display = 'none';
+      resolve(true);
+    };
+    
+    const onKeydown = (e) => {
+      if (e.key === 'Escape') {
+        onCancel();
+      } else if (e.key === 'Enter') {
+        onConfirm();
+      }
+    };
+    
+    cancelBtn.addEventListener('click', onCancel);
+    confirmBtn.addEventListener('click', onConfirm);
+    document.addEventListener('keydown', onKeydown);
+    
+    modal.style.display = 'flex';
+    confirmBtn.focus();
+  });
+}

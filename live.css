@@ -621,3 +621,12 @@ html, body {
     width: 320px;
     max-height: 70vh;
 }
+
+/* Confirmation dialog styling */
+.confirm-cancel:hover {
+    background: #4d4d6c;
+}
+
+.confirm-confirm:hover {
+    background: #e0556d;
+}
