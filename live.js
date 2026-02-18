@@ -79,11 +79,31 @@ async function probeAndAddStream(config) {
     }
     
     if (!stream.name) {
-      stream.name = config.m3u || 'Unknown Stream';
+       stream.name = config.m3u || 'Unknown Stream';
+    }
+    
+    // Update the saved config with resolved name/genre if they were null
+    if (!config.name && stream.name) {
+       config.name = stream.name;
+       const configs = getUserStreams();
+       const idx = configs.findIndex(c => c.m3u === config.m3u);
+       if (idx >= 0) {
+           configs[idx] = config;
+           saveUserStreams(configs);
+       }
+    }
+    if (!config.genre && stream.genre) {
+       config.genre = stream.genre;
+       const configs = getUserStreams();
+       const idx = configs.findIndex(c => c.m3u === config.m3u);
+       if (idx >= 0) {
+           configs[idx] = config;
+           saveUserStreams(configs);
+       }
     }
     
     liveStreams.push(stream);
-}
+    }
 
 function removeUserStream(index) {
    const streams = getUserStreams();
