@@ -99,7 +99,7 @@ function toggleExtraInfo(btn) {
 function toggleStreamInfo(btn) {
    const info = btn.closest('.mix-item').querySelector('.stream-extra-info');
    if (info) {
-      info.style.display = info.style.display === 'none' ? 'flex' : 'none';
+      info.style.display = info.style.display === 'none' ? 'table' : 'none';
    }
 }
 

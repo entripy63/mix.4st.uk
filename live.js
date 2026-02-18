@@ -397,6 +397,14 @@ function saveLiveStreamOrder() {
   saveUserStreams(orderedStreams);
 }
 
+// Toggle stream info popup (for live.html)
+function toggleStreamInfo(btn) {
+   const info = btn.closest('.mix-item').querySelector('.stream-extra-info');
+   if (info) {
+      info.style.display = info.style.display === 'none' ? 'table' : 'none';
+   }
+}
+
 // Stream edit event handlers - update display on input
 document.addEventListener('DOMContentLoaded', function() {
    const mixList = document.getElementById('mixList');
@@ -557,6 +565,22 @@ function showPlaylistGuide() {
 
 function hidePlaylistGuide() {
     document.getElementById('playlistGuideModal').style.display = 'none';
+}
+
+// Delegated event handler for stream list buttons (live.html only)
+const mixList = document.getElementById('mixList');
+if (mixList) {
+    mixList.addEventListener('click', (e) => {
+      const actionBtn = e.target.closest('[data-action]');
+      if (!actionBtn) return;
+      
+      const action = actionBtn.dataset.action;
+      switch (action) {
+         case 'toggle-stream-info':
+            toggleStreamInfo(actionBtn);
+            break;
+      }
+   });
 }
 
 // Live stream restoration for both SPAs
