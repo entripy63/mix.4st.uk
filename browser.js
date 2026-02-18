@@ -91,7 +91,15 @@ function displayMixList(mixes) {
 function toggleExtraInfo(btn) {
    const info = btn.closest('.mix-item').querySelector('.mix-extra-info');
    if (info) {
-     info.style.display = info.style.display === 'none' ? 'block' : 'none';
+      info.style.display = info.style.display === 'none' ? 'block' : 'none';
+   }
+}
+
+// Toggle stream info popup (for live streams in browser)
+function toggleStreamInfo(btn) {
+   const info = btn.closest('.mix-item').querySelector('.stream-extra-info');
+   if (info) {
+      info.style.display = info.style.display === 'none' ? 'flex' : 'none';
    }
 }
 

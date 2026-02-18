@@ -356,9 +356,9 @@ html, body {
 }
 
 .stream-extra-info {
-   display: none;
-   flex-basis: 100%;
-   width: 100%;
+   display: block !important;
+   flex-basis: 100% !important;
+   width: 100% !important;
    margin-top: 8px;
    margin-left: 0;
    padding: 8px 10px;
@@ -366,9 +366,6 @@ html, body {
    border-radius: 4px;
    font-size: 12px;
    color: #aaa;
-   display: flex;
-   flex-direction: column;
-   gap: 8px;
 }
 
 .stream-extra-info p {
@@ -376,24 +373,33 @@ html, body {
 }
 
 .stream-info-field {
-   display: flex;
-   align-items: center;
-   gap: 12px;
-   margin: 0;
-   padding: 0;
+   display: grid !important;
+   grid-template-columns: 100px 1fr !important;
+   gap: 12px !important;
+   align-items: start !important;
+   margin: 0 0 8px 0 !important;
+   padding: 0 !important;
+   width: 100% !important;
+}
+
+.stream-info-field:last-child {
+   margin-bottom: 0 !important;
 }
 
 .stream-info-field strong {
-   flex-shrink: 0;
-   min-width: 80px;
    color: #ccc;
    font-weight: 500;
+   text-align: right;
+}
+
+.stream-info-field a,
+.stream-info-field input {
+   word-break: break-all;
 }
 
 .stream-info-field a {
    color: #5c6bc0;
    text-decoration: none;
-   word-break: break-all;
 }
 
 .stream-edit-name,
@@ -405,6 +411,7 @@ html, body {
    border-radius: 4px;
    color: #e0e0e0;
    font-size: 12px;
+   box-sizing: border-box;
 }
 
 .stream-edit-name:focus,

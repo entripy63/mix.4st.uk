@@ -352,8 +352,13 @@ function playLiveStream(index) {
 
 // Live stream drag-and-drop handlers
 function onLiveStreamDragStart(e, index) {
-  state.draggedStreamIndex = index;
-  e.currentTarget.classList.add('dragging');
+   // Prevent dragging from info popup
+   if (e.target.closest('.stream-extra-info')) {
+      e.preventDefault();
+      return;
+   }
+   state.draggedStreamIndex = index;
+   e.currentTarget.classList.add('dragging');
 }
 
 function onLiveStreamDragOver(e) {
@@ -392,42 +397,35 @@ function saveLiveStreamOrder() {
   saveUserStreams(orderedStreams);
 }
 
-function toggleStreamInfo(btn) {
-   const info = btn.closest('.mix-item').querySelector('.stream-extra-info');
-   if (info) {
-     info.style.display = info.style.display === 'none' ? 'flex' : 'none';
-   }
-}
-
 // Stream edit event handlers - update display on input
 document.addEventListener('DOMContentLoaded', function() {
-  const mixList = document.getElementById('mixList');
-  if (!mixList) return;
-  
-  mixList.addEventListener('input', (e) => {
-     if (e.target.classList.contains('stream-edit-name')) {
-        const index = parseInt(e.target.dataset.index);
-        const stream = liveStreams[index];
-        if (stream) {
-           stream.name = e.target.value;
-           const mixName = e.target.closest('.mix-item').querySelector('.mix-name');
-           if (mixName) mixName.textContent = e.target.value;
-        }
-     } else if (e.target.classList.contains('stream-edit-genre')) {
-        const index = parseInt(e.target.dataset.index);
-        const stream = liveStreams[index];
-        if (stream) {
-           stream.genre = e.target.value;
-           // Update or create genre display in row
-           const streamInfo = e.target.closest('.mix-item').querySelector('.stream-info');
-           let genreSpan = streamInfo?.querySelector('.stream-genre');
-           if (e.target.value) {
-              if (!genreSpan) {
-                 genreSpan = document.createElement('span');
-                 genreSpan.className = 'stream-genre';
-                 streamInfo?.appendChild(genreSpan);
-              }
-              genreSpan.textContent = e.target.value;
+   const mixList = document.getElementById('mixList');
+   if (!mixList) return;
+   
+   mixList.addEventListener('input', (e) => {
+      if (e.target.classList.contains('stream-edit-name')) {
+         const index = parseInt(e.target.dataset.index);
+         const stream = liveStreams[index];
+         if (stream) {
+            stream.name = e.target.value;
+            const mixName = e.target.closest('.mix-item').querySelector('.mix-name');
+            if (mixName) mixName.textContent = e.target.value;
+         }
+      } else if (e.target.classList.contains('stream-edit-genre')) {
+         const index = parseInt(e.target.dataset.index);
+         const stream = liveStreams[index];
+         if (stream) {
+            stream.genre = e.target.value;
+            // Update or create genre display in row
+            const streamInfo = e.target.closest('.mix-item').querySelector('.stream-info');
+            let genreSpan = streamInfo?.querySelector('.stream-genre');
+            if (e.target.value) {
+               if (!genreSpan) {
+                  genreSpan = document.createElement('span');
+                  genreSpan.className = 'stream-genre';
+                  streamInfo?.appendChild(genreSpan);
+               }
+               genreSpan.textContent = e.target.value;
            } else if (genreSpan) {
               genreSpan.remove();
            }
@@ -559,22 +557,6 @@ function showPlaylistGuide() {
 
 function hidePlaylistGuide() {
     document.getElementById('playlistGuideModal').style.display = 'none';
-}
-
-// Delegated event handler for stream list buttons
-const mixList = document.getElementById('mixList');
-if (mixList) {
-    mixList.addEventListener('click', (e) => {
-      const actionBtn = e.target.closest('[data-action]');
-      if (!actionBtn) return;
-      
-      const action = actionBtn.dataset.action;
-      switch (action) {
-         case 'toggle-stream-info':
-            toggleStreamInfo(actionBtn);
-            break;
-      }
-   });
 }
 
 // Live stream restoration for both SPAs
