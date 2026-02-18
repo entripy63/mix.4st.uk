@@ -6,11 +6,6 @@
 // We can't always use the proxy because it hates jungletrain.net
 const STREAM_PROXY = 'https://stream-proxy.round-bar-e93e.workers.dev';
 
-const BUILTIN_STREAM_DEFS = [
-  { name: 'Sleepbot Environmental Broadcast', m3u: 'http://sleepbot.com/ambience/cgi/listen.m3u', genre: 'Ambient' },
-  { name: 'Jungletrain.net', m3u: 'https://jungletrain.net/static/256kbps.m3u', genre: 'Jungle/Drum & Bass' }
-];
-
 function getUserStreams() {
   return storage.getJSON('userStreams', []);
 }
@@ -115,14 +110,23 @@ function removeUserStream(index) {
    }
 }
 
-function initializeBuiltinStreams() {
-   const initialized = storage.getBool('builtinStreamsInitialized', false);
-   if (!initialized) {
-     for (const stream of BUILTIN_STREAM_DEFS) {
-       addUserStream(stream.name, stream.m3u, stream.genre);
-     }
-     storage.set('builtinStreamsInitialized', true);
-   }
+async function loadDefaultStreamsOnFirstRun() {
+    const userStreams = getUserStreams();
+    // Only load default preset if user has no streams yet
+    if (userStreams.length === 0) {
+      try {
+        const response = await fetch('/presets/Default.json');
+        const preset = await response.json();
+        if (preset.name && Array.isArray(preset.streams)) {
+          for (const stream of preset.streams) {
+            await addUserStream(stream.name || null, stream.m3u, stream.genre || null);
+          }
+        }
+      } catch (e) {
+        // Default preset not available, start with empty list
+        console.log('Default preset not found, starting with empty stream list');
+      }
+    }
 }
 
 function getLiveStreamConfig() {
@@ -749,8 +753,8 @@ async function restoreLivePlayer() {
   return false; // Did not restore
 }
 
-// Initialize builtin streams on first load
-initializeBuiltinStreams();
-
-// Initialize live streams in background
-initLiveStreams().catch(e => console.error('Failed to initialize live streams:', e));
+// Load default preset on first run, then initialize live streams
+(async () => {
+  await loadDefaultStreamsOnFirstRun();
+  initLiveStreams().catch(e => console.error('Failed to initialize live streams:', e));
+})();

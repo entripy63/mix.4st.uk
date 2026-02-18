@@ -1,0 +1,17 @@
+{
+  "name": "Default",
+  "version": 1,
+  "savedAt": "2026-02-18T00:00:00Z",
+  "streams": [
+    {
+      "name": "Sleepbot Environmental Broadcast",
+      "m3u": "http://sleepbot.com/ambience/cgi/listen.m3u",
+      "genre": "Ambient"
+    },
+    {
+      "name": "Jungletrain.net",
+      "m3u": "https://jungletrain.net/static/256kbps.m3u",
+      "genre": "Jungle/Drum & Bass"
+    }
+  ]
+}

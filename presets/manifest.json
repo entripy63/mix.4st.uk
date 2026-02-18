@@ -1,6 +1,10 @@
 {
   "presets": [
     {
+      "filename": "Default.json",
+      "name": "Default"
+    },
+    {
       "filename": "DnB.json",
       "name": "Drum & Bass"
     }
