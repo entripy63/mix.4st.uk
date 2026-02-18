@@ -597,12 +597,17 @@ document.addEventListener('click', (e) => {
    }
 });
 
-// Close presets modal on Escape
+// Close modals on Escape
 document.addEventListener('keydown', (e) => {
    if (e.key === 'Escape') {
       const presetsModal = document.getElementById('presetsModal');
+      const playlistGuideModal = document.getElementById('playlistGuideModal');
+      
       if (presetsModal && presetsModal.style.display === 'flex') {
          hidePresetsMenu();
+      }
+      if (playlistGuideModal && playlistGuideModal.style.display === 'flex') {
+         hidePlaylistGuide();
       }
    }
 });
