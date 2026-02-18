@@ -249,6 +249,7 @@ button:active {
 }
 
 /* Add Playlists button */
+#findPlaylistsBtn button,
 #addPlaylistsBtnPlayer {
     background: #252542;
     color: #e0e0e0;
@@ -256,8 +257,12 @@ button:active {
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.2s;
+    white-space: nowrap;
+    font-size: 12px;
+    padding: 10px 12px !important;
 }
 
+#findPlaylistsBtn button:hover,
 #addPlaylistsBtnPlayer:hover {
     background: #3d3d5c;
 }
