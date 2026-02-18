@@ -680,6 +680,13 @@ async function loadAvailablePresets() {
 
 // Show presets menu modal
 async function showPresetsMenu() {
+    // Capture button position before async call
+    const btn = event.target.closest('button');
+    let btnRect = null;
+    if (btn) {
+        btnRect = btn.getBoundingClientRect();
+    }
+    
     const presets = await loadAvailablePresets();
     
     if (presets.length === 0) {
@@ -698,24 +705,20 @@ async function showPresetsMenu() {
     
     // Show modal
     const modal = document.getElementById('presetsModal');
-    const btn = event.target.closest('button');
     modal.style.display = 'flex';
     
-    // Position modal near the button
-    if (btn) {
-        const rect = btn.getBoundingClientRect();
+    // Position modal near the button (above it, centered)
+    if (btnRect) {
         const content = modal.querySelector('.modal-content');
+        const contentWidth = 320; // Match CSS width
+        const contentHeight = Math.min(presets.length * 50 + 60, window.innerHeight * 0.7); // Rough estimate
         
-        // Position below button, centered horizontally
-        setTimeout(() => {
-            const contentRect = content.getBoundingClientRect();
-            const left = rect.left + rect.width / 2 - contentRect.width / 2;
-            const top = rect.top - contentRect.height - 10;
-            
-            content.style.position = 'fixed';
-            content.style.left = Math.max(10, left) + 'px';
-            content.style.top = Math.max(10, top) + 'px';
-        }, 0);
+        const left = btnRect.left + btnRect.width / 2 - contentWidth / 2;
+        const top = btnRect.top - contentHeight - 10;
+        
+        content.style.position = 'fixed';
+        content.style.left = Math.max(10, Math.min(left, window.innerWidth - contentWidth - 10)) + 'px';
+        content.style.top = Math.max(10, top) + 'px';
     }
 }
 
