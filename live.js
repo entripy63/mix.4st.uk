@@ -352,11 +352,6 @@ function playLiveStream(index) {
 
 // Live stream drag-and-drop handlers
 function onLiveStreamDragStart(e, index) {
-   // Prevent dragging from info popup
-   if (e.target.closest('.stream-extra-info')) {
-      e.preventDefault();
-      return;
-   }
    state.draggedStreamIndex = index;
    e.currentTarget.classList.add('dragging');
 }
@@ -440,6 +435,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }
      }
   });
+
+  // Track pointer origin and temporarily disable dragging when in popout inputs
+  mixList.addEventListener('pointerdown', (e) => {
+     const inputInPopout = e.target.closest('.stream-extra-info input, .stream-extra-info textarea');
+     if (inputInPopout) {
+        const row = e.target.closest('.mix-item');
+        if (row && row.draggable) {
+           row.dataset.wasDraggable = '1';
+           row.draggable = false;
+        }
+     }
+  }, true);
+
+  mixList.addEventListener('pointerup', () => {
+     const rows = document.querySelectorAll('.mix-item[data-was-draggable="1"]');
+     rows.forEach(row => {
+        row.draggable = true;
+        delete row.dataset.wasDraggable;
+     });
+  }, true);
 
   // Save to storage on blur
   mixList.addEventListener('blur', (e) => {
