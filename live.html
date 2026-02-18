@@ -14,16 +14,15 @@
         <div id="audioControls">
           <button id="playPauseBtn" class="control-btn" title="Play/Pause (Space)">▶</button>
           <span id="timeDisplay">PAUSED</span>
+          <div id="nowPlaying"></div>
           <div id="volumeControl">
             <button id="muteBtn" class="control-btn" title="Mute">🔊</button>
             <input type="range" id="volumeSlider" min="0" max="100" value="50" title="Volume">
           </div>
         </div>
-        <div id="nowPlaying"></div>
       </div>
       <div class="streams-column">
          <div id="mixBrowser">
-           <h2 style="margin: 0 0 10px 0; flex-shrink: 0;">Live Streams</h2>
            <div id="mixList"></div>
            <button id="findPlaylistsBtn" onclick="showPlaylistGuide()" style="width: 100%; padding: 12px 16px; font-size: 14px; font-weight: bold; margin-top: 10px; flex-shrink: 0;">Find Playlists...</button>
          </div>

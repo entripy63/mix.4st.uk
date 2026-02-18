@@ -121,7 +121,7 @@ html, body {
 }
 
 #volumeSlider {
-  width: 100px;
+  width: 200px;
   height: 6px;
   -webkit-appearance: none;
   appearance: none;
