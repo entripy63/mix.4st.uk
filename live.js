@@ -609,11 +609,36 @@ document.addEventListener('keydown', (e) => {
 
 // Show playlist guide / help
 function showPlaylistGuide() {
-    document.getElementById('playlistGuideModal').style.display = 'flex';
+    const modal = document.getElementById('playlistGuideModal');
+    const btn = event.target.closest('button');
+    
+    modal.style.display = 'flex';
+    
+    // Position modal near the button
+    if (btn) {
+        const rect = btn.getBoundingClientRect();
+        const content = modal.querySelector('.modal-content');
+        
+        // Position below button, centered horizontally
+        setTimeout(() => {
+            const contentRect = content.getBoundingClientRect();
+            const left = rect.left + rect.width / 2 - contentRect.width / 2;
+            const top = rect.top - contentRect.height - 10;
+            
+            content.style.position = 'fixed';
+            content.style.left = Math.max(10, left) + 'px';
+            content.style.top = Math.max(10, top) + 'px';
+        }, 0);
+    }
 }
 
 function hidePlaylistGuide() {
-    document.getElementById('playlistGuideModal').style.display = 'none';
+    const modal = document.getElementById('playlistGuideModal');
+    const content = modal.querySelector('.modal-content');
+    content.style.position = '';
+    content.style.left = '';
+    content.style.top = '';
+    modal.style.display = 'none';
 }
 
 // Load available presets from /presets/manifest.json
@@ -673,11 +698,33 @@ async function showPresetsMenu() {
     
     // Show modal
     const modal = document.getElementById('presetsModal');
+    const btn = event.target.closest('button');
     modal.style.display = 'flex';
+    
+    // Position modal near the button
+    if (btn) {
+        const rect = btn.getBoundingClientRect();
+        const content = modal.querySelector('.modal-content');
+        
+        // Position below button, centered horizontally
+        setTimeout(() => {
+            const contentRect = content.getBoundingClientRect();
+            const left = rect.left + rect.width / 2 - contentRect.width / 2;
+            const top = rect.top - contentRect.height - 10;
+            
+            content.style.position = 'fixed';
+            content.style.left = Math.max(10, left) + 'px';
+            content.style.top = Math.max(10, top) + 'px';
+        }, 0);
+    }
 }
 
 function hidePresetsMenu() {
     const modal = document.getElementById('presetsModal');
+    const content = modal.querySelector('.modal-content');
+    content.style.position = '';
+    content.style.left = '';
+    content.style.top = '';
     modal.style.display = 'none';
 }
 
