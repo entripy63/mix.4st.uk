@@ -156,7 +156,10 @@
         <div id="groupFilters"></div>
         <div id="mixList"></div>
         <div id="findPlaylistsBtn" style="display: none; margin-top: auto; padding: 10px 15px;">
-          <button onclick="showPlaylistGuide()" style="width: 100%; padding: 12px 16px; font-size: 14px; font-weight: bold;">Find Playlists...</button>
+          <div style="display: flex; gap: 10px;">
+            <button onclick="showPlaylistGuide()" style="flex: 1; padding: 12px 16px; font-size: 14px; font-weight: bold;">Find Playlists...</button>
+            <button id="addPlaylistsBtnPlayer" onclick="showPresetsMenu()" style="flex: 1; padding: 12px 16px; font-size: 14px; font-weight: bold;">Add Playlists...</button>
+          </div>
         </div>
         </div>
         </div>
@@ -200,7 +203,15 @@
         </div>
         </div>
         </div>
-  <script src="core.js"></script>
+
+        <div id="presetsModal" class="modal" onclick="hidePresetsMenu()" style="display: none;">
+        <div class="modal-content" onclick="event.stopPropagation()" style="background: #252542; border-radius: 10px; padding: 16px; max-width: 300px;">
+        <h2 style="margin-top: 0; margin-bottom: 16px; font-size: 16px;">Add Playlists</h2>
+        <div id="presetsList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+        </div>
+
+        <script src="core.js"></script>
   <script src="mixes.js"></script>
   <script src="queue.js"></script>
   <script src="player.js"></script>

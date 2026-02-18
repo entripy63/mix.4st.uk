@@ -238,14 +238,28 @@ button:active {
 }
 
 @keyframes slideUp {
-   from {
-      transform: translateY(100%);
-      opacity: 0;
-   }
-   to {
-      transform: translateY(0);
-      opacity: 1;
-   }
+    from {
+       transform: translateY(100%);
+       opacity: 0;
+    }
+    to {
+       transform: translateY(0);
+       opacity: 1;
+    }
+}
+
+/* Add Playlists button */
+#addPlaylistsBtnPlayer {
+    background: #252542;
+    color: #e0e0e0;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#addPlaylistsBtnPlayer:hover {
+    background: #3d3d5c;
 }
 
 .playlist-guide {
