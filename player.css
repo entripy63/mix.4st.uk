@@ -267,6 +267,12 @@ button:active {
     background: #3d3d5c;
 }
 
+/* Presets modal styling */
+#presetsModal .modal-content {
+    width: 320px;
+    max-height: 70vh;
+}
+
 .playlist-guide {
    max-height: 70vh;
    overflow-y: auto;

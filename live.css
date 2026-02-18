@@ -609,9 +609,15 @@ html, body {
 }
 
 .guide-section code {
-   background: #1a1a2e;
-   padding: 2px 4px;
-   border-radius: 3px;
-   font-family: monospace;
-   font-size: 11px;
+    background: #1a1a2e;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 11px;
+}
+
+/* Presets modal styling */
+#presetsModal .modal-content {
+    width: 320px;
+    max-height: 70vh;
 }
