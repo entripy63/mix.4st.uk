@@ -1,0 +1,37 @@
+{
+  "name": "Deep House",
+  "version": 1,
+  "savedAt": "2026-02-18T12:03:00.977Z",
+  "streams": [
+    {
+      "name": "Deep House Radio - Bucharest - Romania",
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99563196",
+      "genre": "Deep House"
+    },
+    {
+      "name": "1.FM - Deep House (www.1.fm)",
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=1847171",
+      "genre": "Deep House"
+    },
+    {
+      "name": "Deep House Network",
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99578163",
+      "genre": "Deep House"
+    },
+    {
+      "name": "Deepvibes Radio",
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=191920",
+      "genre": "Deep House"
+    },
+    {
+      "name": "Extreme Deep House Radio",
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99591153",
+      "genre": "Deep House"
+    },
+    {
+      "name": "Radio Viva ",
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99623706",
+      "genre": " Deep House and Dance music"
+    }
+  ]
+}

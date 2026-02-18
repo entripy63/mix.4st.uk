@@ -1,6 +1,10 @@
 {
   "presets": [
     {
+      "filename": "DeepHouse.json",
+      "name": "Deep House"
+    },
+    {
       "filename": "Default.json",
       "name": "Default"
     },

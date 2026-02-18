@@ -62,6 +62,9 @@ def main():
         print("No valid presets found")
         return
     
+    # Sort presets alphabetically by name
+    presets.sort(key=lambda p: p['name'].lower())
+    
     # Write manifest
     manifest = {
         'presets': presets
