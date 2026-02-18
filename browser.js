@@ -95,55 +95,44 @@ function toggleExtraInfo(btn) {
    }
 }
 
-// Toggle stream info popup (for live streams in browser)
-function toggleStreamInfo(btn) {
-   const info = btn.closest('.mix-item').querySelector('.stream-extra-info');
-   if (info) {
-      info.style.display = info.style.display === 'none' ? 'table' : 'none';
-   }
-}
-
-// Delegated event handler for mix list (handles all modes)
+// Delegated event handler for mix list (handles DJ/All/Search modes)
 document.getElementById('mixList').addEventListener('click', (e) => {
-   const actionBtn = e.target.closest('[data-action]');
-   if (!actionBtn) return;
-   
-   const action = actionBtn.dataset.action;
-   const mixItem = actionBtn.closest('.mix-item');
-   const searchIndex = mixItem?.dataset.searchIndex;
-   
-   const mixId = mixItem?.dataset.mixId;
-   
-   switch (action) {
-      case 'queue-add':
-         if (mixId) addToQueue(mixId);
-         break;
-      case 'play-now':
-         if (mixId) playNow(mixId);
-         break;
-      case 'search-queue-add':
-         if (searchIndex !== undefined) addSearchResultToQueue(parseInt(searchIndex));
-         break;
-      case 'search-play-now':
-         if (searchIndex !== undefined) playSearchResult(parseInt(searchIndex));
-         break;
-      case 'search-play-stream':
-         if (searchIndex !== undefined) playSearchStream(parseInt(searchIndex));
-         break;
-      case 'toggle-info':
-         toggleExtraInfo(actionBtn);
-         break;
-      case 'toggle-stream-info':
-         toggleStreamInfo(actionBtn);
-         break;
-      case 'add-all-queue':
-         addAllToQueue();
-         break;
-      case 'add-all-search-results':
-         addAllSearchResultsToQueue();
-         break;
-   }
-   });
+    const actionBtn = e.target.closest('[data-action]');
+    if (!actionBtn) return;
+    
+    const action = actionBtn.dataset.action;
+    const mixItem = actionBtn.closest('.mix-item');
+    const searchIndex = mixItem?.dataset.searchIndex;
+    
+    const mixId = mixItem?.dataset.mixId;
+    
+    switch (action) {
+       case 'queue-add':
+          if (mixId) addToQueue(mixId);
+          break;
+       case 'play-now':
+          if (mixId) playNow(mixId);
+          break;
+       case 'search-queue-add':
+          if (searchIndex !== undefined) addSearchResultToQueue(parseInt(searchIndex));
+          break;
+       case 'search-play-now':
+          if (searchIndex !== undefined) playSearchResult(parseInt(searchIndex));
+          break;
+       case 'search-play-stream':
+          if (searchIndex !== undefined) playSearchStream(parseInt(searchIndex));
+          break;
+       case 'toggle-info':
+          toggleExtraInfo(actionBtn);
+          break;
+       case 'add-all-queue':
+          addAllToQueue();
+          break;
+       case 'add-all-search-results':
+          addAllSearchResultsToQueue();
+          break;
+    }
+    });
 
    // Track pointer origin and temporarily disable dragging when in popout inputs
    window.lastPointerDownTarget = null;
