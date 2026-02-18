@@ -10,6 +10,7 @@
 
 ## Architecture
 - Static website with two SPAs: DJ mixes (mixes.4st.uk) and live streams (live.4st.uk)
+- Always remember the two SPAs when modifying code. i.e. don't add live stream stuff to browser.js which isn't part of both SPAs.
 
 ### player.html (DJ Mixes SPA)
 - **Location**: mixes.4st.uk
