@@ -582,6 +582,104 @@ function hidePlaylistGuide() {
     document.getElementById('playlistGuideModal').style.display = 'none';
 }
 
+// Load available presets from /presets/manifest.json
+async function loadAvailablePresets() {
+    try {
+        // Load manifest
+        const manifestResponse = await fetch('/presets/manifest.json');
+        const manifest = await manifestResponse.json();
+        
+        if (!Array.isArray(manifest.presets)) {
+            console.error('Invalid manifest: missing "presets" array');
+            return [];
+        }
+        
+        // Load each preset file
+        const presets = [];
+        for (const item of manifest.presets) {
+            try {
+                const presetResponse = await fetch(`/presets/${item.filename}`);
+                const preset = await presetResponse.json();
+                if (preset.name && Array.isArray(preset.streams)) {
+                    presets.push({
+                        filename: item.filename,
+                        name: preset.name,
+                        streams: preset.streams
+                    });
+                }
+            } catch (e) {
+                console.error(`Failed to load preset ${item.filename}:`, e);
+            }
+        }
+        
+        return presets;
+    } catch (e) {
+        console.error('Failed to load presets:', e);
+        return [];
+    }
+}
+
+// Show presets menu modal
+async function showPresetsMenu() {
+    const presets = await loadAvailablePresets();
+    
+    if (presets.length === 0) {
+        alert('No presets available. Upload preset files to /presets/ directory on the server.');
+        return;
+    }
+    
+    // Populate preset list with clickable buttons
+    const presetsList = document.getElementById('presetsList');
+    presetsList.innerHTML = presets.map((preset, index) => `
+        <button onclick="selectPreset(${index})" style="padding: 12px 16px; background: #3d3d5c; border: none; border-radius: 6px; color: #e0e0e0; cursor: pointer; text-align: left; transition: background 0.2s;" onmouseover="this.style.background='#5c6bc0'" onmouseout="this.style.background='#3d3d5c'">${escapeHtml(preset.name)}</button>
+    `).join('');
+    
+    // Store presets for selection handler
+    window._currentPresets = presets;
+    
+    // Show modal
+    const modal = document.getElementById('presetsModal');
+    modal.style.display = 'flex';
+}
+
+function hidePresetsMenu() {
+    const modal = document.getElementById('presetsModal');
+    modal.style.display = 'none';
+}
+
+async function selectPreset(index) {
+    const presets = window._currentPresets;
+    if (!presets || !presets[index]) return;
+    
+    hidePresetsMenu();
+    await addStreamsFromPreset(presets[index]);
+}
+
+// Add streams from a preset, skipping duplicates
+async function addStreamsFromPreset(preset) {
+    const currentStreams = getUserStreams();
+    const existingM3Us = new Set(currentStreams.map(s => s.m3u));
+    
+    let added = 0;
+    let skipped = 0;
+    
+    for (const stream of preset.streams) {
+        if (existingM3Us.has(stream.m3u)) {
+            skipped++;
+            continue;
+        }
+        
+        // addUserStream will probe and add to liveStreams if initialized
+        await addUserStream(stream.name || null, stream.m3u, stream.genre || null);
+        added++;
+    }
+    
+    // Update display with newly added streams
+    displayLiveStreams();
+    
+    showToast(`Added ${added} stream${added !== 1 ? 's' : ''}${skipped > 0 ? `, skipped ${skipped} duplicate${skipped !== 1 ? 's' : ''}` : ''}`);
+}
+
 // Delegated event handler for stream list buttons (live.html only)
 const mixList = document.getElementById('mixList');
 if (mixList) {

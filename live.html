@@ -23,8 +23,12 @@
       </div>
       <div class="streams-column">
          <div id="mixBrowser">
-           <div id="mixList"></div>
-           <button id="findPlaylistsBtn" onclick="showPlaylistGuide()" style="width: 100%; padding: 12px 16px; font-size: 14px; font-weight: bold; margin-top: 10px; flex-shrink: 0;">Find Playlists...</button>
+          <div id="mixList"></div>
+          <div style="display: flex; gap: 10px; margin-top: 10px; flex-shrink: 0;">
+              <button id="findPlaylistsBtn" onclick="showPlaylistGuide()" style="flex: 1; padding: 12px 16px; font-size: 14px; font-weight: bold;">Find Playlists...</button>
+              <button id="addPlaylistsBtn" onclick="showPresetsMenu()" style="flex: 1; padding: 12px 16px; font-size: 14px; font-weight: bold;">Add Playlists...</button>
+            </div>
+          
          </div>
        </div>
     </div>
@@ -66,6 +70,13 @@
             </ul>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div id="presetsModal" class="modal" onclick="hidePresetsMenu()" style="display: none;">
+      <div class="modal-content" onclick="event.stopPropagation()" style="background: #252542; border-radius: 10px; padding: 16px; max-width: 300px;">
+        <h2 style="margin-top: 0; margin-bottom: 16px; font-size: 16px;">Add Playlists</h2>
+        <div id="presetsList" style="display: flex; flex-direction: column; gap: 8px;"></div>
       </div>
     </div>
 

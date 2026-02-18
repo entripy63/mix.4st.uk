@@ -78,9 +78,9 @@ function showToast(message) {
   toast.style.cssText = `
     position: fixed; bottom: 20px; right: 20px;
     background: #4a4a4a; color: #fff; padding: 10px 20px;
-    border-radius: 4px; z-index: 10000; animation: fadeOut 3s forwards;
+    border-radius: 4px; z-index: 10000; animation: fadeOut 5s forwards;
   `;
   toast.textContent = message;
   document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
+  setTimeout(() => toast.remove(), 5000);
 }

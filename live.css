@@ -474,16 +474,16 @@ html, body {
    background: #5c6bc0;
 }
 
-/* Find Playlists button */
-#findPlaylistsBtn {
-   background: #252542;
-   color: #e0e0e0;
-   border: none;
-   transition: background 0.2s;
+/* Find/Add Playlists buttons */
+#findPlaylistsBtn, #addPlaylistsBtn {
+    background: #252542;
+    color: #e0e0e0;
+    border: none;
+    transition: background 0.2s;
 }
 
-#findPlaylistsBtn:hover {
-   background: #3d3d5c;
+#findPlaylistsBtn:hover, #addPlaylistsBtn:hover {
+    background: #3d3d5c;
 }
 
 /* Modal styles */
