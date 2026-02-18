@@ -108,17 +108,23 @@ function showConfirmDialog(title, message) {
     titleEl.textContent = title;
     messageEl.textContent = message;
     
-    // Position near cursor or center
+    // Capture triggering element position for positioning
+    const btn = event && event.target.closest('button');
+    let btnRect = null;
+    if (btn) {
+      btnRect = btn.getBoundingClientRect();
+    }
+    
     const content = modal.querySelector('.confirm-content');
-    content.style.position = '';
-    content.style.left = '';
-    content.style.top = '';
     
     // Handler functions
     const cleanup = () => {
       cancelBtn.removeEventListener('click', onCancel);
       confirmBtn.removeEventListener('click', onConfirm);
       document.removeEventListener('keydown', onKeydown);
+      content.style.position = '';
+      content.style.left = '';
+      content.style.top = '';
     };
     
     const onCancel = () => {
@@ -146,6 +152,21 @@ function showConfirmDialog(title, message) {
     document.addEventListener('keydown', onKeydown);
     
     modal.style.display = 'flex';
+    
+    // Position modal near the clicked button
+    if (btnRect) {
+      const contentWidth = 320;
+      const contentHeight = 160; // Rough estimate
+      
+      // Position to the left of button, vertically centered
+      const left = btnRect.left - contentWidth - 10;
+      const top = btnRect.top + btnRect.height / 2 - contentHeight / 2;
+      
+      content.style.position = 'fixed';
+      content.style.left = Math.max(10, left) + 'px';
+      content.style.top = Math.max(10, Math.min(top, window.innerHeight - contentHeight - 10)) + 'px';
+    }
+    
     confirmBtn.focus();
   });
 }
