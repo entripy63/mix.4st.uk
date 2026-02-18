@@ -73,12 +73,19 @@ async function probeAndAddStream(config) {
       }
     }
     
+    // Only persist resolved names from playlist (not auto-generated fallbacks)
+    let nameWasResolved = false;
+    if (!stream.name && stream.playlistTitle) {
+       nameWasResolved = true;
+    }
+    
     if (!stream.name) {
        stream.name = config.m3u || 'Unknown Stream';
     }
     
     // Update the saved config with resolved name/genre if they were null
-    if (!config.name && stream.name) {
+    // Only persist if name was actually resolved from playlist, not auto-generated
+    if (!config.name && nameWasResolved) {
        config.name = stream.name;
        const configs = getUserStreams();
        const idx = configs.findIndex(c => c.m3u === config.m3u);
