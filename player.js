@@ -272,3 +272,13 @@ function play(url) {
   load(url);
   aud.play();
 }
+
+// Shared keyboard shortcuts (both player.html and live.html)
+document.addEventListener('keydown', function(e) {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.code === 'Space') {
+    e.preventDefault();
+    playPauseBtn.click();
+  }
+  // Escape is handled by modals.js
+});
