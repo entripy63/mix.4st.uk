@@ -1,6 +1,10 @@
 {
   "presets": [
     {
+      "filename": "Classical.json",
+      "name": "Classical"
+    },
+    {
       "filename": "DeepHouse.json",
       "name": "Deep House"
     },
@@ -10,7 +14,23 @@
     },
     {
       "filename": "DnB.json",
-      "name": "Drum & Bass"
+      "name": "DnB"
+    },
+    {
+      "filename": "House.json",
+      "name": "House"
+    },
+    {
+      "filename": "Jazz.json",
+      "name": "Jazz"
+    },
+    {
+      "filename": "Reggae.json",
+      "name": "Reggae"
+    },
+    {
+      "filename": "SomaFM.json",
+      "name": "SomaFM"
     }
   ]
 }
