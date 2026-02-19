@@ -40,9 +40,9 @@ async function loadAvailablePresets() {
 }
 
 // Show presets menu modal (used by both browser.js and liveui.js)
-async function showPresetsMenu() {
+async function showPresetsMenu(e) {
     // Capture button position before async call
-    const btn = event.target.closest('button');
+    const btn = e?.target?.closest('button') || event?.target?.closest('button');
     let btnRect = null;
     if (btn) {
         btnRect = btn.getBoundingClientRect();
@@ -74,12 +74,18 @@ async function showPresetsMenu() {
         const contentWidth = 320; // Match CSS width
         const contentHeight = Math.min(presets.length * 50 + 60, window.innerHeight * 0.7); // Rough estimate
         
-        const left = btnRect.left + btnRect.width / 2 - contentWidth / 2;
-        const top = btnRect.top - contentHeight - 10;
+        let top = btnRect.top - contentHeight - 10;
         
-        content.style.position = 'fixed';
-        content.style.left = Math.max(10, Math.min(left, window.innerWidth - contentWidth - 10)) + 'px';
-        content.style.top = Math.max(10, top) + 'px';
+        // If modal would go above viewport, position below button instead
+        if (top < 10) {
+            top = btnRect.bottom + 10;
+        }
+        
+        const left = btnRect.left + btnRect.width / 2 - contentWidth / 2;
+        
+        content.style.setProperty('position', 'fixed', 'important');
+        content.style.setProperty('left', Math.max(10, Math.min(left, window.innerWidth - contentWidth - 10)) + 'px', 'important');
+        content.style.setProperty('top', Math.max(10, top) + 'px', 'important');
     }
 }
 
@@ -93,9 +99,9 @@ function hidePresetsMenu() {
 }
 
 // Show playlist guide modal (generic - used by both browser.js and liveui.js)
-function showPlaylistGuide() {
+function showPlaylistGuide(e) {
     const modal = document.getElementById('playlistGuideModal');
-    const btn = event.target.closest('button');
+    const btn = e?.target?.closest('button') || event?.target?.closest('button');
     
     modal.style.display = 'flex';
     
@@ -104,15 +110,20 @@ function showPlaylistGuide() {
         const rect = btn.getBoundingClientRect();
         const content = modal.querySelector('.modal-content');
         
-        // Position below button, centered horizontally
+        // Position below button, centered horizontally, but above if button is near top
         setTimeout(() => {
             const contentRect = content.getBoundingClientRect();
             const left = rect.left + rect.width / 2 - contentRect.width / 2;
-            const top = rect.top - contentRect.height - 10;
+            let top = rect.top - contentRect.height - 10;
             
-            content.style.position = 'fixed';
-            content.style.left = Math.max(10, left) + 'px';
-            content.style.top = Math.max(10, top) + 'px';
+            // If modal would go above viewport, position below button instead
+            if (top < 10) {
+                top = rect.bottom + 10;
+            }
+            
+            content.style.setProperty('position', 'fixed', 'important');
+            content.style.setProperty('left', Math.max(10, Math.min(left, window.innerWidth - contentRect.width - 10)) + 'px', 'important');
+            content.style.setProperty('top', Math.max(10, top) + 'px', 'important');
         }, 0);
     }
 }

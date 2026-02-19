@@ -487,25 +487,10 @@ async function playSearchResult(index) {
 }
 
 async function playSearchStream(index) {
-   const item = window.currentSearchResults?.[index];
-   if (item && item.type === 'stream') {
-     state.isLive = true;
-     state.liveStreamUrl = item.url;
-     state.liveDisplayText = item.name;
-     storage.set('liveStreamUrl', item.url);
-     storage.set('liveDisplayText', item.name);
-     
-     document.getElementById('nowPlaying').innerHTML = `<h1>${escapeHtml(item.name)}</h1>`;
-     document.getElementById('coverArt').innerHTML = '';
-     document.getElementById('trackList').innerHTML = '';
-     document.title = 'Live - Player';
-     loadPeaks(null);
-     updateTimeDisplay();
-     
-     aud.src = item.url;
-     aud.play();
-     updatePlayPauseBtn();
-   }
+    const item = window.currentSearchResults?.[index];
+    if (item && item.type === 'stream') {
+      playLive(item.url, item.name, true);
+    }
 }
 
 // Playlist guide modal

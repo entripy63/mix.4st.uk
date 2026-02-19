@@ -7,41 +7,82 @@
 // ========== LIVE STREAM DISPLAY ==========
 
 function displayLiveStreams() {
-  const config = getLiveStreamConfig();
   const mixList = document.getElementById('mixList');
   
-  if (!config || config.length === 0) {
-    mixList.innerHTML = '<div style="color: #888; padding: 20px;">No live streams added yet. Click "Add Playlists..." to get started.</div>';
+  if (!liveStreamsInitialized) {
+    mixList.innerHTML = '<div style="padding: 20px; color: #888;">Checking stream availability...</div>';
+    initLiveStreams().then(() => displayLiveStreams());
     return;
   }
   
-  const streamListHtml = liveStreams.map((stream, index) => {
-    const statusClass = stream.available ? 'available' : 'unavailable';
-    const statusText = stream.available ? '🟢 Available' : '🔴 Unavailable';
-    const statusTitle = stream.reason ? `${statusText}: ${stream.reason}` : statusText;
-    
-    const streamName = escapeHtml(stream.name || stream.m3u);
-    const genreText = stream.genre ? ` · ${escapeHtml(stream.genre)}` : '';
-    const urlText = stream.url ? ` · ${stream.playlistTitle || 'Stream'}` : '';
-    
-    const extraInfo = `<div class="stream-extra-info" style="display:none; padding: 12px; background: #1a1a2e; border-radius: 6px; margin-top: 8px; font-size: 12px;">
-      <div style="margin-bottom: 8px;">
-        <strong>M3U URL:</strong>
-        <textarea style="width: 100%; height: 60px; padding: 4px; background: #0f0f1e; border: 1px solid #3d3d5c; border-radius: 3px; color: #e0e0e0; font-family: monospace; font-size: 11px;" readonly>${escapeHtml(stream.m3u)}</textarea>
-      </div>
-      <button style="padding: 6px 12px; background: #c0475c; border: none; border-radius: 4px; color: #fff; cursor: pointer; font-size: 12px;" onclick="if(confirm('Delete this stream?')) { removeUserStream(${index}); liveStreamsInitialized = false; initLiveStreams().then(() => displayLiveStreams()); }">Delete Stream</button>
-    </div>`;
-    
-    return `<div class="mix-item" data-stream-m3u="${escapeHtml(stream.m3u)}" draggable="true">
-      <button class="icon-btn" onclick="playLiveStream(${index})" title="Play stream">▶</button>
-      <span class="mix-name">${streamName} <span class="mix-duration">${genreText}${urlText}</span></span>
-      <span title="${statusTitle}" style="margin-left: auto;">${statusText}</span>
-      <button class="icon-btn info-btn" data-action="toggle-stream-info" title="More info">ⓘ</button>
-      ${extraInfo}
-    </div>`;
-  }).join('');
+  let html = '';
   
-  mixList.innerHTML = streamListHtml;
+  // Add stream form
+  html += `
+    <div class="add-stream-form">
+      <div class="add-stream-fields">
+        <input type="text" id="newStreamM3U" placeholder="Playlist URL (M3U or PLS)" />
+        <button class="add-stream-btn" onclick="handleAddStream()">Add</button>
+        <button onclick="reloadLiveStreams()" class="reload-btn" title="Reload all streams">⟳</button>
+        <div class="stream-menu-container" style="position: relative;">
+          <button class="stream-menu-btn" onclick="toggleStreamCollectionsMenu()" title="Save/Load streams">☰</button>
+          <div id="streamCollectionsMenu" class="stream-collections-menu" style="display: none; position: absolute; top: 100%; left: 0; background: #252542; border: 1px solid #3d3d5c; border-radius: 6px; padding: 8px; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.4); flex-direction: column; gap: 4px;">
+            <button onclick="loadCollectionFromFile()" style="padding: 8px 12px; background: #3d3d5c; border: none; border-radius: 4px; color: #e0e0e0; cursor: pointer; text-align: left;">📂 Load from File</button>
+            <button onclick="saveCollectionToFile()" style="padding: 8px 12px; background: #3d3d5c; border: none; border-radius: 4px; color: #e0e0e0; cursor: pointer; text-align: left;">💾 Save to File</button>
+            <button onclick="clearAllStreams()" style="padding: 8px 12px; background: #c0475c; border: none; border-radius: 4px; color: #fff; cursor: pointer; text-align: left;">🗑️ Clear All</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  if (liveStreams.length === 0) {
+    html += '<div style="padding: 20px; color: #888;">No live streams configured</div>';
+    mixList.innerHTML = html;
+    return;
+  }
+  
+  // Stream list
+  liveStreams.forEach((stream, index) => {
+    const unavailableClass = stream.available ? '' : ' unavailable';
+    const tooltip = stream.available ? 'Play Now' : (stream.reason || 'Unavailable');
+    const disabled = stream.available ? '' : ' disabled';
+    const deleteBtn = `<button class="icon-btn delete-stream-btn" onclick="handleRemoveStream(${index})" title="Remove stream" style="color: #c0475c;">✕</button>`;
+    const infoBtn = `<button class="icon-btn info-btn" data-action="toggle-stream-info" title="More info">ⓘ</button>`;
+    const infoPopout = `<div class="stream-extra-info" style="display:none">
+      <div class="stream-info-field">
+        <strong>Stream URL:</strong>
+        <a href="${escapeHtml(stream.url || stream.m3u)}" target="_blank" rel="noopener">${escapeHtml(stream.url || stream.m3u)}</a>
+      </div>
+      <div class="stream-info-field">
+        <strong>Name:</strong>
+        <input type="text" class="stream-edit-name" value="${escapeHtml(stream.name)}" placeholder="Stream name" data-index="${index}" />
+      </div>
+      <div class="stream-info-field">
+        <strong>Genre:</strong>
+        <input type="text" class="stream-edit-genre" value="${escapeHtml(stream.genre || '')}" placeholder="Genre" data-index="${index}" />
+      </div>
+    </div>`;
+    
+    html += `
+      <div class="mix-item${unavailableClass}"
+           draggable="true"
+           ondragstart="onLiveStreamDragStart(event, ${index})"
+           ondragover="onLiveStreamDragOver(event)"
+           ondrop="onLiveStreamDrop(event, ${index})"
+           ondragend="onLiveStreamDragEnd()">
+        <button class="icon-btn" onclick="playLiveStream(${index})"${disabled} title="${escapeHtml(tooltip)}">▶</button>
+        <div class="stream-info">
+          <span class="mix-name">${escapeHtml(stream.name)}</span>
+          ${stream.genre && stream.genre !== 'Unknown' ? `<span class="stream-genre">${escapeHtml(stream.genre)}</span>` : ''}
+        </div>
+        ${infoBtn}${deleteBtn}
+        ${infoPopout}
+      </div>
+    `;
+  });
+  
+  mixList.innerHTML = html;
 }
 
 function toggleStreamInfo(btn) {
@@ -72,11 +113,42 @@ function playLiveStream(index) {
   storage.set('liveDisplayText', name);
   
   playLive(url, name, true);
-  
-  // Save which stream is now playing
-  saveCollectionToFile = () => {
-    // Override temporarily to save current stream info
-  };
+}
+
+// ========== STREAM MANAGEMENT HANDLERS ==========
+
+async function handleAddStream() {
+    const m3u = document.getElementById('newStreamM3U').value.trim();
+
+    if (!m3u) {
+      alert('Playlist URL is required');
+      return;
+    }
+
+    if (!m3u.startsWith('http://') && !m3u.startsWith('https://')) {
+      alert('Playlist URL must start with http:// or https://');
+      return;
+    }
+
+    // Add stream with no name, let playlist title be parsed from m3u
+    await addUserStream(null, m3u, null);
+    document.getElementById('newStreamM3U').value = '';
+    displayLiveStreams();
+}
+
+async function handleRemoveStream(index) {
+    const confirmed = await showConfirmDialog('Remove Stream', 'Are you sure you want to remove this stream?');
+    if (confirmed) {
+      removeUserStream(index);
+      liveStreams.splice(index, 1);
+      displayLiveStreams();
+    }
+}
+
+async function reloadLiveStreams() {
+   liveStreamsInitialized = false;
+   liveStreams = [];
+   displayLiveStreams();
 }
 
 // ========== DRAG & DROP REORDERING ==========
@@ -143,29 +215,28 @@ document.addEventListener('dragend', onLiveStreamDragEnd);
 // ========== STREAM COLLECTIONS MENU ==========
 
 function toggleStreamCollectionsMenu() {
-  let menu = document.getElementById('streamCollectionsMenu');
-  if (!menu) {
-    // Create menu dynamically if it doesn't exist
-    const newMenu = document.createElement('div');
-    newMenu.id = 'streamCollectionsMenu';
-    newMenu.style.cssText = 'position: fixed; background: #252542; border: 1px solid #3d3d5c; border-radius: 6px; padding: 8px; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.4);';
-    newMenu.innerHTML = `
-      <button onclick="saveCollectionToFile()" style="display: block; width: 100%; padding: 8px 12px; background: #3d3d5c; border: none; border-radius: 4px; color: #e0e0e0; cursor: pointer; text-align: left; margin-bottom: 4px;">Export Streams</button>
-      <button onclick="loadCollectionFromFile()" style="display: block; width: 100%; padding: 8px 12px; background: #3d3d5c; border: none; border-radius: 4px; color: #e0e0e0; cursor: pointer; text-align: left; margin-bottom: 4px;">Import Streams</button>
-      <button onclick="clearAllStreams()" style="display: block; width: 100%; padding: 8px 12px; background: #c0475c; border: none; border-radius: 4px; color: #fff; cursor: pointer; text-align: left;">Clear All</button>
-    `;
-    document.body.appendChild(newMenu);
-    menu = document.getElementById('streamCollectionsMenu');
-  }
+  const menu = document.getElementById('streamCollectionsMenu');
+  if (!menu) return; // Menu created by displayLiveStreams()
   
-  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  const isHidden = menu.style.display === 'none';
+  menu.style.display = isHidden ? 'flex' : 'none';
   
-  if (menu.style.display !== 'none') {
+  // Position menu to not go off-screen
+  if (isHidden) {
     const btn = document.querySelector('.stream-menu-btn');
     if (btn) {
-      const rect = btn.getBoundingClientRect();
-      menu.style.top = (rect.bottom + 5) + 'px';
-      menu.style.left = rect.left + 'px';
+      const btnRect = btn.getBoundingClientRect();
+      const menuRect = menu.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      
+      // If menu would go off-screen right, position it to the left
+      if (btnRect.left + menuRect.width > viewportWidth) {
+        menu.style.left = 'auto';
+        menu.style.right = '0';
+      } else {
+        menu.style.left = '0';
+        menu.style.right = 'auto';
+      }
     }
   }
 }
@@ -224,9 +295,9 @@ async function addStreamsFromPreset(preset) {
 // ========== EVENT HANDLERS FOR DELEGATED ACTIONS ==========
 
 // Delegated event handler for stream list buttons (live.html only)
-const mixList = document.getElementById('mixList');
-if (mixList) {
-    mixList.addEventListener('click', (e) => {
+const streamListElement = document.getElementById('mixList');
+if (streamListElement) {
+    streamListElement.addEventListener('click', (e) => {
       const actionBtn = e.target.closest('[data-action]');
       if (!actionBtn) return;
       
@@ -238,6 +309,11 @@ if (mixList) {
       }
    });
 }
+
+// Callback for when streams are added during initialization (from livedata.js)
+window.onStreamAdded = () => {
+  displayLiveStreams();
+};
 
 // Callback for when live data is cleared (from livedata.js)
 window.onLiveDataCleared = () => {

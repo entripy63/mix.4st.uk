@@ -288,14 +288,17 @@ async function loadDefaultStreamsOnFirstRun() {
 async function initLiveStreams() {
   if (liveStreamsInitialized) return;
   
+  liveStreamsInitialized = true;
   liveStreams = [];
   const configs = getLiveStreamConfig();
   
   for (const config of configs) {
     await probeAndAddStream(config);
+    // Callback to display streams as they're added (not all at once)
+    if (window.onStreamAdded) {
+      window.onStreamAdded();
+    }
   }
-  
-  liveStreamsInitialized = true;
 }
 
 // Live stream restoration for both SPAs

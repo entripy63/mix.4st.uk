@@ -88,13 +88,17 @@ function playLive(url, displayText, autoplay = false) {
   state.liveDisplayText = displayText;
   storage.set('liveStreamUrl', url);
   storage.set('liveDisplayText', displayText);
-  storage.remove('currentMixPath');
-  // Clear DJ mix UI when playing live stream
-  loadPeaks(null);
-  document.getElementById('coverArt').innerHTML = '';
-  document.getElementById('trackList').innerHTML = '';
+  
+  // Update now playing display
+  const nowPlaying = document.getElementById('nowPlaying');
+  if (nowPlaying) {
+    nowPlaying.innerHTML = `<h1>${escapeHtml(displayText)}</h1>`;
+  }
+  
+  document.title = 'Live - Player';
   aud.src = url;
   aud.load();
+  
   if (autoplay) {
     const handleCanPlay = () => {
       aud.play();
@@ -107,11 +111,16 @@ function playLive(url, displayText, autoplay = false) {
       aud.play().catch(() => {});
     }, 100);
   }
-  document.getElementById('nowPlaying').innerHTML = `<h1>${escapeHtml(displayText)}</h1>`;
-  document.title = 'Live - Player';
+  
   updateTimeDisplay();
   updatePlayPauseBtn();
-  }
+  
+  // Notify other modules (e.g., player-mix.js) that live stream started
+  // player.html listens for this to clear DJ UI; live.html doesn't listen
+  document.dispatchEvent(new CustomEvent('liveStreamStarted', {
+    detail: { url, displayText }
+  }));
+}
 
 // Stop live stream and return to normal mode
 function stopLive() {
