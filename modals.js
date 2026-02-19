@@ -109,8 +109,8 @@ function showPlaylistGuide(e) {
     if (btn) {
         const content = modal.querySelector('.modal-content');
         
-        // Force layout recalculation with requestAnimationFrame
-        requestAnimationFrame(() => {
+        // Wait for layout to settle with setTimeout to ensure measurements are correct
+        setTimeout(() => {
             const rect = btn.getBoundingClientRect();
             const contentRect = content.getBoundingClientRect();
             
@@ -132,7 +132,7 @@ function showPlaylistGuide(e) {
             content.style.setProperty('position', 'fixed', 'important');
             content.style.setProperty('left', finalLeft + 'px', 'important');
             content.style.setProperty('top', finalTop + 'px', 'important');
-        });
+        }, 50);
     }
 }
 

@@ -182,7 +182,8 @@ function encodeFilename(filename) {
 }
 
 async function fetchMixDetails(mix) {
-  const dir = `${mix.djPath}/`;
+  const djPath = mix.djPath || mix.dj;
+  const dir = `${djPath}/`;
   
   // Load peaks if available
   let peaks = null;
