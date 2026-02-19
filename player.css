@@ -190,9 +190,9 @@ button:active {
 }
 
 #playlistGuideModal.modal {
-    /* Modal content is positioned via JavaScript */
-    align-items: flex-start;
-    justify-content: flex-start;
+    /* Default to center; JavaScript may override if button position is valid */
+    align-items: center;
+    justify-content: center;
 }
 
 .modal-content {
