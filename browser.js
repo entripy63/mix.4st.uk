@@ -336,6 +336,10 @@ const browserModes = {
       groupFilters.innerHTML = '';
       groupFilters.style.display = 'none';
       document.getElementById('findPlaylistsBtn').style.display = 'flex';
+      // Clear player.html-specific DOM when switching to live
+      loadPeaks(null);
+      document.getElementById('coverArt').innerHTML = '';
+      document.getElementById('trackList').innerHTML = '';
       displayLiveStreams();
     }
   }
