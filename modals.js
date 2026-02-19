@@ -103,35 +103,40 @@ function showPlaylistGuide(e) {
     const modal = document.getElementById('playlistGuideModal');
     const btn = e?.target?.closest('button') || event?.target?.closest('button');
     
+    // Capture button position BEFORE displaying modal (before layout changes)
+    let btnRect = null;
+    if (btn) {
+        btnRect = btn.getBoundingClientRect();
+    }
+    
     modal.style.display = 'flex';
     
     // Position modal near the button
-    if (btn) {
+    if (btnRect && btnRect.width > 0 && btnRect.height > 0) {
         const content = modal.querySelector('.modal-content');
         
-        // Wait for layout to settle with setTimeout to ensure measurements are correct
+        // Use setTimeout to allow modal to render before measuring its size
         setTimeout(() => {
-            const rect = btn.getBoundingClientRect();
             const contentRect = content.getBoundingClientRect();
             
             // Center horizontally relative to button
-            const left = rect.left + rect.width / 2 - contentRect.width / 2;
+            let left = btnRect.left + btnRect.width / 2 - contentRect.width / 2;
             
             // Try to position above button first
-            let top = rect.top - contentRect.height - 10;
+            let top = btnRect.top - contentRect.height - 10;
             
             // If modal would go above viewport, position below button instead
             if (top < 10) {
-                top = rect.bottom + 10;
+                top = btnRect.bottom + 10;
             }
             
-            // Clamp to viewport bounds
-            const finalLeft = Math.max(10, Math.min(left, window.innerWidth - contentRect.width - 10));
-            const finalTop = Math.max(10, top);
+            // Clamp to viewport bounds with margins
+            left = Math.max(10, Math.min(left, window.innerWidth - contentRect.width - 10));
+            top = Math.max(10, Math.min(top, window.innerHeight - contentRect.height - 10));
             
             content.style.setProperty('position', 'fixed', 'important');
-            content.style.setProperty('left', finalLeft + 'px', 'important');
-            content.style.setProperty('top', finalTop + 'px', 'important');
+            content.style.setProperty('left', left + 'px', 'important');
+            content.style.setProperty('top', top + 'px', 'important');
         }, 50);
     }
 }
