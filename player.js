@@ -89,6 +89,10 @@ function playLive(url, displayText, autoplay = false) {
   storage.set('liveStreamUrl', url);
   storage.set('liveDisplayText', displayText);
   storage.remove('currentMixPath');
+  // Clear DJ mix UI when playing live stream
+  loadPeaks(null);
+  document.getElementById('coverArt').innerHTML = '';
+  document.getElementById('trackList').innerHTML = '';
   aud.src = url;
   aud.load();
   if (autoplay) {
