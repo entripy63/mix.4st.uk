@@ -38,24 +38,43 @@ async function probeAndAddStream(config) {
     const entries = await fetchPlaylist(config.m3u);
     for (const entry of entries) {
       let url = entry.url;
-      // Shoutcast servers use port 8000; append ';' variant for them
-      if (url.includes(':8000/')) {
-        if (!url.endsWith('/')) {
-          url += '/';
-        }
-        url += ';';
-      }
       
+      // Try direct URL first
       if (await probeStream(url)) {
         stream.url = url;
         stream.playlistTitle = entry.title;
         stream.available = true;
         break;
       }
+      
+      // Try with ';' suffix for Shoutcast servers that redirect to text/html
+      let urlWithSemicolon = url;
+      if (!urlWithSemicolon.endsWith('/')) {
+        urlWithSemicolon += '/';
+      }
+      urlWithSemicolon += ';';
+      
+      if (await probeStream(urlWithSemicolon)) {
+        stream.url = urlWithSemicolon;
+        stream.playlistTitle = entry.title;
+        stream.available = true;
+        break;
+      }
+      
+      // Try via proxy for http:// on https: page
       if (url.startsWith('http://') && location.protocol === 'https:') {
         const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(url)}`;
         if (await probeStream(proxyUrl)) {
           stream.url = proxyUrl;
+          stream.playlistTitle = entry.title;
+          stream.available = true;
+          break;
+        }
+        
+        // Try proxy with ';' suffix for Shoutcast
+        const proxyUrlWithSemicolon = `${STREAM_PROXY}?url=${encodeURIComponent(urlWithSemicolon)}`;
+        if (await probeStream(proxyUrlWithSemicolon)) {
+          stream.url = proxyUrlWithSemicolon;
           stream.playlistTitle = entry.title;
           stream.available = true;
           break;
