@@ -109,8 +109,8 @@ function showPlaylistGuide(e) {
     if (btn) {
         const content = modal.querySelector('.modal-content');
         
-        // Use setTimeout to allow layout to complete before measuring
-        setTimeout(() => {
+        // Force layout recalculation with requestAnimationFrame
+        requestAnimationFrame(() => {
             const rect = btn.getBoundingClientRect();
             const contentRect = content.getBoundingClientRect();
             
@@ -125,10 +125,14 @@ function showPlaylistGuide(e) {
                 top = rect.bottom + 10;
             }
             
+            // Clamp to viewport bounds
+            const finalLeft = Math.max(10, Math.min(left, window.innerWidth - contentRect.width - 10));
+            const finalTop = Math.max(10, top);
+            
             content.style.setProperty('position', 'fixed', 'important');
-            content.style.setProperty('left', Math.max(10, Math.min(left, window.innerWidth - contentRect.width - 10)) + 'px', 'important');
-            content.style.setProperty('top', Math.max(10, top) + 'px', 'important');
-        }, 10);
+            content.style.setProperty('left', finalLeft + 'px', 'important');
+            content.style.setProperty('top', finalTop + 'px', 'important');
+        });
     }
 }
 

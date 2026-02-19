@@ -255,6 +255,9 @@ aud.addEventListener("ended", async function () {
 });
 
 function load(url) {
+  // Stop any current playback (especially important when exiting live mode)
+  aud.pause();
+  
   // Exit live mode when loading regular content
   if (state.isLive) {
     state.isLive = false;
