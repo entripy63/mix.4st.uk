@@ -218,8 +218,26 @@ html, body {
    transition: background 0.2s;
 }
 
+.reload-btn {
+   color: #888;
+   font-size: 28px !important;
+   font-weight: bold;
+   line-height: 1;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   min-width: 44px;
+   height: 44px;
+   padding: 8px 10px;
+}
+
 .add-stream-btn:hover, .reload-btn:hover {
    background: #3d3d5c;
+}
+
+.reload-btn:hover {
+   background: rgba(92, 107, 192, 0.2);
+   color: #e0e0e0;
 }
 
 .stream-menu-container {
