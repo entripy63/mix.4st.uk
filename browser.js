@@ -384,13 +384,19 @@ function displaySearchResults(results, query) {
 
    function displayMixedSearchResults(results) {
    const mixList = document.getElementById('mixList');
+   
+   // Separate mixes and streams for proper handling
+   const mixes = results.filter(item => !item.type || item.type === 'mix');
+   const streams = results.filter(item => item.type === 'stream');
+   window.currentSearchMixes = mixes;
    window.currentSearchResults = results;
    
    const html = results.map((item, i) => {
      if (item.type === 'stream') {
        // Live stream result with 📡 badge
        const genre = item.genre ? ` · ${escapeHtml(item.genre)}` : '';
-       return `<div class="mix-item" data-search-index="${i}">
+       const streamIndex = streams.indexOf(item);
+       return `<div class="mix-item" data-search-index="${streamIndex}">
          <button class="icon-btn" style="visibility: hidden; cursor: default;" disabled>+</button>
          <button class="icon-btn" data-action="search-play-stream" title="Play stream">▶</button>
          <span class="mix-name"><span style="font-size: 0.85em;">📡</span> ${escapeHtml(item.name)}${genre}</span>
@@ -408,8 +414,9 @@ function displaySearchResults(results, query) {
        const extraBtn = hasExtra ? `<button class="icon-btn info-btn" data-action="toggle-info" title="More info">ⓘ</button>` : '';
        const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none"><div><strong>Notes:</strong> ${escapeHtml(item.comment)}</div></div>` : '';
        const djLabel = item.dj ? ` - ${escapeHtml(item.dj)}` : '';
+       const mixIndex = mixes.indexOf(item);
        
-       return `<div class="mix-item" data-search-index="${i}">
+       return `<div class="mix-item" data-search-index="${mixIndex}">
          <button class="icon-btn" data-action="search-queue-add" title="Add to queue">+</button>
          <button class="icon-btn" data-action="search-play-now" title="Play now">▶</button>
          <span class="mix-name">♪ ${escapeHtml(item.name)}${djLabel} <span class="mix-duration">${duration}</span></span>

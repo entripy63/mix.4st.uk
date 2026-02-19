@@ -107,13 +107,17 @@ function showPlaylistGuide(e) {
     
     // Position modal near the button
     if (btn) {
-        const rect = btn.getBoundingClientRect();
         const content = modal.querySelector('.modal-content');
         
-        // Position below button, centered horizontally, but above if button is near top
+        // Use setTimeout to allow layout to complete before measuring
         setTimeout(() => {
+            const rect = btn.getBoundingClientRect();
             const contentRect = content.getBoundingClientRect();
+            
+            // Center horizontally relative to button
             const left = rect.left + rect.width / 2 - contentRect.width / 2;
+            
+            // Try to position above button first
             let top = rect.top - contentRect.height - 10;
             
             // If modal would go above viewport, position below button instead
@@ -124,7 +128,7 @@ function showPlaylistGuide(e) {
             content.style.setProperty('position', 'fixed', 'important');
             content.style.setProperty('left', Math.max(10, Math.min(left, window.innerWidth - contentRect.width - 10)) + 'px', 'important');
             content.style.setProperty('top', Math.max(10, top) + 'px', 'important');
-        }, 0);
+        }, 10);
     }
 }
 
