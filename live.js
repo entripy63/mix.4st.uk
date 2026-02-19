@@ -684,8 +684,8 @@ function hidePlaylistGuide() {
 // Load available presets from /presets/manifest.json
 async function loadAvailablePresets() {
     try {
-        // Load manifest
-        const manifestResponse = await fetch('/presets/manifest.json');
+        // Load manifest with cache-busting parameter
+        const manifestResponse = await fetch('/presets/manifest.json?t=' + Date.now());
         const manifest = await manifestResponse.json();
         
         if (!Array.isArray(manifest.presets)) {
