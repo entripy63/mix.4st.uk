@@ -1,7 +1,7 @@
 {
-  "name": "Drum & Bass",
+  "name": "DnB",
   "version": 1,
-  "savedAt": "2026-02-18T00:00:58.389Z",
+  "savedAt": "2026-02-19T12:37:41.157Z",
   "streams": [
     {
       "name": "DnBRadio.com",
@@ -22,6 +22,11 @@
       "name": "Radio-Tube",
       "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=1623283",
       "genre": "Drum & Bass"
+    },
+    {
+      "name": "Party Vibe Radio",
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=795537",
+      "genre": "Jungle"
     }
   ]
 }

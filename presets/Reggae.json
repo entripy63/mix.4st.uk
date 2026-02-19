@@ -1,0 +1,42 @@
+{
+  "name": "Reggae",
+  "version": 1,
+  "savedAt": "2026-02-19T13:06:52.672Z",
+  "streams": [
+    {
+      "name": null,
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=1728296",
+      "genre": "Reggae"
+    },
+    {
+      "name": " Joint Radio Reggae",
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99600831",
+      "genre": "Reggae"
+    },
+    {
+      "name": "Party Vibe Radio",
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=939852",
+      "genre": "Reggae"
+    },
+    {
+      "name": "SileX.live",
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99613560",
+      "genre": "Reggae"
+    },
+    {
+      "name": null,
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99562626",
+      "genre": "Reggae"
+    },
+    {
+      "name": "baddajam",
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99613707",
+      "genre": "Reggae"
+    },
+    {
+      "name": "SomaFM: Heavyweight Reggae",
+      "m3u": "https://somafm.com/reggae130.pls",
+      "genre": "Reggae, Ska, Rocksteady classic and deep tracks."
+    }
+  ]
+}

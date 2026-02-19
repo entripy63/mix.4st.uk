@@ -1,0 +1,47 @@
+{
+  "name": "House",
+  "version": 1,
+  "savedAt": "2026-02-19T11:15:01.064Z",
+  "streams": [
+    {
+      "name": "House Music Radio | UK",
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=1660302",
+      "genre": "House"
+    },
+    {
+      "name": "Hirschmich Radio Organic House",
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99608832",
+      "genre": "House"
+    },
+    {
+      "name": "Radio Pro-B | Romania",
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99621516",
+      "genre": "House"
+    },
+    {
+      "name": "ClubMix Radio | Romania",
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99592284",
+      "genre": "House"
+    },
+    {
+      "name": "DJ ZONE HOUSE RADIO | Plovdiv | Bulgaria",
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99548277",
+      "genre": "House"
+    },
+    {
+      "name": "MoveDaHouse",
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=1666697",
+      "genre": "House"
+    },
+    {
+      "name": "Music Factory | Athens | Greece",
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99449708",
+      "genre": null
+    },
+    {
+      "name": "ENERGY FM",
+      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99608361",
+      "genre": " classic dance and the best new music"
+    }
+  ]
+}
