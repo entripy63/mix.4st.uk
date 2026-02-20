@@ -163,16 +163,27 @@ async function fetchPlaylist(playlistUrl) {
 // ========== STREAM PROBING & ADDITION ==========
 
 async function probeAndAddStream(config) {
-    const stream = {
-      m3u: config.m3u,
-      name: config.name,
-      genre: config.genre,
-      url: null,
-      available: false,
-      reason: null
-    };
-    
-    const entries = await fetchPlaylist(config.m3u);
+     const stream = {
+       m3u: config.m3u,
+       name: config.name,
+       genre: config.genre,
+       url: null,
+       available: false,
+       reason: null
+     };
+     
+     // Check if it's a direct audio file URL, not a playlist
+     const audioExtensions = ['.mp3', '.aac', '.flac', '.wav', '.ogg', '.opus', '.m4a'];
+     const isDirectAudio = audioExtensions.some(ext => config.m3u.toLowerCase().endsWith(ext));
+     
+     let entries;
+     if (isDirectAudio) {
+       // Treat direct audio URL as single-entry list
+       entries = [{ url: config.m3u, title: null }];
+     } else {
+       // Parse as playlist
+       entries = await fetchPlaylist(config.m3u);
+     }
     for (const entry of entries) {
       let url = entry.url;
       
