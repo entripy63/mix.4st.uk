@@ -401,7 +401,13 @@ async function restoreLivePlayer() {
 // ========== PERSISTENCE & COLLECTIONS ==========
 
 async function saveCollectionToFile() {
-  const streams = getUserStreams();
+  // Use display order (liveStreams) not storage order, in case user dragged/reordered
+  const streams = liveStreams.map(stream => ({
+    name: stream.name,
+    m3u: stream.m3u,
+    genre: stream.genre || null
+  }));
+  
   if (streams.length === 0) {
     alert('No streams to save');
     return;
