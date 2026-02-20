@@ -297,17 +297,76 @@ async function addStreamsFromPreset(preset) {
 // Delegated event handler for stream list buttons (live.html only)
 const streamListElement = document.getElementById('mixList');
 if (streamListElement) {
-    streamListElement.addEventListener('click', (e) => {
-      const actionBtn = e.target.closest('[data-action]');
-      if (!actionBtn) return;
+     streamListElement.addEventListener('click', (e) => {
+       const actionBtn = e.target.closest('[data-action]');
+       if (!actionBtn) return;
+       
+       const action = actionBtn.dataset.action;
+       switch (action) {
+          case 'toggle-stream-info':
+             toggleStreamInfo(actionBtn);
+             break;
+       }
+    });
+    
+    // Handle stream name and genre editing
+    streamListElement.addEventListener('input', (e) => {
+      const nameInput = e.target.closest('.stream-edit-name');
+      const genreInput = e.target.closest('.stream-edit-genre');
       
-      const action = actionBtn.dataset.action;
-      switch (action) {
-         case 'toggle-stream-info':
-            toggleStreamInfo(actionBtn);
-            break;
+      if (nameInput) {
+        const index = parseInt(nameInput.dataset.index);
+        const newName = nameInput.value.trim();
+        if (index >= 0 && index < liveStreams.length) {
+          liveStreams[index].name = newName;
+          // Update display
+          const streamRow = nameInput.closest('.mix-item');
+          const nameSpan = streamRow?.querySelector('.mix-name');
+          if (nameSpan) nameSpan.textContent = newName || liveStreams[index].m3u;
+          // Save to storage
+          const configs = getUserStreams();
+          if (configs[index]) {
+            configs[index].name = newName;
+            saveUserStreams(configs);
+          }
+        }
       }
-   });
+      
+      if (genreInput) {
+        const index = parseInt(genreInput.dataset.index);
+        const newGenre = genreInput.value.trim();
+        if (index >= 0 && index < liveStreams.length) {
+          liveStreams[index].genre = newGenre;
+          // Save to storage
+          const configs = getUserStreams();
+          if (configs[index]) {
+            configs[index].genre = newGenre;
+            saveUserStreams(configs);
+          }
+        }
+      }
+    });
+    
+    // Disable dragging when pointer is in text input fields
+    streamListElement.addEventListener('pointerdown', (e) => {
+      const inputInPopout = e.target.closest('.stream-extra-info input, .stream-extra-info textarea');
+      if (inputInPopout) {
+        const row = e.target.closest('.mix-item');
+        if (row && row.draggable) {
+          row.dataset.wasDraggable = '1';
+          row.draggable = false;
+        }
+      }
+    }, true);
+    
+    streamListElement.addEventListener('pointerup', () => {
+      // Re-enable dragging
+      const rows = document.querySelectorAll('.mix-item[data-was-draggable="1"]');
+      rows.forEach(row => {
+        row.draggable = true;
+        delete row.dataset.wasDraggable;
+      });
+    }, true);
 }
 
 // Callback for when streams are added during initialization (from livedata.js)
