@@ -153,6 +153,13 @@ async function fetchPlaylist(playlistUrl) {
      const timeout = setTimeout(() => controller.abort(), 5000); // 5 second timeout
      const resp = await fetch(url, { signal: controller.signal });
      clearTimeout(timeout);
+     
+     // If it's audio, not a playlist, return empty to fallback to direct stream probe
+     const contentType = resp.headers.get('content-type') || '';
+     if (contentType.includes('audio/')) {
+       return [];
+     }
+     
      const text = await resp.text();
      if (text.trim().toLowerCase().startsWith('[playlist]')) {
        return parsePLS(text);
