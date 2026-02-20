@@ -169,6 +169,8 @@ function onLiveStreamDrop(e, dropIndex) {
   e.preventDefault();
   const dragIndex = parseInt(e.dataTransfer.getData('text/plain'));
   
+  console.log('onLiveStreamDrop called: dragIndex=', dragIndex, 'dropIndex=', dropIndex);
+  
   if (dragIndex === dropIndex) return;
   
   // Reorder liveStreams array
