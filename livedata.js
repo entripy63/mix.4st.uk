@@ -150,7 +150,10 @@ async function fetchPlaylist(playlistUrl) {
      // Use proxy to avoid CORS errors on M3U and PLS playlists
      const url = `${STREAM_PROXY}?url=${encodeURIComponent(playlistUrl)}`;
      const controller = new AbortController();
-     const timeout = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+     const timeout = setTimeout(() => {
+       console.log('fetchPlaylist timeout triggered for:', playlistUrl);
+       controller.abort();
+     }, 5000); // 5 second timeout
      const resp = await fetch(url, { signal: controller.signal });
      clearTimeout(timeout);
      const text = await resp.text();
@@ -158,7 +161,8 @@ async function fetchPlaylist(playlistUrl) {
        return parsePLS(text);
      }
      return parseM3U(text);
-   } catch {
+   } catch (e) {
+     console.log('fetchPlaylist error:', e.message);
      return [];
    }
 }
