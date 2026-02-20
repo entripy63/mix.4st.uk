@@ -52,6 +52,26 @@ function getLiveStreamConfig() {
 
 // ========== STREAM PROBING & PLAYLIST PARSING ==========
 
+function isRawIPURL(url) {
+  // Check if URL contains a raw IP address (IPv4 or IPv6)
+  // e.g., http://185.33.21.112/stream or http://[::1]:8000/stream
+  try {
+    const urlObj = new URL(url);
+    const hostname = urlObj.hostname;
+    // IPv4: check if all parts are numeric (0-255)
+    if (/^(\d{1,3}\.){3}\d{1,3}$/.test(hostname)) {
+      return true;
+    }
+    // IPv6: check if it starts with : or contains only hex digits and colons
+    if (hostname.includes(':') || /^[0-9a-f:]+$/i.test(hostname)) {
+      return true;
+    }
+  } catch (e) {
+    // Invalid URL, assume not an IP
+  }
+  return false;
+}
+
 function probeStream(url, timeoutMs = 5000) {
   return new Promise(resolve => {
     const audio = new Audio();
@@ -179,7 +199,8 @@ async function probeAndAddStream(config) {
       }
       
       // Try via proxy for http:// on https: page
-      if (url.startsWith('http://') && location.protocol === 'https:') {
+      // Skip proxy for raw IP URLs (Cloudflare Workers can't reach bare IPs)
+      if (url.startsWith('http://') && location.protocol === 'https:' && !isRawIPURL(url)) {
         const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(url)}`;
         if (await probeStream(proxyUrl)) {
           stream.url = proxyUrl;
