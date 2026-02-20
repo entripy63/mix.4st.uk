@@ -171,8 +171,8 @@ async function probeAndAddStream(config) {
        available: false,
        reason: null
      };
-     
-     // Check if it's a direct audio file URL, not a playlist
+      
+      // Check if it's a direct audio file URL, not a playlist
      const audioExtensions = ['.mp3', '.aac', '.flac', '.wav', '.ogg', '.opus', '.m4a'];
      const isDirectAudio = audioExtensions.some(ext => config.m3u.toLowerCase().endsWith(ext));
      
