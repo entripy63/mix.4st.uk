@@ -222,60 +222,61 @@ async function probeAndAddStream(config) {
      const probeResult = await Promise.race([
        (async () => {
          for (const entry of entries) {
-      let url = entry.url;
-      
-      // Try direct URL first
-      if (await probeStream(url)) {
-        stream.url = url;
-        stream.playlistTitle = entry.title;
-        stream.available = true;
-        break;
-      }
-      
-      // Try with ';' suffix for Shoutcast servers that redirect to text/html
-      let urlWithSemicolon = url;
-      if (!urlWithSemicolon.endsWith('/')) {
-        urlWithSemicolon += '/';
-      }
-      urlWithSemicolon += ';';
-      
-      if (await probeStream(urlWithSemicolon)) {
-        stream.url = urlWithSemicolon;
-        stream.playlistTitle = entry.title;
-        stream.available = true;
-        break;
-      }
-      
-      // Try via proxy for http:// on https: page
-      // Skip proxy for raw IP URLs (Cloudflare Workers can't reach bare IPs)
-      if (url.startsWith('http://') && location.protocol === 'https:' && !isRawIPURL(url)) {
-        const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(url)}`;
-        if (await probeStream(proxyUrl)) {
-          stream.url = proxyUrl;
-          stream.playlistTitle = entry.title;
-          stream.available = true;
-          break;
-        }
-        
-        // Try proxy with ';' suffix for Shoutcast
-        const proxyUrlWithSemicolon = `${STREAM_PROXY}?url=${encodeURIComponent(urlWithSemicolon)}`;
-        if (await probeStream(proxyUrlWithSemicolon)) {
-          stream.url = proxyUrlWithSemicolon;
-          stream.playlistTitle = entry.title;
-          stream.available = true;
-          break;
-        }
-        }
-        return null; // Probing completed
-        })(),
-        probeTimeout
-        ]);
-        
-        if (probeResult?.timedOut) {
-        stream.reason = `Probing timeout (no response from stream or server)`;
-        } else if (!stream.available) {
-        stream.reason = `No working stream found (playlist: ${config.m3u})`;
-    }
+           let url = entry.url;
+           
+           // Try direct URL first
+           if (await probeStream(url)) {
+             stream.url = url;
+             stream.playlistTitle = entry.title;
+             stream.available = true;
+             break;
+           }
+           
+           // Try with ';' suffix for Shoutcast servers that redirect to text/html
+           let urlWithSemicolon = url;
+           if (!urlWithSemicolon.endsWith('/')) {
+             urlWithSemicolon += '/';
+           }
+           urlWithSemicolon += ';';
+           
+           if (await probeStream(urlWithSemicolon)) {
+             stream.url = urlWithSemicolon;
+             stream.playlistTitle = entry.title;
+             stream.available = true;
+             break;
+           }
+           
+           // Try via proxy for http:// on https: page
+           // Skip proxy for raw IP URLs (Cloudflare Workers can't reach bare IPs)
+           if (url.startsWith('http://') && location.protocol === 'https:' && !isRawIPURL(url)) {
+             const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(url)}`;
+             if (await probeStream(proxyUrl)) {
+               stream.url = proxyUrl;
+               stream.playlistTitle = entry.title;
+               stream.available = true;
+               break;
+             }
+             
+             // Try proxy with ';' suffix for Shoutcast
+             const proxyUrlWithSemicolon = `${STREAM_PROXY}?url=${encodeURIComponent(urlWithSemicolon)}`;
+             if (await probeStream(proxyUrlWithSemicolon)) {
+               stream.url = proxyUrlWithSemicolon;
+               stream.playlistTitle = entry.title;
+               stream.available = true;
+               break;
+             }
+           }
+         }
+         return null; // Probing completed
+       })(),
+       probeTimeout
+     ]);
+     
+     if (probeResult?.timedOut) {
+       stream.reason = `Probing timeout (no response from stream or server)`;
+     } else if (!stream.available) {
+       stream.reason = `No working stream found (playlist: ${config.m3u})`;
+     }
     if (!stream.name && stream.playlistTitle) {
       const parsed = parseSomaFMStream(stream.playlistTitle, stream.genre);
       stream.name = parsed.name;
