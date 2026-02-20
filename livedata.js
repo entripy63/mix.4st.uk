@@ -146,18 +146,21 @@ function parseM3U(text) {
 }
 
 async function fetchPlaylist(playlistUrl) {
-  try {
-    // Use proxy to avoid CORS errors on M3U and PLS playlists
-    const url = `${STREAM_PROXY}?url=${encodeURIComponent(playlistUrl)}`;
-    const resp = await fetch(url);
-    const text = await resp.text();
-    if (text.trim().toLowerCase().startsWith('[playlist]')) {
-      return parsePLS(text);
-    }
-    return parseM3U(text);
-  } catch {
-    return [];
-  }
+   try {
+     // Use proxy to avoid CORS errors on M3U and PLS playlists
+     const url = `${STREAM_PROXY}?url=${encodeURIComponent(playlistUrl)}`;
+     const controller = new AbortController();
+     const timeout = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+     const resp = await fetch(url, { signal: controller.signal });
+     clearTimeout(timeout);
+     const text = await resp.text();
+     if (text.trim().toLowerCase().startsWith('[playlist]')) {
+       return parsePLS(text);
+     }
+     return parseM3U(text);
+   } catch {
+     return [];
+   }
 }
 
 // ========== STREAM PROBING & ADDITION ==========
