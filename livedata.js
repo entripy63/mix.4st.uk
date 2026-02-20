@@ -117,7 +117,6 @@ function parsePLS(text) {
     for (const num of Object.keys(files).sort((a, b) => a - b)) {
       entries.push({ url: files[num], title: titles[num] || null });
     }
-    console.log('parsePLS extracted', entries.length, 'entries');
     return entries;
 }
 
@@ -143,7 +142,6 @@ function parseM3U(text) {
         }
       }
     }
-    console.log('parseM3U extracted', entries.length, 'entries');
     return entries;
 }
 
@@ -165,7 +163,6 @@ async function fetchPlaylist(playlistUrl) {
      }
      
      const text = await resp.text();
-     console.log('fetchPlaylist got', text.length, 'chars, starts with:', text.substring(0, 50));
      if (text.trim().toLowerCase().startsWith('[playlist]')) {
        return parsePLS(text);
      }
