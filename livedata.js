@@ -183,6 +183,10 @@ async function probeAndAddStream(config) {
      } else {
        // Parse as playlist
        entries = await fetchPlaylist(config.m3u);
+       // If playlist parsing returned nothing, try URL as direct stream
+       if (entries.length === 0) {
+         entries = [{ url: config.m3u, title: null }];
+       }
      }
     for (const entry of entries) {
       let url = entry.url;
