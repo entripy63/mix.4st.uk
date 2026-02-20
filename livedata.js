@@ -381,11 +381,14 @@ async function saveCollectionToFile() {
     return;
   }
   
+  const collectionName = prompt('Collection name:', `Streams Export ${new Date().toISOString().split('T')[0]}`);
+  if (!collectionName) return; // User cancelled
+  
   const timestamp = new Date().toISOString().split('T')[0];
-  const filename = `streams-${timestamp}.json`;
+  const filename = `${collectionName}-${timestamp}.json`;
   
   const collection = {
-    name: `Streams Export ${timestamp}`,
+    name: collectionName,
     streams: streams
   };
   
