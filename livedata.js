@@ -154,9 +154,11 @@ async function fetchPlaylist(playlistUrl) {
      const resp = await fetch(url, { signal: controller.signal });
      clearTimeout(timeout);
      
-     // If it's audio, not a playlist, return empty to fallback to direct stream probe
+     // If it's a direct audio stream (not a playlist format), return empty to fallback to direct probe
      const contentType = resp.headers.get('content-type') || '';
-     if (contentType.includes('audio/')) {
+     const playlistFormats = ['scpls', 'mpegurl', 'vnd.apple.mpegurl', 'x-mpegurl'];
+     const isPlaylistFormat = playlistFormats.some(fmt => contentType.includes(fmt));
+     if (contentType.includes('audio/') && !isPlaylistFormat) {
        return [];
      }
      
