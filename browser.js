@@ -282,7 +282,7 @@ const browserModes = {
     const groupFilters = document.getElementById('groupFilters');
     const mixList = document.getElementById('mixList');
     
-    document.getElementById('findPlaylistsBtn').style.display = 'none';
+    document.querySelector('.findPlaylistsBtnContainer').style.display = 'none';
     
     if (mode === 'dj') {
       djButtons.style.display = 'flex';
@@ -335,7 +335,7 @@ const browserModes = {
       searchBox.style.display = 'none';
       groupFilters.innerHTML = '';
       groupFilters.style.display = 'none';
-      document.getElementById('findPlaylistsBtn').style.display = 'flex';
+      document.querySelector('.findPlaylistsBtnContainer').style.display = 'flex';
       displayLiveStreams();
     }
   }
@@ -500,14 +500,7 @@ async function playSearchStream(index) {
     }
 }
 
-// Playlist guide modal
-function showPlaylistGuide() {
-  document.getElementById('playlistGuideModal').style.display = 'flex';
-}
 
-function hidePlaylistGuide() {
-  document.getElementById('playlistGuideModal').style.display = 'none';
-}
 
 // Keyboard shortcuts
 document.addEventListener('keydown', function(e) {

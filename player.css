@@ -250,7 +250,7 @@ button:active {
 }
 
 /* Add Playlists button */
-#findPlaylistsBtn button,
+#findPlaylistsBtn,
 #addPlaylistsBtnPlayer {
     background: #252542;
     color: #e0e0e0;
@@ -263,7 +263,7 @@ button:active {
     padding: 10px 12px !important;
 }
 
-#findPlaylistsBtn button:hover,
+#findPlaylistsBtn:hover,
 #addPlaylistsBtnPlayer:hover {
     background: #3d3d5c;
 }

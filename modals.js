@@ -114,7 +114,7 @@ function showPlaylistGuide(e) {
             const btnRect = btn.getBoundingClientRect();
             
             // If button has valid dimensions, position modal near it
-            if (btnRect.width > 0 && btnRect.height > 0 && btnRect.top !== 0) {
+            if (btnRect.width > 0 && btnRect.height > 0) {
                 const contentRect = content.getBoundingClientRect();
                 
                 // Center horizontally relative to button
@@ -137,7 +137,7 @@ function showPlaylistGuide(e) {
                 content.style.setProperty('top', top + 'px', 'important');
             }
             // If button coords invalid, let CSS center the modal
-        }, 100);
+        }, 200);
     }
 }
 
