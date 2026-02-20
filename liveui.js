@@ -66,6 +66,7 @@ function displayLiveStreams() {
     
     html += `
       <div class="mix-item${unavailableClass}"
+           data-stream-m3u="${escapeHtml(stream.m3u)}"
            draggable="true"
            ondragstart="onLiveStreamDragStart(event, ${index})"
            ondragover="onLiveStreamDragOver(event)"
