@@ -158,7 +158,15 @@ async function fetchPlaylist(playlistUrl) {
      const contentType = resp.headers.get('content-type') || '';
      const playlistFormats = ['scpls', 'mpegurl', 'vnd.apple.mpegurl', 'x-mpegurl'];
      const isPlaylistFormat = playlistFormats.some(fmt => contentType.includes(fmt));
-     if (contentType.includes('audio/') && !isPlaylistFormat) {
+     
+     // Check if it's audio (including flac, wav, etc.) but not a playlist
+     const isAudioStream = contentType.includes('audio/') && !isPlaylistFormat;
+     
+     // Also check URL extension as fallback
+     const audioExts = ['.mp3', '.aac', '.flac', '.wav', '.ogg', '.opus', '.m4a', '.wma'];
+     const hasAudioExt = audioExts.some(ext => playlistUrl.toLowerCase().includes(ext));
+     
+     if (isAudioStream || hasAudioExt) {
        return [];
      }
      
@@ -167,7 +175,8 @@ async function fetchPlaylist(playlistUrl) {
        return parsePLS(text);
      }
      return parseM3U(text);
-   } catch {
+   } catch (e) {
+     // Abort or timeout on streaming audio is expected, treat as audio stream
      return [];
    }
 }
