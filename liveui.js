@@ -186,7 +186,9 @@ function onLiveStreamDrop(e, dropIndex) {
 }
 
 function onLiveStreamDragEnd(e) {
-  e.target.style.opacity = '1';
+  if (e && e.target) {
+    e.target.style.opacity = '1';
+  }
 }
 
 // Attach drag handlers to mix list
