@@ -140,8 +140,18 @@ async function handleAddStream() {
 async function handleRemoveStream(index) {
     const confirmed = await showConfirmDialog('Remove Stream', 'Are you sure you want to remove this stream?');
     if (confirmed) {
-      removeUserStream(index);
-      liveStreams.splice(index, 1);
+      // Remove from both liveStreams and storage, keeping them in sync
+      if (index >= 0 && index < liveStreams.length) {
+        const m3u = liveStreams[index].m3u;
+        liveStreams.splice(index, 1);
+        // Also remove from storage
+        const configs = getUserStreams();
+        const storageIndex = configs.findIndex(c => c.m3u === m3u);
+        if (storageIndex >= 0) {
+          configs.splice(storageIndex, 1);
+          saveUserStreams(configs);
+        }
+      }
       displayLiveStreams();
     }
 }
@@ -297,15 +307,17 @@ if (streamListElement) {
         const index = parseInt(nameInput.dataset.index);
         const newName = nameInput.value.trim();
         if (index >= 0 && index < liveStreams.length) {
+          const m3u = liveStreams[index].m3u;
           liveStreams[index].name = newName;
           // Update display
           const streamRow = nameInput.closest('.mix-item');
           const nameSpan = streamRow?.querySelector('.mix-name');
-          if (nameSpan) nameSpan.textContent = newName || liveStreams[index].m3u;
-          // Save to storage
+          if (nameSpan) nameSpan.textContent = newName || m3u;
+          // Save to storage using m3u as key to avoid index mismatches
           const configs = getUserStreams();
-          if (configs[index]) {
-            configs[index].name = newName;
+          const storageIndex = configs.findIndex(c => c.m3u === m3u);
+          if (storageIndex >= 0) {
+            configs[storageIndex].name = newName;
             saveUserStreams(configs);
           }
         }
@@ -315,11 +327,13 @@ if (streamListElement) {
         const index = parseInt(genreInput.dataset.index);
         const newGenre = genreInput.value.trim();
         if (index >= 0 && index < liveStreams.length) {
+          const m3u = liveStreams[index].m3u;
           liveStreams[index].genre = newGenre;
-          // Save to storage
+          // Save to storage using m3u as key to avoid index mismatches
           const configs = getUserStreams();
-          if (configs[index]) {
-            configs[index].genre = newGenre;
+          const storageIndex = configs.findIndex(c => c.m3u === m3u);
+          if (storageIndex >= 0) {
+            configs[storageIndex].genre = newGenre;
             saveUserStreams(configs);
           }
         }
