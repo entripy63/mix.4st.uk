@@ -1,0 +1,40 @@
+{
+  "name": "Radio Paradise",
+  "streams": [
+    {
+      "name": "Radio Paradise Main",
+      "m3u": "http://stream.radioparadise.com/aac-320",
+      "genre": null
+    },
+    {
+      "name": "Radio Paradise Mellow",
+      "m3u": "http://stream.radioparadise.com/mellow-320",
+      "genre": null
+    },
+    {
+      "name": "Radio Paradise Rock",
+      "m3u": "http://stream.radioparadise.com/rock-320",
+      "genre": "Rock"
+    },
+    {
+      "name": "Radio Paradise Global",
+      "m3u": "http://stream.radioparadise.com/global-320",
+      "genre": null
+    },
+    {
+      "name": "Radio Paradise Beyond...",
+      "m3u": "http://stream.radioparadise.com/beyond-320",
+      "genre": null
+    },
+    {
+      "name": "Radio Paradise Serenity",
+      "m3u": "http://stream.radioparadise.com/serenity",
+      "genre": null
+    },
+    {
+      "name": "Radio Paradise 2050",
+      "m3u": "http://stream.radioparadise.com/radio2050-320",
+      "genre": null
+    }
+  ]
+}
