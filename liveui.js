@@ -169,8 +169,6 @@ function onLiveStreamDrop(e, dropIndex) {
   e.preventDefault();
   const dragIndex = parseInt(e.dataTransfer.getData('text/plain'));
   
-  console.log('onLiveStreamDrop called: dragIndex=', dragIndex, 'dropIndex=', dropIndex);
-  
   if (dragIndex === dropIndex) return;
   
   // Reorder liveStreams array
@@ -191,31 +189,7 @@ function onLiveStreamDragEnd(e) {
   }
 }
 
-// Attach drag handlers to mix list
-document.addEventListener('dragstart', (e) => {
-  const mixItem = e.target.closest('.mix-item');
-  if (mixItem && mixItem.dataset.streamM3u) {
-    const index = Array.from(mixItem.parentNode.children).indexOf(mixItem);
-    onLiveStreamDragStart(e, index);
-  }
-});
-
-document.addEventListener('dragover', (e) => {
-  const mixItem = e.target.closest('.mix-item');
-  if (mixItem && mixItem.dataset.streamM3u) {
-    onLiveStreamDragOver(e);
-  }
-});
-
-document.addEventListener('drop', (e) => {
-  const mixItem = e.target.closest('.mix-item');
-  if (mixItem && mixItem.dataset.streamM3u) {
-    const index = Array.from(mixItem.parentNode.children).indexOf(mixItem);
-    onLiveStreamDrop(e, index);
-  }
-});
-
-document.addEventListener('dragend', onLiveStreamDragEnd);
+// Drag/drop handlers are attached inline via ondragstart/ondrop/etc in displayLiveStreams()
 
 // ========== STREAM COLLECTIONS MENU ==========
 
