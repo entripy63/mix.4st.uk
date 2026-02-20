@@ -436,6 +436,9 @@ async function saveCollectionToFile() {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
   
+  // Also persist display order back to storage for consistency
+  saveUserStreams(streams);
+  
   showToast(`Saved ${streams.length} stream${streams.length !== 1 ? 's' : ''}`);
 }
 
