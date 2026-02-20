@@ -192,6 +192,14 @@ async function probeAndAddStream(config) {
        available: false,
        reason: null
      };
+     
+     // Overall timeout for the entire probing process (prevent hanging indefinitely)
+     const probeTimeoutMs = 30000; // 30 seconds max
+     const probeTimeout = new Promise(resolve => {
+       setTimeout(() => {
+         resolve({ timedOut: true });
+       }, probeTimeoutMs);
+     });
       
       // Check if it's a direct audio file URL, not a playlist
      const audioExtensions = ['.mp3', '.aac', '.flac', '.wav', '.ogg', '.opus', '.m4a'];
@@ -209,7 +217,11 @@ async function probeAndAddStream(config) {
          entries = [{ url: config.m3u, title: null }];
        }
      }
-    for (const entry of entries) {
+     
+     // Race against overall timeout
+     const probeResult = await Promise.race([
+       (async () => {
+         for (const entry of entries) {
       let url = entry.url;
       
       // Try direct URL first
@@ -253,10 +265,16 @@ async function probeAndAddStream(config) {
           stream.available = true;
           break;
         }
-      }
-    }
-    if (!stream.available) {
-      stream.reason = `No working stream found (playlist: ${config.m3u})`;
+        }
+        return null; // Probing completed
+        })(),
+        probeTimeout
+        ]);
+        
+        if (probeResult?.timedOut) {
+        stream.reason = `Probing timeout (no response from stream or server)`;
+        } else if (!stream.available) {
+        stream.reason = `No working stream found (playlist: ${config.m3u})`;
     }
     if (!stream.name && stream.playlistTitle) {
       const parsed = parseSomaFMStream(stream.playlistTitle, stream.genre);
