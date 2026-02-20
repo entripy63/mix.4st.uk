@@ -277,7 +277,10 @@ async function probeAndAddStream(config) {
      } else if (!stream.available) {
        stream.reason = `No working stream found (playlist: ${config.m3u})`;
      }
+    // Track if name was resolved from playlist before setting fallback
+    let nameWasResolved = false;
     if (!stream.name && stream.playlistTitle) {
+      nameWasResolved = true;
       const parsed = parseSomaFMStream(stream.playlistTitle, stream.genre);
       stream.name = parsed.name;
       if (!stream.genre) {
@@ -285,12 +288,7 @@ async function probeAndAddStream(config) {
       }
     }
     
-    // Only persist resolved names from playlist (not auto-generated fallbacks)
-    let nameWasResolved = false;
-    if (!stream.name && stream.playlistTitle) {
-       nameWasResolved = true;
-    }
-    
+    // Set fallback if still no name
     if (!stream.name) {
        stream.name = config.m3u || 'Unknown Stream';
     }
