@@ -97,52 +97,54 @@ function probeStream(url, timeoutMs = 5000) {
 }
 
 function parsePLS(text) {
-   const entries = [];
-   const lines = text.split('\n');
-   const files = {};
-   const titles = {};
-   const MAX_ENTRIES = 500; // Reasonable limit for any real playlist
-   
-   for (const line of lines) {
-     const fileMatch = line.match(/^File(\d+)=(.+)$/i);
-     if (fileMatch && Object.keys(files).length < MAX_ENTRIES) {
-       files[fileMatch[1]] = fileMatch[2].trim();
-     }
-     const titleMatch = line.match(/^Title(\d+)=(.+)$/i);
-     if (titleMatch) {
-       titles[titleMatch[1]] = titleMatch[2].trim();
-     }
-   }
-   
-   for (const num of Object.keys(files).sort((a, b) => a - b)) {
-     entries.push({ url: files[num], title: titles[num] || null });
-   }
-   return entries;
+    const entries = [];
+    const lines = text.split('\n');
+    const files = {};
+    const titles = {};
+    const MAX_ENTRIES = 500; // Reasonable limit for any real playlist
+    
+    for (const line of lines) {
+      const fileMatch = line.match(/^File(\d+)=(.+)$/i);
+      if (fileMatch && Object.keys(files).length < MAX_ENTRIES) {
+        files[fileMatch[1]] = fileMatch[2].trim();
+      }
+      const titleMatch = line.match(/^Title(\d+)=(.+)$/i);
+      if (titleMatch) {
+        titles[titleMatch[1]] = titleMatch[2].trim();
+      }
+    }
+    
+    for (const num of Object.keys(files).sort((a, b) => a - b)) {
+      entries.push({ url: files[num], title: titles[num] || null });
+    }
+    console.log('parsePLS extracted', entries.length, 'entries');
+    return entries;
 }
 
 function parseM3U(text) {
-   const entries = [];
-   const lines = text.split('\n').map(line => line.trim());
-   let pendingTitle = null;
-   const MAX_ENTRIES = 500; // Reasonable limit for any real playlist
-   
-   for (const line of lines) {
-     if (entries.length >= MAX_ENTRIES) break; // Stop if too many entries
-     
-     if (line.startsWith('#EXTINF:')) {
-       const commaIndex = line.indexOf(',');
-       if (commaIndex !== -1) {
-         pendingTitle = line.substring(commaIndex + 1).trim();
-       }
-     } else if (line && !line.startsWith('#')) {
-       // Validate line looks like a URL or at least starts with common protocols
-       if (line.startsWith('http://') || line.startsWith('https://') || line.startsWith('mms://') || line.startsWith('rtmp://')) {
-         entries.push({ url: line, title: pendingTitle });
-         pendingTitle = null;
-       }
-     }
-   }
-   return entries;
+    const entries = [];
+    const lines = text.split('\n').map(line => line.trim());
+    let pendingTitle = null;
+    const MAX_ENTRIES = 500; // Reasonable limit for any real playlist
+    
+    for (const line of lines) {
+      if (entries.length >= MAX_ENTRIES) break; // Stop if too many entries
+      
+      if (line.startsWith('#EXTINF:')) {
+        const commaIndex = line.indexOf(',');
+        if (commaIndex !== -1) {
+          pendingTitle = line.substring(commaIndex + 1).trim();
+        }
+      } else if (line && !line.startsWith('#')) {
+        // Validate line looks like a URL or at least starts with common protocols
+        if (line.startsWith('http://') || line.startsWith('https://') || line.startsWith('mms://') || line.startsWith('rtmp://')) {
+          entries.push({ url: line, title: pendingTitle });
+          pendingTitle = null;
+        }
+      }
+    }
+    console.log('parseM3U extracted', entries.length, 'entries');
+    return entries;
 }
 
 async function fetchPlaylist(playlistUrl) {
@@ -163,6 +165,7 @@ async function fetchPlaylist(playlistUrl) {
      }
      
      const text = await resp.text();
+     console.log('fetchPlaylist got', text.length, 'chars, starts with:', text.substring(0, 50));
      if (text.trim().toLowerCase().startsWith('[playlist]')) {
        return parsePLS(text);
      }
