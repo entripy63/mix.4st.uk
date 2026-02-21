@@ -7,6 +7,8 @@
 ## Build/Test Commands
 - No build system - static HTML/CSS website
 - DON'T USE `python3 -m http.server 8000` to test locally, too flakey
+- (axc) mirror -R -x .git/ -x .gitignore -x docs/ -x tools/
+- (live) mirror -R --only-existing
 
 ## Architecture
 - Static website with two SPAs: DJ mixes (mixes.4st.uk) and live streams (live.4st.uk)
