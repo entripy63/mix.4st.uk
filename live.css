@@ -397,7 +397,6 @@ html, body {
    border-collapse: collapse;
    user-select: text;
    -webkit-user-select: text;
-   pointer-events: none;
 }
 
 .stream-extra-info p {
