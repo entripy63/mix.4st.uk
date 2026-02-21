@@ -310,7 +310,13 @@ html, body {
    margin-bottom: 4px;
    transition: background 0.2s;
    display: flex;
-   flex-wrap: wrap;
+   flex-direction: column;
+   gap: 8px;
+   min-width: 0;
+}
+
+.mix-item-row {
+   display: flex;
    align-items: center;
    gap: 8px;
    min-width: 0;
@@ -379,8 +385,7 @@ html, body {
 
 .stream-extra-info {
    display: table;
-   flex-basis: 100%;
-   width: calc(100% - 20px);
+   width: 100%;
    margin-top: 8px;
    margin-left: 0;
    margin-right: 0;
@@ -392,6 +397,7 @@ html, body {
    border-collapse: collapse;
    user-select: text;
    -webkit-user-select: text;
+   pointer-events: none;
 }
 
 .stream-extra-info p {

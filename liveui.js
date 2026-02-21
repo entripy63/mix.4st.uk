@@ -69,15 +69,17 @@ function displayLiveStreams() {
            data-stream-m3u="${escapeHtml(stream.m3u)}"
            draggable="true"
            ondragstart="onLiveStreamDragStart(event, ${index})"
-           ondragover="onLiveStreamDragOver(event)"
-           ondrop="onLiveStreamDrop(event, ${index})"
            ondragend="onLiveStreamDragEnd()">
-        <button class="icon-btn" onclick="playLiveStream(${index})"${disabled} title="${escapeHtml(tooltip)}">▶</button>
-        <div class="stream-info">
-          <span class="mix-name">${escapeHtml(stream.name)}</span>
-          ${stream.genre && stream.genre !== 'Unknown' ? `<span class="stream-genre">${escapeHtml(stream.genre)}</span>` : ''}
+        <div class="mix-item-row"
+             ondragover="onLiveStreamDragOver(event)"
+             ondrop="onLiveStreamDrop(event, ${index})">
+          <button class="icon-btn" onclick="playLiveStream(${index})"${disabled} title="${escapeHtml(tooltip)}">▶</button>
+          <div class="stream-info">
+            <span class="mix-name">${escapeHtml(stream.name)}</span>
+            ${stream.genre && stream.genre !== 'Unknown' ? `<span class="stream-genre">${escapeHtml(stream.genre)}</span>` : ''}
+          </div>
+          ${infoBtn}${deleteBtn}
         </div>
-        ${infoBtn}${deleteBtn}
         ${infoPopout}
       </div>
     `;
@@ -181,13 +183,19 @@ function onLiveStreamDrop(e, dropIndex) {
   
   if (dragIndex === dropIndex) return;
   
-  // Reorder liveStreams array
-  const temp = liveStreams[dragIndex];
-  liveStreams.splice(dragIndex, 1);
-  liveStreams.splice(dropIndex, 0, temp);
+  // Follow canonical pattern: Update userStreams first
+  const configs = getUserStreams();
+  const temp = configs[dragIndex];
+  configs.splice(dragIndex, 1);
+  configs.splice(dropIndex, 0, temp);
+  saveUserStreams(configs);
   
-  // Reorder in storage
-  saveLiveStreamOrder();
+  // Step 2: Keep liveStreams in sync with new order
+  if (liveStreamsInitialized) {
+    const tempLive = liveStreams[dragIndex];
+    liveStreams.splice(dragIndex, 1);
+    liveStreams.splice(dropIndex, 0, tempLive);
+  }
   
   // Refresh display
   displayLiveStreams();
