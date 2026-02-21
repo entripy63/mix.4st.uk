@@ -311,8 +311,8 @@ html, body {
    transition: background 0.2s;
    display: flex;
    align-items: center;
-   flex-wrap: wrap;
    gap: 8px;
+   min-width: 0;
 }
 
 .mix-item:hover {
@@ -357,14 +357,17 @@ html, body {
 .stream-info {
   flex: 1;
   min-width: 0;
+  overflow: hidden;
 }
 
 .mix-name {
-  font-weight: 500;
-  margin-bottom: 4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+   font-weight: 500;
+   margin-bottom: 4px;
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   flex: 1;
+   min-width: 0;
 }
 
 .stream-genre {

@@ -2,14 +2,26 @@
 // Dependencies: core.js (storage, state)
 // Used by: liveui.js, player.js
 
+// ========== ARCHITECTURE: SINGLE SOURCE OF TRUTH ==========
+// 
+// CANONICAL (persistent): userStreams in localStorage
+//   Structure: [{ name, m3u, genre }, ...]
+//   Accessed via: getUserStreams(), saveUserStreams()
+//
+// DERIVED (ephemeral): liveStreams in memory
+//   Structure: [{ name, m3u, genre, url, available, reason, ... }, ...]
+//   Built from userStreams via probeAndAddStream()
+//
+// PATTERN: All mutations update userStreams first, then keep liveStreams in sync
+//   1. Mutate userStreams array
+//   2. saveUserStreams(modified)
+//   3. Update liveStreams to match
+//
+// This eliminates sync fragility - liveStreams is always derived from userStreams
+
 // Live streams configuration
 // We can't always use the proxy because it hates jungletrain.net
 const STREAM_PROXY = 'https://stream-proxy.round-bar-e93e.workers.dev';
-
-// Built-in stream definitions (can be extended)
-const BUILTIN_STREAM_DEFS = {
-  // Will be populated with built-in streams if needed
-};
 
 // Data storage
 let liveStreams = [];
@@ -26,24 +38,35 @@ function saveUserStreams(streams) {
 }
 
 async function addUserStream(name, m3u, genre) {
+   // Step 1: Update canonical source (userStreams)
    const streams = getUserStreams();
    const config = { name: name || null, m3u, genre };
    streams.push(config);
    saveUserStreams(streams);
    
+   // Step 2: Keep liveStreams in sync (probe and add if already initialized)
    if (liveStreamsInitialized) {
       await probeAndAddStream(config);
    }
 }
 
 function removeUserStream(index) {
-   const streams = getUserStreams();
-   streams.splice(index, 1);
-   saveUserStreams(streams);
-   
-   if (liveStreamsInitialized && index < liveStreams.length) {
-     liveStreams.splice(index, 1);
-   }
+    if (index < 0 || index >= liveStreams.length) return;
+    
+    const m3u = liveStreams[index].m3u;
+    
+    // Step 1: Update canonical source (userStreams) - use m3u lookup to find config
+    const streams = getUserStreams();
+    const configIndex = streams.findIndex(s => s.m3u === m3u);
+    if (configIndex >= 0) {
+      streams.splice(configIndex, 1);
+      saveUserStreams(streams);
+    }
+    
+    // Step 2: Keep liveStreams in sync - remove by index
+    if (liveStreamsInitialized) {
+      liveStreams.splice(index, 1);
+    }
 }
 
 function getLiveStreamConfig() {
@@ -341,23 +364,29 @@ function parseSomaFMStream(title, genre) {
 // ========== INITIALIZATION ==========
 
 async function loadDefaultStreamsOnFirstRun() {
-    const userStreams = getUserStreams();
-    // Only load default preset if user has no streams yet
-    if (userStreams.length === 0) {
-      try {
-        const response = await fetch('/presets/Default.json');
-        const preset = await response.json();
-        if (preset.name && Array.isArray(preset.streams)) {
-          for (const stream of preset.streams) {
-            await addUserStream(stream.name || null, stream.m3u, stream.genre || null);
-          }
-        }
-      } catch (e) {
-        // Default preset not available, start with empty list
-        console.log('Default preset not found, starting with empty stream list');
-      }
-    }
-}
+     const userStreams = getUserStreams();
+     // Only load default preset if user has NEVER initialized streams
+     // Check if user has explicitly cleared streams (persisted flag)
+     const hasEverInitialized = storage.getBool('streamsEverInitialized', false);
+     
+     if (userStreams.length === 0 && !hasEverInitialized) {
+       try {
+         const response = await fetch('/presets/Default.json');
+         const preset = await response.json();
+         if (preset.name && Array.isArray(preset.streams)) {
+           for (const stream of preset.streams) {
+             await addUserStream(stream.name || null, stream.m3u, stream.genre || null);
+           }
+         }
+       } catch (e) {
+         // Default preset not available, start with empty list
+         console.log('Default preset not found, starting with empty stream list');
+       }
+     }
+     
+     // Mark that streams have been initialized (prevents reloading defaults on future reloads)
+     storage.set('streamsEverInitialized', true);
+   }
 
 async function initLiveStreams() {
   if (liveStreamsInitialized) return;
@@ -517,10 +546,14 @@ function saveLiveStreamOrder() {
     if (m3u) order.push(m3u);
   });
   if (order.length > 0) {
+    // Step 1: Update canonical source (userStreams)
     const streams = getUserStreams();
-    const reordered = order.map(m3u => streams.find(s => s.m3u === m3u)).filter(Boolean);
-    saveUserStreams(reordered);
-    liveStreams = liveStreams.filter((_, i) => order[i]); // Keep liveStreams in sync
+    const reorderedConfig = order.map(m3u => streams.find(s => s.m3u === m3u)).filter(Boolean);
+    saveUserStreams(reorderedConfig);
+    
+    // Step 2: Keep liveStreams in sync with new order
+    const reorderedLive = order.map(m3u => liveStreams.find(s => s.m3u === m3u)).filter(Boolean);
+    liveStreams = reorderedLive;
   }
 }
 

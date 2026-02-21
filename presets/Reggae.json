@@ -1,10 +1,9 @@
 {
   "name": "Reggae",
-  "version": 1,
-  "savedAt": "2026-02-19T13:06:52.672Z",
+  "category": "genre",
   "streams": [
     {
-      "name": null,
+      "name": "1.FM - ReggaeTrade (www.1.fm)",
       "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=1728296",
       "genre": "Reggae"
     },
@@ -24,7 +23,7 @@
       "genre": "Reggae"
     },
     {
-      "name": null,
+      "name": "Rize Radio",
       "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99562626",
       "genre": "Reggae"
     },

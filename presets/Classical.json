@@ -1,15 +1,21 @@
 {
   "name": "Classical",
+  "category": "genre",
   "version": 1,
   "savedAt": "2026-02-19T13:22:21.248Z",
   "streams": [
+    {
+      "name": "Mother Earth Klassik",
+      "m3u": "https://motherearth.streamserver24.com/listen/motherearth_klassik/motherearth.klassik.flac-lo",
+      "genre": "Classical"
+    },
     {
       "name": "Davide of MIMIC",
       "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=1923481",
       "genre": "Classical"
     },
     {
-      "name": null,
+      "name": "1.FM - Otto's Classical Music (www.1.fm)",
       "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=1863812",
       "genre": "Classical"
     }

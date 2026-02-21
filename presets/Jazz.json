@@ -1,25 +1,29 @@
 {
   "name": "Jazz",
-  "version": 1,
-  "savedAt": "2026-02-19T13:00:04.441Z",
+  "category": "genre",
   "streams": [
+    {
+      "name": "Mother Earth Jazz",
+      "m3u": "https://motherearth.streamserver24.com/listen/motherearth_jazz/motherearth.jazz.flac-lo",
+      "genre": "Jazz"
+    },
     {
       "name": "SileX.live",
       "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99613551",
       "genre": "Jazz"
     },
     {
-      "name": null,
+      "name": "AlvarkoJazz",
       "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99436279",
       "genre": null
     },
     {
-      "name": null,
+      "name": "1.FM - Adore Jazz",
       "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=1859817",
       "genre": "Jazz"
     },
     {
-      "name": null,
+      "name": "1.FM - Sax4Love (www.1.fm)",
       "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=1420031",
       "genre": null
     }

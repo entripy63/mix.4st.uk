@@ -1,95 +1,94 @@
 {
   "name": "SomaFM",
-  "version": 1,
-  "savedAt": "2026-02-19T13:16:03.132Z",
+  "category": "other",
   "streams": [
     {
-      "name": null,
+      "name": "SomaFM: Groove Salad",
       "m3u": "https://somafm.com/groovesalad130.pls",
       "genre": "A nicely chilled plate of ambient/downtempo beats and grooves."
     },
     {
-      "name": null,
+      "name": "SomaFM: Deep Space One",
       "m3u": "https://somafm.com/deepspaceone130.pls",
       "genre": "Deep ambient electronic, experimental and space music. For inner and outer space exploration."
     },
     {
-      "name": null,
+      "name": "SomaFM: Space Station Soma",
       "m3u": "https://somafm.com/spacestation130.pls",
       "genre": "Tune in, turn on, space out. Spaced-out ambient and mid-tempo electronica."
     },
     {
-      "name": null,
+      "name": "SomaFM: Groove Salad Classic",
       "m3u": "https://somafm.com/gsclassic130.pls",
       "genre": "The classic (early 2000s) version of a nicely chilled plate of ambient/downtempo beats and grooves."
     },
     {
-      "name": null,
+      "name": "SomaFM: Synphaera Radio",
       "m3u": "https://somafm.com/synphaera130.pls",
       "genre": "Featuring the music from an independent record label focused on modern electronic ambient and space music."
     },
     {
-      "name": null,
+      "name": "SomaFM: Beat Blender",
       "m3u": "https://somafm.com/beatblender130.pls",
       "genre": "A late night blend of deep-house and downtempo chill."
     },
     {
-      "name": null,
+      "name": "SomaFM: The Dark Zone",
       "m3u": "https://somafm.com/darkzone130.pls",
       "genre": "The darker side of deep ambient. Music for staring into the Abyss."
     },
     {
-      "name": null,
+      "name": "SomaFM: Bossa Beyond (Special)",
       "m3u": "https://somafm.com/bossa130.pls",
       "genre": "Silky-smooth, laid-back Brazilian-style rhythms of Bossa Nova, Samba and beyond"
     },
     {
-      "name": null,
+      "name": "SomaFM: Suburbs of Goa",
       "m3u": "https://somafm.com/suburbsofgoa130.pls",
       "genre": "Desi-influenced Asian world beats and beyond."
     },
     {
-      "name": null,
+      "name": "SomaFM: Sonic Universe",
       "m3u": "https://somafm.com/sonicuniverse130.pls",
       "genre": "Transcending the world of jazz with eclectic, avant-garde takes on tradition."
     },
     {
-      "name": null,
+      "name": "SomaFM: Seven Inch Soul",
       "m3u": "https://somafm.com/7soul130.pls",
       "genre": "Vintage soul tracks from the original 45 RPM vinyl."
     },
     {
-      "name": null,
+      "name": "SomaFM: Fluid",
       "m3u": "https://somafm.com/fluid130.pls",
       "genre": "Drown in the electronic sound of instrumental hiphop, future soul and liquid trap."
     },
     {
-      "name": null,
+      "name": "SomaFM: cliqhop idm",
       "m3u": "https://somafm.com/cliqhop130.pls",
       "genre": "Blips'n'beeps backed mostly w/beats. Intelligent Dance Music."
     },
     {
-      "name": null,
+      "name": "SomaFM: SF 10-33",
       "m3u": "https://somafm.com/sf1033130.pls",
       "genre": "Ambient music mixed with the sounds of San Francisco public safety radio traffic."
     },
     {
-      "name": null,
+      "name": "SomaFM: Dub Step Beyond",
       "m3u": "https://somafm.com/dubstep130.pls",
       "genre": "Dubstep, Dub and Deep Bass. May damage speakers at high volume."
     },
     {
-      "name": null,
+      "name": "SomaFM: Tiki Time (Special)",
       "m3u": "https://somafm.com/tikitime130.pls",
       "genre": "Classic Tiki music and Vintage island rhythms to sip cocktails by."
     },
     {
-      "name": null,
+      "name": "SomaFM: SomaFM Specials",
       "m3u": "https://somafm.com/specials130.pls",
       "genre": "Now featuring Afternoon Jazz, Wavepool, DubX, The Surf Report & More!"
     },
     {
-      "name": null,
+      "name": "SomaFM: Doomed",
       "m3u": "https://somafm.com/doomed130.pls",
       "genre": "Where every day is Halloween: Dark industrial/ambient music for tortured souls."
     }

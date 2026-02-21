@@ -18,12 +18,13 @@ async function loadAvailablePresets() {
         const presets = [];
         for (const item of manifest.presets) {
             try {
-                const presetResponse = await fetch(`/presets/${item.filename}`);
+                const presetResponse = await fetch(`/presets/${item.filename}?t=${Date.now()}`);
                 const preset = await presetResponse.json();
                 if (preset.name && Array.isArray(preset.streams)) {
                     presets.push({
                         filename: item.filename,
                         name: preset.name,
+                        category: preset.category || 'other',
                         streams: preset.streams
                     });
                 }
@@ -55,11 +56,49 @@ async function showPresetsMenu(e) {
         return;
     }
     
-    // Populate preset list with clickable buttons
+    // Group presets by category
+    const grouped = {};
+    presets.forEach((preset, index) => {
+        const cat = preset.category || 'other';
+        if (!grouped[cat]) grouped[cat] = [];
+        grouped[cat].push({ preset, index });
+    });
+    
+    // Get category order: 'genre' first, then others
+    const categoryOrder = Object.keys(grouped).sort((a, b) => {
+        if (a === 'genre') return -1;
+        if (b === 'genre') return 1;
+        return a.localeCompare(b);
+    });
+    
+    // Build HTML with category containers above and tabs at bottom
     const presetsList = document.getElementById('presetsList');
-    presetsList.innerHTML = presets.map((preset, index) => `
-        <button onclick="selectPreset(${index})" style="padding: 12px 16px; background: #3d3d5c; border: none; border-radius: 6px; color: #e0e0e0; cursor: pointer; text-align: left; transition: background 0.2s;" onmouseover="this.style.background='#5c6bc0'" onmouseout="this.style.background='#3d3d5c'">${escapeHtml(preset.name)}</button>
-    `).join('');
+    let html = '';
+    
+    // Category content containers (above tabs)
+    for (const category of categoryOrder) {
+        const containerStyle = category === categoryOrder[0] ? 'display: flex;' : 'display: none;';
+        html += `<div id="presetsContainer-${category}" style="${containerStyle} flex-direction: column; gap: 8px; margin-bottom: 12px;">`;
+        
+        for (const { preset, index } of grouped[category]) {
+            html += `<button onclick="selectPreset(${index})" style="padding: 12px 16px; background: #3d3d5c; border: none; border-radius: 6px; color: #e0e0e0; cursor: pointer; text-align: left; transition: background 0.2s;" onmouseover="this.style.background='#5c6bc0'" onmouseout="this.style.background='#3d3d5c'">${escapeHtml(preset.name)}</button>`;
+        }
+        
+        html += '</div>';
+    }
+    
+    // Tab buttons (at bottom)
+    html += '<div style="display: flex; gap: 0; border-top: 2px solid #3d3d5c; margin-top: 12px; padding-top: 8px;">';
+    for (const category of categoryOrder) {
+        const catLabel = category.charAt(0).toUpperCase() + category.slice(1);
+        const tabId = `presetsTab-${category}`;
+        const isFirst = category === categoryOrder[0];
+        html += `<button onclick="switchPresetsTab('${category}')" id="${tabId}" style="flex: 1; padding: 10px 8px; background: ${isFirst ? '#5c6bc0' : '#3d3d5c'}; border: none; color: #e0e0e0; cursor: pointer; font-size: 13px; font-weight: bold; transition: background 0.2s; border-top: 3px solid ${isFirst ? '#7c7cff' : 'transparent'};" onmouseover="this.style.background='#5c6bc0'" onmouseout="this.style.background=this.id.includes('presetsTab-' + window._presetsCurrentTab) ? '#5c6bc0' : '#3d3d5c'">${escapeHtml(catLabel)}</button>`;
+    }
+    html += '</div>';
+    
+    presetsList.innerHTML = html;
+    window._presetsCurrentTab = categoryOrder[0];
     
     // Store presets for selection handler
     window._currentPresets = presets;
@@ -68,25 +107,39 @@ async function showPresetsMenu(e) {
     const modal = document.getElementById('presetsModal');
     modal.style.display = 'flex';
     
-    // Position modal near the button (above it, centered)
+    // Position modal with bottom anchor (above button, stays above as content grows)
     if (btnRect) {
         const content = modal.querySelector('.modal-content');
         const contentWidth = 320; // Match CSS width
-        const contentHeight = Math.min(presets.length * 50 + 60, window.innerHeight * 0.7); // Rough estimate
-        
-        let top = btnRect.top - contentHeight - 10;
-        
-        // If modal would go above viewport, position below button instead
-        if (top < 10) {
-            top = btnRect.bottom + 10;
-        }
         
         const left = btnRect.left + btnRect.width / 2 - contentWidth / 2;
+        const bottom = window.innerHeight - btnRect.top + 10; // Distance from bottom of viewport
         
         content.style.setProperty('position', 'fixed', 'important');
         content.style.setProperty('left', Math.max(10, Math.min(left, window.innerWidth - contentWidth - 10)) + 'px', 'important');
-        content.style.setProperty('top', Math.max(10, top) + 'px', 'important');
+        content.style.setProperty('bottom', Math.max(10, bottom) + 'px', 'important');
+        content.style.setProperty('top', 'auto', 'important');
     }
+}
+
+function switchPresetsTab(category) {
+    // Hide all containers
+    const containers = document.querySelectorAll('[id^="presetsContainer-"]');
+    containers.forEach(c => c.style.display = 'none');
+    
+    // Show selected container
+    const activeContainer = document.getElementById(`presetsContainer-${category}`);
+    if (activeContainer) activeContainer.style.display = 'flex';
+    
+    // Update tab buttons
+    const tabs = document.querySelectorAll('[id^="presetsTab-"]');
+    tabs.forEach(tab => {
+        const isActive = tab.id === `presetsTab-${category}`;
+        tab.style.background = isActive ? '#5c6bc0' : '#3d3d5c';
+        tab.style.borderBottom = isActive ? '3px solid #7c7cff' : 'transparent';
+    });
+    
+    window._presetsCurrentTab = category;
 }
 
 function hidePresetsMenu() {

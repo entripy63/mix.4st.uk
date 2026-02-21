@@ -1,10 +1,11 @@
 {
   "name": "Mother Earth (96kHz FLAC)",
+  "category": "other",
   "streams": [
     {
       "name": "Mother Earth Jazz",
       "m3u": "https://motherearth.streamserver24.com/listen/motherearth_jazz/motherearth.jazz.flac-lo",
-      "genre": null
+      "genre": "Jazz"
     },
     {
       "name": "Mother Earth Instrumental",
