@@ -313,6 +313,7 @@ html, body {
    align-items: center;
    gap: 8px;
    min-width: 0;
+   position: relative;
 }
 
 .mix-item:hover {
@@ -378,10 +379,14 @@ html, body {
 
 .stream-extra-info {
    display: table;
-   flex-basis: 100%;
-   width: 100%;
-   margin-top: 8px;
-   margin-left: 0;
+   position: absolute;
+   top: 100%;
+   left: 0;
+   right: 0;
+   width: calc(100% - 20px);
+   margin-top: 4px;
+   margin-left: 10px;
+   margin-right: 10px;
    padding: 8px 10px;
    background: #1a1a2e;
    border-radius: 4px;
@@ -390,6 +395,7 @@ html, body {
    border-collapse: collapse;
    user-select: text;
    -webkit-user-select: text;
+   z-index: 10;
 }
 
 .stream-extra-info p {
