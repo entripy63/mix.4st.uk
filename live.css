@@ -75,66 +75,7 @@ html, body {
 
 /* .add-stream-btn, .reload-btn styles in common.css */
 
-.stream-menu-container {
-  position: relative;
-}
-
-.stream-menu-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 10px;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  color: #888;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.stream-menu-btn:hover {
-  background: rgba(92, 107, 192, 0.2);
-  color: #e0e0e0;
-}
-
-.stream-collections-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: #252538;
-  border: 1px solid #3d3d5c;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  min-width: 140px;
-  z-index: 100;
-  margin-top: 4px;
-}
-
-.stream-collections-menu button {
-  display: block;
-  width: 100%;
-  padding: 10px 12px;
-  background: none;
-  border: none;
-  color: #e0e0e0;
-  text-align: left;
-  cursor: pointer;
-  font-size: 13px;
-  transition: background 0.2s;
-}
-
-.stream-collections-menu button:first-child {
-  border-radius: 5px 5px 0 0;
-}
-
-.stream-collections-menu button:last-child {
-  border-radius: 0 0 5px 5px;
-}
-
-.stream-collections-menu button:hover {
-  background: #3d3d5c;
-}
+/* Stream menu styles in common.css */
 
 /* Stream items */
 .mix-item {
@@ -196,11 +137,7 @@ html, body {
   opacity: 0.5;
 }
 
-.stream-info {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-}
+/* Stream info styles in common.css */
 
 .mix-name {
    font-weight: 500;
@@ -210,32 +147,6 @@ html, body {
    text-overflow: ellipsis;
    flex: 1;
    min-width: 0;
-}
-
-.stream-genre {
-  font-size: 12px;
-  color: #aaa;
-  margin-right: 8px;
-}
-
-.stream-extra-info {
-   display: table;
-   width: 100%;
-   margin-top: 8px;
-   margin-left: 0;
-   margin-right: 0;
-   padding: 8px 10px;
-   background: #1a1a2e;
-   border-radius: 4px;
-   font-size: 12px;
-   color: #aaa;
-   border-collapse: collapse;
-   user-select: text;
-   -webkit-user-select: text;
-}
-
-.stream-extra-info p {
-   margin: 4px 0;
 }
 
 /* .stream-info-field, .stream-edit-* styles in common.css */

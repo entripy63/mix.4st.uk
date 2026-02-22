@@ -374,3 +374,91 @@
   margin: 0;
   font-size: 18px;
 }
+
+/* ========== STREAM CONTROLS & INFO ========== */
+
+.stream-menu-container {
+  position: relative;
+}
+
+.stream-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.stream-menu-btn:hover {
+  background: var(--accent-light);
+  color: var(--text-primary);
+}
+
+.stream-collections-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #252538;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  min-width: 140px;
+  z-index: 100;
+  margin-top: 4px;
+}
+
+.stream-collections-menu button {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+
+.stream-collections-menu button:first-child {
+  border-radius: 5px 5px 0 0;
+}
+
+.stream-collections-menu button:last-child {
+  border-radius: 0 0 5px 5px;
+}
+
+.stream-collections-menu button:hover {
+  background: var(--border-color);
+}
+
+.stream-info {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.stream-genre {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-right: 8px;
+}
+
+.stream-extra-info {
+  width: 100%;
+  margin-top: 8px;
+  margin-left: 0;
+  margin-right: 0;
+  padding: 8px 10px;
+  background: var(--bg-dark);
+  border-radius: 4px;
+  font-size: 13px;
+  user-select: text;
+  -webkit-user-select: text;
+}
