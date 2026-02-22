@@ -1,0 +1,276 @@
+/* common.css - Shared styles between player.html and live.html SPAs
+   Includes: buttons, forms, modals, colors, stream info fields
+   SPA-specific layout and structure overrides go in player.css and live.css
+*/
+
+/* ========== COLOR PALETTE ========== */
+:root {
+  --bg-dark: #1a1a2e;
+  --bg-card: #252542;
+  --bg-hover: #2d2d50;
+  --bg-input: #2d2d44;
+  --bg-input-focus: #3d3d50;
+  --border-color: #3d3d5c;
+  --text-primary: #e0e0e0;
+  --text-secondary: #aaa;
+  --text-muted: #888;
+  --text-error: #ff6b6b;
+  --accent: #5c6bc0;
+  --accent-hover: #7986cb;
+  --accent-light: rgba(92, 107, 192, 0.3);
+  --error-bg: #c0475c;
+}
+
+/* ========== BUTTONS ========== */
+
+.icon-btn {
+  padding: 6px 10px;
+  margin-right: 6px;
+  background: transparent;
+  border-radius: 4px;
+  flex-shrink: 0;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.icon-btn:hover {
+  background: var(--accent-light);
+}
+
+.info-btn {
+  margin-left: auto;
+}
+
+.delete-stream-btn {
+  color: var(--text-error);
+}
+
+.delete-stream-btn:hover {
+  background: var(--error-bg);
+  color: #000 !important;
+}
+
+.control-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--border-color);
+  border: none;
+  color: var(--text-primary);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.control-btn:hover {
+  background: var(--accent);
+}
+
+.add-stream-btn, .reload-btn {
+  padding: 8px 14px;
+  background: transparent;
+  color: var(--text-primary);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+
+.add-stream-btn:hover, .reload-btn:hover {
+  background: var(--border-color);
+}
+
+.reload-btn {
+  color: var(--text-muted);
+  font-size: 28px !important;
+  font-weight: bold;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 44px;
+  padding: 8px 10px;
+}
+
+.reload-btn:hover {
+  background: var(--accent-light);
+  color: var(--text-primary);
+}
+
+/* ========== FORM INPUTS ========== */
+
+#newStreamM3U {
+  flex: 1;
+  min-width: 150px;
+  padding: 8px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+#newStreamM3U::placeholder {
+  color: var(--text-muted);
+}
+
+#newStreamM3U:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--bg-input-focus);
+}
+
+.stream-edit-name,
+.stream-edit-genre {
+  width: 100%;
+  padding: 6px 8px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+.stream-edit-name:focus,
+.stream-edit-genre:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--bg-input-focus);
+}
+
+/* ========== STREAM INFO FIELDS ========== */
+
+.stream-info-field {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.stream-info-field:last-child {
+  margin-bottom: 0;
+}
+
+.stream-info-field strong {
+  color: #ccc;
+  font-weight: 500;
+  text-align: right;
+}
+
+.stream-info-field a {
+  color: #5c6bc0;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.stream-info-field a:hover {
+  text-decoration: underline;
+}
+
+.stream-info-field input {
+  padding: 4px 6px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 12px;
+  min-width: 0;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.stream-info-field input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--bg-input-focus);
+}
+
+/* ========== MODALS ========== */
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: var(--bg-card);
+  border-radius: 10px;
+  padding: 24px 32px;
+  max-width: 400px;
+  position: relative;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  color: var(--text-primary);
+  transform: none;
+}
+
+/* ========== CONFIRMATION DIALOG ========== */
+
+.confirm-cancel:hover {
+  background: #4d4d6c;
+}
+
+.confirm-confirm:hover {
+  background: #e0556d;
+}
+
+/* ========== MISC ========== */
+
+.slide-up {
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.dragging {
+  opacity: 0.6;
+  background: var(--border-color);
+}
