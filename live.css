@@ -1,5 +1,4 @@
-/* live.css - Minimal Live Streams SPA
-   Single column, mobile-friendly, no waveform/queue/grid */
+/* live.css - Minimal Live Streams SPA (single column layout) */
 
 html, body {
   margin: 0;
@@ -36,120 +35,17 @@ html, body {
   overflow: hidden;
 }
 
-#mixBrowser {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  min-width: 0;
-  overflow: hidden;
-}
-
-#mixList {
-  flex: 1;
-  overflow-y: auto;
-  min-height: 0;
-  min-width: 0;
-}
-
-/* Custom audio controls */
-/* Audio controls styled in common.css - override volumeSlider width for live.html */
+/* Override volumeSlider width for this SPA */
 #volumeSlider {
   width: 200px;
 }
 
-/* Stream list styles */
-.add-stream-form {
-   flex-shrink: 0;
-   padding: 10px 15px 10px 15px;
-   margin-bottom: 10px;
-}
-
-.add-stream-fields {
-   display: flex;
-   gap: 8px;
-   flex-wrap: wrap;
-}
-
-/* #newStreamM3U styles in common.css */
-
-/* .add-stream-btn, .reload-btn styles in common.css */
-
-/* Stream menu styles in common.css */
-
-/* Mix item styles in common.css - keeping .play-btn unique to live.css */
-
-.mix-item.unavailable .play-btn {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.play-btn {
-   flex-shrink: 0;
-   width: 36px;
-   height: 36px;
-   border-radius: 50%;
-   background: var(--accent);
-   border: none;
-   color: #fff;
-   font-size: 14px;
-   cursor: pointer;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   transition: background 0.2s;
-}
-
-.play-btn:hover:not(:disabled) {
-  background: var(--accent-hover);
-}
-
-.play-btn:disabled {
-  background: var(--border-color);
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-/* .stream-info-field, .stream-edit-* styles in common.css */
-
-/* .icon-btn styles in common.css */
-
-/* .delete-stream-btn styles in common.css */
-
-/* .dragging styles in common.css */
-
-/* Scrollbar styling */
-#mixList::-webkit-scrollbar {
-  width: 8px;
-}
-
-#mixList::-webkit-scrollbar-track {
-  background: #1a1a2e;
-}
-
-#mixList::-webkit-scrollbar-thumb {
-  background: #3d3d5c;
-  border-radius: 4px;
-}
-
-#mixList::-webkit-scrollbar-thumb:hover {
-   background: #5c6bc0;
-}
-
-/* Find/Add Playlists buttons */
+/* Constrain playlist buttons to reasonable width in single-column layout */
 #findPlaylistsBtn, #addPlaylistsBtn {
-    background: #252542;
-    color: #e0e0e0;
-    border: none;
-    transition: background 0.2s;
+  flex: 0 1 auto !important;
 }
 
-#findPlaylistsBtn:hover, #addPlaylistsBtn:hover {
-    background: #3d3d5c;
-}
-
-/* Modal styles in common.css */
-
+/* Bottom-right positioning for playlist guide modal */
 #playlistGuideModal.modal {
    align-items: flex-end;
    justify-content: flex-end;
@@ -161,21 +57,4 @@ html, body {
    border-radius: 10px 10px 0 0;
    margin-right: 20px;
    margin-bottom: 0;
-}
-
-/* Playlist guide styles in common.css */
-
-/* Presets modal styling */
-#presetsModal .modal-content {
-    width: 320px;
-    max-height: 70vh;
-}
-
-/* Confirmation dialog styling */
-.confirm-cancel:hover {
-    background: #4d4d6c;
-}
-
-.confirm-confirm:hover {
-    background: #e0556d;
 }

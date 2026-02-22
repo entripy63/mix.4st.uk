@@ -243,10 +243,33 @@
   transform: none;
 }
 
-/* ========== CONFIRMATION DIALOG ========== */
+/* ========== CONFIRMATION DIALOG & PRESETS ========== */
 
 .confirm-cancel:hover {
   background: #4d4d6c;
+}
+
+/* Presets modal sizing */
+#presetsModal .modal-content {
+  width: 320px;
+  max-height: 70vh;
+}
+
+/* Find/Add Playlists buttons */
+#findPlaylistsBtn, #addPlaylistsBtn, #addPlaylistsBtnPlayer {
+  background: #252542;
+  color: #e0e0e0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 12px;
+  padding: 10px 12px !important;
+  white-space: nowrap;
+}
+
+#findPlaylistsBtn:hover, #addPlaylistsBtn:hover, #addPlaylistsBtnPlayer:hover {
+  background: #3d3d5c;
 }
 
 .confirm-confirm:hover {
@@ -564,4 +587,112 @@
   border-radius: 3px;
   font-family: monospace;
   font-size: 11px;
+}
+
+/* ========== MIX BROWSER CONTAINERS ========== */
+
+#mixBrowser {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+#mixList {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* Scrollbar styling */
+#mixList::-webkit-scrollbar {
+  width: 8px;
+}
+
+#mixList::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+
+#mixList::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+#mixList::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* ========== STREAM CONTROL BAR ========== */
+
+.add-stream-form {
+  flex-shrink: 0;
+  margin-bottom: 10px;
+}
+
+.add-stream-fields {
+  padding: 4px 6px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.add-stream-fields input[type="text"] {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.add-stream-fields input[type="text"]:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--bg-input-focus);
+}
+
+.add-stream-fields button {
+  padding: 8px 16px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  flex-shrink: 0;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.add-stream-fields button:hover {
+  background: var(--accent-light);
+  color: var(--text-primary);
+}
+
+.add-stream-fields .reload-btn {
+  padding: 8px 10px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 28px !important;
+  font-weight: bold;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 44px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.add-stream-fields .reload-btn:hover {
+  background: var(--accent-light);
+  color: var(--text-primary);
 }

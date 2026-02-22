@@ -52,22 +52,7 @@ html, body {
   min-height: 0;
 }
 
-#mixBrowser {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  min-width: 0;
-  overflow: hidden;
-}
-
-#mixList {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  min-height: 0;
-  min-width: 0;
-}
+/* #mixBrowser and #mixList styles in common.css */
 
 #waveform {
   display: block;
@@ -196,39 +181,12 @@ button:active {
 
 /* .slide-up animation in common.css */
 
-/* Add Playlists button */
-#findPlaylistsBtn,
-#addPlaylistsBtnPlayer {
-    background: #252542;
-    color: #e0e0e0;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.2s;
-    white-space: nowrap;
-    font-size: 12px;
-    padding: 10px 12px !important;
+/* Find/Add Playlists buttons styled in common.css - keep flex grow for narrow column */
+#findPlaylistsBtn, #addPlaylistsBtnPlayer {
+  flex: 1 !important;
 }
 
-#findPlaylistsBtn:hover,
-#addPlaylistsBtnPlayer:hover {
-    background: #3d3d5c;
-}
-
-/* Presets modal styling */
-#presetsModal .modal-content {
-    width: 320px;
-    max-height: 70vh;
-}
-
-/* Confirmation dialog styling */
-.confirm-cancel:hover {
-    background: #4d4d6c;
-}
-
-.confirm-confirm:hover {
-    background: #e0556d;
-}
+/* Presets modal and confirmation dialog styles in common.css */
 
 /* Playlist guide styles in common.css */
 
@@ -457,74 +415,7 @@ kbd {
   cursor: not-allowed;
 }
 
-.add-stream-form {
-    margin-top: 0;
-    margin-bottom: 0;
-    border-bottom: 1px solid #333;
-}
-
-.add-stream-fields {
-    padding: 6px 15px;
-    display: flex;
-    gap: 4px;
-    align-items: center;
-}
-
-.add-stream-fields input[type="text"] {
-   flex: 1;
-   padding: 8px;
-   border: 1px solid #444;
-   border-radius: 4px;
-   background: #1a1a2e;
-   color: #fff;
-   font-size: 14px;
-}
-
-.add-stream-fields input[type="text"]:focus {
-   outline: none;
-   border-color: #00d9ff;
-}
-
-.add-stream-fields button {
-    padding: 8px 16px;
-    background: transparent;
-    color: #888;
-    border: 1px solid transparent;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    flex-shrink: 0;
-    white-space: nowrap;
-    transition: all 0.2s;
-}
-
-.add-stream-fields button:hover {
-    background: rgba(92, 107, 192, 0.2);
-    color: #e0e0e0;
-}
-
-.add-stream-fields .reload-btn {
-    padding: 8px 10px;
-    background: transparent;
-    color: #888;
-    font-size: 28px !important;
-    font-weight: bold;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 44px;
-    height: 44px;
-    border: 1px solid transparent;
-    border-radius: 6px;
-    transition: all 0.2s;
-}
-
-.add-stream-fields .reload-btn:hover {
-    background: rgba(92, 107, 192, 0.2);
-    color: #e0e0e0;
-}
+/* Stream control bar styles in common.css */
 
 /* .delete-stream-btn styles in common.css */
 
