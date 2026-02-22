@@ -477,6 +477,7 @@ html, body {
 
 .delete-stream-btn:hover {
   background: #c0475c;
+  color: #000 !important;
 }
 
 .dragging {

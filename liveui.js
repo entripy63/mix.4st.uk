@@ -27,9 +27,9 @@ function displayLiveStreams() {
         <div class="stream-menu-container" style="position: relative;">
           <button class="stream-menu-btn" onclick="toggleStreamCollectionsMenu()" title="Save/Load streams">☰</button>
           <div id="streamCollectionsMenu" class="stream-collections-menu" style="display: none; position: absolute; top: 100%; left: 0; background: #252542; border: 1px solid #3d3d5c; border-radius: 6px; padding: 8px; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.4); flex-direction: column; gap: 4px;">
-            <button onclick="loadCollectionFromFile()" style="padding: 8px 12px; background: #3d3d5c; border: none; border-radius: 4px; color: #e0e0e0; cursor: pointer; text-align: left;">📂 Load from File</button>
-            <button onclick="saveCollectionToFile()" style="padding: 8px 12px; background: #3d3d5c; border: none; border-radius: 4px; color: #e0e0e0; cursor: pointer; text-align: left;">💾 Save to File</button>
-            <button onclick="clearAllStreams()" style="padding: 8px 12px; background: #c0475c; border: none; border-radius: 4px; color: #fff; cursor: pointer; text-align: left;">🗑️ Clear All</button>
+            <button onclick="hideStreamCollectionsMenu(); loadCollectionFromFile()" style="padding: 8px 12px; background: #3d3d5c; border: none; border-radius: 4px; color: #e0e0e0; cursor: pointer; text-align: left;">📂 Load from File</button>
+            <button onclick="hideStreamCollectionsMenu(); saveCollectionToFile()" style="padding: 8px 12px; background: #3d3d5c; border: none; border-radius: 4px; color: #e0e0e0; cursor: pointer; text-align: left;">💾 Save to File</button>
+            <button onclick="hideStreamCollectionsMenu(); clearAllStreams()" style="padding: 8px 12px; background: #c0475c; border: none; border-radius: 4px; color: #fff; cursor: pointer; text-align: left;">🗑️ Clear All</button>
           </div>
         </div>
       </div>
@@ -261,6 +261,7 @@ async function selectPreset(index) {
     if (!presets || !presets[index]) return;
     
     hidePresetsMenu();
+    hideStreamCollectionsMenu();
     await addStreamsFromPreset(presets[index]);
 }
 
