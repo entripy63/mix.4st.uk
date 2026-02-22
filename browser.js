@@ -80,11 +80,14 @@ function displayMixList(mixes) {
         const extraBtn = hasExtra ? `<button class="icon-btn info-btn" data-action="toggle-info" title="More info">ⓘ</button>` : '';
         const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.date ? `<div><strong>Date:</strong> ${escapeHtml(mix.date)}</div>` : ''}${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
         return `<div class="mix-item" data-mix-id="${escapeHtml(mixId)}">
-        <button class="icon-btn" data-action="queue-add" title="Add to queue">+</button>
-        <button class="icon-btn" data-action="play-now" title="Play now">▶</button>
-        <span class="mix-name">${escapeHtml(mix.name)} <span class="mix-duration">(${mix.duration}${genre})</span></span>
-        ${extraBtn}${favIcon}${hiddenIcon}${extraInfo}
-      </div>`;
+        <div class="mix-item-row">
+          <button class="icon-btn" data-action="queue-add" title="Add to queue">+</button>
+          <button class="icon-btn" data-action="play-now" title="Play now">▶</button>
+          <span class="mix-name">${escapeHtml(mix.name)} <span class="mix-duration">(${mix.duration}${genre})</span></span>
+          ${extraBtn}${favIcon}${hiddenIcon}
+        </div>
+        ${extraInfo}
+        </div>`;
       }).join('');
 }
 
@@ -397,9 +400,11 @@ function displaySearchResults(results, query) {
        const genre = item.genre ? ` · ${escapeHtml(item.genre)}` : '';
        const streamIndex = streams.indexOf(item);
        return `<div class="mix-item" data-search-index="${streamIndex}">
-         <button class="icon-btn" style="visibility: hidden; cursor: default;" disabled>+</button>
-         <button class="icon-btn" data-action="search-play-stream" title="Play stream">▶</button>
-         <span class="mix-name"><span style="font-size: 0.85em;">📡</span> ${escapeHtml(item.name)}${genre}</span>
+         <div class="mix-item-row">
+           <button class="icon-btn" style="visibility: hidden; cursor: default;" disabled>+</button>
+           <button class="icon-btn" data-action="search-play-stream" title="Play stream">▶</button>
+           <span class="mix-name"><span style="font-size: 0.85em;">📡</span> ${escapeHtml(item.name)}${genre}</span>
+         </div>
        </div>`;
      } else {
        // Mix result with ♪ badge
@@ -417,10 +422,13 @@ function displaySearchResults(results, query) {
        const mixIndex = mixes.indexOf(item);
        
        return `<div class="mix-item" data-search-index="${mixIndex}">
-         <button class="icon-btn" data-action="search-queue-add" title="Add to queue">+</button>
-         <button class="icon-btn" data-action="search-play-now" title="Play now">▶</button>
-         <span class="mix-name">♪ ${escapeHtml(item.name)}${djLabel} <span class="mix-duration">${duration}</span></span>
-         ${extraBtn}${favIcon}${hiddenIcon}${extraInfo}
+         <div class="mix-item-row">
+           <button class="icon-btn" data-action="search-queue-add" title="Add to queue">+</button>
+           <button class="icon-btn" data-action="search-play-now" title="Play now">▶</button>
+           <span class="mix-name">♪ ${escapeHtml(item.name)}${djLabel} <span class="mix-duration">${duration}</span></span>
+           ${extraBtn}${favIcon}${hiddenIcon}
+         </div>
+         ${extraInfo}
        </div>`;
      }
    }).join('');
@@ -453,10 +461,13 @@ function displaySearchResults(results, query) {
        const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
        
        return `<div class="mix-item" data-search-index="${i}">
-         <button class="icon-btn" data-action="search-queue-add" title="Add to queue">+</button>
-         <button class="icon-btn" data-action="search-play-now" title="Play now">▶</button>
-         <span class="mix-name">${escapeHtml(mix.name)}${djSuffix} <span class="mix-duration">${duration}</span></span>
-         ${extraBtn}${favIcon}${hiddenIcon}${extraInfo}
+         <div class="mix-item-row">
+           <button class="icon-btn" data-action="search-queue-add" title="Add to queue">+</button>
+           <button class="icon-btn" data-action="search-play-now" title="Play now">▶</button>
+           <span class="mix-name">${escapeHtml(mix.name)}${djSuffix} <span class="mix-duration">${duration}</span></span>
+           ${extraBtn}${favIcon}${hiddenIcon}
+         </div>
+         ${extraInfo}
        </div>`;
     }).join('');
 }
