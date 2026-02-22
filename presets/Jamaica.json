@@ -1,0 +1,47 @@
+{
+  "name": "Jamaica",
+  "category": "country",
+  "tab": "Jamaica",
+  "streams": [
+    {
+      "name": "Radio PONdENDS",
+      "m3u": "https://free.rcast.net/4177",
+      "genre": "Reggae"
+    },
+    {
+      "name": "Jamaican Roots Radio",
+      "m3u": "https://stream-177.zeno.fm/bfkd9wv4p0quv?zt=[REDACTED:jwt-token]",
+      "genre": null
+    },
+    {
+      "name": "Tops Radio",
+      "m3u": "https://stream-179.zeno.fm/u9fd6xcasz9vv?zt=[REDACTED:jwt-token]",
+      "genre": "Reggae"
+    },
+    {
+      "name": "Global1 FM Radio",
+      "m3u": "https://dc2.serverse.com:8028/stream",
+      "genre": "Reggae"
+    },
+    {
+      "name": "Reggae 141",
+      "m3u": "https://hestia2.cdnstream.com/1301_128",
+      "genre": "Reggae"
+    },
+    {
+      "name": "Tun-it-up Radio",
+      "m3u": "https://tunitup2020.radioca.st/stream/1/",
+      "genre": "Reggae"
+    },
+    {
+      "name": "Tony Culture Time",
+      "m3u": "https://stream.radiojar.com/fqz01v52p72vv",
+      "genre": "Reggae"
+    },
+    {
+      "name": "Kingdom Nubia Radio",
+      "m3u": "https://usa10.fastcast4u.com/knr0",
+      "genre": null
+    }
+  ]
+}

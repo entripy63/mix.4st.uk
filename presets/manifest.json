@@ -1,8 +1,16 @@
 {
   "presets": [
     {
+      "filename": "Brazil.json",
+      "name": "Brazil"
+    },
+    {
       "filename": "Classical.json",
       "name": "Classical"
+    },
+    {
+      "filename": "Cuba.json",
+      "name": "Cuba"
     },
     {
       "filename": "DeepHouse.json",
@@ -21,12 +29,24 @@
       "name": "House"
     },
     {
+      "filename": "Jamaica.json",
+      "name": "Jamaica"
+    },
+    {
       "filename": "Jazz.json",
       "name": "Jazz"
     },
     {
+      "filename": "Kenya.json",
+      "name": "Kenya"
+    },
+    {
       "filename": "MotherEarth.json",
       "name": "Mother Earth (96kHz FLAC)"
+    },
+    {
+      "filename": "Nigeria.json",
+      "name": "Nigeria"
     },
     {
       "filename": "RadioParadise.json",

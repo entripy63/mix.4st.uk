@@ -1,0 +1,22 @@
+{
+  "name": "Brazil",
+  "category": "country",
+  "tab": "Brazil",
+  "streams": [
+    {
+      "name": "Nova Brasil",
+      "m3u": "https://26643.live.streamtheworld.com/NOVABRASIL_SP_SC",
+      "genre": null
+    },
+    {
+      "name": "BAND FM 96.1",
+      "m3u": "https://26683.live.streamtheworld.com/BANDFM_SPAAC_SC",
+      "genre": null
+    },
+    {
+      "name": "JBFM 99.9",
+      "m3u": "https://27393.live.streamtheworld.com/JBFMAAC_SC",
+      "genre": null
+    }
+  ]
+}

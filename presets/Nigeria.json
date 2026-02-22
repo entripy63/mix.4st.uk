@@ -1,0 +1,12 @@
+{
+  "name": "Nigeria",
+  "category": "country",
+  "tab": "Nigeria",
+  "streams": [
+    {
+      "name": "Noble FM | Ibadan",
+      "m3u": "https://stream.zeno.fm/ysuxkw05e4duv",
+      "genre": null
+    }
+  ]
+}

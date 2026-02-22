@@ -1,0 +1,22 @@
+{
+  "name": "Kenya",
+  "category": "country",
+  "tab": "Kenya",
+  "streams": [
+    {
+      "name": "Mulembe FM | Nairobi",
+      "m3u": "https://atunwadigital.streamguys1.com/mulembefm",
+      "genre": null
+    },
+    {
+      "name": "West FM | Nairobi",
+      "m3u": "https://usa7-vn.mixstream.net/:8008/stream/1/",
+      "genre": null
+    },
+    {
+      "name": "Ramogi FM | Nairobi",
+      "m3u": "https://ramogifm-atunwadigital.streamguys1.com/ramogifm",
+      "genre": null
+    }
+  ]
+}

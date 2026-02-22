@@ -1,0 +1,37 @@
+{
+  "name": "Cuba",
+  "category": "country",
+  "tab": "Cuba",
+  "streams": [
+    {
+      "name": "Salsamania Radio Musica Cubana",
+      "m3u": "https://stream2.rcast.net/60446",
+      "genre": null
+    },
+    {
+      "name": "Tu Zona Musical",
+      "m3u": "https://radiomachado.com/radio/8000/stream/1/",
+      "genre": null
+    },
+    {
+      "name": "Radio Enciclopedia",
+      "m3u": "https://icecast.teveo.cu/9Rnrbjzq",
+      "genre": null
+    },
+    {
+      "name": "Radio Campesina Cubana",
+      "m3u": "https://radiocampesinacubana.stream.laut.fm/radiocampesinacubana?t302=2026-02-21_12-53-24&uuid=b948a6e3-b434-4766-bd57-aea755415fc8",
+      "genre": null
+    },
+    {
+      "name": "Radio Rabel",
+      "m3u": "https://eu1.lhdserver.es:3093/stream",
+      "genre": null
+    },
+    {
+      "name": "Habana Radio",
+      "m3u": "https://media.ohc.cu/habanaradio",
+      "genre": null
+    }
+  ]
+}
