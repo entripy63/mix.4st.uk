@@ -4,6 +4,22 @@
 //               livedata.js (stream management, probing, parsing)
 //               modals.js (showPlaylistGuide, hidePlaylistGuide, showPresetsMenu, hidePresetsMenu)
 
+// ========== PRESET CATEGORY BUTTONS ==========
+
+async function renderPresetButtons(container) {
+    const categories = await getAvailableCategories();
+    
+    if (categories.length === 0) return;
+    
+    let html = '';
+    for (const category of categories) {
+        const label = category.charAt(0).toUpperCase() + category.slice(1);
+        html += `<button onclick="showPresetsMenu(event, '${category}')">Add ${label}</button>`;
+    }
+    
+    container.innerHTML = html;
+}
+
 // ========== LIVE STREAM DISPLAY ==========
 
 function displayLiveStreams() {

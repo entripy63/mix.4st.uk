@@ -696,3 +696,23 @@
   background: var(--accent-light);
   color: var(--text-primary);
 }
+
+/* ========== PRESET CATEGORY BUTTONS ========== */
+
+#presetsButtonsContainer button {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 12px;
+  padding: 10px 12px !important;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 100px;
+}
+
+#presetsButtonsContainer button:hover {
+  background: var(--border-color);
+}

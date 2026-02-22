@@ -25,6 +25,7 @@ async function loadAvailablePresets() {
                         filename: item.filename,
                         name: preset.name,
                         category: preset.category || 'other',
+                        tab: preset.tab || null,
                         streams: preset.streams
                     });
                 }
@@ -40,8 +41,24 @@ async function loadAvailablePresets() {
     }
 }
 
+// Get unique categories from presets with proper ordering
+async function getAvailableCategories() {
+    const presets = await loadAvailablePresets();
+    const categories = [...new Set(presets.map(p => p.category || 'other'))];
+    
+    // Sort: 'genre' first, then alphabetically
+    categories.sort((a, b) => {
+        if (a === 'genre') return -1;
+        if (b === 'genre') return 1;
+        return a.localeCompare(b);
+    });
+    
+    return categories;
+}
+
 // Show presets menu modal (used by both browser.js and liveui.js)
-async function showPresetsMenu(e) {
+// If filterCategory is provided, only show presets from that category
+async function showPresetsMenu(e, filterCategory = null) {
     // Capture button position before async call
     const btn = e?.target?.closest('button') || event?.target?.closest('button');
     let btnRect = null;
@@ -49,19 +66,35 @@ async function showPresetsMenu(e) {
         btnRect = btn.getBoundingClientRect();
     }
     
-    const presets = await loadAvailablePresets();
+    const allPresets = await loadAvailablePresets();
     
-    if (presets.length === 0) {
+    if (allPresets.length === 0) {
         alert('No presets available. Upload preset files to /presets/ directory on the server.');
         return;
     }
     
-    // Group presets by category
+    // Filter presets by category if specified
+    const presets = filterCategory 
+        ? allPresets.filter(p => (p.category || 'other') === filterCategory)
+        : allPresets;
+    
+    if (presets.length === 0) {
+        alert(`No presets found in category: ${filterCategory}`);
+        return;
+    }
+    
+    // Group presets by category, then by tab within each category
     const grouped = {};
     presets.forEach((preset, index) => {
         const cat = preset.category || 'other';
-        if (!grouped[cat]) grouped[cat] = [];
-        grouped[cat].push({ preset, index });
+        const tab = preset.tab || null;
+        const key = tab ? `${cat}|${tab}` : `${cat}|_none`;
+        
+        if (!grouped[cat]) grouped[cat] = { tabs: {}, allItems: [] };
+        if (!grouped[cat].tabs[key]) grouped[cat].tabs[key] = [];
+        
+        grouped[cat].tabs[key].push({ preset, index, tab });
+        grouped[cat].allItems.push({ preset, index, tab });
     });
     
     // Get category order: 'genre' first, then others
@@ -71,40 +104,92 @@ async function showPresetsMenu(e) {
         return a.localeCompare(b);
     });
     
-    // Build HTML with category containers above and tabs at bottom
+    // Build HTML with category containers above and tabs/subtabs at bottom
     const presetsList = document.getElementById('presetsList');
     let html = '';
     
-    // Category content containers (above tabs)
+    // Category content containers with tab support
     for (const category of categoryOrder) {
+        const catData = grouped[category];
+        const tabKeys = Object.keys(catData.tabs);
+        const hasTabs = tabKeys.some(k => !k.endsWith('|_none'));
+        
+        // Container for all content in this category
         const containerStyle = category === categoryOrder[0] ? 'display: flex;' : 'display: none;';
         html += `<div id="presetsContainer-${category}" style="${containerStyle} flex-direction: column; gap: 8px; margin-bottom: 12px;">`;
         
-        for (const { preset, index } of grouped[category]) {
-            html += `<button onclick="selectPreset(${index})" style="padding: 12px 16px; background: #3d3d5c; border: none; border-radius: 6px; color: #e0e0e0; cursor: pointer; text-align: left; transition: background 0.2s;" onmouseover="this.style.background='#5c6bc0'" onmouseout="this.style.background='#3d3d5c'">${escapeHtml(preset.name)}</button>`;
+        // If category has tabs, create tab containers for each tab
+        if (hasTabs) {
+            for (const tabKey of tabKeys) {
+                const items = catData.tabs[tabKey];
+                const isNoTab = tabKey.endsWith('|_none');
+                const tabName = isNoTab ? null : tabKey.split('|')[1];
+                const tabContainerId = `presetsSubtab-${category}-${tabName || 'main'}`;
+                const tabStyle = tabKey === tabKeys[0] ? 'display: flex;' : 'display: none;';
+                
+                html += `<div id="${tabContainerId}" style="${tabStyle} flex-direction: column; gap: 8px;">`;
+                for (const { preset, index } of items) {
+                    html += `<button onclick="selectPreset(${index})" style="padding: 12px 16px; background: #3d3d5c; border: none; border-radius: 6px; color: #e0e0e0; cursor: pointer; text-align: left; transition: background 0.2s;" onmouseover="this.style.background='#5c6bc0'" onmouseout="this.style.background='#3d3d5c'">${escapeHtml(preset.name)}</button>`;
+                }
+                html += '</div>';
+            }
+            
+            // Add subtab buttons for this category - only if more than 1 subtab
+            if (tabKeys.length > 1) {
+                html += `<div id="presetsSubtabs-${category}" style="display: flex; gap: 0; border-top: 1px solid #3d3d5c; margin-top: 8px; padding-top: 4px;">`;
+                for (const tabKey of tabKeys) {
+                    const items = catData.tabs[tabKey];
+                    const isNoTab = tabKey.endsWith('|_none');
+                    const tabName = isNoTab ? null : tabKey.split('|')[1];
+                    const tabLabel = tabName || 'All';
+                    const subtabId = `presetsSubtab-${category}-${tabName || 'main'}-btn`;
+                    const isFirst = tabKey === tabKeys[0];
+                    
+                    html += `<button onclick="switchPresetsSubtab('${category}', '${tabName || ''}')" id="${subtabId}" style="flex: 1; padding: 6px 4px; background: ${isFirst ? '#5c6bc0' : '#3d3d5c'}; border: none; color: #e0e0e0; cursor: pointer; font-size: 11px; font-weight: bold; transition: background 0.2s; border-top: 2px solid ${isFirst ? '#7c7cff' : 'transparent'};" onmouseover="this.style.background='#5c6bc0'" onmouseout="this.style.background=${isFirst ? '#5c6bc0' : '#3d3d5c'}">${escapeHtml(tabLabel)}</button>`;
+                }
+                html += '</div>';
+            }
+        } else {
+            // No tabs in this category, just list presets
+            for (const { preset, index } of catData.allItems) {
+                html += `<button onclick="selectPreset(${index})" style="padding: 12px 16px; background: #3d3d5c; border: none; border-radius: 6px; color: #e0e0e0; cursor: pointer; text-align: left; transition: background 0.2s;" onmouseover="this.style.background='#5c6bc0'" onmouseout="this.style.background='#3d3d5c'">${escapeHtml(preset.name)}</button>`;
+            }
         }
         
         html += '</div>';
     }
     
-    // Tab buttons (at bottom)
-    html += '<div style="display: flex; gap: 0; border-top: 2px solid #3d3d5c; margin-top: 12px; padding-top: 8px;">';
-    for (const category of categoryOrder) {
-        const catLabel = category.charAt(0).toUpperCase() + category.slice(1);
-        const tabId = `presetsTab-${category}`;
-        const isFirst = category === categoryOrder[0];
-        html += `<button onclick="switchPresetsTab('${category}')" id="${tabId}" style="flex: 1; padding: 10px 8px; background: ${isFirst ? '#5c6bc0' : '#3d3d5c'}; border: none; color: #e0e0e0; cursor: pointer; font-size: 13px; font-weight: bold; transition: background 0.2s; border-top: 3px solid ${isFirst ? '#7c7cff' : 'transparent'};" onmouseover="this.style.background='#5c6bc0'" onmouseout="this.style.background=this.id.includes('presetsTab-' + window._presetsCurrentTab) ? '#5c6bc0' : '#3d3d5c'">${escapeHtml(catLabel)}</button>`;
+    // Category tab buttons (at bottom) - only show if not filtered to single category
+    if (!filterCategory && categoryOrder.length > 1) {
+        html += '<div style="display: flex; gap: 0; border-top: 2px solid #3d3d5c; margin-top: 12px; padding-top: 8px;">';
+        for (const category of categoryOrder) {
+            const catLabel = category.charAt(0).toUpperCase() + category.slice(1);
+            const tabId = `presetsTab-${category}`;
+            const isFirst = category === categoryOrder[0];
+            html += `<button onclick="switchPresetsTab('${category}')" id="${tabId}" style="flex: 1; padding: 10px 8px; background: ${isFirst ? '#5c6bc0' : '#3d3d5c'}; border: none; color: #e0e0e0; cursor: pointer; font-size: 13px; font-weight: bold; transition: background 0.2s; border-top: 3px solid ${isFirst ? '#7c7cff' : 'transparent'};" onmouseover="this.style.background='#5c6bc0'" onmouseout="this.style.background=this.id.includes('presetsTab-' + window._presetsCurrentTab) ? '#5c6bc0' : '#3d3d5c'">${escapeHtml(catLabel)}</button>`;
+        }
+        html += '</div>';
     }
-    html += '</div>';
     
     presetsList.innerHTML = html;
     window._presetsCurrentTab = categoryOrder[0];
+    window._presetsCurrentSubtabs = {};
     
     // Store presets for selection handler
     window._currentPresets = presets;
     
-    // Show modal
+    // Update modal title
     const modal = document.getElementById('presetsModal');
+    const modalTitle = modal.querySelector('h2') || modal.querySelector('.modal-content h2');
+    if (modalTitle) {
+        if (filterCategory) {
+            const categoryLabel = filterCategory.charAt(0).toUpperCase() + filterCategory.slice(1);
+            modalTitle.textContent = `Add ${categoryLabel}`;
+        } else {
+            modalTitle.textContent = 'Add Playlists';
+        }
+    }
+    
     modal.style.display = 'flex';
     
     // Position modal with bottom anchor (above button, stays above as content grows)
@@ -140,6 +225,36 @@ function switchPresetsTab(category) {
     });
     
     window._presetsCurrentTab = category;
+    
+    // Reset subtabs for this category (show first subtab if it has any)
+    switchPresetsSubtab(category, '');
+}
+
+function switchPresetsSubtab(category, tabName) {
+    // Hide all subtabs for this category
+    const subtabs = document.querySelectorAll(`[id^="presetsSubtab-${category}-"][id$="-main"]:not([id$="-btn"]), [id^="presetsSubtab-${category}-"]:not([id$="-btn"]):not([id$="-main"])`);
+    document.querySelectorAll(`[id^="presetsSubtab-${category}-"]`).forEach(el => {
+        if (!el.id.endsWith('-btn')) {
+            el.style.display = 'none';
+        }
+    });
+    
+    // Show selected subtab
+    const subtabId = tabName ? `presetsSubtab-${category}-${tabName}` : `presetsSubtab-${category}-main`;
+    const activeSubtab = document.getElementById(subtabId);
+    if (activeSubtab) activeSubtab.style.display = 'flex';
+    
+    // Update subtab buttons for this category
+    const subtabBtns = document.querySelectorAll(`[id^="presetsSubtab-${category}-"][id$="-btn"]`);
+    subtabBtns.forEach(btn => {
+        const btnTabName = btn.id.replace(`presetsSubtab-${category}-`, '').replace('-btn', '');
+        const isActive = (tabName === '' && btnTabName === 'main') || btnTabName === tabName;
+        btn.style.background = isActive ? '#5c6bc0' : '#3d3d5c';
+        btn.style.borderTop = isActive ? '2px solid #7c7cff' : '2px solid #3d3d5c';
+    });
+    
+    if (!window._presetsCurrentSubtabs) window._presetsCurrentSubtabs = {};
+    window._presetsCurrentSubtabs[category] = tabName;
 }
 
 function hidePresetsMenu() {

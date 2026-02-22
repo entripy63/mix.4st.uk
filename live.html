@@ -26,10 +26,10 @@
          <div id="mixBrowser">
           <div id="mixList"></div>
           <div style="display: flex; gap: 10px; margin-top: 10px; flex-shrink: 0;">
-              <button id="findPlaylistsBtn" onclick="showPlaylistGuide(event)" style="flex: 1; padding: 12px 16px; font-size: 14px; font-weight: bold;">Find Playlists...</button>
-              <button id="addPlaylistsBtn" onclick="showPresetsMenu(event)" style="flex: 1; padding: 12px 16px; font-size: 14px; font-weight: bold;">Add Playlists...</button>
+              <button id="findPlaylistsBtn" onclick="showPlaylistGuide(event)" style="flex: 0 1 auto; padding: 12px 16px; font-size: 14px; font-weight: bold;">Find Playlists...</button>
+              <div id="presetsButtonsContainer" style="display: flex; gap: 8px; flex: 1;"></div>
             </div>
-          
+           
          </div>
          </div>
          <footer id="httpsNotice" style="text-align: center; padding: 12px 15px; color: #fff; font-size: 13px; font-weight: bold; background-color: #c0475c; grid-column: 1 / -1; display: none;">
@@ -108,6 +108,9 @@
     <script>
       // live.html restoration - restore live stream if available
       (async function restoreLiveApp() {
+        // Initialize preset buttons
+        await renderPresetButtons(document.getElementById('presetsButtonsContainer'));
+        
         const restored = await restoreLivePlayer();
         if (!restored) {
           // No live stream to restore, initialize display

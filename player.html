@@ -158,8 +158,8 @@
         <div id="mixList"></div>
         <div style="display: none; margin-top: auto; padding: 10px 15px;" class="findPlaylistsBtnContainer">
           <div style="display: flex; gap: 10px;">
-            <button id="findPlaylistsBtn" onclick="showPlaylistGuide(event)" style="flex: 1; padding: 12px 16px; font-size: 14px; font-weight: bold;">Find Playlists...</button>
-            <button id="addPlaylistsBtnPlayer" onclick="showPresetsMenu(event)" style="flex: 1; padding: 12px 16px; font-size: 14px; font-weight: bold;">Add Playlists...</button>
+            <button id="findPlaylistsBtn" onclick="showPlaylistGuide(event)" style="flex: 0 1 auto; padding: 12px 16px; font-size: 14px; font-weight: bold;">Find Playlists...</button>
+            <div id="presetsButtonsContainer" style="display: flex; gap: 8px; flex: 1;"></div>
           </div>
         </div>
         </div>
@@ -243,6 +243,12 @@
         <script src="modals.js"></script>
         <script src="liveui.js"></script>
         <script src="browser.js"></script>
+        <script>
+          // Initialize preset buttons for live mode
+          (async function initPlayer() {
+            await renderPresetButtons(document.getElementById('presetsButtonsContainer'));
+          })();
+        </script>
         </body>
 
 </html>
