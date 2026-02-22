@@ -506,38 +506,7 @@ kbd {
   display: inline-block;
 }
 
-.mix-item, .queue-item {
-  padding: 5px 10px;
-  font-size: 14px;
-  background: #252542;
-  border-radius: 6px;
-  margin-bottom: 4px;
-  transition: background 0.2s;
-}
-
-.mix-item {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    min-width: 0;
-}
-
-.mix-item .mix-name {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.mix-item:hover {
-  background: #2d2d50;
-}
-
-.mix-item.unavailable {
-  opacity: 0.5;
-}
+/* Mix item styles in common.css */
 
 .mix-item.unavailable .icon-btn {
   cursor: not-allowed;
@@ -684,12 +653,7 @@ kbd {
    font-size: 12px;
 }
 
-.mix-item-row {
-   display: flex;
-   align-items: center;
-   gap: 8px;
-   min-width: 0;
-}
+/* .mix-item-row styles in common.css */
 
 /* Stream info styles in common.css */
 

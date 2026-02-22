@@ -462,3 +462,47 @@
   user-select: text;
   -webkit-user-select: text;
 }
+
+/* ========== MIX ITEMS ========== */
+
+.mix-item, .queue-item {
+  padding: 5px 10px;
+  font-size: 14px;
+  background: var(--bg-card);
+  border-radius: 6px;
+  margin-bottom: 4px;
+  transition: background 0.2s;
+}
+
+.mix-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.mix-item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.mix-item:hover {
+  background: var(--bg-hover);
+}
+
+.mix-item.unavailable {
+  opacity: 0.6;
+}
+
+.mix-name {
+  font-weight: 500;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
