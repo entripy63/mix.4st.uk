@@ -298,10 +298,10 @@ async function addStreamsFromPreset(preset) {
         // addUserStream will probe and add to liveStreams if initialized
         await addUserStream(stream.name || null, stream.m3u, stream.genre || null);
         added++;
+        
+        // Update display after each stream is added for progress feedback
+        displayLiveStreams();
     }
-    
-    // Update display with newly added streams
-    displayLiveStreams();
     
     showToast(`Added ${added} stream${added !== 1 ? 's' : ''}${skipped > 0 ? `, skipped ${skipped} duplicate${skipped !== 1 ? 's' : ''}` : ''}`);
 }

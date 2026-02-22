@@ -153,19 +153,11 @@ function showConfirmDialog(title, message) {
     
     modal.style.display = 'flex';
     
-    // Position modal near the clicked button
-    if (btnRect) {
-      const contentWidth = 320;
-      const contentHeight = 160; // Rough estimate
-      
-      // Position to the left of button, vertically centered
-      const left = btnRect.left - contentWidth - 10;
-      const top = btnRect.top + btnRect.height / 2 - contentHeight / 2;
-      
-      content.style.position = 'fixed';
-      content.style.left = Math.max(10, left) + 'px';
-      content.style.top = Math.max(10, Math.min(top, window.innerHeight - contentHeight - 10)) + 'px';
-    }
+    // Center modal on screen (don't try to position near button for confirm dialogs)
+    // Confirm dialogs are important and should be centered/prominent
+    content.style.position = 'auto';
+    content.style.left = 'auto';
+    content.style.top = 'auto';
     
     confirmBtn.focus();
   });

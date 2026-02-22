@@ -709,8 +709,7 @@
   font-size: 12px;
   padding: 10px 12px !important;
   white-space: nowrap;
-  flex: 1;
-  min-width: 100px;
+  flex: 0 1 auto;
 }
 
 #presetsButtonsContainer button:hover {
