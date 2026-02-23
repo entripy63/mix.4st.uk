@@ -216,6 +216,19 @@ async function probeAndAddStream(config, initConfig = {}) {
        reason: null
      };
      
+     // Skip probing if this stream is currently playing (single-stream-per-IP constraint)
+     // Just mark it as available since it's clearly working
+     if (state.liveStreamUrl && config.m3u === state.liveStreamUrl) {
+       stream.url = state.liveStreamUrl;
+       stream.available = true;
+       stream.reason = null;
+       // liveStreams entry will be created/returned, mark as already probed
+       if (liveStreamsInitialized) {
+         liveStreams.push(stream);
+       }
+       return stream;
+     }
+     
      // Overall timeout for the entire probing process (prevent hanging indefinitely)
      const probeTimeoutMs = 30000; // 30 seconds max
      const probeTimeout = new Promise(resolve => {
@@ -224,36 +237,36 @@ async function probeAndAddStream(config, initConfig = {}) {
        }, probeTimeoutMs);
      });
       
-      // Check if it's a direct audio file URL, not a playlist
-     const audioExtensions = ['.mp3', '.aac', '.flac', '.wav', '.ogg', '.opus', '.m4a'];
-     const isDirectAudio = audioExtensions.some(ext => config.m3u.toLowerCase().endsWith(ext));
-     
-     let entries;
-     if (isDirectAudio) {
-       // Treat direct audio URL as single-entry list
-       entries = [{ url: config.m3u, title: null }];
-     } else {
-       // Parse as playlist
-       entries = await fetchPlaylist(config.m3u);
-       // If playlist parsing returned nothing, try URL as direct stream
-       if (entries.length === 0) {
-         entries = [{ url: config.m3u, title: null }];
-       }
-     }
-     
-     // Race against overall timeout
-     const probeResult = await Promise.race([
-       (async () => {
-         for (const entry of entries) {
-           let url = entry.url;
-           
-           // Try direct URL first
-           if (await probeStream(url)) {
-             stream.url = url;
-             stream.playlistTitle = entry.title;
-             stream.available = true;
-             break;
-           }
+       // Check if it's a direct audio file URL, not a playlist
+      const audioExtensions = ['.mp3', '.aac', '.flac', '.wav', '.ogg', '.opus', '.m4a'];
+      const isDirectAudio = audioExtensions.some(ext => config.m3u.toLowerCase().endsWith(ext));
+      
+      let entries;
+      if (isDirectAudio) {
+        // Treat direct audio URL as single-entry list
+        entries = [{ url: config.m3u, title: null }];
+      } else {
+        // Parse as playlist
+        entries = await fetchPlaylist(config.m3u);
+        // If playlist parsing returned nothing, try URL as direct stream
+        if (entries.length === 0) {
+          entries = [{ url: config.m3u, title: null }];
+        }
+      }
+      
+      // Race against overall timeout
+      const probeResult = await Promise.race([
+        (async () => {
+          for (const entry of entries) {
+            let url = entry.url;
+            
+            // Try direct URL first
+            if (await probeStream(url)) {
+              stream.url = url;
+              stream.playlistTitle = entry.title;
+              stream.available = true;
+              break;
+            }
            
            // Try with ';' suffix for Shoutcast servers that redirect to text/html
            let urlWithSemicolon = url;
