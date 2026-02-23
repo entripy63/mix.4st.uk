@@ -222,7 +222,15 @@ async function probeAndAddStream(config, initConfig = {}) {
        stream.url = state.liveStreamUrl;
        stream.available = true;
        stream.reason = null;
+       // Set fallback name if not provided
+       if (!stream.name) {
+         stream.name = config.m3u || 'Unknown Stream';
+       }
        liveStreams.push(stream);
+       // Call redisplay callback
+       if (window.onStreamAdded) {
+         window.onStreamAdded(initConfig);
+       }
        return stream;
      }
      
