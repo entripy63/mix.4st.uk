@@ -107,4 +107,23 @@ document.getElementById('fileInput').addEventListener('change', async function (
   // Restore browser mode for non-live restoration
   const savedBrowserMode = storage.get('browserMode', 'dj');
   browserModes.switch(savedBrowserMode);
-})();
+  
+  // Restore mode-specific state
+  if (savedBrowserMode === 'dj') {
+    const savedDJ = storage.get('currentDJ');
+    if (savedDJ) {
+      await setCurrentDJ(savedDJ);
+      const savedFilter = storage.get('currentFilter', '');
+      if (savedFilter) {
+        applyFilter(savedFilter);
+      }
+    }
+  } else if (savedBrowserMode === 'search') {
+    const savedQuery = storage.get('lastSearchQuery', '');
+    if (savedQuery) {
+      document.getElementById('searchInput').value = savedQuery;
+      const results = searchIndex.search(savedQuery);
+      displaySearchResults(results, savedQuery);
+    }
+  }
+  })();

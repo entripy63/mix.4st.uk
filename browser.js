@@ -3,6 +3,7 @@
 // State setters - keep state and UI in sync
 async function setCurrentDJ(djPath) {
   state.currentDJ = djPath;
+  storage.set('currentDJ', djPath);
   state.currentMixes = await fetchDJMixes(djPath);
   state.currentFilter = '';
   state.currentGroups = detectGroups(state.currentMixes);
@@ -53,10 +54,11 @@ function updateFilterButtons() {
 }
 
 function applyFilter(group) {
-  state.currentFilter = group;
-  updateFilterButtons();
-  const filtered = filterMixes(state.currentMixes, group, state.currentGroups);
-  displayMixList(filtered);
+   state.currentFilter = group;
+   storage.set('currentFilter', group);
+   updateFilterButtons();
+   const filtered = filterMixes(state.currentMixes, group, state.currentGroups);
+   displayMixList(filtered);
 }
 
 function displayMixList(mixes) {
@@ -260,13 +262,14 @@ document.getElementById('djSelect').addEventListener('change', function() {
 
 let searchTimeout = null;
 document.getElementById('searchInput').addEventListener('input', function() {
-  clearTimeout(searchTimeout);
-  const query = this.value;
-  
-  searchTimeout = setTimeout(() => {
-    const results = searchIndex.search(query);
-    displaySearchResults(results, query);
-  }, 150);
+   clearTimeout(searchTimeout);
+   const query = this.value;
+   storage.set('lastSearchQuery', query);
+   
+   searchTimeout = setTimeout(() => {
+     const results = searchIndex.search(query);
+     displaySearchResults(results, query);
+   }, 150);
 });
 
 
