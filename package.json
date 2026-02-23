@@ -1,0 +1,21 @@
+{
+  "type": "module",
+  "name": "mix.4st.uk",
+  "version": "1.0.0",
+  "description": "website",
+  "main": "browser.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "lint": "eslint *.js",
+    "lint:fix": "eslint *.js --fix"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.1"
+  }
+}
