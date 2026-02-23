@@ -136,8 +136,10 @@ function playLiveStream(index) {
   
   state.isLive = true;
   state.liveStreamUrl = url;
+  state.liveStreamM3u = stream.m3u;
   state.liveDisplayText = name;
   storage.set('liveStreamUrl', url);
+  storage.set('liveStreamM3u', stream.m3u);
   storage.set('liveDisplayText', name);
   
   playLive(url, name, true);

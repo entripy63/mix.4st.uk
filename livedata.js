@@ -218,14 +218,11 @@ async function probeAndAddStream(config, initConfig = {}) {
      
      // Skip probing if this stream is currently playing (single-stream-per-IP constraint)
      // Just mark it as available since it's clearly working
-     if (state.liveStreamUrl && config.m3u === state.liveStreamUrl) {
+     if (state.liveStreamM3u && config.m3u === state.liveStreamM3u) {
        stream.url = state.liveStreamUrl;
        stream.available = true;
        stream.reason = null;
-       // liveStreams entry will be created/returned, mark as already probed
-       if (liveStreamsInitialized) {
-         liveStreams.push(stream);
-       }
+       liveStreams.push(stream);
        return stream;
      }
      
@@ -424,24 +421,27 @@ async function initLiveStreams(config = {}) {
 
 // Live stream restoration for both SPAs
 async function restoreLivePlayer() {
-   try {
-     const savedLiveUrl = storage.get('liveStreamUrl');
-     const savedLiveText = storage.get('liveDisplayText');
-     
-     if (savedLiveUrl && savedLiveText) {
-       state.isRestoring = true;
-       const wasPlaying = storage.getBool('wasPlaying', false);
-       playLive(savedLiveUrl, savedLiveText, wasPlaying);
-       // Keep isRestoring true until after playLive's async setup (canplay listener, timeouts, etc.)
-       setTimeout(() => {
-         state.isRestoring = false;
-       }, 200);
-       // Always pass callback - checks browserModes at invocation time (live.html has no browserModes, always true)
-       const config = {
-         shouldRedisplayAfterProbe: () => typeof browserModes === 'undefined' || browserModes.current === 'live'
-       };
-       await initLiveStreams(config);
-       return true; // Restored live stream
+    try {
+      const savedLiveUrl = storage.get('liveStreamUrl');
+      const savedLiveM3u = storage.get('liveStreamM3u');
+      const savedLiveText = storage.get('liveDisplayText');
+      
+      if (savedLiveUrl && savedLiveText) {
+        state.isRestoring = true;
+        state.liveStreamUrl = savedLiveUrl;
+        state.liveStreamM3u = savedLiveM3u;
+        const wasPlaying = storage.getBool('wasPlaying', false);
+        playLive(savedLiveUrl, savedLiveText, wasPlaying);
+        // Keep isRestoring true until after playLive's async setup (canplay listener, timeouts, etc.)
+        setTimeout(() => {
+          state.isRestoring = false;
+        }, 200);
+        // Always pass callback - checks browserModes at invocation time (live.html has no browserModes, always true)
+        const config = {
+          shouldRedisplayAfterProbe: () => typeof browserModes === 'undefined' || browserModes.current === 'live'
+        };
+        await initLiveStreams(config);
+        return true; // Restored live stream
      }
    } catch (e) {
      console.error('Error restoring live stream:', e);
