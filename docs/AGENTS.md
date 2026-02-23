@@ -9,6 +9,7 @@
 - DON'T USE `python3 -m http.server 8000` to test locally, too flakey
 - (axc) mirror -R -x .git/ -x .gitignore -x docs/ -x tools/
 - (live) mirror -R --only-existing
+- **ESLint**: `npm run lint` — syntax checking, `npm run lint:fix` — auto-fix formatting
 
 ## Architecture
 - Static website with two SPAs: DJ mixes (mixes.4st.uk) and live streams (live.4st.uk)
@@ -17,23 +18,42 @@
 ### player.html (DJ Mixes SPA)
 - **Location**: mixes.4st.uk
 - **Layout**: Landing page, Player, Queue, Browser columns, responsive design
-- **Stylesheet**: `player.css`
+- **Stylesheets**: `common.css`, `player.css`
 - **JavaScript modules** (no bundler, simple script loading):
   - `core.js` - Shared utilities, global state, DOM references
   - `mixes.js` - Loads mix data from `manifest.json` files
   - `queue.js` - Queue management, drag-drop, queue operations
   - `player.js` - Playback controls, waveform rendering, audio handling
   - `player-mix.js` - Mix-specific playback logic
-  - `browser.js` - Mix browser, search, live streams, settings, page restoration
+  - `livedata.js` - Live stream data management, probing, persistence
+  - `modals.js` - Modal dialogs, settings, help, playlists
+  - `liveui.js` - Live stream UI rendering and interactions
+  - `browser.js` - DJ/All/Favorites browser modes, mode switching, keyboard shortcuts
+  - `search.js` - Search functionality and results display
+  - `restore.js` - Page state restoration on load
 
 ### live.html (Live Streams SPA)
 - **Location**: live.4st.uk (independent hosting)
 - **Layout**: Single column, mobile-first
-- **Stylesheet**: `live.css`
+- **Stylesheets**: `common.css`, `live.css`
 - **JavaScript modules**:
   - `core.js` - Shared utilities (same as player.html)
   - `player.js` - Playback controls (same as player.html)
-  - `live.js` - Live stream management, collections, drag-drop reordering
+  - `livedata.js` - Live stream data management, probing, persistence
+  - `modals.js` - Modal dialogs, playlist guide
+  - `liveui.js` - Live stream UI rendering and interactions
+
+### Shared Modules (Both SPAs)
+- `core.js` - State object, storage helpers, utility functions
+- `player.js` - Audio playback, controls, muting, live stream playback
+- `livedata.js` - Stream probing, parsing (M3U/PLS), persistence, collections
+- `liveui.js` - Stream rendering, drag-drop reordering, collections menu
+- `modals.js` - Confirmation dialogs, settings, help, playlist guide
+
+### Stylesheets
+- `common.css` - Shared colors, layout, modals, buttons (used by both SPAs)
+- `player.css` - Waveform, queue, browser columns, responsive layout (player.html only)
+- `live.css` - Mobile-first layout, stream list styling (live.html only)
 
 ### Data & Configuration
 - DJ folders contain `manifest.json`, `.tracks.txt` files, `.peaks.json` files, and cover images
@@ -50,8 +70,15 @@
 - `generate-peaks.py` - Run after adding audio files to generate `.peaks.json` waveform data
 - `generate-search-index.py` - Run after manifest changes to regenerate `search-index.json` for search mode
 
+## Important Design Principles
+- **Two SPAs, Shared Code**: Code used by both player.html and live.html should not reference browserModes or mix-specific features
+- **Guard Callbacks**: When stream operations could interfere with other browser tabs, use `shouldRedisplayStreams()` guard to prevent unwanted redisplays
+- **Simple Module Loading**: No bundler — script order matters. Check player.html and live.html `<script>` tags for load order
+- **Callback Pattern**: Use callbacks (not monkey-patching) for cross-module behavior (see livedata.js `shouldRedisplayAfterProbe` pattern)
+
 ## Code Style
 - HTML: HTML5 doctype, UTF-8, 2-space indent, external stylesheet
+- JavaScript: ESLint configured, run `npm run lint` before pushing
 - Track lists: `.tracks.txt` CSV files with format `time,title,artist[,remixer]`
 
 ## Git
