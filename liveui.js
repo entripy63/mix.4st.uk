@@ -287,25 +287,28 @@ async function selectPreset(index) {
 
 // Add streams from a preset, skipping duplicates
 async function addStreamsFromPreset(preset) {
-    const currentStreams = getUserStreams();
-    const existingM3Us = new Set(currentStreams.map(s => s.m3u));
-    
-    let added = 0;
-    let skipped = 0;
-    
-    for (const stream of preset.streams) {
-        if (existingM3Us.has(stream.m3u)) {
-            skipped++;
-            continue;
-        }
-        
-        // addUserStream will probe and add to liveStreams if initialized
-        await addUserStream(stream.name || null, stream.m3u, stream.genre || null);
-        added++;
-        
-        // Update display after each stream is added for progress feedback
-        displayLiveStreams();
-    }
+     const currentStreams = getUserStreams();
+     const existingM3Us = new Set(currentStreams.map(s => s.m3u));
+     
+     let added = 0;
+     let skipped = 0;
+     
+     for (const stream of preset.streams) {
+         if (existingM3Us.has(stream.m3u)) {
+             skipped++;
+             continue;
+         }
+         
+         // addUserStream will probe and add to liveStreams if initialized
+         await addUserStream(stream.name || null, stream.m3u, stream.genre || null);
+         added++;
+         
+         // Update display after each stream is added for progress feedback
+         // Only redisplay if on Live tab (or on live.html which has no browserModes)
+         if (typeof browserModes === 'undefined' || browserModes.current === 'live') {
+           displayLiveStreams();
+         }
+     }
     
     showToast(`Added ${added} stream${added !== 1 ? 's' : ''}${skipped > 0 ? `, skipped ${skipped} duplicate${skipped !== 1 ? 's' : ''}` : ''}`);
 }
