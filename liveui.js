@@ -141,47 +141,56 @@ function playLiveStream(index) {
 // ========== STREAM MANAGEMENT HANDLERS ==========
 
 async function handleAddStream() {
-    const m3u = document.getElementById('newStreamM3U').value.trim();
+     const m3u = document.getElementById('newStreamM3U').value.trim();
 
-    if (!m3u) {
-      alert('Playlist URL is required');
-      return;
-    }
+     if (!m3u) {
+       alert('Playlist URL is required');
+       return;
+     }
 
-    if (!m3u.startsWith('http://') && !m3u.startsWith('https://')) {
-      alert('Playlist URL must start with http:// or https://');
-      return;
-    }
+     if (!m3u.startsWith('http://') && !m3u.startsWith('https://')) {
+       alert('Playlist URL must start with http:// or https://');
+       return;
+     }
 
-    // Add stream with no name, let playlist title be parsed from m3u
-    await addUserStream(null, m3u, null);
-    document.getElementById('newStreamM3U').value = '';
-    displayLiveStreams();
+     // Add stream with no name, let playlist title be parsed from m3u
+     await addUserStream(null, m3u, null);
+     document.getElementById('newStreamM3U').value = '';
+     // Only redisplay if on Live tab (or on live.html which has no browserModes)
+     if (typeof browserModes === 'undefined' || browserModes.current === 'live') {
+       displayLiveStreams();
+     }
 }
 
 async function handleRemoveStream(index) {
-    const confirmed = await showConfirmDialog('Remove Stream', 'Are you sure you want to remove this stream?');
-    if (confirmed) {
-      // Remove from both liveStreams and storage, keeping them in sync
-      if (index >= 0 && index < liveStreams.length) {
-        const m3u = liveStreams[index].m3u;
-        liveStreams.splice(index, 1);
-        // Also remove from storage
-        const configs = getUserStreams();
-        const storageIndex = configs.findIndex(c => c.m3u === m3u);
-        if (storageIndex >= 0) {
-          configs.splice(storageIndex, 1);
-          saveUserStreams(configs);
-        }
-      }
-      displayLiveStreams();
-    }
+     const confirmed = await showConfirmDialog('Remove Stream', 'Are you sure you want to remove this stream?');
+     if (confirmed) {
+       // Remove from both liveStreams and storage, keeping them in sync
+       if (index >= 0 && index < liveStreams.length) {
+         const m3u = liveStreams[index].m3u;
+         liveStreams.splice(index, 1);
+         // Also remove from storage
+         const configs = getUserStreams();
+         const storageIndex = configs.findIndex(c => c.m3u === m3u);
+         if (storageIndex >= 0) {
+           configs.splice(storageIndex, 1);
+           saveUserStreams(configs);
+         }
+       }
+       // Only redisplay if on Live tab (or on live.html which has no browserModes)
+       if (typeof browserModes === 'undefined' || browserModes.current === 'live') {
+         displayLiveStreams();
+       }
+     }
 }
 
 async function reloadLiveStreams() {
-   liveStreamsInitialized = false;
-   liveStreams = [];
-   displayLiveStreams();
+    liveStreamsInitialized = false;
+    liveStreams = [];
+    // Only redisplay if on Live tab (or on live.html which has no browserModes)
+    if (typeof browserModes === 'undefined' || browserModes.current === 'live') {
+      displayLiveStreams();
+    }
 }
 
 // ========== DRAG & DROP REORDERING ==========
@@ -217,11 +226,13 @@ function onLiveStreamDrop(e, dropIndex) {
     liveStreams.splice(dropIndex, 0, tempLive);
   }
   
-  // Refresh display
-  displayLiveStreams();
-}
+  // Refresh display (only if on Live tab or on live.html)
+  if (typeof browserModes === 'undefined' || browserModes.current === 'live') {
+     displayLiveStreams();
+   }
+  }
 
-function onLiveStreamDragEnd(e) {
+  function onLiveStreamDragEnd(e) {
   if (e && e.target) {
     e.target.style.opacity = '1';
   }
