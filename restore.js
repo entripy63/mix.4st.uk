@@ -108,22 +108,30 @@ document.getElementById('fileInput').addEventListener('change', async function (
   const savedBrowserMode = storage.get('browserMode', 'dj');
   browserModes.switch(savedBrowserMode);
   
-  // Restore mode-specific state
-  if (savedBrowserMode === 'dj') {
-    const savedDJ = storage.get('currentDJ');
-    if (savedDJ) {
-      await setCurrentDJ(savedDJ);
-      const savedFilter = storage.get('currentFilter', '');
-      if (savedFilter) {
-        applyFilter(savedFilter);
+  // Restore mode-specific state (defer to ensure DOM is updated)
+  setTimeout(async () => {
+    if (savedBrowserMode === 'dj') {
+      const savedDJ = storage.get('currentDJ');
+      if (savedDJ) {
+        await setCurrentDJ(savedDJ);
+        const savedFilter = storage.get('currentFilter', '');
+        if (savedFilter) {
+          applyFilter(savedFilter);
+        }
+      }
+    } else if (savedBrowserMode === 'search') {
+      const savedQuery = storage.get('lastSearchQuery', '');
+      if (savedQuery) {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+          searchInput.value = savedQuery;
+          // Wait for search index to be loaded
+          if (searchIndex && searchIndex.data) {
+            const results = searchIndex.search(savedQuery);
+            displaySearchResults(results, savedQuery);
+          }
+        }
       }
     }
-  } else if (savedBrowserMode === 'search') {
-    const savedQuery = storage.get('lastSearchQuery', '');
-    if (savedQuery) {
-      document.getElementById('searchInput').value = savedQuery;
-      const results = searchIndex.search(savedQuery);
-      displaySearchResults(results, savedQuery);
-    }
-  }
+  }, 100);
   })();
