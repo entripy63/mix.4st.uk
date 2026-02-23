@@ -272,13 +272,21 @@ document.getElementById('searchInput').addEventListener('input', function() {
 
 
 
-// Keyboard shortcuts
+// Keyboard shortcuts - use capture to intercept Space early
+window.addEventListener('keydown', function(e) {
+  if (e.code === 'Space' && e.target.id !== 'searchInput') {
+    e.preventDefault();
+    e.stopPropagation();
+    playPauseBtn.click();
+    return false;
+  }
+}, true);
+
+// Other shortcuts remain on document level
 document.addEventListener('keydown', function(e) {
   if (e.target.tagName === 'INPUT') return;
-  if (e.code === 'Space') {
-    e.preventDefault();
-    playPauseBtn.click();
-  } else if (e.code === 'ArrowDown' && e.ctrlKey) {
+  
+  if (e.code === 'ArrowDown' && e.ctrlKey) {
     e.preventDefault();
     skipNext();
   } else if (e.code === 'ArrowUp' && e.ctrlKey) {
