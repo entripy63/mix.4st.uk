@@ -206,7 +206,7 @@ async function fetchPlaylist(playlistUrl) {
 
 // ========== STREAM PROBING & ADDITION ==========
 
-async function probeAndAddStream(config) {
+async function probeAndAddStream(config, initConfig = {}) {
      const stream = {
        m3u: config.m3u,
        name: config.name,
@@ -338,9 +338,14 @@ async function probeAndAddStream(config) {
     }
     
     liveStreams.push(stream);
-}
+    
+    // Call redisplay callback (liveui.js will decide whether to actually redisplay)
+    if (window.onStreamAdded) {
+      window.onStreamAdded(initConfig);
+    }
+    }
 
-// ========== SOMA FM STREAM PARSING ==========
+    // ========== SOMA FM STREAM PARSING ==========
 
 function parseSomaFMStream(title, genre) {
   // Parse SomaFM stream names like "Groovesalad;LC 128k aac;http://..."
@@ -388,43 +393,47 @@ async function loadDefaultStreamsOnFirstRun() {
      storage.set('streamsEverInitialized', true);
    }
 
-async function initLiveStreams() {
-  if (liveStreamsInitialized) return;
-  
-  liveStreamsInitialized = true;
-  liveStreams = [];
-  const configs = getLiveStreamConfig();
-  
-  for (const config of configs) {
-    await probeAndAddStream(config);
-    // Callback to display streams as they're added (not all at once)
-    if (window.onStreamAdded) {
-      window.onStreamAdded();
-    }
-  }
+async function initLiveStreams(config = {}) {
+   if (liveStreamsInitialized) return;
+   
+   liveStreamsInitialized = true;
+   liveStreams = [];
+   const configs = getLiveStreamConfig();
+   
+   for (const streamConfig of configs) {
+     await probeAndAddStream(streamConfig, config);
+     // Callback to display streams as they're added (not all at once)
+     if (window.onStreamAdded) {
+       window.onStreamAdded();
+     }
+   }
 }
 
 // Live stream restoration for both SPAs
 async function restoreLivePlayer() {
-  try {
-    const savedLiveUrl = storage.get('liveStreamUrl');
-    const savedLiveText = storage.get('liveDisplayText');
-    
-    if (savedLiveUrl && savedLiveText) {
-      state.isRestoring = true;
-      const wasPlaying = storage.getBool('wasPlaying', false);
-      playLive(savedLiveUrl, savedLiveText, wasPlaying);
-      // Keep isRestoring true until after playLive's async setup (canplay listener, timeouts, etc.)
-      setTimeout(() => {
-        state.isRestoring = false;
-      }, 200);
-      await initLiveStreams();
-      return true; // Restored live stream
-    }
-  } catch (e) {
-    console.error('Error restoring live stream:', e);
-  }
-  return false; // Did not restore
+   try {
+     const savedLiveUrl = storage.get('liveStreamUrl');
+     const savedLiveText = storage.get('liveDisplayText');
+     
+     if (savedLiveUrl && savedLiveText) {
+       state.isRestoring = true;
+       const wasPlaying = storage.getBool('wasPlaying', false);
+       playLive(savedLiveUrl, savedLiveText, wasPlaying);
+       // Keep isRestoring true until after playLive's async setup (canplay listener, timeouts, etc.)
+       setTimeout(() => {
+         state.isRestoring = false;
+       }, 200);
+       // Always pass callback - checks browserModes at invocation time (live.html has no browserModes, always true)
+       const config = {
+         shouldRedisplayAfterProbe: () => typeof browserModes === 'undefined' || browserModes.current === 'live'
+       };
+       await initLiveStreams(config);
+       return true; // Restored live stream
+     }
+   } catch (e) {
+     console.error('Error restoring live stream:', e);
+   }
+   return false; // Did not restore
 }
 
 // ========== PERSISTENCE & COLLECTIONS ==========
@@ -506,7 +515,11 @@ async function loadCollectionFromFile() {
       
       // Re-initialize to pick up new streams
       liveStreamsInitialized = false;
-      await initLiveStreams();
+      // Always pass callback - checks browserModes at invocation time (live.html has no browserModes, always true)
+      const config = {
+        shouldRedisplayAfterProbe: () => typeof browserModes === 'undefined' || browserModes.current === 'live'
+      };
+      await initLiveStreams(config);
       
       hideStreamCollectionsMenu();
       showToast(`Loaded ${data.name || 'collection'}`);
@@ -559,6 +572,10 @@ function saveLiveStreamOrder() {
 
 // Load default preset on first run, then initialize live streams
 (async () => {
-  await loadDefaultStreamsOnFirstRun();
-  initLiveStreams().catch(e => console.error('Failed to initialize live streams:', e));
+   await loadDefaultStreamsOnFirstRun();
+   // Always pass callback - checks browserModes at invocation time (live.html has no browserModes, always true)
+   const config = {
+     shouldRedisplayAfterProbe: () => typeof browserModes === 'undefined' || browserModes.current === 'live'
+   };
+   initLiveStreams(config).catch(e => console.error('Failed to initialize live streams:', e));
 })();

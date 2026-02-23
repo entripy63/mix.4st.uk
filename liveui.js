@@ -27,7 +27,11 @@ function displayLiveStreams() {
   
   if (!liveStreamsInitialized) {
     mixList.innerHTML = '<div style="padding: 20px; color: #888;">Checking stream availability...</div>';
-    initLiveStreams().then(() => displayLiveStreams());
+    // Always pass callback - checks browserModes at invocation time (live.html has no browserModes, always true)
+    const config = {
+      shouldRedisplayAfterProbe: () => typeof browserModes === 'undefined' || browserModes.current === 'live'
+    };
+    initLiveStreams(config).then(() => displayLiveStreams());
     return;
   }
   
@@ -388,8 +392,11 @@ if (streamListElement) {
 }
 
 // Callback for when streams are added during initialization (from livedata.js)
-window.onStreamAdded = () => {
-  displayLiveStreams();
+// Check guard callback before redisplaying (checks current browser mode at invocation time)
+window.onStreamAdded = (initConfig = {}) => {
+  if (initConfig.shouldRedisplayAfterProbe?.()) {
+    displayLiveStreams();
+  }
 };
 
 // Callback for when live data is cleared (from livedata.js)
