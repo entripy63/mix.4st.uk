@@ -56,7 +56,7 @@ function displayQueue() {
           ondragend="onDragEnd()">
         <span class="drag-handle">☰</span>
         <span class="mix-name" onclick="playFromQueue(${i})">${escapeHtml(mix.name)}${djSuffix}</span>
-        ${i !== state.currentQueueIndex ? `<button class="remove-btn" onclick="removeFromQueue(${i})">✕</button>` : ''}
+        ${i !== state.currentQueueIndex ? `<button class="delete-btn" onclick="removeFromQueue(${i})">✕</button>` : ''}
       </div>`;
   }).join('');
 }

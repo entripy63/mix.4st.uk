@@ -31,6 +31,11 @@
       "name": "1.FM - Sax4Love (www.1.fm)",
       "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=1420031",
       "genre": null
+    },
+    {
+      "name": "Abacus FM Smooth Jazz",
+      "m3u": "https://s20.reliastream.com/stream/8100/stream",
+      "genre": "Jazz"
     }
   ]
 }

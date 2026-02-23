@@ -63,7 +63,7 @@ function displayLiveStreams() {
     const unavailableClass = stream.available ? '' : ' unavailable';
     const tooltip = stream.available ? 'Play Now' : (stream.reason || 'Unavailable');
     const disabled = stream.available ? '' : ' disabled';
-    const deleteBtn = `<button class="icon-btn delete-stream-btn" onclick="handleRemoveStream(${index})" title="Remove stream" style="color: #c0475c;">✕</button>`;
+    const deleteBtn = `<button class="delete-btn" onclick="handleRemoveStream(${index})" title="Remove stream">✕</button>`;
     const infoBtn = `<button class="icon-btn info-btn" data-action="toggle-stream-info" title="More info">ⓘ</button>`;
     const infoPopout = `<div class="stream-extra-info" style="display:none">
       <div class="stream-info-field">

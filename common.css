@@ -43,13 +43,20 @@
   margin-left: auto;
 }
 
-.delete-stream-btn {
-  color: var(--text-error);
+.delete-btn {
+  color: #ff6b6b;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
 }
 
-.delete-stream-btn:hover {
-  background: var(--error-bg);
-  color: #000 !important;
+.delete-btn:hover {
+  background: rgba(255, 107, 107, 0.2);
+  transform: none;
 }
 
 .control-btn {

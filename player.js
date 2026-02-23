@@ -139,19 +139,19 @@ function stopLive() {
 // Play/Pause button click
 playPauseBtn?.addEventListener('click', function(e) {
    if (state.isLive) {
-     if (aud.paused) {
-       resumeLive();
-     } else {
-       pauseLive();
-     }
-   } else {
-     if (aud.paused) {
-       aud.play();
-     } else {
-       aud.pause();
-     }
-   }
- });
+      if (aud.paused) {
+        resumeLive();
+      } else {
+        pauseLive();
+      }
+    } else {
+      if (aud.paused) {
+        aud.play().catch(() => {}); // Ignore aborted/failed plays
+      } else {
+        aud.pause();
+      }
+    }
+  });
 
 // Mute button click
 let volumeBeforeMute = 0.5;
