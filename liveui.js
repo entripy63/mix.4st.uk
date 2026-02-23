@@ -4,6 +4,11 @@
 //               livedata.js (stream management, probing, parsing)
 //               modals.js (showPlaylistGuide, hidePlaylistGuide, showPresetsMenu, hidePresetsMenu)
 
+// Guard: only redisplay streams if on Live tab (or on live.html which has no browserModes)
+function shouldRedisplayStreams() {
+  return typeof browserModes === 'undefined' || browserModes.current === 'live';
+}
+
 // ========== PRESET CATEGORY BUTTONS ==========
 
 async function renderPresetButtons(container) {
@@ -27,9 +32,9 @@ function displayLiveStreams() {
   
   if (!liveStreamsInitialized) {
     mixList.innerHTML = '<div style="padding: 20px; color: #888;">Checking stream availability...</div>';
-    // Always pass callback - checks browserModes at invocation time (live.html has no browserModes, always true)
+    // Always pass callback - checks shouldRedisplayStreams at invocation time
     const config = {
-      shouldRedisplayAfterProbe: () => typeof browserModes === 'undefined' || browserModes.current === 'live'
+      shouldRedisplayAfterProbe: shouldRedisplayStreams
     };
     initLiveStreams(config).then(() => displayLiveStreams());
     return;
@@ -156,8 +161,7 @@ async function handleAddStream() {
      // Add stream with no name, let playlist title be parsed from m3u
      await addUserStream(null, m3u, null);
      document.getElementById('newStreamM3U').value = '';
-     // Only redisplay if on Live tab (or on live.html which has no browserModes)
-     if (typeof browserModes === 'undefined' || browserModes.current === 'live') {
+     if (shouldRedisplayStreams()) {
        displayLiveStreams();
      }
 }
@@ -177,8 +181,7 @@ async function handleRemoveStream(index) {
            saveUserStreams(configs);
          }
        }
-       // Only redisplay if on Live tab (or on live.html which has no browserModes)
-       if (typeof browserModes === 'undefined' || browserModes.current === 'live') {
+       if (shouldRedisplayStreams()) {
          displayLiveStreams();
        }
      }
@@ -187,8 +190,7 @@ async function handleRemoveStream(index) {
 async function reloadLiveStreams() {
     liveStreamsInitialized = false;
     liveStreams = [];
-    // Only redisplay if on Live tab (or on live.html which has no browserModes)
-    if (typeof browserModes === 'undefined' || browserModes.current === 'live') {
+    if (shouldRedisplayStreams()) {
       displayLiveStreams();
     }
 }
@@ -226,13 +228,13 @@ function onLiveStreamDrop(e, dropIndex) {
     liveStreams.splice(dropIndex, 0, tempLive);
   }
   
-  // Refresh display (only if on Live tab or on live.html)
-  if (typeof browserModes === 'undefined' || browserModes.current === 'live') {
-     displayLiveStreams();
-   }
+  // Refresh display
+  if (shouldRedisplayStreams()) {
+    displayLiveStreams();
   }
+}
 
-  function onLiveStreamDragEnd(e) {
+function onLiveStreamDragEnd(e) {
   if (e && e.target) {
     e.target.style.opacity = '1';
   }
@@ -315,8 +317,7 @@ async function addStreamsFromPreset(preset) {
          added++;
          
          // Update display after each stream is added for progress feedback
-         // Only redisplay if on Live tab (or on live.html which has no browserModes)
-         if (typeof browserModes === 'undefined' || browserModes.current === 'live') {
+         if (shouldRedisplayStreams()) {
            displayLiveStreams();
          }
      }
