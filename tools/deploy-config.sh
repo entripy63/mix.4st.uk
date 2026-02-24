@@ -12,7 +12,7 @@ declare -A SERVERS=(
 # Remote directories (change these based on your server structure)
 declare -A REMOTE_DIRS=(
   [mixes-prod]="/"
-  [mixes-test]="/test/"
+  [mixes-test]="/"
   [live-prod]="/"
   [live-test]="/"
 )
