@@ -56,11 +56,13 @@
 - `live.css` - Mobile-first layout, stream list styling (live.html only)
 
 ### Data & Configuration
+- All DJ content organized under `mixes/` container directory
+- `mixes/trip/`, `mixes/izmar/`, `mixes/aboo/`, `mixes/jx3p/`, `mixes/gmanual/`, `mixes/haze/`, `mixes/rpfr/` - Main DJ folders
+- `mixes/moreDJs/` - Additional DJ folders (estimulo, claptone, etc.)
 - DJ folders contain `manifest.json`, `.tracks.txt` files, `.peaks.json` files, and cover images
-- `trip/`, `izmar/`, `aboo/`, `jx3p/`, `gmanual/`, `haze/`, `rpfr/` - Main DJ folders
-- `moreDJs/` - Additional DJ folders
+- `mixes/audio-source-config.json` - External audio source configuration
+- `mixes/search-index.json` - Generated search index
 - `.htaccess` - DirectoryIndex and MP3 download forcing
-- `audio-source-config.json` - External audio source configuration
 
 **For complete asset documentation, see [ASSETS.md](ASSETS.md)**
 
