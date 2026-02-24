@@ -29,7 +29,10 @@ async function loadDJ(djPath) {
 function updateDJButtons() {
   document.querySelectorAll('#djButtons button').forEach(btn => {
     const buttonDJ = 'mixes/' + btn.textContent.replace('-', '').toLowerCase();
-    btn.classList.toggle('active', buttonDJ === state.currentDJ);
+    const isActive = MIXES_BASE_URL.startsWith('http') 
+      ? buttonDJ === state.currentDJ.replace(/.*\/mixes\//, 'mixes/')
+      : buttonDJ === state.currentDJ;
+    btn.classList.toggle('active', isActive);
   });
 }
 

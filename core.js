@@ -1,5 +1,18 @@
 // core.js - Shared utilities, global state, and DOM references
 
+// Mixes base URL - defaults to local, overridden by mixes-config.json
+let MIXES_BASE_URL = '/mixes/';
+
+async function loadMixesConfig() {
+  try {
+    const resp = await fetch('mixes-config.json');
+    const config = await resp.json();
+    MIXES_BASE_URL = config.mixesBaseUrl;
+  } catch (e) {
+    console.warn('Failed to load mixes-config.json, using local fallback:', e);
+  }
+}
+
 function escapeHtml(str) {
    if (!str) return '';
    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

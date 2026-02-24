@@ -108,6 +108,9 @@
     <script>
       // live.html restoration - restore live stream if available
       (async function restoreLiveApp() {
+        // Load mixes config first
+        await loadMixesConfig();
+        
         // Initialize preset buttons
         await renderPresetButtons(document.getElementById('presetsButtonsContainer'));
         

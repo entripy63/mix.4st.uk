@@ -246,8 +246,9 @@
         <script src="browser.js"></script>
         <script src="restore.js"></script>
         <script>
-          // Initialize preset buttons for live mode
+          // Initialize mixes config and player
           (async function initPlayer() {
+            await loadMixesConfig();
             await renderPresetButtons(document.getElementById('presetsButtonsContainer'));
           })();
         </script>
