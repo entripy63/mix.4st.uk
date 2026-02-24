@@ -55,7 +55,7 @@ def main():
                     if subentry.is_dir():
                         manifest_path = subentry / 'manifest.json'
                         if manifest_path.exists():
-                            process_manifest(manifest_path, subentry.name, all_mixes)
+                            process_manifest(manifest_path, f"moreDJs/{subentry.name}", all_mixes)
             else:
                 # Check all root-level directories
                 manifest_path = entry / 'manifest.json'
