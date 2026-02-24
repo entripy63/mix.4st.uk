@@ -240,30 +240,30 @@ def process_directory_split(source_directory, output_directory):
     print(f"  Wrote manifest.json ({len(mixes)} mixes)")
 
 def find_dj_directories(base_directory):
-    """Find all directories containing audio files, including nested ones in moreDJs/."""
-    dj_dirs = []
-    extensions = {'.mp3', '.flac', '.m4a', '.opus'}
-    
-    for entry in base_directory.iterdir():
-        if entry.is_dir() and not entry.name.startswith('.'):
-            if entry.name == 'moreDJs':
-                # Scan subdirectories within moreDJs
-                for subentry in entry.iterdir():
-                    if subentry.is_dir():
-                        has_audio = any(f.suffix.lower() in extensions for f in subentry.iterdir() if f.is_file())
-                        if has_audio:
-                            dj_dirs.append(subentry)
-            else:
-                # Check root-level directories
-                has_audio = any(f.suffix.lower() in extensions for f in entry.iterdir() if f.is_file())
-                if has_audio:
-                    dj_dirs.append(entry)
-    
-    return sorted(dj_dirs, key=lambda p: p.name.lower())
+     """Find all directories containing audio files, including nested ones in moreDJs/."""
+     dj_dirs = []
+     extensions = {'.mp3', '.flac', '.m4a', '.opus'}
+     
+     for entry in base_directory.iterdir():
+         if entry.is_dir() and not entry.name.startswith('.'):
+             if entry.name == 'moreDJs':
+                 # Scan subdirectories within moreDJs
+                 for subentry in entry.iterdir():
+                     if subentry.is_dir():
+                         has_audio = any(f.suffix.lower() in extensions for f in subentry.iterdir() if f.is_file())
+                         if has_audio:
+                             dj_dirs.append(subentry)
+             else:
+                 # Check all root-level directories
+                 has_audio = any(f.suffix.lower() in extensions for f in entry.iterdir() if f.is_file())
+                 if has_audio:
+                     dj_dirs.append(entry)
+     
+     return sorted(dj_dirs, key=lambda p: p.name.lower())
 
 def load_config():
     """Load audio source configuration if it exists."""
-    config_path = Path('audio-source-config.json')
+    config_path = Path('mixes/audio-source-config.json')
     if config_path.exists():
         try:
             with open(config_path) as f:
@@ -312,11 +312,9 @@ def main():
         for source_folder in all_source_dirs:
             source_name = source_folder.name
             
-            # Determine output location: main DJ in root, others in moreDJs
-            if source_name in main_djs:
-                output_path = output_dir / source_name
-            else:
-                output_path = output_dir / 'moreDJs' / source_name
+            # Since mixes/ is the base, all DJs go to output_dir / source_name
+            # (moreDJs will be a subdirectory within mixes/)
+            output_path = output_dir / source_name
             
             output_path.mkdir(parents=True, exist_ok=True)
             

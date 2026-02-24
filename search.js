@@ -16,7 +16,7 @@ const searchIndex = {
 
   this.loading = true;
   try {
-  const response = await fetch('search-index.json');
+  const response = await fetch('mixes/search-index.json');
   this.data = await response.json();
   // Build Map for O(1) lookups: dj/file -> mixData
   this.byId = new Map(this.data.map(m => [`${m.dj}/${m.file}`, m]));

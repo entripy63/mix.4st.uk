@@ -63,29 +63,29 @@ def extract_cover(audio_path, output_path):
         return False
 
 def find_dj_folders(root_dir):
-    """Find DJ folders (directories containing audio files), including nested ones in moreDJs/."""
-    dj_folders = []
-    for item in sorted(root_dir.iterdir()):
-        if item.is_dir() and not item.name.startswith('.'):
-            if item.name == 'moreDJs':
-                # Scan subdirectories within moreDJs
-                for subitem in sorted(item.iterdir()):
-                    if subitem.is_dir():
-                        has_audio = any(
-                            f.suffix.lower() in AUDIO_EXTENSIONS 
-                            for f in subitem.iterdir() if f.is_file()
-                        )
-                        if has_audio:
-                            dj_folders.append(subitem)
-            else:
-                # Check root-level directories
-                has_audio = any(
-                    f.suffix.lower() in AUDIO_EXTENSIONS 
-                    for f in item.iterdir() if f.is_file()
-                )
-                if has_audio:
-                    dj_folders.append(item)
-    return dj_folders
+     """Find DJ folders (directories containing audio files), including nested ones in moreDJs/."""
+     dj_folders = []
+     for item in sorted(root_dir.iterdir()):
+         if item.is_dir() and not item.name.startswith('.'):
+             if item.name == 'moreDJs':
+                 # Scan subdirectories within moreDJs
+                 for subitem in sorted(item.iterdir()):
+                     if subitem.is_dir():
+                         has_audio = any(
+                             f.suffix.lower() in AUDIO_EXTENSIONS 
+                             for f in subitem.iterdir() if f.is_file()
+                         )
+                         if has_audio:
+                             dj_folders.append(subitem)
+             else:
+                 # Check all root-level directories
+                 has_audio = any(
+                     f.suffix.lower() in AUDIO_EXTENSIONS 
+                     for f in item.iterdir() if f.is_file()
+                 )
+                 if has_audio:
+                     dj_folders.append(item)
+     return dj_folders
 
 def process_folder(folder):
     """Process all audio files in a folder, extracting cover art (read and write in same folder)."""
@@ -138,7 +138,7 @@ def process_folder_split(source_folder, output_folder):
 def load_config():
     """Load audio source configuration if it exists."""
     import json
-    config_path = Path('audio-source-config.json')
+    config_path = Path('mixes/audio-source-config.json')
     if config_path.exists():
         try:
             with open(config_path) as f:
@@ -192,11 +192,9 @@ def main():
         for source_folder in all_source_dirs:
             source_name = source_folder.name
             
-            # Determine output location: main DJ in root, others in moreDJs
-            if source_name in main_djs:
-                output_folder = output_dir / source_name
-            else:
-                output_folder = output_dir / 'moreDJs' / source_name
+            # Since output_dir (mixes/) is the base, all DJs go there directly
+            # (moreDJs will be a subdirectory within mixes/)
+            output_folder = output_dir / source_name
             
             output_folder.mkdir(parents=True, exist_ok=True)
             
