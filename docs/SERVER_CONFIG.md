@@ -2,11 +2,11 @@
 
 These files are **not deployed** via git/lftp to avoid overwrites:
 - `.htaccess`
-- `mixes-config.json`
+- `mixes/mixes-config.json`
 
 ## mixes.4st.uk (Production)
 
-**mixes-config.json:**
+**mixes/mixes-config.json:**
 ```json
 {
   "mixesBaseUrl": "/mixes/"
@@ -17,7 +17,7 @@ These files are **not deployed** via git/lftp to avoid overwrites:
 
 ## test.4st.uk (Test)
 
-**mixes-config.json:**
+**mixes/mixes-config.json:**
 ```json
 {
   "mixesBaseUrl": "https://stream-proxy.round-bar-e93e.workers.dev/url?url=https://mixes.4st.uk/mixes/"
@@ -28,7 +28,7 @@ These files are **not deployed** via git/lftp to avoid overwrites:
 
 ## live.4st.uk (Live Streams)
 
-**mixes-config.json:**
+**mixes/mixes-config.json:**
 ```json
 {
   "mixesBaseUrl": "/mixes/"

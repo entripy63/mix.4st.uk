@@ -5,11 +5,11 @@ let MIXES_BASE_URL = '/mixes/';
 
 async function loadMixesConfig() {
   try {
-    const resp = await fetch('mixes-config.json');
+    const resp = await fetch('mixes/mixes-config.json');
     const config = await resp.json();
     MIXES_BASE_URL = config.mixesBaseUrl;
   } catch (e) {
-    console.warn('Failed to load mixes-config.json, using local fallback:', e);
+    console.warn('Failed to load mixes/mixes-config.json, using local fallback:', e);
   }
 }
 

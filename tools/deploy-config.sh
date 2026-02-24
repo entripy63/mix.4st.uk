@@ -18,10 +18,10 @@ declare -A REMOTE_DIRS=(
 )
 
 # Mirror commands for each target
-# Note: .htaccess and mixes-config.json are excluded - manage these per-server to avoid overwrites
+# Note: .htaccess and mixes/mixes-config.json are excluded - manage these per-server to avoid overwrites
 declare -A MIRROR_COMMANDS=(
-  [mixes-prod]="mirror -R -x .git/ -x .gitignore -x AGENTS.md -x docs/ -x tools/ -x node_modules/ -x .htaccess -x mixes-config.json -X package* -X eslint.*"
-  [mixes-test]="mirror -R -x .git/ -x .gitignore -x AGENTS.md -x docs/ -x tools/ -x node_modules/ -x .htaccess -x mixes-config.json -X package* -X eslint.*"
+  [mixes-prod]="mirror -R -x .git/ -x .gitignore -x AGENTS.md -x docs/ -x tools/ -x node_modules/ -x .htaccess -x mixes/mixes-config.json -X package* -X eslint.*"
+  [mixes-test]="mirror -R -x .git/ -x .gitignore -x AGENTS.md -x docs/ -x tools/ -x node_modules/ -x .htaccess -x mixes/mixes-config.json -X package* -X eslint.*"
   [live-prod]="mirror -R --only-existing"
   [live-test]="mirror -R --only-existing"
 )
