@@ -1,7 +1,0 @@
-# DirectoryIndex
-DirectoryIndex index.html
-
-# Force .mp3 downloads instead of streaming in browser
-<FilesMatch "\.mp3$">
-  Header set Content-Disposition "attachment"
-</FilesMatch>
