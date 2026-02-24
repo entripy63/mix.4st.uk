@@ -48,11 +48,21 @@ document.getElementById('fileInput').addEventListener('change', async function (
   return;
   }
 
-  const savedPath = storage.get('currentMixPath');
+  let savedPath = storage.get('currentMixPath');
   if (savedPath) {
-  const parts = savedPath.split('/');
-  const file = parts.pop();
-  const djPath = parts.join('/');
+   // Migrate old DJ paths (e.g., "aboo/mixname" -> "mixes/aboo/mixname")
+   if (!savedPath.startsWith('mixes/')) {
+     const parts = savedPath.split('/');
+     if (parts[0] === 'moreDJs') {
+       savedPath = 'mixes/' + savedPath;
+     } else {
+       savedPath = 'mixes/' + savedPath;
+     }
+     storage.set('currentMixPath', savedPath);
+   }
+   const parts = savedPath.split('/');
+   const file = parts.pop();
+   const djPath = parts.join('/');
   let mix;
   try {
   const mixes = await fetchDJMixes(djPath);

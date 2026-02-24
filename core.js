@@ -66,9 +66,28 @@ const state = {
    isLive: false,           // Currently playing a live stream
    liveStreamUrl: null,     // URL to restore on live resume
    liveDisplayText: null    // Display text for current live stream
-};
+   };
 
-// Format time as M:SS or H:MM:SS
+   // Migrate old DJ paths in queue to new mixes/ paths
+   (function migrateQueuePaths() {
+   let needsSave = false;
+   state.queue.forEach(mix => {
+       if (mix.djPath && !mix.djPath.startsWith('mixes/')) {
+           if (mix.djPath.startsWith('moreDJs/')) {
+               mix.djPath = 'mixes/' + mix.djPath;
+           } else {
+               mix.djPath = 'mixes/' + mix.djPath;
+           }
+           needsSave = true;
+       }
+   });
+   if (needsSave) {
+       const persistableQueue = state.queue.filter(mix => !mix.isLocal);
+       storage.set('queue', persistableQueue);
+   }
+   })();
+
+   // Format time as M:SS or H:MM:SS
 function formatTime(seconds) {
   if (!isFinite(seconds) || seconds < 0) return '0:00';
   const h = Math.floor(seconds / 3600);
