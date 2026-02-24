@@ -1,5 +1,6 @@
 async function fetchDJMixes(djPath) {
-  const response = await fetch(`${MIXES_BASE_URL}${djPath}/manifest.json`);
+  const cleanPath = djPath.replace(/^mixes\//, '');
+  const response = await fetch(`${MIXES_BASE_URL}${cleanPath}/manifest.json`);
   const manifest = await response.json();
   return manifest.mixes.map(mix => ({
     name: mix.name,
@@ -183,7 +184,8 @@ function encodeFilename(filename) {
 
 async function fetchMixDetails(mix) {
   const djPath = mix.djPath || mix.dj;
-  const dir = `${MIXES_BASE_URL}${djPath}/`;
+  const cleanPath = djPath.replace(/^mixes\//, '');
+  const dir = `${MIXES_BASE_URL}${cleanPath}/`;
   
   // Load peaks if available
   let peaks = null;
