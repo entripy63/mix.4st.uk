@@ -1,0 +1,12 @@
+# Enable CORS for cross-origin requests (disaster recovery)
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "*"
+</IfModule>
+
+# DirectoryIndex
+DirectoryIndex index.html
+
+# Force .mp3 downloads instead of streaming in browser
+<FilesMatch "\.mp3$">
+  Header set Content-Disposition "attachment"
+</FilesMatch>
