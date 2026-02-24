@@ -55,12 +55,12 @@ def main():
                     if subentry.is_dir():
                         manifest_path = subentry / 'manifest.json'
                         if manifest_path.exists():
-                            process_manifest(manifest_path, f"moreDJs/{subentry.name}", all_mixes)
+                            process_manifest(manifest_path, f"mixes/moreDJs/{subentry.name}", all_mixes)
             else:
                 # Check all root-level directories
                 manifest_path = entry / 'manifest.json'
                 if manifest_path.exists():
-                    process_manifest(manifest_path, entry.name, all_mixes)
+                    process_manifest(manifest_path, f"mixes/{entry.name}", all_mixes)
     
     # Write combined index
     index_path = base_directory / 'search-index.json'
