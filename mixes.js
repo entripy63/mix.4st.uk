@@ -1,6 +1,5 @@
 async function fetchDJMixes(djPath) {
-  const cleanPath = djPath.replace(/^mixes\//, '');
-  const response = await fetch(`${MIXES_BASE_URL}${cleanPath}/manifest.json`);
+  const response = await fetch(`${djPath}/manifest.json`);
   const manifest = await response.json();
   return manifest.mixes.map(mix => ({
     name: mix.name,
@@ -184,14 +183,13 @@ function encodeFilename(filename) {
 
 async function fetchMixDetails(mix) {
   const djPath = mix.djPath || mix.dj;
-  const cleanPath = djPath.replace(/^mixes\//, '');
-  const dir = `${MIXES_BASE_URL}${cleanPath}/`;
+  const localDir = `${djPath}/`;
   
-  // Load peaks if available
+  // Load peaks if available (local)
   let peaks = null;
   if (mix.peaksFile) {
     try {
-      const peaksResponse = await fetch(dir + encodeFilename(mix.peaksFile));
+      const peaksResponse = await fetch(localDir + encodeFilename(mix.peaksFile));
       if (peaksResponse.ok) {
         const peaksData = await peaksResponse.json();
         peaks = peaksData.peaks;
@@ -201,15 +199,15 @@ async function fetchMixDetails(mix) {
     }
   }
   
-  // Build download links
+  // Build download links (local)
   const downloadLinks = (mix.downloads || []).map(d => ({
-    href: dir + encodeFilename(d.file),
+    href: localDir + encodeFilename(d.file),
     label: d.label
   }));
   
-  // Try to load track list from .tracks.txt (CSV)
+  // Try to load track list from .tracks.txt (CSV) (local)
   let trackListTable = '';
-  const txtPath = `${dir}${encodeFilename(mix.file)}.tracks.txt`;
+  const txtPath = `${localDir}${encodeFilename(mix.file)}.tracks.txt`;
   
   try {
     const txtResponse = await fetch(txtPath);
@@ -221,11 +219,15 @@ async function fetchMixDetails(mix) {
     // No track list file, that's fine
   }
   
-  // Cover art URL
-  const coverSrc = mix.coverFile ? dir + encodeFilename(mix.coverFile) : null;
+  // Cover art URL (local)
+  const coverSrc = mix.coverFile ? localDir + encodeFilename(mix.coverFile) : null;
+  
+  // Audio source uses configurable MIXES_BASE_URL (may be remote)
+  const cleanPath = djPath.replace(/^mixes\//, '');
+  const audioSrc = `${MIXES_BASE_URL}${cleanPath}/${encodeFilename(mix.audioFile)}`;
   
   return {
-    audioSrc: dir + encodeFilename(mix.audioFile),
+    audioSrc,
     trackListTable,
     peaks,
     downloadLinks,
