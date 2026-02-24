@@ -4,7 +4,7 @@
 # LFTP bookmarks and paths
 declare -A SERVERS=(
   [mixes-prod]="axc"
-  [mixes-test]="axc"
+  [mixes-test]="axc-test"
   [live-prod]="live"
   [live-test]="live-test"
 )
