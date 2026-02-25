@@ -150,7 +150,22 @@ aud.addEventListener('seeked', updateWaveformCursor);
 
 // Click on waveform to seek
 waveformCanvas.addEventListener('click', function (e) {
-    console.log('Waveform clicked', { duration: aud.duration, isFinite: isFinite(aud.duration) });
+    const buffered = [];
+    for (let i = 0; i < aud.buffered.length; i++) {
+        buffered.push([aud.buffered.start(i), aud.buffered.end(i)]);
+    }
+    const seekable = [];
+    for (let i = 0; i < aud.seekable.length; i++) {
+        seekable.push([aud.seekable.start(i), aud.seekable.end(i)]);
+    }
+    console.log('Waveform clicked', { 
+        duration: aud.duration, 
+        isFinite: isFinite(aud.duration),
+        buffered,
+        seekable,
+        readyState: aud.readyState,
+        paused: aud.paused
+    });
     e.preventDefault();
     e.stopPropagation();
     
@@ -163,11 +178,6 @@ waveformCanvas.addEventListener('click', function (e) {
         if (isFinite(newTime)) {
             aud.currentTime = newTime;
             console.log('After set', { currentTime: aud.currentTime });
-            
-            // Monitor if it changes after we set it
-            setTimeout(() => {
-                console.log('After 100ms', { currentTime: aud.currentTime });
-            }, 100);
             
             updateWaveformCursor();
         }
