@@ -143,11 +143,17 @@ function updateWaveformCursor() {
 
 // Update waveform cursor on audio events
 aud.addEventListener('timeupdate', updateWaveformCursor);
+aud.addEventListener('seeking', (e) => {
+    console.log('Seeking event fired', { currentTime: aud.currentTime });
+});
 aud.addEventListener('seeked', updateWaveformCursor);
 
 // Click on waveform to seek
 waveformCanvas.addEventListener('click', function (e) {
     console.log('Waveform clicked', { duration: aud.duration, isFinite: isFinite(aud.duration) });
+    e.preventDefault();
+    e.stopPropagation();
+    
     if (aud.duration && isFinite(aud.duration)) {
         const rect = waveformCanvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
