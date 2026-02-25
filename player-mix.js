@@ -143,29 +143,10 @@ function updateWaveformCursor() {
 
 // Update waveform cursor on audio events
 aud.addEventListener('timeupdate', updateWaveformCursor);
-aud.addEventListener('seeking', (e) => {
-    console.log('Seeking event fired', { currentTime: aud.currentTime });
-});
 aud.addEventListener('seeked', updateWaveformCursor);
 
 // Click on waveform to seek
 waveformCanvas.addEventListener('click', function (e) {
-    const buffered = [];
-    for (let i = 0; i < aud.buffered.length; i++) {
-        buffered.push([aud.buffered.start(i), aud.buffered.end(i)]);
-    }
-    const seekable = [];
-    for (let i = 0; i < aud.seekable.length; i++) {
-        seekable.push([aud.seekable.start(i), aud.seekable.end(i)]);
-    }
-    console.log('Waveform clicked', { 
-        duration: aud.duration, 
-        isFinite: isFinite(aud.duration),
-        buffered,
-        seekable,
-        readyState: aud.readyState,
-        paused: aud.paused
-    });
     e.preventDefault();
     e.stopPropagation();
     
@@ -173,12 +154,16 @@ waveformCanvas.addEventListener('click', function (e) {
         const rect = waveformCanvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const progress = Math.max(0, Math.min(1, x / waveformCanvas.width));
-        const newTime = progress * aud.duration;
-        console.log('Seek', { progress, newTime, duration: aud.duration, beforeSet: aud.currentTime });
+        let newTime = progress * aud.duration;
+        
+        // Clamp to seekable range
+        if (aud.seekable.length > 0) {
+            const seekableEnd = aud.seekable.end(aud.seekable.length - 1);
+            newTime = Math.min(newTime, seekableEnd);
+        }
+        
         if (isFinite(newTime)) {
             aud.currentTime = newTime;
-            console.log('After set', { currentTime: aud.currentTime });
-            
             updateWaveformCursor();
         }
     }
