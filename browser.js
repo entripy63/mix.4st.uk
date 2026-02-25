@@ -136,6 +136,11 @@ function displayMixList(mixes) {
       return !isHidden || state.showHiddenMixes;
     });
     state.displayedMixes = visibleMixes;
+    
+    // Heuristic: Show artist if DJ folder has 15+ unique artists
+    const uniqueArtists = new Set(mixes.map(m => m.artist).filter(a => a));
+    const showArtist = uniqueArtists.size >= 15;
+    
     const mixList = document.getElementById('mixList');
     const header = visibleMixes.length > 1 ? `<div class="mix-list-header"><button data-action="add-all-queue" class="mix-list-btn" title="Add all to queue">Add All to Queue</button></div>` : '';
     mixList.innerHTML = header +
@@ -146,6 +151,10 @@ function displayMixList(mixes) {
         const favIcon = isFav ? '<span class="fav-icon" title="Favourite">❤️</span>' : '';
         const hiddenIcon = isHidden ? '<span class="hidden-icon" title="Hidden">🚫</span>' : '';
         const genre = mix.genre ? ` · ${escapeHtml(mix.genre)}` : '';
+        // Show artist only if: enabled, artist exists, not "Various", and not already in mix name
+        const artist = showArtist && mix.artist && mix.artist !== 'Various'
+          && !mix.name.toLowerCase().includes(mix.artist.toLowerCase())
+          ? ` by ${escapeHtml(mix.artist)}` : '';
         const hasExtra = mix.date || mix.comment;
         const extraBtn = hasExtra ? `<button class="icon-btn info-btn" data-action="toggle-info" title="More info">ⓘ</button>` : '';
         const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.date ? `<div><strong>Date:</strong> ${escapeHtml(mix.date)}</div>` : ''}${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
@@ -153,7 +162,7 @@ function displayMixList(mixes) {
         <div class="mix-item-row">
           <button class="icon-btn" data-action="queue-add" title="Add to queue">+</button>
           <button class="icon-btn" data-action="play-now" title="Play now">▶</button>
-          <span class="mix-name">${escapeHtml(mix.name)} <span class="mix-duration">(${mix.duration}${genre})</span></span>
+          <span class="mix-name">${escapeHtml(mix.name)}${artist} <span class="mix-duration">(${mix.duration}${genre})</span></span>
           ${extraBtn}${favIcon}${hiddenIcon}
         </div>
         ${extraInfo}
