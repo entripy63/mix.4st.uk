@@ -153,9 +153,16 @@ waveformCanvas.addEventListener('click', function (e) {
         const x = e.clientX - rect.left;
         const progress = Math.max(0, Math.min(1, x / waveformCanvas.width));
         const newTime = progress * aud.duration;
-        console.log('Seek', { progress, newTime, duration: aud.duration });
+        console.log('Seek', { progress, newTime, duration: aud.duration, beforeSet: aud.currentTime });
         if (isFinite(newTime)) {
             aud.currentTime = newTime;
+            console.log('After set', { currentTime: aud.currentTime });
+            
+            // Monitor if it changes after we set it
+            setTimeout(() => {
+                console.log('After 100ms', { currentTime: aud.currentTime });
+            }, 100);
+            
             updateWaveformCursor();
         }
     }
