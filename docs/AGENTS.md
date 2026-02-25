@@ -4,12 +4,12 @@
 - **[ASSETS.md](ASSETS.md)** — Comprehensive asset documentation (HTML, CSS, JavaScript modules, data files)
 - This file — Development instructions and architecture overview
 
-## Build/Test Commands
+## Build/Test/Deploy Commands
 - No build system - static HTML/CSS website
 - DON'T USE `python3 -m http.server 8000` to test locally, too flakey
-- (axc) mirror -R -x .git/ -x .gitignore -x docs/ -x tools/
-- (live) mirror -R --only-existing
 - **ESLint**: `npm run lint` — syntax checking, `npm run lint:fix` — auto-fix formatting
+- ./tools/deploy.sh [target]
+- Targets: mixes-test, mixes-prod, live-test, live-prod, all-test, all-prod
 
 ## Architecture
 - Static website with two SPAs: DJ mixes (mixes.4st.uk) and live streams (live.4st.uk)
@@ -67,6 +67,7 @@
 **For complete asset documentation, see [ASSETS.md](ASSETS.md)**
 
 ## Python Scripts
+⚠️ **Performance Tip**: By passing DJ folder names to the scripts, you only process new content. Processing the entire collection takes 7-10+ hours.
 - `generate-covers.py` - Run after adding audio files to extract embedded cover art images
 - `generate-manifest.py` - Run after adding/updating audio files to regenerate `manifest.json` in each DJ folder
 - `generate-peaks.py` - Run after adding audio files to generate `.peaks.json` waveform data
