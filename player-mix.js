@@ -147,11 +147,13 @@ aud.addEventListener('seeked', updateWaveformCursor);
 
 // Click on waveform to seek
 waveformCanvas.addEventListener('click', function (e) {
+    console.log('Waveform clicked', { duration: aud.duration, isFinite: isFinite(aud.duration) });
     if (aud.duration && isFinite(aud.duration)) {
         const rect = waveformCanvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const progress = Math.max(0, Math.min(1, x / waveformCanvas.width));
         const newTime = progress * aud.duration;
+        console.log('Seek', { progress, newTime, duration: aud.duration });
         if (isFinite(newTime)) {
             aud.currentTime = newTime;
             updateWaveformCursor();
