@@ -5,6 +5,10 @@
 *.opus
 *.peaks.json
 *.mediaartlocal
+*.jpg
+*.png
+*.gif
+*.bmp
 .directory
 **/BH4WNF~8
 **/.mediaartlocal

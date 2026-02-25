@@ -14,7 +14,9 @@
           "label": "MP3"
         }
       ],
-      "genre": "The Broadest Beats"
+      "genre": "The Broadest Beats",
+      "peaksFile": "Solid_Steel_Radio_Show-Banks12-10-19-02.peaks.json",
+      "coverFile": "Solid_Steel_Radio_Show-Banks12-10-19-02.png"
     },
     {
       "name": "29.6.08",
@@ -29,7 +31,8 @@
           "label": "MP3"
         }
       ],
-      "comment": "Recorded with No23 Recorder"
+      "comment": "Recorded with No23 Recorder",
+      "peaksFile": "brainbug -25minute madness - dubstep edition 29.6.08.peaks.json"
     },
     {
       "name": "Anjuna Deep Edition 138",
@@ -43,7 +46,8 @@
           "file": "the-anjunadeep-edition-138-with-lane-8-kidnap-kid.mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "the-anjunadeep-edition-138-with-lane-8-kidnap-kid.peaks.json"
     },
     {
       "name": "Another Oldies Mix (vinyl only",
@@ -58,7 +62,8 @@
           "label": "MP3"
         }
       ],
-      "genre": "House"
+      "genre": "House",
+      "peaksFile": "Another Oldies Mix (vinyl only).peaks.json"
     },
     {
       "name": "Blech 20.1",
@@ -74,7 +79,9 @@
         }
       ],
       "genre": "Electronic",
-      "date": "2009"
+      "date": "2009",
+      "peaksFile": "Blech 20.1 1.peaks.json",
+      "coverFile": "Blech 20.1 1.jpg"
     },
     {
       "name": "Blogariddims 21/Fusion Dub",
@@ -91,7 +98,9 @@
       ],
       "genre": "DJ mixes",
       "date": "2007",
-      "comment": "Blogariddims 21/Fusion Dub A mix of Miles Davis-inspired jazz, funk and soul in dub\r\rSee blog.grievousangel.net for more details"
+      "comment": "Blogariddims 21/Fusion Dub A mix of Miles Davis-inspired jazz, funk and soul in dub\r\rSee blog.grievousangel.net for more details",
+      "peaksFile": "blogariddims21.peaks.json",
+      "coverFile": "blogariddims21.jpg"
     },
     {
       "name": "Chilled Lounge (Re do)",
@@ -105,7 +114,8 @@
           "file": "Chilled Lounge (Re-do).mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "Chilled Lounge (Re-do).peaks.json"
     },
     {
       "name": "dj heretic at bar oskar 150111",
@@ -119,7 +129,8 @@
           "file": "dj_heretic_at_bar_oskar_150111.mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "dj_heretic_at_bar_oskar_150111.peaks.json"
     },
     {
       "name": "Duke Spook meets MBM",
@@ -135,7 +146,8 @@
         }
       ],
       "genre": "Industrial",
-      "comment": " "
+      "comment": " ",
+      "peaksFile": "Duke Spook meets MBM.peaks.json"
     },
     {
       "name": "EE - Japan Special",
@@ -152,7 +164,24 @@
       ],
       "genre": "Electronic",
       "date": "2016",
-      "comment": "Electronic Explorations \u2013 Japan special - Words and curation by Chris SSG / Tokyo, Japan.\r\n"
+      "comment": "Electronic Explorations \u2013 Japan special - Words and curation by Chris SSG / Tokyo, Japan.\r\n",
+      "peaksFile": "ElectronicExplorations_440_Lynne__EE_JAPAN_SPECIAL.peaks.json",
+      "coverFile": "ElectronicExplorations_440_Lynne__EE_JAPAN_SPECIAL.jpg"
+    },
+    {
+      "name": "Ferocious Mullet Cognitive Disidents Manifesto Broadcast 2021",
+      "file": "Ferocious_Mullet-Cognitive_Disidents-Manifesto_Broadcast-2021",
+      "audioFile": "Ferocious_Mullet-Cognitive_Disidents-Manifesto_Broadcast-2021.flac",
+      "duration": 3460.514104,
+      "durationFormatted": "0:57:40",
+      "artist": "Various",
+      "downloads": [
+        {
+          "file": "Ferocious_Mullet-Cognitive_Disidents-Manifesto_Broadcast-2021.flac",
+          "label": "FLAC"
+        }
+      ],
+      "peaksFile": "Ferocious_Mullet-Cognitive_Disidents-Manifesto_Broadcast-2021.peaks.json"
     },
     {
       "name": "live pa dis-patch festival",
@@ -169,7 +198,8 @@
       ],
       "genre": "Electronic",
       "date": "2007",
-      "comment": "monolake.de"
+      "comment": "monolake.de",
+      "peaksFile": "monolake_._dis-patch_festival_19.10.07.peaks.json"
     },
     {
       "name": "Lousy Smarch Weather (2008-Mar-14)",
@@ -185,7 +215,8 @@
         }
       ],
       "genre": "Jungle",
-      "date": "2008"
+      "date": "2008",
+      "peaksFile": "segfault-lousy_smarch_weather-jungle_mix-2008_03_14.peaks.json"
     },
     {
       "name": "melodic house DJ set in the Lab NYC",
@@ -199,7 +230,9 @@
           "file": "LANE 8 melodic house DJ set in the Lab NYC.mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "LANE 8 melodic house DJ set in the Lab NYC.peaks.json",
+      "coverFile": "LANE 8 melodic house DJ set in the Lab NYC.jpg"
     },
     {
       "name": "MK   Essential Mix 2014",
@@ -213,7 +246,8 @@
           "file": "MK - Essential Mix 2014.mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "MK - Essential Mix 2014.peaks.json"
     },
     {
       "name": "PlayGround Mix 114 - Logreybeam",
@@ -228,7 +262,8 @@
           "label": "MP3"
         }
       ],
-      "date": "2012"
+      "date": "2012",
+      "peaksFile": "PlayGround Mix 114 - Logreybeam.peaks.json"
     },
     {
       "name": "Pre Natal",
@@ -242,7 +277,8 @@
           "file": "Ryan Blackman - Pre-Natal.mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "Ryan Blackman - Pre-Natal.peaks.json"
     },
     {
       "name": "progressive breaks mix",
@@ -257,7 +293,8 @@
           "label": "MP3"
         }
       ],
-      "genre": "DJ mix - Breaks"
+      "genre": "DJ mix - Breaks",
+      "peaksFile": "audiohazrd - progressive breaks mix.peaks.json"
     },
     {
       "name": "Ron Trent - Tribute Mix (Mixed by Nick Harris)",
@@ -273,7 +310,9 @@
         }
       ],
       "date": "20130216",
-      "comment": "Amazing Ron Trent tribute mix. Mixed by Nick Harris of NRK records. Awesome track selection, reflecting Ron Trent's solo work, as well as his work with Chez Damier (Chez & Trent). No copyright infringement intended, keep the old skool mixes alive! Please rate & comment."
+      "comment": "Amazing Ron Trent tribute mix. Mixed by Nick Harris of NRK records. Awesome track selection, reflecting Ron Trent's solo work, as well as his work with Chez Damier (Chez & Trent). No copyright infringement intended, keep the old skool mixes alive! Please rate & comment.",
+      "peaksFile": "Ron Trent - Tribute Mix (Mixed by Nick Harris).peaks.json",
+      "coverFile": "Ron Trent - Tribute Mix (Mixed by Nick Harris).jpg"
     },
     {
       "name": "RonTrent Worldwide",
@@ -287,7 +326,8 @@
           "file": "RonTrent-Worldwide.mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "RonTrent-Worldwide.peaks.json"
     },
     {
       "name": "The Madness Of DJ Guy",
@@ -304,7 +344,9 @@
       ],
       "genre": "Booty Bass",
       "date": "2008",
-      "comment": "This mix was recorded in August 2008 to promo the \"Going Crazy EP\" by DJ Guy.  \r\n\r\nDJ Guy is available for bookings globally - please get in contact via the myspace page:  http://myspace.com/dj_guy  \r\n\r\nTracklisting: \r\n\r\nIntro - Beat Dominator - 2 4 6 8 Feel The Bass (Tekno Version) - Pandisc - http://www.discogs.com/release/212787\r\nDJ Nasty - Rythmalism - Motor City Electro Company - http://www.discogs.com/release/320909\r\nFacedown - Smack Dem Gutz (Dub Mix) - Bassdog Records - http://www.discogs.com/release/1435186\r\nUnknown DJ - Basstronic (Bonus Beats) - Dunk Yer Funk Records - http://www.discogs.com/release/95083\r\nGant-Man - Lets Get It Perculated - Ghetto Test - http://www.discogs.com/release/231074\r\nEsser - Forces (Reese Mix) - KMS - http://www.discogs.com/release/1097046\r\nThe Underground Track Master - 313 Let's Go - Mix Records - http://www.discogs.com/release/350067\r\nDJ Guy - Going Crazy - Global Fire - http://www.discogs.com/release/1369802\r\nDJ Puncho - Let Me C U Juke - Dance Mania - http://www.discogs.com/release/2968\r\nCrazy Caz - Work It Out - Big Boy Records - http://www.discogs.com/release/1437729\r\nThe X-Men - It's More Fun To Sample (Dub Version) - http://www.discogs.com/release/48814\r\nParris Mitchell Project - Bitches & Money - Dance Mania - http://www.discogs.com/release/228004\r\nSoul Designer - Detroit Sound - F Communications - http://www.discogs.com/release/30044\r\nAux 88 - Direct Drive - Direct Beat - http://www.discogs.com/release/31317\r\nA-Trak - Kraftwerk Break - Ammo Records - http://www.discogs.com/release/406874\r\nDebo - From Da Back - Freak Mode - http://www.discogs.com/release/151800\r\nPaul Johnson - Tic Toc - Cajual Records - http://www.discogs.com/release/2064\r\nChaos - Afrogermanic - Underground Resistance - http://www.discogs.com/release/3059\r\nEgyptian Lover - Egypt Egypt - Egyptian Empire Records - http://www.discogs.com/release/19750\r\nDJ Slugo - Cardboard Booty - Dance Mania - http://www.discogs.com/release/13970\r\nLittle Computer People - Eyes - Psi49net - http://www.discogs.com/release/10025\r\nPierre's Pfantasy Club - Dream Girl (Ralph Rosario Mix) - Mastercuts - http://www.discogs.com/release/61253\r\nDJ Flint - Bitches and Hoes - Freak Mode - http://www.discogs.com/release/62094\r\nRenegades of Rhythm - Before The Dawn (Main Mix) - North End Recordings - http://www.discogs.com/release/180257\r\nDJ Godfather - 24's - D.E.T. Only - http://www.discogs.com/release/224410\r\nDJ Godfather - Much Live - Databass Records - http://www.discogs.com/release/29990\r\nPosatronix - Shake It - Direct Beat - http://www.discogs.com/release/30028\r\nTeksoul - Chuck (Heavey Bottom Mix) - Skuzz - http://www.discogs.com/release/224240\r\nDJ Guy - Gangster (Extended Mix) - Global Fire - http://www.discogs.com/release/1369802\r\nTraxmen & Eric Martin - Hit It From The Back - Dance Mania - http://www.discogs.com/release/39117\r\nBreak FX\r\nWiley - Flyboy - Shut Your Mouth Recordings - http://www.discogs.com/release/911150\r\nRed Planet - Prayer Stick (Trans Electric) - Red Planet - http://www.discogs.com/release/12768\r\nGeorge Kranz - Trommeltanz (Din Daa Daa) - Personal Records - http://www.discogs.com/release/19669\r\nNon Stop DJs - Hydraulic Pimp - Non Stop Recordings - http://www.discogs.com/release/256093\r\nNeighbour - What I Say - Home Breakin Records - http://www.discogs.com/release/1318877\r\nX-Men - Revenge Of The X-Men - The X Files - http://www.discogs.com/release/199386\r\nAdonis - No Way Back - Trax UK - http://www.discogs.com/release/30018\r\nFade To Black - In Synch - Fragile Records - http://www.discogs.com/release/1075779\r\nLuke ft Jiggie - Take Off Your Clothes - Priority Records - http://www.discogs.com/release/533589\r\nDJ Guy - Lil Closer - Global Fire - http://www.discogs.com/release/1369802\r\nDJ Guy - Amber DJ Tools - Global Fire - http://www.discogs.com/release/1369802\r\nI.O.S. - Dance Through The Night - F.A.C.T. Records - http://www.discogs.com/release/78944\r\nDJ Godfather - Work That! (Clean) - Twilight 76 Records - http://www.discogs.com/release/25591\r\nSupply N' Demand - Updown - Supply N' Demand - http://www.discogs.com/release/518842\r\nDJ Assault - Jungle Love - Electrofunk Records - http://www.discogs.com/release/10997\r\n24-K - Don't Go There (Acapella) - MCA Soundtracks - http://www.discogs.com/release/772468\r\nDJ Guy - Don't Fuck With Me (Fuckstrumental) - Global Fire - http://www.discogs.com/release/1369802\r\nDJ Deeon - Every Day - Freak Mode - http://www.discogs.com/release/145118\r\nAaron-Carl - No No - Intuit-Solar - http://www.discogs.com/release/37041\r\nDj Assault - Disco Guitar (Remix) - Electrofunk Records - http://www.discogs.com/release/15164\r\nDJ Assault - Dis Bitch - Electrofunk Records - http://www.discogs.com/release/15166\r\nClark - Dirty Pixie - Warp Records - http://www.discogs.com/release/1172339\r\nGant-Man - Muzik Make U - Dance Mania - http://www.discogs.com/release/875738"
+      "comment": "This mix was recorded in August 2008 to promo the \"Going Crazy EP\" by DJ Guy.  \r\n\r\nDJ Guy is available for bookings globally - please get in contact via the myspace page:  http://myspace.com/dj_guy  \r\n\r\nTracklisting: \r\n\r\nIntro - Beat Dominator - 2 4 6 8 Feel The Bass (Tekno Version) - Pandisc - http://www.discogs.com/release/212787\r\nDJ Nasty - Rythmalism - Motor City Electro Company - http://www.discogs.com/release/320909\r\nFacedown - Smack Dem Gutz (Dub Mix) - Bassdog Records - http://www.discogs.com/release/1435186\r\nUnknown DJ - Basstronic (Bonus Beats) - Dunk Yer Funk Records - http://www.discogs.com/release/95083\r\nGant-Man - Lets Get It Perculated - Ghetto Test - http://www.discogs.com/release/231074\r\nEsser - Forces (Reese Mix) - KMS - http://www.discogs.com/release/1097046\r\nThe Underground Track Master - 313 Let's Go - Mix Records - http://www.discogs.com/release/350067\r\nDJ Guy - Going Crazy - Global Fire - http://www.discogs.com/release/1369802\r\nDJ Puncho - Let Me C U Juke - Dance Mania - http://www.discogs.com/release/2968\r\nCrazy Caz - Work It Out - Big Boy Records - http://www.discogs.com/release/1437729\r\nThe X-Men - It's More Fun To Sample (Dub Version) - http://www.discogs.com/release/48814\r\nParris Mitchell Project - Bitches & Money - Dance Mania - http://www.discogs.com/release/228004\r\nSoul Designer - Detroit Sound - F Communications - http://www.discogs.com/release/30044\r\nAux 88 - Direct Drive - Direct Beat - http://www.discogs.com/release/31317\r\nA-Trak - Kraftwerk Break - Ammo Records - http://www.discogs.com/release/406874\r\nDebo - From Da Back - Freak Mode - http://www.discogs.com/release/151800\r\nPaul Johnson - Tic Toc - Cajual Records - http://www.discogs.com/release/2064\r\nChaos - Afrogermanic - Underground Resistance - http://www.discogs.com/release/3059\r\nEgyptian Lover - Egypt Egypt - Egyptian Empire Records - http://www.discogs.com/release/19750\r\nDJ Slugo - Cardboard Booty - Dance Mania - http://www.discogs.com/release/13970\r\nLittle Computer People - Eyes - Psi49net - http://www.discogs.com/release/10025\r\nPierre's Pfantasy Club - Dream Girl (Ralph Rosario Mix) - Mastercuts - http://www.discogs.com/release/61253\r\nDJ Flint - Bitches and Hoes - Freak Mode - http://www.discogs.com/release/62094\r\nRenegades of Rhythm - Before The Dawn (Main Mix) - North End Recordings - http://www.discogs.com/release/180257\r\nDJ Godfather - 24's - D.E.T. Only - http://www.discogs.com/release/224410\r\nDJ Godfather - Much Live - Databass Records - http://www.discogs.com/release/29990\r\nPosatronix - Shake It - Direct Beat - http://www.discogs.com/release/30028\r\nTeksoul - Chuck (Heavey Bottom Mix) - Skuzz - http://www.discogs.com/release/224240\r\nDJ Guy - Gangster (Extended Mix) - Global Fire - http://www.discogs.com/release/1369802\r\nTraxmen & Eric Martin - Hit It From The Back - Dance Mania - http://www.discogs.com/release/39117\r\nBreak FX\r\nWiley - Flyboy - Shut Your Mouth Recordings - http://www.discogs.com/release/911150\r\nRed Planet - Prayer Stick (Trans Electric) - Red Planet - http://www.discogs.com/release/12768\r\nGeorge Kranz - Trommeltanz (Din Daa Daa) - Personal Records - http://www.discogs.com/release/19669\r\nNon Stop DJs - Hydraulic Pimp - Non Stop Recordings - http://www.discogs.com/release/256093\r\nNeighbour - What I Say - Home Breakin Records - http://www.discogs.com/release/1318877\r\nX-Men - Revenge Of The X-Men - The X Files - http://www.discogs.com/release/199386\r\nAdonis - No Way Back - Trax UK - http://www.discogs.com/release/30018\r\nFade To Black - In Synch - Fragile Records - http://www.discogs.com/release/1075779\r\nLuke ft Jiggie - Take Off Your Clothes - Priority Records - http://www.discogs.com/release/533589\r\nDJ Guy - Lil Closer - Global Fire - http://www.discogs.com/release/1369802\r\nDJ Guy - Amber DJ Tools - Global Fire - http://www.discogs.com/release/1369802\r\nI.O.S. - Dance Through The Night - F.A.C.T. Records - http://www.discogs.com/release/78944\r\nDJ Godfather - Work That! (Clean) - Twilight 76 Records - http://www.discogs.com/release/25591\r\nSupply N' Demand - Updown - Supply N' Demand - http://www.discogs.com/release/518842\r\nDJ Assault - Jungle Love - Electrofunk Records - http://www.discogs.com/release/10997\r\n24-K - Don't Go There (Acapella) - MCA Soundtracks - http://www.discogs.com/release/772468\r\nDJ Guy - Don't Fuck With Me (Fuckstrumental) - Global Fire - http://www.discogs.com/release/1369802\r\nDJ Deeon - Every Day - Freak Mode - http://www.discogs.com/release/145118\r\nAaron-Carl - No No - Intuit-Solar - http://www.discogs.com/release/37041\r\nDj Assault - Disco Guitar (Remix) - Electrofunk Records - http://www.discogs.com/release/15164\r\nDJ Assault - Dis Bitch - Electrofunk Records - http://www.discogs.com/release/15166\r\nClark - Dirty Pixie - Warp Records - http://www.discogs.com/release/1172339\r\nGant-Man - Muzik Make U - Dance Mania - http://www.discogs.com/release/875738",
+      "peaksFile": "DJ Guy - The Madness Of DJ Guy.peaks.json",
+      "coverFile": "DJ Guy - The Madness Of DJ Guy.jpg"
     },
     {
       "name": "TheMagician   MEGAMAGICTAPE2017",
@@ -318,7 +360,8 @@
           "file": "TheMagician - MEGAMAGICTAPE2017.mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "TheMagician - MEGAMAGICTAPE2017.peaks.json"
     },
     {
       "name": "UFOs_&_Heroin",
@@ -333,7 +376,8 @@
           "label": "MP3"
         }
       ],
-      "date": "2007"
+      "date": "2007",
+      "peaksFile": "UFOs___Heroin_160.peaks.json"
     },
     {
       "name": "Webcast, 02 March 2010 @ 6pm GMT",
@@ -349,46 +393,49 @@
         }
       ],
       "date": "2010",
-      "comment": "http://www.autechre.ws"
+      "comment": "http://www.autechre.ws",
+      "peaksFile": "Autechre.ws Broadcast - 02-03-2010.peaks.json"
     },
     {
-      "name": "Where It All Started   Deep House Mix 2018 by XYPO  M3HuF1t9F0",
-      "file": "Where It All Started _ Deep House Mix 2018 by XYPO-_M3HuF1t9F0",
-      "audioFile": "Where It All Started _ Deep House Mix 2018 by XYPO-_M3HuF1t9F0.mp3",
+      "name": "Where It All Started   Deep House Mix 2018 by XYPO  ",
+      "file": "Where It All Started _ Deep House Mix 2018 by XYPO-_",
+      "audioFile": "Where It All Started _ Deep House Mix 2018 by XYPO-_.mp3",
       "duration": 3445.224,
       "durationFormatted": "0:57:25",
       "artist": "Various",
       "downloads": [
         {
-          "file": "Where It All Started _ Deep House Mix 2018 by XYPO-_M3HuF1t9F0.mp3",
+          "file": "Where It All Started _ Deep House Mix 2018 by XYPO-_.mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "Where It All Started _ Deep House Mix 2018 by XYPO-_.peaks.json"
     },
     {
-      "name": "\u00c2me Boiler Room Berlin DJ Set 4qljzHND1OY",
-      "file": "\u00c2me Boiler Room Berlin DJ Set-4qljzHND1OY",
-      "audioFile": "\u00c2me Boiler Room Berlin DJ Set-4qljzHND1OY.mp3",
+      "name": "\u00c2me Boiler Room Berlin DJ Set",
+      "file": "\u00c2me Boiler Room Berlin DJ Set",
+      "audioFile": "\u00c2me Boiler Room Berlin DJ Set.mp3",
       "duration": 4076.64,
       "durationFormatted": "1:07:56",
       "artist": "Various",
       "downloads": [
         {
-          "file": "\u00c2me Boiler Room Berlin DJ Set-4qljzHND1OY.mp3",
+          "file": "\u00c2me Boiler Room Berlin DJ Set.mp3",
           "label": "MP3"
         }
-      ]
+      ],
+      "peaksFile": "\u00c2me Boiler Room Berlin DJ Set.peaks.json"
     },
     {
       "name": "\u00c3me Audi Q2 X Boiler Room",
-      "file": "\u00c3me Audi Q2 X Boiler Room #untaggable DJ Set-rAAktg5_OXo",
-      "audioFile": "\u00c3me Audi Q2 X Boiler Room #untaggable DJ Set-rAAktg5_OXo.mp3",
+      "file": "\u00c3me Audi Q2 X Boiler Room #untaggable DJ Set",
+      "audioFile": "\u00c3me Audi Q2 X Boiler Room #untaggable DJ Set.mp3",
       "duration": 3693.936,
       "durationFormatted": "1:01:33",
       "artist": "\u00c3me Audi Q2 X Boiler Room #untaggable DJ Set",
       "downloads": [
         {
-          "file": "\u00c3me Audi Q2 X Boiler Room #untaggable DJ Set-rAAktg5_OXo.mp3",
+          "file": "\u00c3me Audi Q2 X Boiler Room #untaggable DJ Set.mp3",
           "label": "MP3"
         }
       ]
