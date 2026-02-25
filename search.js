@@ -7,47 +7,47 @@ const searchIndex = {
   loading: false,
 
   async load() {
-  if (this.data) return this.data;
-  if (this.loading) {
-  // Wait for existing load to complete
-  while (this.loading) await new Promise(r => setTimeout(r, 50));
-  return this.data;
-  }
+    if (this.data) return this.data;
+    if (this.loading) {
+      // Wait for existing load to complete
+      while (this.loading) await new Promise(r => setTimeout(r, 50));
+      return this.data;
+    }
 
-  this.loading = true;
-  try {
-  const response = await fetch('mixes/search-index.json');
-  this.data = await response.json();
-  // Build Map for O(1) lookups: dj/file -> mixData
-  this.byId = new Map(this.data.map(m => [`${m.dj}/${m.file}`, m]));
-  } catch (e) {
-  console.error('Failed to load search index:', e);
-  this.data = [];
-  this.byId = new Map();
-  }
-  this.loading = false;
-  return this.data;
+    this.loading = true;
+    try {
+      const response = await fetch('mixes/search-index.json');
+      this.data = await response.json();
+      // Build Map for O(1) lookups: dj/file -> mixData
+      this.byId = new Map(this.data.map(m => [`${m.dj}/${m.file}`, m]));
+    } catch (e) {
+      console.error('Failed to load search index:', e);
+      this.data = [];
+      this.byId = new Map();
+    }
+    this.loading = false;
+    return this.data;
   },
 
   search(query) {
-  if (!this.data || !query.trim()) return [];
-  const terms = query.toLowerCase().split(/\s+/).filter(t => t.length > 0);
+    if (!this.data || !query.trim()) return [];
+    const terms = query.toLowerCase().split(/\s+/).filter(t => t.length > 0);
 
-  // Search mixes
-  const mixResults = this.data.filter(mix => {
-  const searchable = `${mix.name} ${mix.artist} ${mix.genre} ${mix.comment} ${mix.dj}`.toLowerCase();
-  return terms.every(term => searchable.includes(term));
-  }).map(m => ({ ...m, type: 'mix' }));
+    // Search mixes
+    const mixResults = this.data.filter(mix => {
+      const searchable = `${mix.name} ${mix.artist} ${mix.genre} ${mix.comment} ${mix.dj}`.toLowerCase();
+      return terms.every(term => searchable.includes(term));
+    }).map(m => ({ ...m, type: 'mix' }));
 
-  // Search live streams
-  const streamResults = (liveStreams || []).filter(stream => {
-  if (!stream.available) return false;
-  const searchable = `${stream.name} ${stream.genre || ''}`.toLowerCase();
-  return terms.every(term => searchable.includes(term));
-  }).map(s => ({ ...s, type: 'stream' }));
+    // Search live streams
+    const streamResults = (liveStreams || []).filter(stream => {
+      if (!stream.available) return false;
+      const searchable = `${stream.name} ${stream.genre || ''}`.toLowerCase();
+      return terms.every(term => searchable.includes(term));
+    }).map(s => ({ ...s, type: 'stream' }));
 
-  // Combine results (mixes first, then streams)
-  return [...mixResults, ...streamResults];
+    // Combine results (mixes first, then streams)
+    return [...mixResults, ...streamResults];
   }
 };
 
@@ -56,42 +56,42 @@ async function displayFavourites() {
   const favouriteIds = [...mixFlags._favourites];
 
   if (favouriteIds.length === 0) {
-  mixList.innerHTML = '<div style="color: #888; padding: 20px;">No favourites yet. Play a mix and click the Fav button to add it here.</div>';
-  return;
+    mixList.innerHTML = '<div style="color: #888; padding: 20px;">No favourites yet. Play a mix and click the Fav button to add it here.</div>';
+    return;
   }
 
   // Load search index to get mix metadata
   if (!searchIndex.data) {
-  mixList.innerHTML = '<div style="color: #888; padding: 20px;">Loading...</div>';
-  await searchIndex.load();
+    mixList.innerHTML = '<div style="color: #888; padding: 20px;">Loading...</div>';
+    await searchIndex.load();
   }
 
   // Build mixes from favourited IDs using search index Map (O(1) lookup)
   const mixes = [];
   for (const mixId of favouriteIds) {
-  // mixId is like "trip/mix-name" or "haze/mix-name"
-  const match = searchIndex.byId.get(mixId);
-  if (match) {
-  mixes.push({
-  name: match.name,
-  file: match.file,
-  audioFile: match.audioFile,
-  duration: match.duration,
-  artist: match.artist,
-  genre: match.genre,
-  comment: match.comment,
-  peaksFile: match.peaksFile,
-  coverFile: match.coverFile,
-  downloads: match.downloads,
-  djPath: match.dj,
-  djLabel: match.dj
-  });
-  }
+    // mixId is like "trip/mix-name" or "haze/mix-name"
+    const match = searchIndex.byId.get(mixId);
+    if (match) {
+      mixes.push({
+        name: match.name,
+        file: match.file,
+        audioFile: match.audioFile,
+        duration: match.duration,
+        artist: match.artist,
+        genre: match.genre,
+        comment: match.comment,
+        peaksFile: match.peaksFile,
+        coverFile: match.coverFile,
+        downloads: match.downloads,
+        djPath: match.dj,
+        djLabel: match.dj
+      });
+    }
   }
 
   if (mixes.length === 0) {
-  mixList.innerHTML = '<div style="color: #888; padding: 20px;">No favourites found in search index.</div>';
-  return;
+    mixList.innerHTML = '<div style="color: #888; padding: 20px;">No favourites found in search index.</div>';
+    return;
   }
 
   // Use the DJ-badged display (same as search results)
@@ -103,16 +103,16 @@ function displaySearchResults(results, query) {
   const searchInfo = document.getElementById('searchInfo');
 
   if (!query.trim()) {
-  mixList.innerHTML = '';
-  searchInfo.textContent = `${searchIndex.data?.length || 0} mixes available`;
-  return;
+    mixList.innerHTML = '';
+    searchInfo.textContent = `${searchIndex.data?.length || 0} mixes available`;
+    return;
   }
 
   searchInfo.textContent = `${results.length} result${results.length !== 1 ? 's' : ''} for "${query}"`;
 
   if (results.length === 0) {
-  mixList.innerHTML = '<div style="color: #888; padding: 20px;">No results found</div>';
-  return;
+    mixList.innerHTML = '<div style="color: #888; padding: 20px;">No results found</div>';
+    return;
   }
 
   displayMixedSearchResults(results);
@@ -128,33 +128,33 @@ function displayMixedSearchResults(results) {
   window.currentSearchResults = results;
 
   const html = results.map((item, i) => {
-  if (item.type === 'stream') {
-  // Live stream result with 📡 badge
-  const genre = item.genre ? ` · ${escapeHtml(item.genre)}` : '';
-  const streamIndex = streams.indexOf(item);
-  return `<div class="mix-item" data-search-index="${streamIndex}">
+    if (item.type === 'stream') {
+      // Live stream result with 📡 badge
+      const genre = item.genre ? ` · ${escapeHtml(item.genre)}` : '';
+      const streamIndex = streams.indexOf(item);
+      return `<div class="mix-item" data-search-index="${streamIndex}">
    <div class="mix-item-row">
    <button class="icon-btn" style="visibility: hidden; cursor: default;" disabled>+</button>
    <button class="icon-btn" data-action="search-play-stream" title="Play stream">▶</button>
    <span class="mix-name"><span style="font-size: 0.85em;">📡</span> ${escapeHtml(item.name)}${genre}</span>
    </div>
    </div>`;
-  } else {
-  // Mix result with ♪ badge
-  const mixId = `${item.dj}/${item.file}`;
-  const isFav = mixFlags.isFavourite(mixId);
-  const isHidden = mixFlags.isHidden(mixId);
-  const favIcon = isFav ? '<span class="fav-icon" title="Favourite">❤️</span>' : '';
-  const hiddenIcon = isHidden ? '<span class="hidden-icon" title="Hidden">🚫</span>' : '';
-  const genre = item.genre ? ` · ${escapeHtml(item.genre)}` : '';
-  const duration = item.duration ? `(${item.duration}${genre})` : '';
-  const hasExtra = item.comment;
-  const extraBtn = hasExtra ? `<button class="icon-btn info-btn" data-action="toggle-info" title="More info">ⓘ</button>` : '';
-  const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none"><div><strong>Notes:</strong> ${escapeHtml(item.comment)}</div></div>` : '';
-  const djLabel = item.dj ? ` - ${escapeHtml(item.dj)}` : '';
-  const mixIndex = mixes.indexOf(item);
+    } else {
+      // Mix result with ♪ badge
+      const mixId = `${item.dj}/${item.file}`;
+      const isFav = mixFlags.isFavourite(mixId);
+      const isHidden = mixFlags.isHidden(mixId);
+      const favIcon = isFav ? '<span class="fav-icon" title="Favourite">❤️</span>' : '';
+      const hiddenIcon = isHidden ? '<span class="hidden-icon" title="Hidden">🚫</span>' : '';
+      const genre = item.genre ? ` · ${escapeHtml(item.genre)}` : '';
+      const duration = item.duration ? `(${item.duration}${genre})` : '';
+      const hasExtra = item.comment;
+      const extraBtn = hasExtra ? `<button class="icon-btn info-btn" data-action="toggle-info" title="More info">ⓘ</button>` : '';
+      const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none"><div><strong>Notes:</strong> ${escapeHtml(item.comment)}</div></div>` : '';
+      const djLabel = item.dj ? ` - ${escapeHtml(item.dj)}` : '';
+      const mixIndex = mixes.indexOf(item);
 
-  return `<div class="mix-item" data-search-index="${mixIndex}">
+      return `<div class="mix-item" data-search-index="${mixIndex}">
    <div class="mix-item-row">
    <button class="icon-btn" data-action="search-queue-add" title="Add to queue">+</button>
    <button class="icon-btn" data-action="search-play-now" title="Play now">▶</button>
@@ -163,7 +163,7 @@ function displayMixedSearchResults(results) {
    </div>
    ${extraInfo}
    </div>`;
-  }
+    }
   }).join('');
 
   mixList.innerHTML = html;
@@ -171,8 +171,8 @@ function displayMixedSearchResults(results) {
 
 function displayMixListWithDJ(mixes) {
   const visibleMixes = mixes.filter(mix => {
-  const isHidden = mixFlags.isHidden(getMixId(mix));
-  return !isHidden || state.showHiddenMixes;
+    const isHidden = mixFlags.isHidden(getMixId(mix));
+    return !isHidden || state.showHiddenMixes;
   });
 
   window.currentSearchMixes = visibleMixes;
@@ -181,19 +181,19 @@ function displayMixListWithDJ(mixes) {
   const header = visibleMixes.length > 1 ? `<div class="mix-list-header"><button data-action="add-all-search-results" class="mix-list-btn" title="Add all to queue">Add All to Queue</button></div>` : '';
 
   mixList.innerHTML = header + visibleMixes.map((mix, i) => {
-  const mixId = getMixId(mix);
-  const isFav = mixFlags.isFavourite(mixId);
-  const isHidden = mixFlags.isHidden(mixId);
-  const favIcon = isFav ? '<span class="fav-icon" title="Favourite">❤️</span>' : '';
-  const hiddenIcon = isHidden ? '<span class="hidden-icon" title="Hidden">🚫</span>' : '';
-  const djSuffix = mix.djLabel ? ` - ${escapeHtml(mix.djLabel.split('/').pop())}` : '';
-  const genre = mix.genre ? ` · ${escapeHtml(mix.genre)}` : '';
-  const duration = mix.duration ? `(${mix.duration}${genre})` : '';
-  const hasExtra = mix.comment;
-  const extraBtn = hasExtra ? `<button class="icon-btn info-btn" data-action="toggle-info" title="More info">ⓘ</button>` : '';
-  const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
+    const mixId = getMixId(mix);
+    const isFav = mixFlags.isFavourite(mixId);
+    const isHidden = mixFlags.isHidden(mixId);
+    const favIcon = isFav ? '<span class="fav-icon" title="Favourite">❤️</span>' : '';
+    const hiddenIcon = isHidden ? '<span class="hidden-icon" title="Hidden">🚫</span>' : '';
+    const djSuffix = mix.djLabel ? ` - ${escapeHtml(mix.djLabel.split('/').pop())}` : '';
+    const genre = mix.genre ? ` · ${escapeHtml(mix.genre)}` : '';
+    const duration = mix.duration ? `(${mix.duration}${genre})` : '';
+    const hasExtra = mix.comment;
+    const extraBtn = hasExtra ? `<button class="icon-btn info-btn" data-action="toggle-info" title="More info">ⓘ</button>` : '';
+    const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
 
-  return `<div class="mix-item" data-search-index="${i}">
+    return `<div class="mix-item" data-search-index="${i}">
    <div class="mix-item-row">
    <button class="icon-btn" data-action="search-queue-add" title="Add to queue">+</button>
    <button class="icon-btn" data-action="search-play-now" title="Play now">▶</button>
@@ -208,16 +208,16 @@ function displayMixListWithDJ(mixes) {
 function addSearchResultToQueue(index) {
   const item = window.currentSearchMixes[index];
   if (item) {
-  const mix = { ...item, djPath: item.dj || item.djPath };
-  state.queue.push({ ...mix, queueId: generateQueueId() });
-  saveQueue();
-  displayQueue();
+    const mix = { ...item, djPath: item.dj || item.djPath };
+    state.queue.push({ ...mix, queueId: generateQueueId() });
+    saveQueue();
+    displayQueue();
   }
 }
 
 function addAllSearchResultsToQueue() {
   window.currentSearchMixes.forEach(mix => {
-  state.queue.push({ ...mix, queueId: generateQueueId() });
+    state.queue.push({ ...mix, queueId: generateQueueId() });
   });
   saveQueue();
   displayQueue();
@@ -226,24 +226,24 @@ function addAllSearchResultsToQueue() {
 async function playSearchResult(index) {
   const item = window.currentSearchMixes[index];
   if (item) {
-  // Normalize search result to have djPath
-  const mix = { ...item, djPath: item.dj || item.djPath };
+    // Normalize search result to have djPath
+    const mix = { ...item, djPath: item.dj || item.djPath };
 
-  state.previousQueueIndex = state.currentQueueIndex;
-  state.previousQueueTime = aud.currentTime;
-  state.playingFromPlayNow = true;
+    state.previousQueueIndex = state.currentQueueIndex;
+    state.previousQueueTime = aud.currentTime;
+    state.playingFromPlayNow = true;
 
-  state.queue.push({ ...mix, queueId: generateQueueId() });
-  state.currentQueueIndex = state.queue.length - 1;
-  saveQueue();
-  displayQueue();
-  await playMix(mix);
+    state.queue.push({ ...mix, queueId: generateQueueId() });
+    state.currentQueueIndex = state.queue.length - 1;
+    saveQueue();
+    displayQueue();
+    await playMix(mix);
   }
 }
 
 async function playSearchStream(index) {
   const item = window.currentSearchResults?.[index];
   if (item && item.type === 'stream') {
-  playLive(item.url, item.name, true);
+    playLive(item.url, item.name, true);
   }
 }
