@@ -151,6 +151,7 @@ def main():
     source_dir = None
     output_dir = None
     config = load_config()
+    specific_djs = []
     
     # Parse arguments
     if len(sys.argv) > 1 and sys.argv[1] == '--source':
@@ -163,16 +164,19 @@ def main():
         if not source_dir.exists():
             print(f"Error: source directory {source_dir} does not exist")
             sys.exit(1)
-    elif config and 'source_directory' in config:
-        # Use config file if no --source argument
-        source_dir = Path(config['source_directory'])
-        output_dir = Path.cwd()
-        if not source_dir.exists():
-            print(f"Error: source directory in config {source_dir} does not exist")
-            sys.exit(1)
     else:
         root_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path.cwd()
         output_dir = root_dir
+        # Any additional arguments are specific DJ folder names
+        if len(sys.argv) > 2:
+            specific_djs = sys.argv[2:]
+        
+        # Check config file (applies even when specific DJs are named)
+        if config and 'source_directory' in config:
+            source_dir = Path(config['source_directory'])
+            if not source_dir.exists():
+                print(f"Error: source directory in config {source_dir} does not exist")
+                sys.exit(1)
     
     if not output_dir.exists():
         print(f"Error: {output_dir} does not exist")
@@ -184,6 +188,14 @@ def main():
         print(f"Writing covers to: {output_dir}")
         
         all_source_dirs = [d for d in sorted(source_dir.iterdir()) if d.is_dir() and not d.name.startswith('.')]
+        
+        # Filter to specific DJs if requested
+        if specific_djs:
+            all_source_dirs = [d for d in all_source_dirs if d.name in specific_djs]
+            if not all_source_dirs:
+                print(f"Error: No matching DJ folders found for: {', '.join(specific_djs)}")
+                sys.exit(1)
+        
         main_djs = config.get('main_djs', []) if config else []
         total_extracted = 0
         total_skipped = 0
@@ -192,9 +204,11 @@ def main():
         for source_folder in all_source_dirs:
             source_name = source_folder.name
             
-            # Since output_dir (mixes/) is the base, all DJs go there directly
-            # (moreDJs will be a subdirectory within mixes/)
-            output_folder = output_dir / source_name
+            # Determine correct output path: main DJs in output_dir/, others in output_dir/moreDJs/
+            if source_name in main_djs:
+                output_folder = output_dir / source_name
+            else:
+                output_folder = output_dir / 'moreDJs' / source_name
             
             output_folder.mkdir(parents=True, exist_ok=True)
             
@@ -226,11 +240,21 @@ def main():
         return
     
     # Otherwise find and process all DJ folders
-    dj_folders = find_dj_folders(output_dir)
-    
-    if not dj_folders:
-        print("No DJ folders found")
-        sys.exit(0)
+    if specific_djs:
+        # When specific DJ names are provided, trust they exist and are DJ folders
+        dj_folders = []
+        for dj_name in specific_djs:
+            dj_path = output_dir / dj_name
+            if dj_path.exists() and dj_path.is_dir():
+                dj_folders.append(dj_path)
+            else:
+                print(f"Error: DJ folder not found: {dj_name}")
+                sys.exit(1)
+    else:
+        dj_folders = find_dj_folders(output_dir)
+        if not dj_folders:
+            print("No DJ folders found")
+            sys.exit(0)
     
     total_extracted = 0
     total_skipped = 0

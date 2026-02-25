@@ -1,5 +1,72 @@
 // browser.js - Browser, Search, Live Streams, and Page Restoration
 
+// Build DJ dropdown dynamically from search-index.json
+async function buildDJDropdown() {
+  try {
+    // Fetch main DJs list from config
+    const configResponse = await fetch('mixes/audio-source-config.json');
+    const config = configResponse.ok ? await configResponse.json() : {};
+    const mainDJs = config.main_djs || [];
+
+    // Fetch search index to extract unique DJs
+    const indexResponse = await fetch('mixes/search-index.json');
+    const searchIndex = indexResponse.ok ? await indexResponse.json() : [];
+
+    // Extract unique DJs and paths
+    const djMap = new Map();
+    searchIndex.forEach(mix => {
+      const dj = mix.dj;
+      if (dj && !djMap.has(dj)) {
+        djMap.set(dj, dj);
+      }
+    });
+
+    const djSelect = document.getElementById('djSelect');
+    if (!djSelect) return;
+
+    // Separate into main and other DJs
+    const mainDJsList = [];
+    const otherDJsList = [];
+
+    djMap.forEach((_, djPath) => {
+      const djName = djPath.split('/').pop();
+      const isMain = mainDJs.includes(djName);
+      if (isMain) {
+        mainDJsList.push({ name: djName, path: djPath });
+      } else {
+        otherDJsList.push({ name: djName, path: djPath });
+      }
+    });
+
+    // Sort alphabetically
+    mainDJsList.sort((a, b) => a.name.localeCompare(b.name));
+    otherDJsList.sort((a, b) => a.name.localeCompare(b.name));
+
+    // Build optgroups
+    let html = '';
+    
+    if (mainDJsList.length > 0) {
+      html += '<optgroup label="Featured DJs">';
+      mainDJsList.forEach(dj => {
+        html += `<option value="${dj.path}">${dj.name}</option>`;
+      });
+      html += '</optgroup>';
+    }
+
+    if (otherDJsList.length > 0) {
+      html += '<optgroup label="More DJs">';
+      otherDJsList.forEach(dj => {
+        html += `<option value="${dj.path}">${dj.name}</option>`;
+      });
+      html += '</optgroup>';
+    }
+
+    djSelect.innerHTML = html;
+  } catch (e) {
+    console.error('Error building DJ dropdown:', e);
+  }
+}
+
 // State setters - keep state and UI in sync
 async function setCurrentDJ(djPath) {
   state.currentDJ = djPath;

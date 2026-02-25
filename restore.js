@@ -114,6 +114,9 @@ document.getElementById('fileInput').addEventListener('change', async function (
   console.error('Error restoring player:', e);
   }
 
+  // Build DJ dropdown dynamically
+  await buildDJDropdown();
+  
   // Restore browser mode for non-live restoration
   const savedBrowserMode = storage.get('browserMode', 'dj');
   browserModes.switch(savedBrowserMode);

@@ -126,8 +126,9 @@
 
 ### manifest.json (per DJ folder)
 - **Purpose**: List of tracks, cover art, metadata for each DJ
-- **Location**: `trip/`, `izmar/`, `aboo/`, `jx3p/`, `gmanual/`, `haze/`, `rpfr/`, `moreDJs/*/`
+- **Location**: `mixes/trip/`, `mixes/izmar/`, `mixes/aboo/`, `mixes/jx3p/`, `mixes/gmanual/`, `mixes/haze/`, `mixes/rpfr/` (main DJs), or `mixes/moreDJs/*/` (additional DJs)
 - **Format**: JSON with track metadata
+- **Note**: Two-level directory structure is intentional. Main DJs go in `mixes/`, others go in `mixes/moreDJs/`
 
 ### .tracks.txt (per DJ folder)
 - **Purpose**: Human-readable track list with timestamps
@@ -160,31 +161,85 @@
 
 ## Python Scripts
 
-### generate-covers.py
-- **Purpose**: Extract embedded cover art from audio files
-- **Run**: After adding new audio files
-- **Output**: Cover images in DJ folders
+⚠️ **IMPORTANT**: These scripts can take **many hours** to run on the entire collection (7-10+ hours). You almost never want to process all folders. **Only process newly added DJ folders** to keep runtime manageable.
 
-### generate-manifest.py
-- **Purpose**: Regenerate `manifest.json` in each DJ folder
+### Audio Source Configuration
+
+Audio files are stored separately from the generated metadata (manifests, peaks, etc.). Their location is defined in `mixes/audio-source-config.json`:
+
+```json
+{
+  "source_directory": "/path/to/audio/mixes",
+  "main_djs": ["trip", "haze", "izmar", ...]
+}
+```
+
+The scripts automatically read this config and process audio from the source directory, writing generated artifacts (manifest.json, .peaks.json, etc.) to the local DJ folders.
+
+### Understanding DJ Folder Structure
+
+**All generate scripts process BOTH directory levels:**
+- `mixes/` — Main DJ folders (trip, haze, izmar, rpfr, aboo, jx3p, gmanual)
+- `mixes/moreDJs/` — Additional DJ folders (estimulo, claptone, Mushroom Boyz, Various, etc.)
+
+This two-level structure is **intentional** and has meaning for the JavaScript apps. **Do NOT move folders between these directories.**
+
+### Usage
+
+**Process specific DJ folders only** (RECOMMENDED):
+```bash
+# Process only newly added folders (manifest goes to correct location: mixes/ or mixes/moreDJs/)
+python3 tools/generate-manifest.py mixes "Mushroom Boyz" Various
+python3 tools/generate-covers.py mixes "Mushroom Boyz" Various
+python3 tools/generate-peaks.py mixes "Mushroom Boyz" Various
+cd mixes && python3 ../tools/generate-search-index.py .
+```
+
+**Process all folders** (NOT recommended - takes 7-10+ hours):
+```bash
+python3 tools/generate-manifest.py .
+python3 tools/generate-covers.py .
+python3 tools/generate-peaks.py .
+python3 tools/generate-search-index.py
+```
+
+**Override audio source location** (if needed):
+```bash
+python3 tools/generate-manifest.py --source /alternate/audio/path .
+```
+
+### Individual Scripts
+
+#### generate-covers.py
+- **Purpose**: Extract embedded cover art images from audio files
+- **Input**: Reads audio from `source_directory` (defined in config)
+- **Output**: `.jpg`, `.png`, `.bmp`, `.gif` files in DJ folders
+- **Run**: Once when adding new DJ folders or to extract covers from newly added audio
+- **Performance**: Fast (image extraction is quick)
+
+#### generate-manifest.py
+- **Purpose**: Regenerate `manifest.json` in each DJ folder with track metadata
+- **Input**: Audio file metadata (title, duration, artist, etc.)
+- **Output**: `manifest.json` with list of mixes and their properties
 - **Run**: After adding/updating audio files
-- **Output**: `manifest.json` files with track metadata
+- **Performance**: Medium (metadata extraction via ffprobe)
 
-### generate-peaks.py
-- **Purpose**: Generate `.peaks.json` waveform data
+#### generate-peaks.py
+- **Purpose**: Generate `.peaks.json` waveform data for audio visualization
+- **Input**: Audio files (reads raw samples via ffmpeg)
+- **Output**: `.peaks.json` with normalized waveform data (4000 samples per mix)
 - **Run**: After adding audio files
-- **Output**: `.peaks.json` in DJ folders
+- **Performance**: SLOW - This is the bottleneck. Can take 2-3 seconds per mix.
+- **Note**: Skips if `.peaks.json` already exists
 
-### generate-search-index.py
-- **Purpose**: Regenerate `search-index.json`
-- **Run**: After manifest changes
-- **Output**: `search-index.json` (search index)
+#### generate-search-index.py
+- **Purpose**: Regenerate `search-index.json` for search functionality
+- **Input**: All `manifest.json` files
+- **Output**: `search-index.json` (consolidated search index)
+- **Run**: After any manifest changes
+- **Performance**: Fast (reads existing manifests, no audio processing)
 
-### extract-tracklists.py
-- **Purpose**: One-time migration tool
-- **Task**: Extract track lists from legacy HTML to `.tracks.txt` CSV
-
-### fix-metadata.py
+#### fix-metadata.py
 - **Purpose**: Metadata cleanup and validation
 - **Run**: As needed for data corrections
 
@@ -305,13 +360,18 @@ player.html adds: mixes.js → queue.js → player-mix.js → browser.js → sea
 
 ## Development Workflow
 
-1. **Add Audio Files**: Place MP3s in DJ folder (e.g., `trip/`)
-2. **Generate Metadata**: Run `python3 generate-manifest.py`
-3. **Extract Covers**: Run `python3 generate-covers.py`
-4. **Generate Waveforms**: Run `python3 generate-peaks.py`
-5. **Update Search**: Run `python3 generate-search-index.py`
-6. **Test**: Load `player.html` or `live.html` in browser
-7. **Deploy**: Push to git, deploy to server
+1. **Add DJ Folder**: Create new folder under `mixes/` (main DJs) or `mixes/moreDJs/` (additional DJs). Keep it in the appropriate directory — **do not move between directories**.
+2. **Generate Metadata** (specific folders only):
+   - `python3 tools/generate-manifest.py . "NewDJ"`
+   - `python3 tools/generate-covers.py . "NewDJ"`
+   - `python3 tools/generate-peaks.py . "NewDJ"`
+3. **Update Search Index**: `python3 tools/generate-search-index.py` (automatically scans both `mixes/` and `mixes/moreDJs/`, runs on all manifests)
+4. **Test**: Load `player.html` or `live.html` in browser
+5. **Commit & Deploy**: Push to git, deploy to server
+
+⚠️ **Performance Tip**: By passing DJ folder names to the scripts, you only process new content. Processing the entire collection takes 7-10+ hours.
+
+⚠️ **Directory Structure**: The two-level structure (`mixes/` and `mixes/moreDJs/`) is intentional and has meaning for the JavaScript apps. All generate scripts understand both levels. Do not move folders between directories.
 
 ---
 
