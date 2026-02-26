@@ -4,6 +4,7 @@
 *.wav
 *.opus
 *.peaks.json
+manifest.json
 *.mediaartlocal
 *.jpg
 *.png
