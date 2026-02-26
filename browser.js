@@ -70,7 +70,9 @@ async function buildDJDropdown() {
 // State setters - keep state and UI in sync
 async function setCurrentDJ(djPath) {
   state.currentDJ = djPath;
-  storage.set('currentDJ', djPath);
+  // Store DJ separately for each mode: 'dj' uses currentDJ (backwards compatible), 'all' uses currentDJ_all
+  const storageKey = browserModes.current === 'all' ? 'currentDJ_all' : 'currentDJ';
+  storage.set(storageKey, djPath);
   state.currentMixes = await fetchDJMixes(djPath);
   state.currentFilter = '';
   state.currentGroups = detectGroups(state.currentMixes);
@@ -277,7 +279,7 @@ const browserModes = {
       groupFilters.innerHTML = '';
       mixList.innerHTML = '';
       
-      // Restore DJ mode state
+      // Restore DJ mode state (uses currentDJ key for backwards compatibility)
       const savedDJ = storage.get('currentDJ');
       if (savedDJ) {
         await setCurrentDJ(savedDJ);
@@ -293,8 +295,8 @@ const browserModes = {
       groupFilters.innerHTML = '';
       mixList.innerHTML = '';
       
-      // Restore 'all' mode state
-      const savedDJ = storage.get('currentDJ');
+      // Restore 'all' mode state (uses currentDJ_all key for mode-specific storage)
+      const savedDJ = storage.get('currentDJ_all');
       if (savedDJ) {
         const djSelect = document.getElementById('djSelect');
         if (djSelect) {
