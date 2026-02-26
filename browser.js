@@ -253,7 +253,7 @@ document.getElementById('mixList').addEventListener('click', (e) => {
 
 // Browser modes coordinator
 const browserModes = {
-  current: 'dj',
+  current: null,
   
   async switch(mode) {
     if (mode === this.current) return;
