@@ -118,45 +118,7 @@ document.getElementById('fileInput').addEventListener('change', async function (
   await buildDJDropdown();
 
   // Restore browser mode for non-live restoration
+  // browserModes.switch() handles all mode-specific state restoration
   const savedBrowserMode = storage.get('browserMode', 'dj');
-  browserModes.switch(savedBrowserMode);
-
-  // Restore mode-specific state (defer to ensure DOM is updated)
-  setTimeout(async () => {
-    if (savedBrowserMode === 'dj') {
-      const savedDJ = storage.get('currentDJ');
-      if (savedDJ) {
-        await setCurrentDJ(savedDJ);
-        const savedFilter = storage.get('currentFilter', '');
-        if (savedFilter) {
-          applyFilter(savedFilter);
-        }
-      }
-    } else if (savedBrowserMode === 'all') {
-      const savedDJ = storage.get('currentDJ');
-      if (savedDJ) {
-        const djSelect = document.getElementById('djSelect');
-        if (djSelect) {
-          djSelect.value = savedDJ;
-        }
-        // Load mixes for the selected DJ without DJ-mode-specific UI updates
-        state.currentDJ = savedDJ;
-        state.currentMixes = await fetchDJMixes(savedDJ);
-        displayMixList(state.currentMixes);
-      }
-    } else if (savedBrowserMode === 'search') {
-      const savedQuery = storage.get('lastSearchQuery', '');
-      if (savedQuery) {
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-          searchInput.value = savedQuery;
-          // Wait for search index to be loaded
-          if (searchIndex && searchIndex.data) {
-            const results = searchIndex.search(savedQuery);
-            displaySearchResults(results, savedQuery);
-          }
-        }
-      }
-    }
-  }, 100);
+  await browserModes.switch(savedBrowserMode);
 })();

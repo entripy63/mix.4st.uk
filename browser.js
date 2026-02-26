@@ -253,7 +253,7 @@ document.getElementById('mixList').addEventListener('click', (e) => {
 const browserModes = {
   current: 'dj',
   
-  switch(mode) {
+  async switch(mode) {
     if (mode === this.current) return;
     this.current = mode;
     storage.set('browserMode', mode);
@@ -276,13 +276,35 @@ const browserModes = {
       searchBox.style.display = 'none';
       groupFilters.innerHTML = '';
       mixList.innerHTML = '';
+      
+      // Restore DJ mode state
+      const savedDJ = storage.get('currentDJ');
+      if (savedDJ) {
+        await setCurrentDJ(savedDJ);
+        const savedFilter = storage.get('currentFilter', '');
+        if (savedFilter) {
+          applyFilter(savedFilter);
+        }
+      }
     } else if (mode === 'all') {
       djButtons.style.display = 'none';
       djDropdown.style.display = 'block';
       searchBox.style.display = 'none';
       groupFilters.innerHTML = '';
       mixList.innerHTML = '';
-      document.getElementById('djSelect').value = '';
+      
+      // Restore 'all' mode state
+      const savedDJ = storage.get('currentDJ');
+      if (savedDJ) {
+        const djSelect = document.getElementById('djSelect');
+        if (djSelect) {
+          djSelect.value = savedDJ;
+        }
+        // Load mixes for the selected DJ without DJ-mode-specific UI updates
+        state.currentDJ = savedDJ;
+        state.currentMixes = await fetchDJMixes(savedDJ);
+        displayMixList(state.currentMixes);
+      }
     } else if (mode === 'search') {
       djButtons.style.display = 'none';
       djDropdown.style.display = 'none';
