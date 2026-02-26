@@ -68,9 +68,10 @@
 
 ## Python Scripts
 ⚠️ **Performance Tip**: By passing DJ folder names to the scripts, you only process new content. Processing the entire collection takes 7-10+ hours.
+Generate covers and peaks before manifest so it can reference them.
 - `generate-covers.py` - Run after adding audio files to extract embedded cover art images
-- `generate-manifest.py` - Run after adding/updating audio files to regenerate `manifest.json` in each DJ folder
 - `generate-peaks.py` - Run after adding audio files to generate `.peaks.json` waveform data
+- `generate-manifest.py` - Run after adding/updating audio files to regenerate `manifest.json` in each DJ folder
 - `generate-search-index.py` - Run after manifest changes to regenerate `search-index.json` for search mode
 
 ## Important Design Principles
