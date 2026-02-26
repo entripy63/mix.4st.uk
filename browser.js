@@ -378,7 +378,7 @@ document.getElementById('searchInput').addEventListener('input', function() {
 
 // Keyboard shortcuts - use capture to intercept Space early
 window.addEventListener('keydown', function(e) {
-  if (e.code === 'Space' && e.target.id !== 'searchInput') {
+  if (e.code === 'Space' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) && !e.target.isContentEditable) {
     e.preventDefault();
     e.stopPropagation();
     playPauseBtn.click();
