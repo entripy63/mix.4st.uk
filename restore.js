@@ -132,6 +132,18 @@ document.getElementById('fileInput').addEventListener('change', async function (
           applyFilter(savedFilter);
         }
       }
+    } else if (savedBrowserMode === 'all') {
+      const savedDJ = storage.get('currentDJ');
+      if (savedDJ) {
+        const djSelect = document.getElementById('djSelect');
+        if (djSelect) {
+          djSelect.value = savedDJ;
+        }
+        // Load mixes for the selected DJ without DJ-mode-specific UI updates
+        state.currentDJ = savedDJ;
+        state.currentMixes = await fetchDJMixes(savedDJ);
+        displayMixList(state.currentMixes);
+      }
     } else if (savedBrowserMode === 'search') {
       const savedQuery = storage.get('lastSearchQuery', '');
       if (savedQuery) {
