@@ -1,0 +1,56 @@
+{
+  "name": "24-7 Niche Radio",
+  "category": "other",
+  "streams": [
+    {
+      "name": "24-7 Motown",
+      "m3u": "https://antares.dribbcast.com/proxy/s8110/stream",
+      "genre": null
+    },
+    {
+      "name": "24-7 Disco",
+      "m3u": "https://antares.dribbcast.com/proxy/s8190/stream",
+      "genre": "Disco"
+    },
+    {
+      "name": "24-7 Reggae",
+      "m3u": "https://antares.dribbcast.com/proxy/s8200/stream",
+      "genre": "Reggae"
+    },
+    {
+      "name": "24-7 Northern Soul",
+      "m3u": "https://antares.dribbcast.com/proxy/s8230/stream",
+      "genre": "Soul"
+    },
+    {
+      "name": "24-7 Soul",
+      "m3u": "https://antares.dribbcast.com/proxy/s8300/stream",
+      "genre": "Soul"
+    },
+    {
+      "name": "24-7 Smooth Jazz",
+      "m3u": "https://antares.dribbcast.com/proxy/s8280/stream",
+      "genre": "Jazz"
+    },
+    {
+      "name": "24-7 The '60s",
+      "m3u": "https://antares.dribbcast.com/proxy/s8220/stream",
+      "genre": null
+    },
+    {
+      "name": "24-7 The '70s",
+      "m3u": "https://antares.dribbcast.com/proxy/s8260/stream",
+      "genre": null
+    },
+    {
+      "name": "24-7 The '80s",
+      "m3u": "https://antares.dribbcast.com/proxy/s8270/stream",
+      "genre": null
+    },
+    {
+      "name": "24-7 Decades",
+      "m3u": "https://antares.dribbcast.com/proxy/s8120/stream",
+      "genre": null
+    }
+  ]
+}

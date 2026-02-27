@@ -1,12 +1,40 @@
 {
   "name": "House",
   "category": "genre",
-  "version": 1,
-  "savedAt": "2026-02-19T11:15:01.064Z",
   "streams": [
+    {
+      "name": "hearMe.FM Glenn Cooper",
+      "m3u": "https://radio.hearme.fm:8170/stream",
+      "genre": "House, Deep House, Soulful House, Tech House"
+    },
+    {
+      "name": "hearMe.FM Strictly House",
+      "m3u": "https://radio.hearme.fm:8020/stream",
+      "genre": "House, Deep House, Soulful House, Tech House"
+    },
+    {
+      "name": "hearMe.FM House",
+      "m3u": "https://radio.hearme.fm:8060/stream",
+      "genre": "House"
+    },
+    {
+      "name": "House Nation UK",
+      "m3u": "https://streaming.radio.co/s06bd9d805/listen",
+      "genre": "House"
+    },
+    {
+      "name": "House Music Radio",
+      "m3u": "https://uk4-vn.mixstream.net/:8128/listen.mp3",
+      "genre": "House"
+    },
     {
       "name": "House Music Radio | UK",
       "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=1660302",
+      "genre": "House"
+    },
+    {
+      "name": "House.FM",
+      "m3u": "https://uksoutha.streaming.broadcast.radio:19920/housefm",
       "genre": "House"
     },
     {

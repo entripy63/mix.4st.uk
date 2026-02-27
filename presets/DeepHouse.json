@@ -1,8 +1,6 @@
 {
   "name": "Deep House",
   "category": "genre",
-  "version": 1,
-  "savedAt": "2026-02-18T12:03:00.977Z",
   "streams": [
     {
       "name": "Deep House Radio - Bucharest - Romania",
@@ -33,6 +31,16 @@
       "name": "Radio Viva ",
       "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99623706",
       "genre": " Deep House and Dance music"
+    },
+    {
+      "name": "hearMe.FM Deep House",
+      "m3u": "https://radio.hearme.fm:8170/stream",
+      "genre": "Deep House"
+    },
+    {
+      "name": "hearMe.FM Deep Progressive House",
+      "m3u": "https://radio.hearme.fm:8420/stream",
+      "genre": "Deep Progressive House"
     }
   ]
 }
