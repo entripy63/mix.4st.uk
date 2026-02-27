@@ -106,6 +106,7 @@ function displayLiveStreams() {
     const unavailableClass = stream.available ? '' : ' unavailable';
     const tooltip = stream.available ? 'Play Now' : (stream.reason || 'Unavailable');
     const disabled = stream.available ? '' : ' disabled';
+    const isCurrentStream = state.isLive && state.liveStreamM3u === stream.m3u;
     const deleteBtn = `<button class="delete-btn" onclick="handleRemoveStream(${index})" title="Remove stream">✕</button>`;
     const infoBtn = `<button class="icon-btn info-btn" data-action="toggle-stream-info" title="More info">ⓘ</button>`;
     const infoPopout = `<div class="stream-extra-info" style="display:none">
@@ -132,8 +133,8 @@ function displayLiveStreams() {
         <div class="mix-item-row"
              ondragover="onLiveStreamDragOver(event)"
              ondrop="onLiveStreamDrop(event, ${index})">
-          ${deleteBtn}
-          <div class="stream-info">
+           ${isCurrentStream ? '<span style="width: 24px;"></span>' : deleteBtn}
+           <div class="stream-info">
             <span class="mix-name">${escapeHtml(stream.name)}</span>
             ${stream.genre && stream.genre !== 'Unknown' ? `<span class="stream-genre">${escapeHtml(stream.genre)}</span>` : ''}
           </div>
