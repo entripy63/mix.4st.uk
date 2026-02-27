@@ -48,15 +48,16 @@ function displayQueue() {
   queueDiv.innerHTML = queueInfo + header + state.queue.map((mix, i) => {
     const djName = mix.artist || getDJName(mix.htmlPath || mix.djPath);
     const djSuffix = mix.isLocal ? '' : ` - ${escapeHtml(djName)}`;
+    const deleteBtn = `<button class="delete-btn" onclick="removeFromQueue(${i})" title="Remove from queue">✕</button>`;
     return `<div class="queue-item${i === state.currentQueueIndex ? ' current' : ''}" 
           draggable="true" 
           ondragstart="onDragStart(event, ${i})" 
           ondragover="onDragOver(event)" 
           ondrop="onDrop(event, ${i})"
           ondragend="onDragEnd()">
-        <span class="drag-handle">☰</span>
-        <span class="mix-name" onclick="playFromQueue(${i})">${escapeHtml(mix.name)}${djSuffix}</span>
-        ${i !== state.currentQueueIndex ? `<button class="delete-btn" onclick="removeFromQueue(${i})">✕</button>` : ''}
+        ${i !== state.currentQueueIndex ? deleteBtn : '<span style="width: 24px;"></span>'}
+        <span class="mix-name">${escapeHtml(mix.name)}${djSuffix}</span>
+        <button class="icon-btn" onclick="playFromQueue(${i})" title="Play Now">▶</button>
       </div>`;
   }).join('');
 }
