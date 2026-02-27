@@ -132,12 +132,12 @@ function displayLiveStreams() {
         <div class="mix-item-row"
              ondragover="onLiveStreamDragOver(event)"
              ondrop="onLiveStreamDrop(event, ${index})">
-          <button class="icon-btn" onclick="playLiveStream(${index})"${disabled} title="${escapeHtml(tooltip)}">▶</button>
+          ${deleteBtn}
           <div class="stream-info">
             <span class="mix-name">${escapeHtml(stream.name)}</span>
             ${stream.genre && stream.genre !== 'Unknown' ? `<span class="stream-genre">${escapeHtml(stream.genre)}</span>` : ''}
           </div>
-          ${infoBtn}${deleteBtn}
+          ${infoBtn}<button class="icon-btn" onclick="playLiveStream(${index})"${disabled} title="${escapeHtml(tooltip)}">▶</button>
         </div>
         ${infoPopout}
       </div>
