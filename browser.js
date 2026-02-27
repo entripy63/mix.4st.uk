@@ -215,6 +215,19 @@ document.getElementById('mixList').addEventListener('click', (e) => {
        case 'add-all-search-results':
           addAllSearchResultsToQueue();
           break;
+       case 'preset-play-now': {
+          const presetIndex = actionBtn.closest('.mix-item')?.dataset.presetStreamIndex;
+          if (presetIndex !== undefined) playPresetStream(parseInt(presetIndex));
+          break;
+       }
+       case 'preset-add-stream': {
+          const presetIndex = actionBtn.closest('.mix-item')?.dataset.presetStreamIndex;
+          if (presetIndex !== undefined) addPresetStreamToUserStreams(parseInt(presetIndex));
+          break;
+       }
+       case 'preset-add-all':
+          addAllPresetStreamsToUserStreams();
+          break;
     }
     });
 
@@ -270,7 +283,9 @@ const browserModes = {
     const groupFilters = document.getElementById('groupFilters');
     const mixList = document.getElementById('mixList');
     
-    document.querySelector('.findPlaylistsBtnContainer').style.display = 'none';
+    const presetDropdown = document.getElementById('presetDropdown');
+    if (presetDropdown) presetDropdown.style.display = 'none';
+    groupFilters.style.display = '';
     
     if (mode === 'dj') {
       djButtons.style.display = 'flex';
@@ -345,8 +360,25 @@ const browserModes = {
       searchBox.style.display = 'none';
       groupFilters.innerHTML = '';
       groupFilters.style.display = 'none';
-      document.querySelector('.findPlaylistsBtnContainer').style.display = 'flex';
-      displayLiveStreams();
+      if (presetDropdown) {
+        presetDropdown.style.display = 'block';
+        await buildPresetDropdown();
+        // Restore last selected preset
+        const savedPreset = storage.get('currentPreset');
+        const presetSelect = document.getElementById('presetSelect');
+        if (savedPreset && presetSelect) {
+          presetSelect.value = savedPreset;
+          const presets = await getPresets();
+          const preset = presets[parseInt(savedPreset)];
+          if (preset) {
+            displayPresetStreams(preset);
+          } else {
+            mixList.innerHTML = '<div style="padding: 20px; color: #888;">Select a preset to browse streams</div>';
+          }
+        } else {
+          mixList.innerHTML = '<div style="padding: 20px; color: #888;">Select a preset to browse streams</div>';
+        }
+      }
     }
   }
 };
@@ -358,6 +390,20 @@ document.querySelectorAll('.mode-btn').forEach(btn => {
 document.getElementById('djSelect').addEventListener('change', function() {
   if (this.value) {
     loadDJ(this.value);
+  }
+});
+
+document.getElementById('presetSelect')?.addEventListener('change', async function() {
+  if (this.value === '') {
+    document.getElementById('mixList').innerHTML = '<div style="padding: 20px; color: #888;">Select a preset to browse streams</div>';
+    storage.remove('currentPreset');
+    return;
+  }
+  const presets = await getPresets();
+  const preset = presets[parseInt(this.value)];
+  if (preset) {
+    storage.set('currentPreset', this.value);
+    displayPresetStreams(preset);
   }
 });
 

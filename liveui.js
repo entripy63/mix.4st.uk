@@ -4,9 +4,43 @@
 //               livedata.js (stream management, probing, parsing)
 //               modals.js (showPlaylistGuide, hidePlaylistGuide, showPresetsMenu, hidePresetsMenu)
 
-// Guard: only redisplay streams if on Live tab (or on live.html which has no browserModes)
+// ========== TARGET ELEMENT HELPERS ==========
+
+// Get the target element for user stream rendering
+// player.html: #userStreamsList (middle column tab)
+// live.html: #mixList (main stream column)
+function getStreamListTarget() {
+  return document.getElementById('userStreamsList') || document.getElementById('mixList');
+}
+
+// Guard: check if user streams are currently visible and should be redisplayed
 function shouldRedisplayStreams() {
-  return typeof browserModes === 'undefined' || browserModes.current === 'live';
+  // live.html: always redisplay (no tabs/modes)
+  if (typeof browserModes === 'undefined') return true;
+  // player.html: redisplay if User Streams tab is visible
+  return document.getElementById('userStreamsTab')?.style.display !== 'none';
+}
+
+// ========== MIDDLE COLUMN TAB SWITCHING ==========
+
+function switchMiddleTab(tab) {
+  const queueTab = document.getElementById('queueTab');
+  const userStreamsTab = document.getElementById('userStreamsTab');
+  if (!queueTab || !userStreamsTab) return; // Not on player.html
+
+  queueTab.style.display = tab === 'queue' ? '' : 'none';
+  userStreamsTab.style.display = tab === 'userStreams' ? '' : 'none';
+
+  document.querySelectorAll('.middle-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
+
+  storage.set('middleTab', tab);
+
+  // If switching to user streams, ensure they're displayed
+  if (tab === 'userStreams') {
+    displayLiveStreams();
+  }
 }
 
 // ========== PRESET CATEGORY BUTTONS ==========
@@ -28,10 +62,10 @@ async function renderPresetButtons(container) {
 // ========== LIVE STREAM DISPLAY ==========
 
 function displayLiveStreams() {
-  const mixList = document.getElementById('mixList');
+  const target = getStreamListTarget();
   
   if (!liveStreamsInitialized) {
-    mixList.innerHTML = '<div style="padding: 20px; color: #888;">Checking stream availability...</div>';
+    target.innerHTML = '<div style="padding: 20px; color: #888;">Checking stream availability...</div>';
     // Always pass callback - checks shouldRedisplayStreams at invocation time
     const config = {
       shouldRedisplayAfterProbe: shouldRedisplayStreams
@@ -63,7 +97,7 @@ function displayLiveStreams() {
   
   if (liveStreams.length === 0) {
     html += '<div style="padding: 20px; color: #888;">No live streams configured</div>';
-    mixList.innerHTML = html;
+    target.innerHTML = html;
     return;
   }
   
@@ -110,7 +144,7 @@ function displayLiveStreams() {
     `;
   });
   
-  mixList.innerHTML = html;
+  target.innerHTML = html;
 }
 
 function toggleStreamInfo(btn) {
@@ -327,10 +361,171 @@ async function addStreamsFromPreset(preset) {
     showToast(`Added ${added} stream${added !== 1 ? 's' : ''}${skipped > 0 ? `, skipped ${skipped} duplicate${skipped !== 1 ? 's' : ''}` : ''}`);
 }
 
+// ========== PRESET BROWSER (for browser Live mode) ==========
+
+let _presetCache = null;
+
+async function getPresets() {
+  if (!_presetCache) {
+    _presetCache = await loadAvailablePresets();
+  }
+  return _presetCache;
+}
+
+async function buildPresetDropdown() {
+  const presetSelect = document.getElementById('presetSelect');
+  if (!presetSelect) return;
+
+  const presets = await getPresets();
+
+  // Group by category
+  const grouped = {};
+  presets.forEach((preset, index) => {
+    const cat = preset.category || 'other';
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push({ preset, index });
+  });
+
+  const categoryOrder = Object.keys(grouped).sort((a, b) => {
+    if (a === 'genre') return -1;
+    if (b === 'genre') return 1;
+    return a.localeCompare(b);
+  });
+
+  let html = '<option value="">Select a preset...</option>';
+  for (const category of categoryOrder) {
+    const label = category.charAt(0).toUpperCase() + category.slice(1);
+    html += `<optgroup label="${escapeHtml(label)}">`;
+    for (const { preset, index } of grouped[category]) {
+      html += `<option value="${index}">${escapeHtml(preset.name)}</option>`;
+    }
+    html += '</optgroup>';
+  }
+
+  presetSelect.innerHTML = html;
+}
+
+function displayPresetStreams(preset) {
+  const mixList = document.getElementById('mixList');
+  if (!mixList) return;
+
+  window._currentBrowsedPreset = preset;
+
+  if (!preset || !preset.streams || preset.streams.length === 0) {
+    mixList.innerHTML = '<div style="padding: 20px; color: #888;">No streams in this preset</div>';
+    return;
+  }
+
+  const header = preset.streams.length > 1
+    ? '<div class="mix-list-header"><button data-action="preset-add-all" class="mix-list-btn" title="Add all to user streams">Add All to User Streams</button></div>'
+    : '';
+
+  mixList.innerHTML = header + preset.streams.map((stream, i) => {
+    const genre = stream.genre ? `<span class="stream-genre">${escapeHtml(stream.genre)}</span>` : '';
+    return `<div class="mix-item" data-preset-stream-index="${i}">
+      <div class="mix-item-row">
+        <button class="icon-btn" data-action="preset-add-stream" title="Add to user streams">+</button>
+        <button class="icon-btn" data-action="preset-play-now" title="Play now">▶</button>
+        <div class="stream-info">
+          <span class="mix-name">${escapeHtml(stream.name || stream.m3u)}</span>
+          ${genre}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function playPresetStream(index) {
+  const preset = window._currentBrowsedPreset;
+  if (!preset || !preset.streams[index]) return;
+
+  const stream = preset.streams[index];
+  const name = stream.name || stream.m3u;
+
+  showToast('Connecting to stream...');
+
+  // Resolve stream URL (probe without persisting to user streams)
+  const audioExtensions = ['.mp3', '.aac', '.flac', '.wav', '.ogg', '.opus', '.m4a'];
+  const isDirectAudio = audioExtensions.some(ext => stream.m3u.toLowerCase().endsWith(ext));
+
+  let entries;
+  if (isDirectAudio) {
+    entries = [{ url: stream.m3u, title: null }];
+  } else {
+    entries = await fetchPlaylist(stream.m3u);
+    if (entries.length === 0) {
+      entries = [{ url: stream.m3u, title: null }];
+    }
+  }
+
+  let resolvedUrl = null;
+  for (const entry of entries) {
+    if (await probeStream(entry.url)) {
+      resolvedUrl = entry.url;
+      break;
+    }
+    // Try with ; suffix for Shoutcast
+    let urlWithSemicolon = entry.url;
+    if (!urlWithSemicolon.endsWith('/')) urlWithSemicolon += '/';
+    urlWithSemicolon += ';';
+    if (await probeStream(urlWithSemicolon)) {
+      resolvedUrl = urlWithSemicolon;
+      break;
+    }
+    // Try proxy for http on https page
+    if (entry.url.startsWith('http://') && location.protocol === 'https:' && !isRawIPURL(entry.url)) {
+      const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(entry.url)}`;
+      if (await probeStream(proxyUrl)) {
+        resolvedUrl = proxyUrl;
+        break;
+      }
+    }
+  }
+
+  if (!resolvedUrl) {
+    showToast('Stream unavailable');
+    return;
+  }
+
+  state.isLive = true;
+  state.liveStreamUrl = resolvedUrl;
+  state.liveStreamM3u = stream.m3u;
+  state.liveDisplayText = name;
+  storage.set('liveStreamUrl', resolvedUrl);
+  storage.set('liveStreamM3u', stream.m3u);
+  storage.set('liveDisplayText', name);
+
+  playLive(resolvedUrl, name, true);
+}
+
+async function addPresetStreamToUserStreams(index) {
+  const preset = window._currentBrowsedPreset;
+  if (!preset || !preset.streams[index]) return;
+
+  const stream = preset.streams[index];
+  const currentStreams = getUserStreams();
+  if (currentStreams.some(s => s.m3u === stream.m3u)) {
+    showToast('Stream already in user streams');
+    return;
+  }
+
+  await addUserStream(stream.name || null, stream.m3u, stream.genre || null);
+  switchMiddleTab('userStreams');
+  showToast(`Added ${stream.name || 'stream'}`);
+}
+
+async function addAllPresetStreamsToUserStreams() {
+  const preset = window._currentBrowsedPreset;
+  if (!preset) return;
+
+  await addStreamsFromPreset(preset);
+  switchMiddleTab('userStreams');
+}
+
 // ========== EVENT HANDLERS FOR DELEGATED ACTIONS ==========
 
-// Delegated event handler for stream list buttons (live.html only)
-const streamListElement = document.getElementById('mixList');
+// Delegated event handler for user stream list (targets #userStreamsList on player.html, #mixList on live.html)
+const streamListElement = getStreamListTarget();
 if (streamListElement) {
      streamListElement.addEventListener('click', (e) => {
        const actionBtn = e.target.closest('[data-action]');

@@ -17,7 +17,7 @@
 
 ### player.html (DJ Mixes SPA)
 - **Location**: mixes.4st.uk
-- **Layout**: Landing page, Player, Queue, Browser columns, responsive design
+- **Layout**: Landing page, Player, Queue/User Streams (tabbed), Browser columns, responsive design
 - **Stylesheets**: `common.css`, `player.css`
 - **JavaScript modules** (no bundler, simple script loading):
   - `core.js` - Shared utilities, global state, DOM references
@@ -28,8 +28,8 @@
   - `livedata.js` - Live stream data management, probing, persistence
   - `modals.js` - Modal dialogs, settings, help, playlists
   - `livestore.js` - Stream collection persistence (save/load/clear)
-  - `liveui.js` - Live stream UI rendering and interactions
-  - `browser.js` - DJ/All/Favorites browser modes, mode switching, keyboard shortcuts
+  - `liveui.js` - Live stream UI rendering, preset browser, middle column tab switching
+  - `browser.js` - DJ/All/Live/Favorites browser modes, mode switching, keyboard shortcuts
   - `search.js` - Search functionality and results display
   - `restore.js` - Page state restoration on load
 

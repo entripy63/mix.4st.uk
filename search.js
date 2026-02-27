@@ -212,6 +212,7 @@ function addSearchResultToQueue(index) {
     state.queue.push({ ...mix, queueId: generateQueueId() });
     saveQueue();
     displayQueue();
+    if (typeof switchMiddleTab === 'function') switchMiddleTab('queue');
   }
 }
 
@@ -221,6 +222,7 @@ function addAllSearchResultsToQueue() {
   });
   saveQueue();
   displayQueue();
+  if (typeof switchMiddleTab === 'function') switchMiddleTab('queue');
 }
 
 async function playSearchResult(index) {

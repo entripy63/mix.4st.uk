@@ -27,12 +27,21 @@
       <div id="trackList"></div>
     </div>
     <div class="middle-column">
-      <div id="queue"></div>
-      <div id="localFiles">
-        <label class="file-input-label">
-          <input type="file" id="fileInput" accept="audio/*" multiple hidden>
-          Add Local Files
-        </label>
+      <div id="middleTabs">
+        <button class="middle-tab active" data-tab="queue" onclick="switchMiddleTab('queue')">Mix Queue</button>
+        <button class="middle-tab" data-tab="userStreams" onclick="switchMiddleTab('userStreams')">User Streams</button>
+      </div>
+      <div id="queueTab" class="middle-tab-content">
+        <div id="queue"></div>
+        <div id="localFiles">
+          <label class="file-input-label">
+            <input type="file" id="fileInput" accept="audio/*" multiple hidden>
+            Add Local Files
+          </label>
+        </div>
+      </div>
+      <div id="userStreamsTab" class="middle-tab-content" style="display: none;">
+        <div id="userStreamsList"></div>
       </div>
     </div>
     <div class="right-column">
@@ -122,18 +131,17 @@
             <!-- Options populated dynamically by buildDJDropdown() -->
           </select>
         </div>
+        <div id="presetDropdown" style="display: none;">
+          <select id="presetSelect">
+            <option value="">Select a preset...</option>
+          </select>
+        </div>
         <div id="searchBox" style="display: none;">
           <input type="text" id="searchInput" placeholder="Search mixes..." autocomplete="off">
           <div id="searchInfo"></div>
         </div>
         <div id="groupFilters"></div>
         <div id="mixList"></div>
-        <div style="display: none; margin-top: auto; padding: 10px 15px;" class="findPlaylistsBtnContainer">
-          <div style="display: flex; gap: 10px;">
-            <button id="findPlaylistsBtn" onclick="showPlaylistGuide(event)" style="flex: 0 1 auto; padding: 12px 16px; font-size: 14px; font-weight: bold;">Find Playlists...</button>
-            <div id="presetsButtonsContainer" style="display: flex; gap: 8px; flex: 1;"></div>
-          </div>
-        </div>
         </div>
         <footer id="httpsNotice" style="text-align: center; padding: 12px 15px; color: #fff; font-size: 13px; font-weight: bold; background-color: #c0475c; grid-column: 1 / -1; display: none;">
           ⚠️ Some audio streams may not work on HTTPS. Use the <a id="httpLink" href="#" style="color: #fff; text-decoration: underline;">HTTP version</a> for full compatibility.
@@ -225,7 +233,6 @@
           // Initialize mixes config and player
           (async function initPlayer() {
             await loadMixesConfig();
-            await renderPresetButtons(document.getElementById('presetsButtonsContainer'));
           })();
         </script>
         </body>

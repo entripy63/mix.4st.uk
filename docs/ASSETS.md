@@ -4,7 +4,7 @@
 
 ### player.html
 - **Purpose**: Main DJ mix player SPA (mixes.4st.uk)
-- **Layout**: 3 columns (player, queue, browser)
+- **Layout**: 3 columns (player, queue/user-streams tabbed, browser)
 - **Features**: Mix playback, queue management, search, live streams, settings
 - **Responsive**: Yes (mobile, tablet, desktop)
 
@@ -113,15 +113,18 @@
 
 #### liveui.js
 - **Purpose**: Live stream UI rendering and interactions
-- **Dependencies**: core.js, livedata.js
+- **Dependencies**: core.js, livedata.js, modals.js
 - **Used by**: player.html, live.html
 - **Features**:
-  - Stream list rendering
-  - Drag-drop reordering
+  - User stream list rendering (`displayLiveStreams()` → targets `#userStreamsList` on player.html, `#mixList` on live.html)
+  - Middle column tab switching (`switchMiddleTab()` — Mix Queue / User Streams)
+  - Preset browser (`buildPresetDropdown()`, `displayPresetStreams()`) for browsing streams by preset
+  - Per-stream actions: play from preset, add to user streams
+  - Drag-drop reordering of user streams
   - Stream editing (name, genre)
   - Collections menu
   - Display guard (`shouldRedisplayStreams()`)
-  - Preset management
+  - Preset category buttons
 
 #### modals.js
 - **Purpose**: Modal dialogs and confirmation UI

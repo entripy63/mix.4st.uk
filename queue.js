@@ -183,6 +183,7 @@ function addToQueue(mixId) {
     state.queue.push({ ...mix, queueId: generateQueueId() });
     saveQueue();
     displayQueue();
+    if (typeof switchMiddleTab === 'function') switchMiddleTab('queue');
   }
 }
 
@@ -192,6 +193,7 @@ function addAllToQueue() {
   });
   saveQueue();
   displayQueue();
+  if (typeof switchMiddleTab === 'function') switchMiddleTab('queue');
 }
 
 displayQueue();

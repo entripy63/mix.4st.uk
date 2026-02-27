@@ -46,10 +46,85 @@ html, body {
   min-height: 0;
 }
 
-#queue {
+#queueTab {
   flex: 1;
   overflow-y: auto;
   min-height: 0;
+}
+
+#userStreamsTab {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+#middleTabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #3d3d5c;
+  flex-shrink: 0;
+}
+
+.middle-tab {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: #888;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.middle-tab:hover {
+  background: rgba(92, 107, 192, 0.2);
+  color: #e0e0e0;
+  transform: none;
+}
+
+.middle-tab.active {
+  background: #5c6bc0;
+  color: #fff;
+  border-color: #5c6bc0;
+}
+
+#presetDropdown {
+  margin-bottom: 12px;
+}
+
+#presetSelect {
+  width: 100%;
+  padding: 10px 12px;
+  background: #2d2d44;
+  color: #e0e0e0;
+  border: 1px solid #3d3d5c;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+#presetSelect:hover {
+  border-color: #5c6bc0;
+}
+
+#presetSelect:focus {
+  outline: none;
+  border-color: #5c6bc0;
+  box-shadow: 0 0 0 2px rgba(92, 107, 192, 0.3);
+}
+
+#presetSelect option {
+  background: #2d2d44;
+  color: #e0e0e0;
+  padding: 8px;
 }
 
 /* #mixBrowser and #mixList styles in common.css */

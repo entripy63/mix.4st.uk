@@ -42,7 +42,9 @@ document.getElementById('fileInput').addEventListener('change', async function (
       loadPeaks(null);
       document.getElementById('coverArt').innerHTML = '';
       document.getElementById('trackList').innerHTML = '';
-      // Restore browser mode and return - don't restore mix
+      // Restore middle column tab and browser mode, then return - don't restore mix
+      const savedMiddleTab = storage.get('middleTab', 'queue');
+      switchMiddleTab(savedMiddleTab);
       const savedBrowserMode = storage.get('browserMode', 'live');
       browserModes.switch(savedBrowserMode);
       return;
@@ -116,6 +118,10 @@ document.getElementById('fileInput').addEventListener('change', async function (
 
   // Build DJ dropdown dynamically
   await buildDJDropdown();
+
+  // Restore middle column tab
+  const savedMiddleTab = storage.get('middleTab', 'queue');
+  switchMiddleTab(savedMiddleTab);
 
   // Restore browser mode for non-live restoration
   // browserModes.switch() handles all mode-specific state restoration
