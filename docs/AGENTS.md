@@ -27,6 +27,7 @@
   - `player-mix.js` - Mix-specific playback logic
   - `livedata.js` - Live stream data management, probing, persistence
   - `modals.js` - Modal dialogs, settings, help, playlists
+  - `livestore.js` - Stream collection persistence (save/load/clear)
   - `liveui.js` - Live stream UI rendering and interactions
   - `browser.js` - DJ/All/Favorites browser modes, mode switching, keyboard shortcuts
   - `search.js` - Search functionality and results display
@@ -41,12 +42,14 @@
   - `player.js` - Playback controls (same as player.html)
   - `livedata.js` - Live stream data management, probing, persistence
   - `modals.js` - Modal dialogs, playlist guide
+  - `livestore.js` - Stream collection persistence (save/load/clear)
   - `liveui.js` - Live stream UI rendering and interactions
 
 ### Shared Modules (Both SPAs)
 - `core.js` - State object, storage helpers, utility functions
 - `player.js` - Audio playback, controls, muting, live stream playback
-- `livedata.js` - Stream probing, parsing (M3U/PLS), persistence, collections
+- `livedata.js` - Stream probing, parsing (M3U/PLS), persistence
+- `livestore.js` - Stream collection persistence (save/load/clear)
 - `liveui.js` - Stream rendering, drag-drop reordering, collections menu
 - `modals.js` - Confirmation dialogs, settings, help, playlist guide
 

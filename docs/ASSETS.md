@@ -99,8 +99,17 @@
   - Audio detection
   - SomaFM stream parsing
   - Persistent storage (localStorage)
-  - Collections (save/load)
   - Proxy-based CORS handling
+
+#### livestore.js
+- **Purpose**: Stream collection persistence (save/load/clear)
+- **Dependencies**: core.js, livedata.js, modals.js
+- **Used by**: player.html, live.html
+- **Features**:
+  - Save streams to JSON file (with metadata modal)
+  - Load streams from JSON file
+  - Clear all streams (with confirmation)
+  - Collection metadata tracking (name, category)
 
 #### liveui.js
 - **Purpose**: Live stream UI rendering and interactions
@@ -256,6 +265,7 @@ player.js         (audio playback engine)
 player-mix.js     (mix-specific playback)
 livedata.js       (stream data, probing, parsing)
 modals.js         (modal dialogs)
+livestore.js      (collection persistence)
 liveui.js         (stream UI, rendering)
 browser.js        (DJ/All/Favorites modes, filtering)
 search.js         (search index, results)
@@ -269,6 +279,7 @@ core.js           (shared: state, storage, utilities)
 player.js         (audio playback engine)
 livedata.js       (stream data, probing, parsing)
 modals.js         (modal dialogs)
+livestore.js      (collection persistence)
 liveui.js         (stream UI, rendering)
 live.html         (single-column SPA layout)
 ```
@@ -283,9 +294,11 @@ player.js ←─ (playback engine)
     ↓
 livedata.js ←─ (stream management, probing)
     ↓
-liveui.js ←─ (stream rendering, guards)
-    ↓
 modals.js ←─ (dialogs)
+    ↓
+livestore.js ←─ (collection persistence)
+    ↓
+liveui.js ←─ (stream rendering, guards)
     ↓
 player.html adds: mixes.js → queue.js → player-mix.js → browser.js → search.js → restore.js
 ```
@@ -309,6 +322,7 @@ player.html adds: mixes.js → queue.js → player-mix.js → browser.js → sea
 │   ├── core.js             # Global state, storage, utilities
 │   ├── player.js           # Audio playback, controls, waveform
 │   ├── livedata.js         # Stream probing, parsing, persistence
+│   ├── livestore.js        # Collection persistence (save/load/clear)
 │   ├── liveui.js           # Stream rendering, drag-drop, guards
 │   └── modals.js           # Modal dialogs, confirmations, help
 │
@@ -392,7 +406,8 @@ player.html adds: mixes.js → queue.js → player-mix.js → browser.js → sea
 | **browser.js** | ~12KB | Browser modes, keyboard shortcuts |
 | **search.js** | ~8KB | Search functionality |
 | **restore.js** | ~2KB | State restoration |
-| **livedata.js** | ~15KB | Stream probing, parsing |
+| **livedata.js** | ~11KB | Stream probing, parsing |
+| **livestore.js** | ~5KB | Collection persistence |
 | **liveui.js** | ~10KB | Stream rendering, UI |
 | **modals.js** | ~8KB | Modal dialogs |
 | **eslint.config.js** | <1KB | Linter config |
@@ -408,7 +423,7 @@ player.html adds: mixes.js → queue.js → player-mix.js → browser.js → sea
 
 ### mixes.4st.uk (DJ Mixes SPA)
 - **Entry Point**: player.html
-- **JavaScript Modules**: core, mixes, queue, player, player-mix, livedata, modals, liveui, browser, search, restore
+- **JavaScript Modules**: core, mixes, queue, player, player-mix, livedata, modals, livestore, liveui, browser, search, restore
 - **Stylesheets**: common.css, player.css
 - **Data**: DJ folders with manifests, track lists, cover art, waveform data
 - **Size**: ~200MB+ (includes all DJ music archives)
@@ -416,7 +431,7 @@ player.html adds: mixes.js → queue.js → player-mix.js → browser.js → sea
 
 ### live.4st.uk (Live Streams SPA)
 - **Entry Point**: live.html
-- **JavaScript Modules**: core, player, livedata, modals, liveui
+- **JavaScript Modules**: core, player, livedata, modals, livestore, liveui
 - **Stylesheets**: common.css, live.css
 - **Independence**: Can be hosted separately from mixes.4st.uk
 - **Size**: ~5MB (minimal, no music archives)
@@ -428,7 +443,7 @@ player.html adds: mixes.js → queue.js → player-mix.js → browser.js → sea
 
 ### Code Sharing
 - **core.js & player.js**: Completely shared, no SPA-specific logic
-- **livedata.js & liveui.js**: Shared, designed to work independently of browser modes
+- **livedata.js, livestore.js & liveui.js**: Shared, designed to work independently of browser modes
 - **modals.js**: Shared, generic confirmation/dialog logic
 - **player-mix.js, mixes.js, queue.js, browser.js, search.js, restore.js**: player.html only
 - **avoid**: Don't add browserModes references to shared modules
