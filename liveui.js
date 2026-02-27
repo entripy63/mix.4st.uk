@@ -125,7 +125,7 @@ function displayLiveStreams() {
     </div>`;
     
     html += `
-      <div class="mix-item${unavailableClass}"
+      <div class="mix-item${unavailableClass}${isCurrentStream ? ' current' : ''}"
            data-stream-m3u="${escapeHtml(stream.m3u)}"
            draggable="true"
            ondragstart="onLiveStreamDragStart(event, ${index})"
@@ -178,6 +178,7 @@ function playLiveStream(index) {
   storage.set('liveDisplayText', name);
   
   playLive(url, name, true);
+  displayLiveStreams();
 }
 
 // ========== STREAM MANAGEMENT HANDLERS ==========
