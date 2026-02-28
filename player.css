@@ -481,6 +481,7 @@ kbd {
 .mix-extra-info {
    flex-basis: 100%;
    width: 100%;
+   box-sizing: border-box;
    margin-top: 8px;
    margin-left: 0;
    padding: 8px 10px;
