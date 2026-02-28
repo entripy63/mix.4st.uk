@@ -162,10 +162,10 @@ function displayMixList(mixes) {
         const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none">${mix.date ? `<div><strong>Date:</strong> ${escapeHtml(mix.date)}</div>` : ''}${mix.comment ? `<div><strong>Notes:</strong> ${escapeHtml(mix.comment)}</div>` : ''}</div>` : '';
         return `<div class="mix-item" data-mix-id="${escapeHtml(mixId)}">
         <div class="mix-item-row">
+          <span class="mix-name">${escapeHtml(mix.name)}${artist} <span class="mix-duration">(${mix.duration}${genre})</span></span>
+          ${favIcon}${hiddenIcon}${extraBtn}
           <button class="icon-btn" data-action="queue-add" title="Add to queue">+</button>
           <button class="icon-btn" data-action="play-now" title="Play now">▶</button>
-          <span class="mix-name">${escapeHtml(mix.name)}${artist} <span class="mix-duration">(${mix.duration}${genre})</span></span>
-          ${extraBtn}${favIcon}${hiddenIcon}
         </div>
         ${extraInfo}
         </div>`;

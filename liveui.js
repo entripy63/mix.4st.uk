@@ -426,12 +426,12 @@ function displayPresetStreams(preset) {
     const genre = stream.genre ? `<span class="stream-genre">${escapeHtml(stream.genre)}</span>` : '';
     return `<div class="mix-item" data-preset-stream-index="${i}">
       <div class="mix-item-row">
-        <button class="icon-btn" data-action="preset-add-stream" title="Add to user streams">+</button>
-        <button class="icon-btn" data-action="preset-play-now" title="Play now">▶</button>
         <div class="stream-info">
           <span class="mix-name">${escapeHtml(stream.name || stream.m3u)}</span>
           ${genre}
         </div>
+        <button class="icon-btn" data-action="preset-add-stream" title="Add to user streams">+</button>
+        <button class="icon-btn" data-action="preset-play-now" title="Play now">▶</button>
       </div>
     </div>`;
   }).join('');

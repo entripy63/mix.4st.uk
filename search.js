@@ -134,9 +134,8 @@ function displayMixedSearchResults(results) {
       const streamIndex = streams.indexOf(item);
       return `<div class="mix-item" data-search-index="${streamIndex}">
    <div class="mix-item-row">
-   <button class="icon-btn" style="visibility: hidden; cursor: default;" disabled>+</button>
-   <button class="icon-btn" data-action="search-play-stream" title="Play stream">▶</button>
    <span class="mix-name"><span style="font-size: 0.85em;">📡</span> ${escapeHtml(item.name)}${genre}</span>
+   <button class="icon-btn" data-action="search-play-stream" title="Play stream">▶</button>
    </div>
    </div>`;
     } else {
@@ -156,10 +155,10 @@ function displayMixedSearchResults(results) {
 
       return `<div class="mix-item" data-search-index="${mixIndex}">
    <div class="mix-item-row">
+   <span class="mix-name">♪ ${escapeHtml(item.name)}${djLabel} <span class="mix-duration">${duration}</span></span>
+   ${favIcon}${hiddenIcon}${extraBtn}
    <button class="icon-btn" data-action="search-queue-add" title="Add to queue">+</button>
    <button class="icon-btn" data-action="search-play-now" title="Play now">▶</button>
-   <span class="mix-name">♪ ${escapeHtml(item.name)}${djLabel} <span class="mix-duration">${duration}</span></span>
-   ${extraBtn}${favIcon}${hiddenIcon}
    </div>
    ${extraInfo}
    </div>`;
@@ -195,10 +194,10 @@ function displayMixListWithDJ(mixes) {
 
     return `<div class="mix-item" data-search-index="${i}">
    <div class="mix-item-row">
+   <span class="mix-name">${escapeHtml(mix.name)}${djSuffix} <span class="mix-duration">${duration}</span></span>
+   ${favIcon}${hiddenIcon}${extraBtn}
    <button class="icon-btn" data-action="search-queue-add" title="Add to queue">+</button>
    <button class="icon-btn" data-action="search-play-now" title="Play now">▶</button>
-   <span class="mix-name">${escapeHtml(mix.name)}${djSuffix} <span class="mix-duration">${duration}</span></span>
-   ${extraBtn}${favIcon}${hiddenIcon}
    </div>
    ${extraInfo}
    </div>`;
