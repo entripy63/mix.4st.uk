@@ -420,10 +420,6 @@ async function initLiveStreams(config = {}) {
    
    for (const streamConfig of configs) {
      await probeAndAddStream(streamConfig, config);
-     // Callback to display streams as they're added (not all at once)
-     if (window.onStreamAdded) {
-       window.onStreamAdded();
-     }
    }
 }
 

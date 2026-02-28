@@ -607,8 +607,8 @@ if (streamListElement) {
 
 // Callback for when streams are added during initialization (from livedata.js)
 // Check guard callback before redisplaying (checks current browser mode at invocation time)
-window.onStreamAdded = (initConfig = {}) => {
-  if (initConfig.shouldRedisplayAfterProbe?.()) {
+window.onStreamAdded = () => {
+  if (shouldRedisplayStreams()) {
     displayLiveStreams();
   }
 };
