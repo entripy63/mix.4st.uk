@@ -11,40 +11,6 @@
 <body>
   <div class="container">
     <div class="left-column">
-      <canvas id="waveform"></canvas>
-      <div id="waveformResizeHandle"></div>
-      <audio id="audioPlayer"></audio>
-      <div id="audioControls">
-        <button id="playPauseBtn" class="control-btn" title="Play/Pause (Space)">▶</button>
-        <span id="timeDisplay">0:00 / 0:00</span>
-        <div id="volumeControl">
-          <button id="muteBtn" class="control-btn" title="Mute">🔊</button>
-          <input type="range" id="volumeSlider" min="0" max="100" value="50" title="Volume">
-        </div>
-      </div>
-      <div id="nowPlaying"></div>
-      <div id="coverArt"></div>
-      <div id="trackList"></div>
-    </div>
-    <div class="middle-column">
-      <div id="middleTabs">
-        <button class="middle-tab active" data-tab="queue" onclick="switchMiddleTab('queue')">Mix Queue</button>
-        <button class="middle-tab" data-tab="userStreams" onclick="switchMiddleTab('userStreams')">User Streams</button>
-      </div>
-      <div id="queueTab" class="middle-tab-content">
-        <div id="queue"></div>
-        <div id="localFiles">
-          <label class="file-input-label">
-            <input type="file" id="fileInput" accept="audio/*" multiple hidden>
-            Add Local Files
-          </label>
-        </div>
-      </div>
-      <div id="userStreamsTab" class="middle-tab-content" style="display: none;">
-        <div id="userStreamsList"></div>
-      </div>
-    </div>
-    <div class="right-column">
       <div id="mixBrowser">
         <div id="browserModeSelector">
           <button class="mode-btn active" data-mode="dj" title="Browse by DJ (Ctrl+D)">
@@ -155,47 +121,41 @@
           }
         </script>
         </div>
+    <div class="middle-column">
+      <div id="middleTabs">
+        <button class="middle-tab active" data-tab="queue" onclick="switchMiddleTab('queue')">Mix Queue</button>
+        <button class="middle-tab" data-tab="userStreams" onclick="switchMiddleTab('userStreams')">User Streams</button>
+      </div>
+      <div id="queueTab" class="middle-tab-content">
+        <div id="queue"></div>
+        <div id="localFiles">
+          <label class="file-input-label">
+            <input type="file" id="fileInput" accept="audio/*" multiple hidden>
+            Add Local Files
+          </label>
         </div>
-        <div id="playlistGuideModal" class="modal" onclick="hidePlaylistGuide()" style="display: none;">
-        <div class="modal-content slide-up" onclick="event.stopPropagation()">
-        <button class="modal-close" onclick="hidePlaylistGuide()">×</button>
-        <h2>Find Stream Playlists</h2>
-        <div class="playlist-guide">
-        <div class="guide-section">
-          <h3>SomaFM</h3>
-          <p><a href="https://somafm.com/listen/" target="_blank" onclick="hidePlaylistGuide()">somafm.com/listen/</a></p>
-          <ol>
-            <li>Click on a station you like</li>
-            <li>Right-click on the <strong>AAC 128K</strong> link</li>
-            <li>Select "Copy link" or "Copy link address"</li>
-            <li>Paste into the Playlist URL box above</li>
-          </ol>
+      </div>
+      <div id="userStreamsTab" class="middle-tab-content" style="display: none;">
+        <div id="userStreamsList"></div>
+      </div>
+    </div>
+    <div class="right-column">
+      <canvas id="waveform"></canvas>
+      <div id="waveformResizeHandle"></div>
+      <audio id="audioPlayer"></audio>
+      <div id="audioControls">
+        <button id="playPauseBtn" class="control-btn" title="Play/Pause (Space)">▶</button>
+        <span id="timeDisplay">0:00 / 0:00</span>
+        <div id="volumeControl">
+          <button id="muteBtn" class="control-btn" title="Mute">🔊</button>
+          <input type="range" id="volumeSlider" min="0" max="100" value="50" title="Volume">
         </div>
-        <div class="guide-section">
-          <h3>Shoutcast</h3>
-          <p><a href="http://directory.shoutcast.com/" target="_blank" onclick="hidePlaylistGuide()">directory.shoutcast.com</a></p>
-          <ol>
-            <li>Browse or search for a station or genre</li>
-            <li>Click the <strong>download icon</strong> next to the station</li>
-            <li>Right-click on <strong>Winamp (.pls)</strong></li>
-            <li>Select "Copy link" or "Copy link address"</li>
-            <li>Paste into the Playlist URL box above</li>
-          </ol>
+      </div>
+      <div id="nowPlaying"></div>
+      <div id="coverArt"></div>
+      <div id="trackList"></div>
+    </div>
         </div>
-        <div class="guide-section">
-          <h3>Finding Streams Online</h3>
-          <ul>
-            <li>Search <strong>"[station name] m3u"</strong> or <strong>"[station name] playlist"</strong> in Google</li>
-            <li>Look for links ending in <code>.m3u</code> or <code>.pls</code></li>
-            <li>These are playlist files that work with our player</li>
-            <li>If you find a direct stream URL (http/https), paste it in the box above</li>
-            <li>Many streaming sites use walled gardens - look for independent radio directories</li>
-          </ul>
-        </div>
-        </div>
-        </div>
-        </div>
-
         <div id="presetsModal" class="modal" onclick="hidePresetsMenu()" style="display: none;">
         <div class="modal-content" onclick="event.stopPropagation()" style="background: #252542; border-radius: 10px; padding: 16px; max-width: 300px;">
         <h2 style="margin-top: 0; margin-bottom: 16px; font-size: 16px;">Add Playlists</h2>
