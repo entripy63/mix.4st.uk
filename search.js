@@ -69,7 +69,7 @@ async function displayFavourites() {
   }
 
   // Load search index to get mix metadata
-  if (!searchIndex.data) {
+  if (!searchIndex.mixData) {
     mixList.innerHTML = '<div style="color: #888; padding: 20px;">Loading...</div>';
     await searchIndex.load();
   }

@@ -331,20 +331,24 @@ const browserModes = {
       const searchInput = document.getElementById('searchInput');
       const existingQuery = searchInput.value;
       
-      if (searchIndex.data) {
+      if (searchIndex.mixData) {
         if (existingQuery.trim()) {
           const results = searchIndex.search(existingQuery);
           displaySearchResults(results, existingQuery);
         } else {
           mixList.innerHTML = '';
-          document.getElementById('searchInfo').textContent = `${searchIndex.data.length} mixes available`;
+          const totalMixes = searchIndex.mixData?.length || 0;
+          const totalStreams = searchIndex.streamData?.length || 0;
+          document.getElementById('searchInfo').textContent = `${totalMixes} mixes, ${totalStreams} streams available`;
         }
         searchInput.focus();
       } else {
         mixList.innerHTML = '';
         document.getElementById('searchInfo').textContent = 'Loading search index...';
         searchIndex.load().then(() => {
-          document.getElementById('searchInfo').textContent = `${searchIndex.data.length} mixes available`;
+          const totalMixes = searchIndex.mixData?.length || 0;
+          const totalStreams = searchIndex.streamData?.length || 0;
+          document.getElementById('searchInfo').textContent = `${totalMixes} mixes, ${totalStreams} streams available`;
           searchInput.focus();
         });
       }
