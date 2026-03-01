@@ -28,7 +28,7 @@
 | `generate-peaks.py` | Config path: `mixes/audio-source-config.json`, simplified moreDJs logic | ✓ |
 | `generate-covers.py` | Config path: `mixes/audio-source-config.json`, simplified logic | ✓ |
 | `generate-search-index.py` | Simplified DJ directory scanning for mixes/ base | ✓ |
-| `generate-presets-manifest.py` | No changes needed (presets/ stays in root) | ✓ |
+| `generate-streams-manifest.py` | Renamed from generate-presets-manifest.py, uses streams/ directory | ✓ |
 
 **All scripts verified to compile successfully.**
 
@@ -72,7 +72,7 @@
 │       └── Unique3/
 ├── cgi-bin/
 ├── docs/
-├── presets/
+├── streams/
 ├── tools/
 ├── node_modules/
 ├── [various files: *.js, *.css, *.html, *.json]

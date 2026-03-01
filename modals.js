@@ -2,11 +2,11 @@
 // Used by: browser.js, liveui.js
 // Dependencies: core.js (escapeHtml)
 
-// Load available presets from /presets/manifest.json
+// Load available streams from /streams/manifest.json
 async function loadAvailablePresets() {
     try {
         // Load manifest with cache-busting parameter
-        const manifestResponse = await fetch('/presets/manifest.json?t=' + Date.now());
+        const manifestResponse = await fetch('/streams/manifest.json?t=' + Date.now());
         const manifest = await manifestResponse.json();
         
         if (!Array.isArray(manifest.presets)) {
@@ -14,11 +14,11 @@ async function loadAvailablePresets() {
             return [];
         }
         
-        // Load each preset file
+        // Load each stream file
         const presets = [];
         for (const item of manifest.presets) {
             try {
-                const presetResponse = await fetch(`/presets/${item.filename}?t=${Date.now()}`);
+                const presetResponse = await fetch(`/streams/${item.filename}?t=${Date.now()}`);
                 const preset = await presetResponse.json();
                 if (preset.name && Array.isArray(preset.streams)) {
                     presets.push({
@@ -69,7 +69,7 @@ async function showPresetsMenu(e, filterCategory = null) {
     const allPresets = await loadAvailablePresets();
     
     if (allPresets.length === 0) {
-        alert('No presets available. Upload preset files to /presets/ directory on the server.');
+        alert('No streams available. Upload stream files to /streams/ directory on the server.');
         return;
     }
     

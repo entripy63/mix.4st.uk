@@ -76,6 +76,7 @@ Generate covers and peaks before manifest so it can reference them.
 - `generate-peaks.py` - Run after adding audio files to generate `.peaks.json` waveform data
 - `generate-manifest.py` - Run after adding/updating audio files to regenerate `manifest.json` in each DJ folder
 - `generate-search-index.py` - Run after manifest changes to regenerate `search-index.json` for search mode
+- `generate-streams-manifest.py` - Run after uploading streams to `/streams/` directory to regenerate `manifest.json` for stream presets
 
 ## Important Design Principles
 - **Two SPAs, Shared Code**: Code used by both player.html and live.html should not reference browserModes or mix-specific features

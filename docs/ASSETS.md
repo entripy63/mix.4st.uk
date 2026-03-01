@@ -251,6 +251,13 @@ python3 tools/generate-manifest.py --source /alternate/audio/path .
 - **Run**: After any manifest changes
 - **Performance**: Fast (reads existing manifests, no audio processing)
 
+#### generate-streams-manifest.py
+- **Purpose**: Regenerate `manifest.json` for stream presets in `/streams/` directory
+- **Input**: JSON stream files in `/streams/` directory
+- **Output**: `streams/manifest.json` (consolidated stream metadata)
+- **Run**: After uploading new stream files to `/streams/`
+- **Performance**: Very fast (simple JSON parsing)
+
 #### fix-metadata.py
 - **Purpose**: Metadata cleanup and validation
 - **Run**: As needed for data corrections
@@ -366,10 +373,11 @@ player.html adds: mixes.js → queue.js → player-mix.js → browser.js → sea
 │   └── tools/              # Various analysis/reference docs
 │
 └── Python Build Scripts
-    ├── generate-covers.py       # Extract cover art from MP3s
-    ├── generate-manifest.py     # Generate DJ manifests
-    ├── generate-peaks.py        # Generate waveform data
-    ├── generate-search-index.py # Generate search index
+    ├── generate-covers.py           # Extract cover art from MP3s
+    ├── generate-manifest.py         # Generate DJ manifests
+    ├── generate-peaks.py            # Generate waveform data
+    ├── generate-search-index.py     # Generate search index
+    ├── generate-streams-manifest.py # Generate stream presets manifest
     └── (other utilities)
 ```
 

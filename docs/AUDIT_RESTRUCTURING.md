@@ -38,8 +38,9 @@
   - Line 199: Hardcoded `'moreDJs'` path construction
   - **Need**: Same updates
 
-- **generate-presets-manifest.py** (81 lines, NO refs)
-  - Uses hardcoded `presets` dir (OK, not moving)
+- **generate-streams-manifest.py** (81 lines, RENAMED & UPDATED)
+- Renamed from generate-presets-manifest.py
+- Uses hardcoded `streams` dir (updated from presets)
   - **No changes needed**
 
 - **fix-metadata.py** (169 lines, 1 hardcoded ref)
