@@ -288,25 +288,6 @@ function toggleStreamCollectionsMenu() {
   
   const isHidden = menu.style.display === 'none';
   menu.style.display = isHidden ? 'flex' : 'none';
-  
-  // Position menu to not go off-screen
-  if (isHidden) {
-    const btn = document.querySelector('.stream-menu-btn');
-    if (btn) {
-      const btnRect = btn.getBoundingClientRect();
-      const menuRect = menu.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
-      
-      // If menu would go off-screen right, position it to the left
-      if (btnRect.left + menuRect.width > viewportWidth) {
-        menu.style.left = 'auto';
-        menu.style.right = '0';
-      } else {
-        menu.style.left = '0';
-        menu.style.right = 'auto';
-      }
-    }
-  }
 }
 
 function hideStreamCollectionsMenu() {
