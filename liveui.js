@@ -315,8 +315,8 @@ function hideStreamCollectionsMenu() {
 // Close menu when clicking outside
 document.addEventListener('click', (e) => {
    const menu = document.getElementById('streamCollectionsMenu');
-   const btn = document.querySelector('.stream-menu-btn');
-   if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
+   const container = menu?.parentElement;
+   if (menu && container && !container.contains(e.target)) {
       hideStreamCollectionsMenu();
    }
 });
