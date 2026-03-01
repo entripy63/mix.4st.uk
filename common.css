@@ -642,8 +642,7 @@
 /* ========== STREAM CONTROL BAR ========== */
 
 .add-stream-form {
-  flex-shrink: 0;
-  margin-bottom: 10px;
+  margin-top: 6px;
 }
 
 .add-stream-fields {

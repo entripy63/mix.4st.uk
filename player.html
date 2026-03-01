@@ -125,6 +125,17 @@
       <div id="middleTabs">
         <button class="middle-tab active" data-tab="queue" onclick="switchMiddleTab('queue')">Mix Queue</button>
         <button class="middle-tab" data-tab="userStreams" onclick="switchMiddleTab('userStreams')">User Streams</button>
+        <div id="streamTabActions" class="stream-tab-actions" style="display: none;">
+          <button onclick="reloadLiveStreams()" class="reload-btn" title="Reload all streams">⟳</button>
+          <div class="stream-menu-container" style="position: relative;">
+            <button class="stream-menu-btn" onclick="toggleStreamCollectionsMenu()" title="Save/Load streams">☰</button>
+            <div id="streamCollectionsMenu" class="stream-collections-menu">
+              <button onclick="hideStreamCollectionsMenu(); loadCollectionFromFile()">📂 Load from File</button>
+              <button onclick="hideStreamCollectionsMenu(); saveCollectionToFile()">💾 Save to File</button>
+              <button onclick="hideStreamCollectionsMenu(); clearAllStreams()">🗑️ Clear All</button>
+            </div>
+          </div>
+        </div>
       </div>
       <div id="queueTab" class="middle-tab-content">
         <div id="queue"></div>

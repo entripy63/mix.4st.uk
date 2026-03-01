@@ -35,6 +35,11 @@ function switchMiddleTab(tab) {
     btn.classList.toggle('active', btn.dataset.tab === tab);
   });
 
+  const streamActions = document.getElementById('streamTabActions');
+  if (streamActions) {
+    streamActions.style.display = tab === 'userStreams' ? '' : 'none';
+  }
+
   storage.set('middleTab', tab);
 
   // If switching to user streams, ensure they're displayed
@@ -75,30 +80,10 @@ function displayLiveStreams() {
   }
   
   let html = '';
-  
-  // Add stream form
-  html += `
-    <div class="add-stream-form">
-      <div class="add-stream-fields">
-        <input type="text" id="newStreamM3U" placeholder="Playlist URL (M3U or PLS)" />
-        <button class="add-stream-btn" onclick="handleAddStream()">Add</button>
-        <button onclick="reloadLiveStreams()" class="reload-btn" title="Reload all streams">⟳</button>
-        <div class="stream-menu-container" style="position: relative;">
-          <button class="stream-menu-btn" onclick="toggleStreamCollectionsMenu()" title="Save/Load streams">☰</button>
-          <div id="streamCollectionsMenu" class="stream-collections-menu" style="display: none; position: absolute; top: 100%; right: 0; background: #252542; border: 1px solid #3d3d5c; border-radius: 6px; padding: 8px; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.4); flex-direction: column; gap: 4px;">
-            <button onclick="hideStreamCollectionsMenu(); loadCollectionFromFile()" style="padding: 8px 12px; background: #3d3d5c; border: none; border-radius: 4px; color: #e0e0e0; cursor: pointer; text-align: left;">📂 Load from File</button>
-            <button onclick="hideStreamCollectionsMenu(); saveCollectionToFile()" style="padding: 8px 12px; background: #3d3d5c; border: none; border-radius: 4px; color: #e0e0e0; cursor: pointer; text-align: left;">💾 Save to File</button>
-            <button onclick="hideStreamCollectionsMenu(); clearAllStreams()" style="padding: 8px 12px; background: #c0475c; border: none; border-radius: 4px; color: #fff; cursor: pointer; text-align: left;">🗑️ Clear All</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
+  const hasTabActions = !!document.getElementById('streamTabActions');
   
   if (liveStreams.length === 0) {
     html += '<div style="padding: 20px; color: #888;">No live streams configured</div>';
-    target.innerHTML = html;
-    return;
   }
   
   // Stream list
@@ -106,7 +91,6 @@ function displayLiveStreams() {
     const unavailableClass = stream.available ? '' : ' unavailable';
     const tooltip = stream.available ? 'Play Now' : (stream.reason || 'Unavailable');
     const disabled = stream.available ? '' : ' disabled';
-    const isCurrentStream = state.isLive && state.liveStreamM3u === stream.m3u;
     const deleteBtn = `<button class="delete-btn" onclick="handleRemoveStream(${index})" title="Remove stream">✕</button>`;
     const infoBtn = `<button class="icon-btn info-btn" data-action="toggle-stream-info" title="More info">ⓘ</button>`;
     const infoPopout = `<div class="stream-extra-info" style="display:none">
@@ -125,7 +109,7 @@ function displayLiveStreams() {
     </div>`;
     
     html += `
-      <div class="mix-item${unavailableClass}${isCurrentStream ? ' current' : ''}"
+      <div class="mix-item${unavailableClass}"
            data-stream-m3u="${escapeHtml(stream.m3u)}"
            draggable="true"
            ondragstart="onLiveStreamDragStart(event, ${index})"
@@ -133,7 +117,7 @@ function displayLiveStreams() {
         <div class="mix-item-row"
              ondragover="onLiveStreamDragOver(event)"
              ondrop="onLiveStreamDrop(event, ${index})">
-           ${isCurrentStream ? '<span style="width: 24px;"></span>' : deleteBtn}
+           ${deleteBtn}
            <div class="stream-info">
             <span class="mix-name">${escapeHtml(stream.name)}</span>
             ${stream.genre && stream.genre !== 'Unknown' ? `<span class="stream-genre">${escapeHtml(stream.genre)}</span>` : ''}
@@ -144,6 +128,30 @@ function displayLiveStreams() {
       </div>
     `;
   });
+  
+  // Add stream form — placed after the stream list so input sits at the bottom
+  html += `
+    <div class="add-stream-form">
+      <div class="add-stream-fields">
+        <input type="text" id="newStreamM3U" placeholder="Playlist URL (M3U or PLS)" />
+        <button class="add-stream-btn" onclick="handleAddStream()">Add</button>`;
+  // Only include reload/menu buttons when not in player.html (where they live in the tab bar)
+  if (!hasTabActions) {
+    html += `
+        <button onclick="reloadLiveStreams()" class="reload-btn" title="Reload all streams">⟳</button>
+        <div class="stream-menu-container" style="position: relative;">
+          <button class="stream-menu-btn" onclick="toggleStreamCollectionsMenu()" title="Save/Load streams">☰</button>
+          <div id="streamCollectionsMenu" class="stream-collections-menu">
+            <button onclick="hideStreamCollectionsMenu(); loadCollectionFromFile()">📂 Load from File</button>
+            <button onclick="hideStreamCollectionsMenu(); saveCollectionToFile()">💾 Save to File</button>
+            <button onclick="hideStreamCollectionsMenu(); clearAllStreams()">🗑️ Clear All</button>
+          </div>
+        </div>`;
+  }
+  html += `
+      </div>
+    </div>
+  `;
   
   target.innerHTML = html;
 }
@@ -198,9 +206,11 @@ async function handleAddStream() {
 
      // Add stream with no name, let playlist title be parsed from m3u
      await addUserStream(null, m3u, null);
-     document.getElementById('newStreamM3U').value = '';
      if (shouldRedisplayStreams()) {
        displayLiveStreams();
+       // Scroll the input into view so user can immediately add another
+       const input = document.getElementById('newStreamM3U');
+       if (input) input.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
      }
 }
 

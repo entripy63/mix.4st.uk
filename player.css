@@ -61,10 +61,30 @@ html, body {
 #middleTabs {
   display: flex;
   gap: 4px;
+  align-items: center;
   margin-bottom: 6px;
   padding-bottom: 6px;
   border-bottom: 1px solid #3d3d5c;
   flex-shrink: 0;
+}
+
+.stream-tab-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.stream-tab-actions .reload-btn {
+  font-size: 20px !important;
+  min-width: 32px;
+  height: 32px;
+  padding: 4px 6px;
+}
+
+.stream-tab-actions .stream-menu-btn {
+  font-size: 14px;
+  padding: 4px 8px;
 }
 
 .middle-tab {
