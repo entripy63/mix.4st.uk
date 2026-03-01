@@ -129,7 +129,7 @@
           <button onclick="reloadLiveStreams()" class="reload-btn" title="Reload all streams">⟳</button>
           <div class="stream-menu-container" style="position: relative;">
             <button class="stream-menu-btn" onclick="toggleStreamCollectionsMenu()" title="Save/Load streams">☰</button>
-            <div id="streamCollectionsMenu" class="stream-collections-menu">
+            <div id="streamCollectionsMenu" class="stream-collections-menu" style="display: none;">
               <button onclick="hideStreamCollectionsMenu(); loadCollectionFromFile()">📂 Load from File</button>
               <button onclick="hideStreamCollectionsMenu(); saveCollectionToFile()">💾 Save to File</button>
               <button onclick="hideStreamCollectionsMenu(); clearAllStreams()">🗑️ Clear All</button>

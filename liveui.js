@@ -297,7 +297,7 @@ function toggleStreamCollectionsMenu() {
   if (!menu) return; // Menu created by displayLiveStreams()
   
   const isHidden = menu.style.display === 'none';
-  menu.style.display = isHidden ? 'flex' : 'none';
+  menu.style.display = isHidden ? 'block' : 'none';
 }
 
 function hideStreamCollectionsMenu() {
