@@ -43,6 +43,7 @@ document.getElementById('fileInput').addEventListener('change', async function (
       document.getElementById('coverArt').innerHTML = '';
       document.getElementById('trackList').innerHTML = '';
       // Restore middle column tab and browser mode, then return - don't restore mix
+      await buildDJDropdown();
       const savedMiddleTab = storage.get('middleTab', 'queue');
       switchMiddleTab(savedMiddleTab);
       const savedBrowserMode = storage.get('browserMode', 'live');
