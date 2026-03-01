@@ -2,52 +2,60 @@
 
 // Search index cache
 const searchIndex = {
-  data: null,
+  mixData: null,
+  streamData: null,
   byId: null,
   loading: false,
 
   async load() {
-    if (this.data) return this.data;
+    if (this.mixData && this.streamData) return { mixes: this.mixData, streams: this.streamData };
     if (this.loading) {
       // Wait for existing load to complete
       while (this.loading) await new Promise(r => setTimeout(r, 50));
-      return this.data;
+      return { mixes: this.mixData, streams: this.streamData };
     }
 
     this.loading = true;
     try {
-      const response = await fetch('mixes/search-index.json');
-      this.data = await response.json();
+      // Load both indexes in parallel
+      const [mixResponse, streamResponse] = await Promise.all([
+        fetch('mixes/search-index.json'),
+        fetch('streams/search-index.json')
+      ]);
+      
+      this.mixData = await mixResponse.json();
+      this.streamData = await streamResponse.json();
+      
       // Build Map for O(1) lookups: dj/file -> mixData
-      this.byId = new Map(this.data.map(m => [`${m.dj}/${m.file}`, m]));
+      this.byId = new Map(this.mixData.map(m => [`${m.dj}/${m.file}`, m]));
     } catch (e) {
       console.error('Failed to load search index:', e);
-      this.data = [];
+      this.mixData = [];
+      this.streamData = [];
       this.byId = new Map();
     }
     this.loading = false;
-    return this.data;
+    return { mixes: this.mixData, streams: this.streamData };
   },
 
   search(query) {
-    if (!this.data || !query.trim()) return [];
+    if (!this.mixData || !query.trim()) return [];
     const terms = query.toLowerCase().split(/\s+/).filter(t => t.length > 0);
 
     // Search mixes
-    const mixResults = this.data.filter(mix => {
+    const mixResults = this.mixData.filter(mix => {
       const searchable = `${mix.name} ${mix.artist} ${mix.genre} ${mix.comment} ${mix.dj}`.toLowerCase();
       return terms.every(term => searchable.includes(term));
     }).map(m => ({ ...m, type: 'mix' }));
 
-    // Search live streams
-    const streamResults = (liveStreams || []).filter(stream => {
-      if (!stream.available) return false;
-      const searchable = `${stream.name} ${stream.genre || ''}`.toLowerCase();
+    // Search indexed streams (from streams/search-index.json)
+    const indexedStreamResults = (this.streamData || []).filter(stream => {
+      const searchable = `${stream.name} ${stream.genre || ''} ${stream.presetLabel || ''}`.toLowerCase();
       return terms.every(term => searchable.includes(term));
-    }).map(s => ({ ...s, type: 'stream' }));
+    }).map(s => ({ ...s, type: 'stream', url: s.url }));
 
-    // Combine results (mixes first, then streams)
-    return [...mixResults, ...streamResults];
+    // Combine results (mixes first, then indexed streams)
+    return [...mixResults, ...indexedStreamResults];
   }
 };
 
@@ -104,7 +112,9 @@ function displaySearchResults(results, query) {
 
   if (!query.trim()) {
     mixList.innerHTML = '';
-    searchInfo.textContent = `${searchIndex.data?.length || 0} mixes available`;
+    const totalMixes = searchIndex.mixData?.length || 0;
+    const totalStreams = searchIndex.streamData?.length || 0;
+    searchInfo.textContent = `${totalMixes} mixes, ${totalStreams} streams available`;
     return;
   }
 
