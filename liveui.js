@@ -35,6 +35,11 @@ function switchMiddleTab(tab) {
     btn.classList.toggle('active', btn.dataset.tab === tab);
   });
 
+  const queueActions = document.getElementById('queueTabActions');
+  if (queueActions) {
+    queueActions.style.display = tab === 'queue' ? '' : 'none';
+  }
+
   const streamActions = document.getElementById('streamTabActions');
   if (streamActions) {
     streamActions.style.display = tab === 'userStreams' ? '' : 'none';

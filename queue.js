@@ -36,16 +36,11 @@ function displayQueue() {
   const queueInfo = state.queue.length > 0 
     ? `<div class="queue-info">${state.currentQueueIndex >= 0 ? `${playState} ${state.currentQueueIndex + 1} of ${state.queue.length}` : `${state.queue.length} mixes`}${durationText}</div>` 
     : '';
-  const header = state.queue.length > 0 
-    ? `<div class="queue-header">
-        <button onclick="clearQueue()">Clear</button>
-        <button onclick="shuffleQueue()">Shuffle</button>
-        <button class="loop-btn${state.loopQueue ? ' active' : ''}" onclick="toggleLoop()">Loop</button>
-        <button onclick="skipPrev()" title="Previous in queue">↑ Prev</button>
-        <button onclick="skipNext()" title="Next in queue">↓ Next</button>
-      </div>` 
-    : '';
-  queueDiv.innerHTML = queueInfo + header + state.queue.map((mix, i) => {
+  // Sync loop button state in tab bar
+  const loopTabBtn = document.getElementById('loopTabBtn');
+  if (loopTabBtn) loopTabBtn.classList.toggle('active', state.loopQueue);
+
+  queueDiv.innerHTML = queueInfo + state.queue.map((mix, i) => {
     const djName = mix.artist || getDJName(mix.htmlPath || mix.djPath);
     const djSuffix = mix.isLocal ? '' : ` - ${escapeHtml(djName)}`;
     const deleteBtn = `<button class="delete-btn" onclick="removeFromQueue(${i})" title="Remove from queue">✕</button>`;
@@ -55,7 +50,7 @@ function displayQueue() {
           ondragover="onDragOver(event)" 
           ondrop="onDrop(event, ${i})"
           ondragend="onDragEnd()">
-        ${i !== state.currentQueueIndex ? deleteBtn : '<span style="width: 24px;"></span>'}
+        ${deleteBtn}
         <span class="mix-name">${escapeHtml(mix.name)}${djSuffix}</span>
         <button class="icon-btn" onclick="playFromQueue(${i})" title="Play Now">▶</button>
       </div>`;
@@ -170,12 +165,18 @@ async function playFromQueue(index) {
 }
 
 function removeFromQueue(index) {
-  if (index !== state.currentQueueIndex) {
-    state.queue.splice(index, 1);
-    if (index < state.currentQueueIndex) state.currentQueueIndex--;
-    saveQueue();
-    displayQueue();
+  state.queue.splice(index, 1);
+  if (state.queue.length === 0) {
+    state.currentQueueIndex = -1;
+  } else if (index < state.currentQueueIndex) {
+    state.currentQueueIndex--;
+  } else if (index === state.currentQueueIndex) {
+    if (state.currentQueueIndex >= state.queue.length) {
+      state.currentQueueIndex = state.queue.length - 1;
+    }
   }
+  saveQueue();
+  displayQueue();
 }
 
 function addToQueue(mixId) {
