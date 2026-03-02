@@ -199,12 +199,6 @@ async function fetchMixDetails(mix) {
     }
   }
   
-  // Build download links (local)
-  const downloadLinks = (mix.downloads || []).map(d => ({
-    href: localDir + encodeFilename(d.file),
-    label: d.label
-  }));
-  
   // Try to load track list from .tracks.txt (CSV) (local)
   let trackListTable = '';
   const txtPath = `${localDir}${encodeFilename(mix.file)}.tracks.txt`;
@@ -225,6 +219,11 @@ async function fetchMixDetails(mix) {
   // Audio source uses configurable MIXES_BASE_URL (may be remote)
   const cleanPath = djPath.replace(/^mixes\//, '');
   const audioSrc = `${MIXES_BASE_URL}${cleanPath}/${encodeFilename(mix.audioFile)}`;
+  // Build download links (may be remote)
+  const downloadLinks = (mix.downloads || []).map(d => ({
+    href: MIXES_BASE_URL + cleanPath + '/' + encodeFilename(d.file),
+    label: d.label
+  }));
   
   return {
     audioSrc,
