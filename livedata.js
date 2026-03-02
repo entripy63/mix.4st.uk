@@ -98,14 +98,20 @@ function isRawIPURL(url) {
 function probeStream(url, timeoutMs = 5000) {
   return new Promise(resolve => {
     const audio = new Audio();
-    const timer = setTimeout(() => {
+    const cleanup = () => {
+      audio.pause();
       audio.src = '';
+      audio.removeAttribute('src');
+      audio.load();
+    };
+    const timer = setTimeout(() => {
+      cleanup();
       resolve(false);
     }, timeoutMs);
     
     audio.addEventListener('canplay', () => {
       clearTimeout(timer);
-      audio.src = '';
+      cleanup();
       resolve(true);
     }, { once: true });
     
@@ -190,18 +196,21 @@ async function fetchPlaylist(playlistUrl) {
      const hasAudioExt = audioExts.some(ext => playlistUrl.toLowerCase().includes(ext));
      
      if (isAudioStream || hasAudioExt) {
+       controller.abort();
        return [];
      }
      
      const text = await resp.text();
+     controller.abort();
      if (text.trim().toLowerCase().startsWith('[playlist]')) {
        return parsePLS(text);
      }
      return parseM3U(text);
-   } catch (e) {
+     } catch (e) {
+     controller.abort();
      // Abort or timeout on streaming audio is expected, treat as audio stream
      return [];
-   }
+     }
 }
 
 // ========== STREAM PROBING & ADDITION ==========
