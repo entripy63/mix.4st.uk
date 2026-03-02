@@ -1,1 +1,2 @@
 DirectoryIndex player.html index.html
+AddType application/json .streams .mixes

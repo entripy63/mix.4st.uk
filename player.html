@@ -130,6 +130,8 @@
           <button onclick="skipNext()" class="tab-action-btn" title="Next in queue">▼</button>
           <button onclick="shuffleQueue()" class="tab-action-btn" title="Shuffle queue">⇄</button>
           <button id="loopTabBtn" onclick="toggleLoop()" class="tab-action-btn" title="Loop queue">⟳</button>
+          <button onclick="loadQueueFromFile()" class="tab-action-btn" title="Load queue from file">↥</button>
+          <button onclick="saveQueueToFile()" class="tab-action-btn" title="Save queue to file">↧</button>
           <button onclick="clearQueue()" class="tab-action-btn" title="Clear queue">✕</button>
         </div>
         <div id="streamTabActions" class="tab-actions" style="display: none;">
@@ -193,6 +195,7 @@
         <script src="core.js"></script>
         <script src="mixes.js"></script>
         <script src="queue.js"></script>
+        <script src="queuestore.js"></script>
         <script src="player.js"></script>
         <script src="player-mix.js"></script>
         <script src="livedata.js"></script>

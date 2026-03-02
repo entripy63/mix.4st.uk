@@ -75,7 +75,7 @@ def process_streams(streams_directory, all_streams):
                 'name': stream.get('name', ''),
                 'genre': stream.get('genre', ''),
                 'url': stream.get('m3u', ''),
-                'preset': preset_filename.replace('.json', ''),
+                'preset': preset_filename.replace('.streams', ''),
                 'presetLabel': preset_name
             })
             stream_count += 1

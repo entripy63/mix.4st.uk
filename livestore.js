@@ -89,7 +89,7 @@ function saveCollectionWithMetadata(streams) {
   collectionMetadata = { name, category };
   
   const timestamp = new Date().toISOString().split('T')[0];
-  const filename = `${name}-${timestamp}.json`;
+  const filename = `${name}-${timestamp}.streams`;
   
   const collection = {
     name: name,
@@ -119,7 +119,7 @@ function saveCollectionWithMetadata(streams) {
 async function loadCollectionFromFile() {
   const input = document.createElement('input');
   input.type = 'file';
-  input.accept = '.json';
+  input.accept = '.streams,.json';
   
   input.onchange = async (e) => {
     const file = e.target.files[0];

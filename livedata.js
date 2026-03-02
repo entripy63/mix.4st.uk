@@ -403,7 +403,7 @@ async function loadDefaultStreamsOnFirstRun() {
      
      if (userStreams.length === 0 && !hasEverInitialized) {
        try {
-         const response = await fetch('/streams/Default.json');
+         const response = await fetch('/streams/Default.streams');
          const preset = await response.json();
          if (preset.name && Array.isArray(preset.streams)) {
            for (const stream of preset.streams) {

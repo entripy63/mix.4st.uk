@@ -5,7 +5,7 @@ Generate manifest.json for streams directory.
 Usage:
     python3 generate-streams-manifest.py
 
-Scans /streams/ directory for .json stream files, reads the 'name' field
+Scans /streams/ directory for .streams files, reads the 'name' field
 from each, and generates /streams/manifest.json listing them.
 
 Preset file format expected:
@@ -28,9 +28,9 @@ def main():
         print(f"Error: {streams_dir} directory does not exist")
         return
     
-    # Find all .json files in streams directory (exclude manifest.json)
+    # Find all .streams files in streams directory (exclude manifest.json)
     stream_files = sorted([
-        f for f in streams_dir.glob('*.json')
+        f for f in streams_dir.glob('*.streams')
         if f.name != 'manifest.json'
     ])
     
