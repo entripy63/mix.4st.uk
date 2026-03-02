@@ -1,2 +1,9 @@
 DirectoryIndex player.html index.html
 AddType application/json .streams .mixes
+# Tell the browser to download the following multimedia files
+AddType application/octet-stream .mp3
+AddType application/octet-stream .m4a
+AddType application/octet-stream .flac
+AddType application/octet-stream .wav
+
+
