@@ -147,15 +147,17 @@ function calculateTotalDuration() {
 }
 
 function skipNext() {
-  if (state.currentQueueIndex >= 0 && state.currentQueueIndex < state.queue.length - 1) {
-    playFromQueue(state.currentQueueIndex + 1);
-  }
+  if (state.queue.length === 0) return;
+  state.currentQueueIndex = (state.currentQueueIndex + 1) % state.queue.length;
+  saveQueue();
+  displayQueue();
 }
 
 function skipPrev() {
-  if (state.currentQueueIndex > 0) {
-    playFromQueue(state.currentQueueIndex - 1);
-  }
+  if (state.queue.length === 0) return;
+  state.currentQueueIndex = (state.currentQueueIndex - 1 + state.queue.length) % state.queue.length;
+  saveQueue();
+  displayQueue();
 }
 
 async function playFromQueue(index) {
