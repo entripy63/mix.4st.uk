@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Player</title>
-    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
-    <link rel="stylesheet" href="common.css">
-    <link rel="stylesheet" href="player.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎧</text></svg>">
-  </head>
+
+<head>
+  <title>Player</title>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+  <link rel="stylesheet" href="common.css">
+  <link rel="stylesheet" href="player.css">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎧</text></svg>">
+</head>
 
 <body>
   <div class="container">
@@ -35,61 +37,91 @@
           </button>
           <button class="settings-btn" onclick="showSettings()" title="Settings">⚙️</button>
           <button class="help-btn" onclick="showHelp()" title="Keyboard shortcuts (?)">?</button>
-          </div>
-          <div id="settingsModal" class="modal" style="display: none;">
-            <div class="modal-content">
-              <button class="modal-close" onclick="hideSettings()">×</button>
-              <h2>Settings</h2>
-              <div class="settings-group">
-                <label class="setting-label">After Play Now:</label>
-                <div class="setting-options">
-                  <label class="radio-label">
-                    <input type="radio" name="afterPlayNow" value="stop" onchange="updateSetting('afterPlayNow', this.value)">
-                    Stop
-                  </label>
-                  <label class="radio-label">
-                    <input type="radio" name="afterPlayNow" value="loop" onchange="updateSetting('afterPlayNow', this.value)">
-                    Loop
-                  </label>
-                  <label class="radio-label">
-                    <input type="radio" name="afterPlayNow" value="continue" onchange="updateSetting('afterPlayNow', this.value)">
-                    Continue with Queue
-                  </label>
-                </div>
-              </div>
-              <div class="settings-group">
-                <label class="checkbox-label">
-                  <input type="checkbox" id="showHiddenMixesCheckbox" onchange="updateShowHiddenMixes(this.checked)">
-                  Show Hidden Mixes
+        </div>
+        <div id="settingsModal" class="modal" style="display: none;">
+          <div class="modal-content">
+            <button class="modal-close" onclick="hideSettings()">×</button>
+            <h2>Settings</h2>
+            <div class="settings-group">
+              <label class="setting-label">After Play Now:</label>
+              <div class="setting-options">
+                <label class="radio-label">
+                  <input type="radio" name="afterPlayNow" value="stop"
+                    onchange="updateSetting('afterPlayNow', this.value)">
+                  Stop
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="afterPlayNow" value="loop"
+                    onchange="updateSetting('afterPlayNow', this.value)">
+                  Loop
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="afterPlayNow" value="continue"
+                    onchange="updateSetting('afterPlayNow', this.value)">
+                  Continue with Queue
                 </label>
               </div>
             </div>
+            <div class="settings-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="showHiddenMixesCheckbox" onchange="updateShowHiddenMixes(this.checked)">
+                Show Hidden Mixes
+              </label>
+            </div>
           </div>
-          <div id="helpModal" class="modal" style="display: none;">
+        </div>
+        <div id="helpModal" class="modal" style="display: none;">
           <div class="modal-content">
             <button class="modal-close" onclick="hideHelp()">×</button>
             <h2>Keyboard Shortcuts</h2>
             <table class="shortcuts-table">
-              <tr><td><kbd>Space</kbd></td><td>Play / Pause</td></tr>
-              <tr><td><kbd>Ctrl</kbd>+<kbd>↓</kbd></td><td>Next in queue</td></tr>
-              <tr><td><kbd>Ctrl</kbd>+<kbd>↑</kbd></td><td>Previous in queue</td></tr>
-              <tr><td><kbd>Ctrl</kbd>+<kbd>D</kbd></td><td>DJ mode</td></tr>
-              <tr><td><kbd>Ctrl</kbd>+<kbd>A</kbd></td><td>All DJs mode</td></tr>
-              <tr><td><kbd>Ctrl</kbd>+<kbd>F</kbd></td><td>Search mode</td></tr>
-              <tr><td><kbd>Ctrl</kbd>+<kbd>V</kbd></td><td>Favourites mode</td></tr>
-              <tr><td><kbd>Ctrl</kbd>+<kbd>L</kbd></td><td>Live mode</td></tr>
-              <tr><td><kbd>Esc</kbd></td><td>Close this help</td></tr>
+              <tr>
+                <td><kbd>Space</kbd></td>
+                <td>Play / Pause</td>
+              </tr>
+              <tr>
+                <td><kbd>Ctrl</kbd>+<kbd>↓</kbd></td>
+                <td>Next in queue</td>
+              </tr>
+              <tr>
+                <td><kbd>Ctrl</kbd>+<kbd>↑</kbd></td>
+                <td>Previous in queue</td>
+              </tr>
+              <tr>
+                <td><kbd>Ctrl</kbd>+<kbd>D</kbd></td>
+                <td>DJ mode</td>
+              </tr>
+              <tr>
+                <td><kbd>Ctrl</kbd>+<kbd>A</kbd></td>
+                <td>All DJs mode</td>
+              </tr>
+              <tr>
+                <td><kbd>Ctrl</kbd>+<kbd>F</kbd></td>
+                <td>Search mode</td>
+              </tr>
+              <tr>
+                <td><kbd>Ctrl</kbd>+<kbd>V</kbd></td>
+                <td>Favourites mode</td>
+              </tr>
+              <tr>
+                <td><kbd>Ctrl</kbd>+<kbd>L</kbd></td>
+                <td>Live mode</td>
+              </tr>
+              <tr>
+                <td><kbd>Esc</kbd></td>
+                <td>Close this help</td>
+              </tr>
             </table>
           </div>
-          </div>
+        </div>
         <div id="djButtons">
-        <button onclick="loadDJ('mixes/trip')">trip-</button>
-        <button onclick="loadDJ('mixes/izmar')">Izmar</button>
-        <button onclick="loadDJ('mixes/haze')">haze</button>
-        <button onclick="loadDJ('mixes/rpfr')">rpfr</button>
-        <button onclick="loadDJ('mixes/jx3p')">jx3p</button>
-        <button onclick="loadDJ('mixes/gmanual')">gmanual</button>
-        <button onclick="loadDJ('mixes/aboo')">Aboo</button>
+          <button onclick="loadDJ('mixes/trip')">trip-</button>
+          <button onclick="loadDJ('mixes/izmar')">Izmar</button>
+          <button onclick="loadDJ('mixes/haze')">haze</button>
+          <button onclick="loadDJ('mixes/rpfr')">rpfr</button>
+          <button onclick="loadDJ('mixes/jx3p')">jx3p</button>
+          <button onclick="loadDJ('mixes/gmanual')">gmanual</button>
+          <button onclick="loadDJ('mixes/aboo')">Aboo</button>
         </div>
         <div id="djDropdown" style="display: none;">
           <select id="djSelect">
@@ -108,19 +140,21 @@
         </div>
         <div id="groupFilters"></div>
         <div id="mixList"></div>
-        </div>
-        <footer id="httpsNotice" style="text-align: center; padding: 12px 15px; color: #fff; font-size: 13px; font-weight: bold; background-color: #c0475c; grid-column: 1 / -1; display: none;">
-          ⚠️ Some audio streams may not work on HTTPS. Use the <a id="httpLink" href="#" style="color: #fff; text-decoration: underline;">HTTP version</a> for full compatibility.
-        </footer>
-        <script>
-          document.getElementById('httpLink').href = window.location.href.replace(/^https:/, 'http:');
-        </script>
-        <script>
-          if (location.protocol === 'https:') {
-            document.getElementById('httpsNotice').style.display = '';
-          }
-        </script>
-        </div>
+      </div>
+      <footer id="httpsNotice"
+        style="text-align: center; padding: 12px 15px; color: #fff; font-size: 13px; font-weight: bold; background-color: #c0475c; grid-column: 1 / -1; display: none;">
+        ⚠️ Some audio streams may not work on HTTPS. Use the <a id="httpLink" href="#"
+          style="color: #fff; text-decoration: underline;">HTTP version</a> for full compatibility.
+      </footer>
+      <script>
+        document.getElementById('httpLink').href = window.location.href.replace(/^https:/, 'http:');
+      </script>
+      <script>
+        if (location.protocol === 'https:') {
+          document.getElementById('httpsNotice').style.display = '';
+        }
+      </script>
+    </div>
     <div class="middle-column">
       <div id="middleTabs">
         <button class="middle-tab active" data-tab="queue" onclick="switchMiddleTab('queue')">Mix Queue</button>
@@ -170,47 +204,48 @@
       <div id="coverArt"></div>
       <div id="trackList"></div>
     </div>
-        </div>
-        <div id="presetsModal" class="modal" onclick="hidePresetsMenu()" style="display: none;">
-        <div class="modal-content" onclick="event.stopPropagation()" style="background: #252542; border-radius: 10px; padding: 16px; max-width: 300px;">
-        <h2 style="margin-top: 0; margin-bottom: 16px; font-size: 16px;">Add Playlists</h2>
-        <div id="presetsList" style="display: flex; flex-direction: column; gap: 8px;"></div>
-        </div>
-        </div>
+  </div>
+  <div id="presetsModal" class="modal" onclick="hidePresetsMenu()" style="display: none;">
+    <div class="modal-content" onclick="event.stopPropagation()"
+      style="background: #252542; border-radius: 10px; padding: 16px; max-width: 300px;">
+      <h2 style="margin-top: 0; margin-bottom: 16px; font-size: 16px;">Add Playlists</h2>
+      <div id="presetsList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+    </div>
+  </div>
 
-        <div id="confirmDialog" class="modal" style="display: none;">
-        <div class="confirm-content modal-content" onclick="event.stopPropagation()" style="background: #252542; border-radius: 10px; padding: 24px; max-width: 320px;">
-        <h2 class="confirm-title" style="margin-top: 0; margin-bottom: 12px; font-size: 16px;"></h2>
-        <p class="confirm-message" style="margin: 0 0 20px 0; color: #ccc; font-size: 14px;"></p>
-        <div style="display: flex; gap: 10px; justify-content: flex-end;">
-          <button class="confirm-cancel" style="padding: 10px 16px; background: #3d3d5c; border: none; border-radius: 6px; color: #e0e0e0; cursor: pointer; transition: background 0.2s; font-size: 14px;">Cancel</button>
-          <button class="confirm-confirm" style="padding: 10px 16px; background: #c0475c; border: none; border-radius: 6px; color: #fff; cursor: pointer; transition: background 0.2s; font-size: 14px; font-weight: bold;">Delete</button>
-        </div>
-         </div>
-         </div>
-        <footer id="httpsNotice" style="text-align: center; padding: 10px 15px; color: #888; font-size: 12px; border-top: 1px solid #3d3d5c; grid-column: 1 / -1;">
-           Some audio streams may not work on HTTPS. Use the <a href="http://mix.4st.uk" style="color: #c0475c; text-decoration: none;">HTTP version</a> for full compatibility.
-        </footer>
-        
-        <script src="core.js"></script>
-        <script src="mixes.js"></script>
-        <script src="queue.js"></script>
-        <script src="queuestore.js"></script>
-        <script src="player.js"></script>
-        <script src="player-mix.js"></script>
-        <script src="livedata.js"></script>
-        <script src="modals.js"></script>
-        <script src="livestore.js"></script>
-        <script src="liveui.js"></script>
-        <script src="search.js"></script>
-        <script src="browser.js"></script>
-        <script src="restore.js"></script>
-        <script>
-          // Initialize mixes config and player
-          (async function initPlayer() {
-            await loadMixesConfig();
-          })();
-        </script>
-        </body>
+  <div id="confirmDialog" class="modal" style="display: none;">
+    <div class="confirm-content modal-content" onclick="event.stopPropagation()"
+      style="background: #252542; border-radius: 10px; padding: 24px; max-width: 320px;">
+      <h2 class="confirm-title" style="margin-top: 0; margin-bottom: 12px; font-size: 16px;"></h2>
+      <p class="confirm-message" style="margin: 0 0 20px 0; color: #ccc; font-size: 14px;"></p>
+      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button class="confirm-cancel"
+          style="padding: 10px 16px; background: #3d3d5c; border: none; border-radius: 6px; color: #e0e0e0; cursor: pointer; transition: background 0.2s; font-size: 14px;">Cancel</button>
+        <button class="confirm-confirm"
+          style="padding: 10px 16px; background: #c0475c; border: none; border-radius: 6px; color: #fff; cursor: pointer; transition: background 0.2s; font-size: 14px; font-weight: bold;">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="core.js"></script>
+  <script src="mixes.js"></script>
+  <script src="queue.js"></script>
+  <script src="queuestore.js"></script>
+  <script src="player.js"></script>
+  <script src="player-mix.js"></script>
+  <script src="livedata.js"></script>
+  <script src="modals.js"></script>
+  <script src="livestore.js"></script>
+  <script src="liveui.js"></script>
+  <script src="search.js"></script>
+  <script src="browser.js"></script>
+  <script src="restore.js"></script>
+  <script>
+    // Initialize mixes config and player
+    (async function initPlayer() {
+      await loadMixesConfig();
+    })();
+  </script>
+</body>
 
 </html>
