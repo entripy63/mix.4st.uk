@@ -1,6 +1,5 @@
 // player.js - Core Playback (Live Streams & Audio Control)
-// Shared by both player.html and live.html
-// Waveform code moved to player-mix.js (player.html only)
+// Waveform code is in player-mix.js
 
 // Custom audio controls
 const playPauseBtn = document.getElementById('playPauseBtn');
@@ -116,7 +115,6 @@ function playLive(url, displayText, autoplay = false) {
   updatePlayPauseBtn();
   
   // Notify other modules (e.g., player-mix.js) that live stream started
-  // player.html listens for this to clear DJ UI; live.html doesn't listen
   document.dispatchEvent(new CustomEvent('liveStreamStarted', {
     detail: { url, displayText }
   }));
@@ -276,7 +274,7 @@ function play(url) {
   aud.play();
 }
 
-// Shared keyboard shortcuts (both player.html and live.html)
+// Keyboard shortcuts
 document.addEventListener('keydown', function(e) {
   if (e.target.tagName === 'INPUT') return;
   if (e.code === 'Space') {

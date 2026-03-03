@@ -8,29 +8,18 @@
 - **Features**: Mix playback, queue management, search, live streams, settings
 - **Responsive**: Yes (mobile, tablet, desktop)
 
-### live.html
-- **Purpose**: Standalone live streaming SPA (live.4st.uk)
-- **Layout**: Single column, mobile-first
-- **Features**: Live stream management, collections, drag-drop reordering
-- **Independent Hosting**: Yes (can run separately from player.html)
-
 ---
 
 ## Stylesheets
 
 ### common.css
-- **Purpose**: Shared styling for both SPAs
-- **Used by**: player.html, live.html
+- **Purpose**: Shared styling
+- **Used by**: player.html
 - **Contains**: Colors, layout grid, modals, buttons, responsive design
 
 ### player.css
 - **Purpose**: Styling specific to player.html
 - **Size**: Waveform, queue, browser columns, responsive layout
-- **Depends on**: common.css
-
-### live.css
-- **Purpose**: Styling specific to live.html
-- **Design**: Mobile-first, single-column layout
 - **Depends on**: common.css
 
 ---
@@ -47,7 +36,7 @@
 #### player.js (250+ lines)
 - **Purpose**: Playback controls, waveform rendering, audio handling
 - **Dependencies**: core.js
-- **Used by**: player.html, live.html
+- **Used by**: player.html
 - **Features**: Play/pause, volume, progress, waveform display
 
 ### Player-Specific Modules
@@ -87,12 +76,12 @@
 - **Used by**: player.html
 - **Features**: Restore mix playback, browser mode, search query, DJ selection, filters
 
-### Live Streaming Modules (Shared)
+### Live Streaming Modules
 
 #### livedata.js
 - **Purpose**: Live stream data management, probing, persistence
 - **Dependencies**: core.js
-- **Used by**: player.html, live.html
+- **Used by**: player.html
 - **Features**:
   - Stream probing (timeout handling)
   - Playlist parsing (M3U, PLS)
@@ -104,7 +93,7 @@
 #### livestore.js
 - **Purpose**: Stream collection persistence (save/load/clear)
 - **Dependencies**: core.js, livedata.js, modals.js
-- **Used by**: player.html, live.html
+- **Used by**: player.html
 - **Features**:
   - Save streams to JSON file (with metadata modal)
   - Load streams from JSON file
@@ -114,9 +103,9 @@
 #### liveui.js
 - **Purpose**: Live stream UI rendering and interactions
 - **Dependencies**: core.js, livedata.js, modals.js
-- **Used by**: player.html, live.html
+- **Used by**: player.html
 - **Features**:
-  - User stream list rendering (`displayLiveStreams()` → targets `#userStreamsList` on player.html, `#mixList` on live.html)
+  - User stream list rendering (`displayLiveStreams()` → targets `#userStreamsList`)
   - Middle column tab switching (`switchMiddleTab()` — Mix Queue / User Streams)
   - Preset browser (`buildPresetDropdown()`, `displayPresetStreams()`) for browsing streams by preset
   - Per-stream actions: play from preset, add to user streams
@@ -129,7 +118,7 @@
 #### modals.js
 - **Purpose**: Modal dialogs and confirmation UI
 - **Dependencies**: core.js
-- **Used by**: player.html, live.html
+- **Used by**: player.html
 - **Features**: Settings, help, confirmation dialogs, playlist guide, presets menu
 
 ---
@@ -283,20 +272,9 @@ restore.js        (restore state on page load)
 player.html       (3-column SPA layout)
 ```
 
-### live.html Load Order
-```
-core.js           (shared: state, storage, utilities)
-player.js         (audio playback engine)
-livedata.js       (stream data, probing, parsing)
-modals.js         (modal dialogs)
-livestore.js      (collection persistence)
-liveui.js         (stream UI, rendering)
-live.html         (single-column SPA layout)
-```
-
 ### Dependency Graph (Simplified)
 ```
-player.html & live.html
+player.html
     ↓
 core.js ←─ (used by all modules)
     ↓
@@ -319,16 +297,14 @@ player.html adds: mixes.js → queue.js → player-mix.js → browser.js → sea
 
 ```
 /
-├── Shared HTML Entry Points
-│   ├── player.html          # Main DJ mix player SPA (mixes.4st.uk)
-│   └── live.html           # Live streaming SPA (live.4st.uk)
+├── HTML Entry Point
+│   └── player.html          # Main DJ mix player SPA (mixes.4st.uk)
 │
-├── Shared Stylesheets
-│   ├── common.css           # Colors, layout, modals, buttons (both SPAs)
-│   ├── player.css           # Player-specific: waveform, queue, columns
-│   └── live.css            # Live-specific: mobile-first layout
+├── Stylesheets
+│   ├── common.css           # Colors, layout, modals, buttons
+│   └── player.css           # Player-specific: waveform, queue, columns
 │
-├── Shared JavaScript Modules
+├── JavaScript Modules
 │   ├── core.js             # Global state, storage, utilities
 │   ├── player.js           # Audio playback, controls, waveform
 │   ├── livedata.js         # Stream probing, parsing, persistence
@@ -391,7 +367,7 @@ player.html adds: mixes.js → queue.js → player-mix.js → browser.js → sea
    - `python3 tools/generate-covers.py . "NewDJ"`
    - `python3 tools/generate-peaks.py . "NewDJ"`
 3. **Update Search Index**: `python3 tools/generate-search-index.py` (automatically scans both `mixes/` and `mixes/moreDJs/`, runs on all manifests)
-4. **Test**: Load `player.html` or `live.html` in browser
+4. **Test**: Load `player.html` in browser
 5. **Commit & Deploy**: Push to git, deploy to server
 
 ⚠️ **Performance Tip**: By passing DJ folder names to the scripts, you only process new content. Processing the entire collection takes 7-10+ hours.
@@ -405,10 +381,8 @@ player.html adds: mixes.js → queue.js → player-mix.js → browser.js → sea
 | File | Size | Purpose |
 |------|------|---------|
 | **player.html** | ~5KB | Main entry point (DJ mixes SPA) |
-| **live.html** | ~2KB | Live streaming entry point |
 | **common.css** | ~35KB | Shared styling |
 | **player.css** | ~40KB | Player-specific styling |
-| **live.css** | ~20KB | Live-specific styling |
 | **core.js** | ~6KB | Shared utilities, state |
 | **player.js** | ~25KB | Playback engine, waveform |
 | **player-mix.js** | ~12KB | Mix-specific playback |
@@ -426,7 +400,6 @@ player.html adds: mixes.js → queue.js → player-mix.js → browser.js → sea
 | **Total JS (player.html)** | **~115KB** | Uncompressed |
 | **Total CSS** | **~95KB** | Uncompressed |
 | **Total (player.html)** | **~215KB** | JS + CSS + HTML |
-| **Total (live.html)** | **~75KB** | Smaller, streams-only |
 
 ---
 
@@ -440,34 +413,25 @@ player.html adds: mixes.js → queue.js → player-mix.js → browser.js → sea
 - **Size**: ~200MB+ (includes all DJ music archives)
 - **Features**: Full player with queue, mix browser, search, live streams, state restoration
 
-### live.4st.uk (Live Streams SPA)
-- **Entry Point**: live.html
-- **JavaScript Modules**: core, player, livedata, modals, livestore, liveui
-- **Stylesheets**: common.css, live.css
-- **Independence**: Can be hosted separately from mixes.4st.uk
-- **Size**: ~5MB (minimal, no music archives)
-- **Benefits**: Load balancing, redundancy, faster deploys, independent updates
-
 ---
 
 ## Important Design Notes
 
 ### Code Sharing
-- **core.js & player.js**: Completely shared, no SPA-specific logic
-- **livedata.js, livestore.js & liveui.js**: Shared, designed to work independently of browser modes
-- **modals.js**: Shared, generic confirmation/dialog logic
-- **player-mix.js, mixes.js, queue.js, browser.js, search.js, restore.js**: player.html only
-- **avoid**: Don't add browserModes references to shared modules
+- **core.js & player.js**: Shared utilities and playback engine
+- **livedata.js, livestore.js & liveui.js**: Live streaming modules, designed to work independently of browser modes
+- **modals.js**: Generic confirmation/dialog logic
+- **player-mix.js, mixes.js, queue.js, browser.js, search.js, restore.js**: Player-specific modules
 
 ### Guard Callbacks
 - **shouldRedisplayStreams()** in liveui.js prevents stream display updates from overwriting other browser tabs
-- Implementation: Checks `browserModes.current === 'live'` (player.html) or true (live.html)
+- Implementation: Checks `browserModes.current === 'live'`
 - Pattern: Pass callback config to functions that loop over streams
 
 ### Script Loading Order
 - Simple sequential loading (no bundler)
 - Order matters: core.js must load first, then dependencies, then entry point
-- Check `<script>` tags in player.html and live.html for correct order
+- Check `<script>` tags in player.html for correct order
 
 ### No External Dependencies
 - Vanilla JavaScript only

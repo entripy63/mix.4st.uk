@@ -22,36 +22,29 @@ function getMixId(mix) {
    return mix.htmlPath || `${mix.djPath}/${mix.file}`;
 }
 
-// Determine if we're on live.html to isolate its storage
-const IS_LIVE_PAGE = location.pathname.includes('live.html');
-
 const storage = {
-  _prefixKey(key) {
-    return IS_LIVE_PAGE ? `live_${key}` : key;
-  },
   get(key, defaultVal = null) {
-    const val = localStorage.getItem(this._prefixKey(key));
+    const val = localStorage.getItem(key);
     return val !== null ? val : defaultVal;
   },
   getNum(key, defaultVal = 0) {
-    const val = localStorage.getItem(this._prefixKey(key));
+    const val = localStorage.getItem(key);
     return val !== null ? parseFloat(val) : defaultVal;
   },
   getJSON(key, defaultVal = null) {
     try {
-      const val = localStorage.getItem(this._prefixKey(key));
+      const val = localStorage.getItem(key);
       return val !== null ? JSON.parse(val) : defaultVal;
     } catch { return defaultVal; }
   },
   getBool(key, defaultVal = false) {
-    const prefixedKey = this._prefixKey(key);
-    return localStorage.getItem(prefixedKey) === 'true' || (localStorage.getItem(prefixedKey) === null && defaultVal);
+    return localStorage.getItem(key) === 'true' || (localStorage.getItem(key) === null && defaultVal);
   },
   set(key, val) {
-    localStorage.setItem(this._prefixKey(key), typeof val === 'object' ? JSON.stringify(val) : val);
+    localStorage.setItem(key, typeof val === 'object' ? JSON.stringify(val) : val);
   },
   remove(key) {
-    localStorage.removeItem(this._prefixKey(key));
+    localStorage.removeItem(key);
   }
 };
 

@@ -6,18 +6,12 @@
 
 // ========== TARGET ELEMENT HELPERS ==========
 
-// Get the target element for user stream rendering
-// player.html: #userStreamsList (middle column tab)
-// live.html: #mixList (main stream column)
 function getStreamListTarget() {
-  return document.getElementById('userStreamsList') || document.getElementById('mixList');
+  return document.getElementById('userStreamsList');
 }
 
 // Guard: check if user streams are currently visible and should be redisplayed
 function shouldRedisplayStreams() {
-  // live.html: always redisplay (no tabs/modes)
-  if (typeof browserModes === 'undefined') return true;
-  // player.html: redisplay if User Streams tab is visible
   return document.getElementById('userStreamsTab')?.style.display !== 'none';
 }
 
@@ -85,7 +79,6 @@ function displayLiveStreams() {
   }
   
   let html = '';
-  const hasTabActions = !!document.getElementById('streamTabActions');
   
   if (liveStreams.length === 0) {
     html += '<div style="padding: 20px; color: #888;">No live streams configured</div>';
@@ -139,21 +132,7 @@ function displayLiveStreams() {
     <div class="add-stream-form">
       <div class="add-stream-fields">
         <input type="text" id="newStreamM3U" placeholder="Playlist URL (M3U or PLS)" />
-        <button class="add-stream-btn" onclick="handleAddStream()">Add</button>`;
-  // Only include reload/menu buttons when not in player.html (where they live in the tab bar)
-  if (!hasTabActions) {
-    html += `
-        <button onclick="reloadLiveStreams()" class="reload-btn" title="Reload all streams">⟳</button>
-        <div class="stream-menu-container" style="position: relative;">
-          <button class="stream-menu-btn" onclick="toggleStreamCollectionsMenu()" title="Save/Load streams">☰</button>
-          <div id="streamCollectionsMenu" class="stream-collections-menu">
-            <button onclick="hideStreamCollectionsMenu(); loadCollectionFromFile()">📂 Load from File</button>
-            <button onclick="hideStreamCollectionsMenu(); saveCollectionToFile()">💾 Save to File</button>
-            <button onclick="hideStreamCollectionsMenu(); clearAllStreams()">🗑️ Clear All</button>
-          </div>
-        </div>`;
-  }
-  html += `
+        <button class="add-stream-btn" onclick="handleAddStream()">Add</button>
       </div>
     </div>
   `;
@@ -522,7 +501,7 @@ async function addAllPresetStreamsToUserStreams() {
 
 // ========== EVENT HANDLERS FOR DELEGATED ACTIONS ==========
 
-// Delegated event handler for user stream list (targets #userStreamsList on player.html, #mixList on live.html)
+// Delegated event handler for user stream list
 const streamListElement = getStreamListTarget();
 if (streamListElement) {
      streamListElement.addEventListener('click', (e) => {

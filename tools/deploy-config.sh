@@ -3,27 +3,27 @@
 
 # LFTP bookmarks and paths
 declare -A SERVERS=(
-  [mixes-prod]="axc"
-  [mixes-test]="axc-test"
-  [live-prod]="live"
-  [live-test]="live-test"
+  [prod]="axc"
+  [test]="axc-test"
+  [prod-backup]="live"
+  [test-backup]="live-test"
 )
 
 # Remote directories (change these based on your server structure)
 declare -A REMOTE_DIRS=(
-  [mixes-prod]="/"
-  [mixes-test]="/"
-  [live-prod]="/"
-  [live-test]="/"
+  [prod]="/"
+  [test]="/"
+  [prod-backup]="/"
+  [test-backup]="/"
 )
 
 # Mirror commands for each target
 # Note: mixes/mixes-config.json is excluded - manage per-server to avoid overwrites
 declare -A MIRROR_COMMANDS=(
-  [mixes-prod]="mirror -R -x .git/ -x .gitignore -x AGENTS.md -x docs/ -x tools/ -x node_modules/ -x mixes/mixes-config.json -X package* -X eslint.*"
-  [mixes-test]="mirror -R -x .git/ -x .gitignore -x AGENTS.md -x docs/ -x tools/ -x node_modules/ -x mixes/mixes-config.json -X package* -X eslint.*"
-  [live-prod]="mirror -R --only-existing"
-  [live-test]="mirror -R --only-existing"
+  [prod]="mirror -R -x .git/ -x .gitignore -x AGENTS.md -x docs/ -x tools/ -x node_modules/ -x mixes/mixes-config.json -X package* -X eslint.*"
+  [test]="mirror -R -x .git/ -x .gitignore -x AGENTS.md -x docs/ -x tools/ -x node_modules/ -x mixes/mixes-config.json -X package* -X eslint.*"
+  [prod-backup]="mirror -R -x .git/ -x .gitignore -x AGENTS.md -x docs/ -x tools/ -x node_modules/ -x mixes/mixes-config.json -X package* -X eslint.*"
+  [test-backup]="mirror -R -x .git/ -x .gitignore -x AGENTS.md -x docs/ -x tools/ -x node_modules/ -x mixes/mixes-config.json -X package* -X eslint.*"
 )
 
 # Export for use in other scripts

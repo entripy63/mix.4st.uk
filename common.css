@@ -1,6 +1,6 @@
-/* common.css - Shared styles between player.html and live.html SPAs
+/* common.css - Shared styles for player.html
    Includes: buttons, forms, modals, colors, stream info fields
-   SPA-specific layout and structure overrides go in player.css and live.css
+   Layout and structure overrides go in player.css
 */
 
 /* ========== COLOR PALETTE ========== */

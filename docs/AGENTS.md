@@ -9,13 +9,12 @@
 - DON'T USE `python3 -m http.server 8000` to test locally, too flakey
 - **ESLint**: `npm run lint` — syntax checking, `npm run lint:fix` — auto-fix formatting
 - ./tools/deploy.sh [target]
-- Targets: mixes-test, mixes-prod, live-test, live-prod, all-test, all-prod
+- Targets: test, prod, test-backup, prod-backup, all-test, all-prod
 
 ## Architecture
-- Static website with two SPAs: DJ mixes (mixes.4st.uk) and live streams (live.4st.uk)
-- Always remember the two SPAs when modifying code. i.e. don't add live stream stuff to browser.js which isn't part of both SPAs.
+- Static website with a single SPA (player.html)
 
-### player.html (DJ Mixes SPA)
+### player.html
 - **Location**: mixes.4st.uk
 - **Layout**: Landing page, Player, Queue/User Streams (tabbed), Browser columns, responsive design
 - **Stylesheets**: `common.css`, `player.css`
@@ -33,30 +32,9 @@
   - `search.js` - Search functionality and results display
   - `restore.js` - Page state restoration on load
 
-### live.html (Live Streams SPA)
-- **Location**: live.4st.uk (independent hosting)
-- **Layout**: Single column, mobile-first
-- **Stylesheets**: `common.css`, `live.css`
-- **JavaScript modules**:
-  - `core.js` - Shared utilities (same as player.html)
-  - `player.js` - Playback controls (same as player.html)
-  - `livedata.js` - Live stream data management, probing, persistence
-  - `modals.js` - Modal dialogs, playlist guide
-  - `livestore.js` - Stream collection persistence (save/load/clear)
-  - `liveui.js` - Live stream UI rendering and interactions
-
-### Shared Modules (Both SPAs)
-- `core.js` - State object, storage helpers, utility functions
-- `player.js` - Audio playback, controls, muting, live stream playback
-- `livedata.js` - Stream probing, parsing (M3U/PLS), persistence
-- `livestore.js` - Stream collection persistence (save/load/clear)
-- `liveui.js` - Stream rendering, drag-drop reordering, collections menu
-- `modals.js` - Confirmation dialogs, settings, help, playlist guide
-
 ### Stylesheets
-- `common.css` - Shared colors, layout, modals, buttons (used by both SPAs)
-- `player.css` - Waveform, queue, browser columns, responsive layout (player.html only)
-- `live.css` - Mobile-first layout, stream list styling (live.html only)
+- `common.css` - Shared colors, layout, modals, buttons
+- `player.css` - Waveform, queue, browser columns, responsive layout
 
 ### Data & Configuration
 - All DJ content organized under `mixes/` container directory
@@ -79,9 +57,8 @@ Generate covers and peaks before manifest so it can reference them.
 - `generate-streams-manifest.py` - Run after uploading streams to `/streams/` directory to regenerate `manifest.json` for stream presets
 
 ## Important Design Principles
-- **Two SPAs, Shared Code**: Code used by both player.html and live.html should not reference browserModes or mix-specific features
 - **Guard Callbacks**: When stream operations could interfere with other browser tabs, use `shouldRedisplayStreams()` guard to prevent unwanted redisplays
-- **Simple Module Loading**: No bundler — script order matters. Check player.html and live.html `<script>` tags for load order
+- **Simple Module Loading**: No bundler — script order matters. Check player.html `<script>` tags for load order
 - **Callback Pattern**: Use callbacks (not monkey-patching) for cross-module behavior (see livedata.js `shouldRedisplayAfterProbe` pattern)
 
 ## Code Style

@@ -36,8 +36,5 @@ The 'User Streams' tab would bring up the existing Live mode UI.
 Apart from the obvious UX behaviour apparent from the current All mode and Live mode behaviour a few optmisations should be possible.
 Specifically, if a user Adds to Queue the centre column should automatically display the 'Mix Queue" tab. If a user Adds to User Streams the centre column should automatically display the 'User Streams' tab.
 
-## What happens to the live.html SPA
-Currently unsure but to have access to the 'User Streams' tab in the centre column it would either need to become a two colum SPA or find a compact way of merging the 'User Streams' tab into the single column, probably just between the Player and the new Live mode UI. TBD.
-
 ## Implementation
 I would suggest that initially the existing Live mode UI first be moved to a new tabbed centre column leaving nothing more than the Add Genre, Add Country and Add Other buttons as the remaining Live mode UI. Once that is working we can change the Browser Live mode to be similar to All mode.

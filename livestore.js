@@ -157,9 +157,8 @@ async function loadCollectionFromFile() {
       
       // Re-initialize to pick up new streams
       liveStreamsInitialized = false;
-      // Always pass callback - checks browserModes at invocation time (live.html has no browserModes, always true)
       const config = {
-        shouldRedisplayAfterProbe: () => typeof browserModes === 'undefined' || browserModes.current === 'live'
+        shouldRedisplayAfterProbe: () => browserModes.current === 'live'
       };
       await initLiveStreams(config);
       

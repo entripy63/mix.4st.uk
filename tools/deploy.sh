@@ -1,7 +1,7 @@
 #!/bin/bash
 # Deployment script for mix.4st.uk
 # Usage: ./tools/deploy.sh [target]
-# Targets: mixes-test, mixes-prod, live-test, live-prod, all-test, all-prod
+# Targets: test, prod, test-backup, prod-backup, all-test, all-prod
 
 set -e
 
@@ -17,7 +17,7 @@ if [ ! -f "$CONFIG" ]; then
 fi
 
 # Valid targets
-VALID_TARGETS=("mixes-test" "mixes-prod" "live-test" "live-prod" "all-test" "all-prod")
+VALID_TARGETS=("test" "prod" "test-backup" "prod-backup" "all-test" "all-prod")
 TARGET="${1:-all-test}"
 
 # Validate target
@@ -29,9 +29,9 @@ fi
 
 # Determine which targets to deploy to
 if [[ "$TARGET" == "all-test" ]]; then
-  TARGETS=("mixes-test" "live-test")
+  TARGETS=("test" "test-backup")
 elif [[ "$TARGET" == "all-prod" ]]; then
-  TARGETS=("mixes-prod" "live-prod")
+  TARGETS=("prod" "prod-backup")
 else
   TARGETS=("$TARGET")
 fi

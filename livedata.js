@@ -432,7 +432,6 @@ async function initLiveStreams(config = {}) {
    }
 }
 
-// Live stream restoration for both SPAs
 async function restoreLivePlayer() {
     try {
       const savedLiveUrl = storage.get('liveStreamUrl');
@@ -449,9 +448,8 @@ async function restoreLivePlayer() {
         setTimeout(() => {
           state.isRestoring = false;
         }, 200);
-        // Always pass callback - checks browserModes at invocation time (live.html has no browserModes, always true)
-        const config = {
-          shouldRedisplayAfterProbe: () => typeof browserModes === 'undefined' || browserModes.current === 'live'
+           const config = {
+          shouldRedisplayAfterProbe: () => browserModes.current === 'live'
         };
         await initLiveStreams(config);
         return true; // Restored live stream
@@ -465,9 +463,8 @@ async function restoreLivePlayer() {
 // Load default preset on first run, then initialize live streams
 (async () => {
    await loadDefaultStreamsOnFirstRun();
-   // Always pass callback - checks browserModes at invocation time (live.html has no browserModes, always true)
    const config = {
-     shouldRedisplayAfterProbe: () => typeof browserModes === 'undefined' || browserModes.current === 'live'
+     shouldRedisplayAfterProbe: () => browserModes.current === 'live'
    };
    initLiveStreams(config).catch(e => console.error('Failed to initialize live streams:', e));
 })();

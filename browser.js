@@ -261,8 +261,7 @@ document.getElementById('mixList').addEventListener('click', (e) => {
 
 
 
-// Live stream functions are now in live.js (shared with live.html)
-// browser.js references these functions but doesn't define them
+// Live stream functions are in livedata.js, livestore.js, liveui.js
 
 // Browser modes coordinator
 const browserModes = {
@@ -508,4 +507,4 @@ document.getElementById('helpModal')?.addEventListener('click', function(e) {
 // Initialize favourites button state
 updateFavouritesButton();
 
-// Stream collections management is now in live.js
+// Stream collections management is in livestore.js

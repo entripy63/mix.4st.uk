@@ -81,9 +81,6 @@
   - Line 121: `<option value="">Select a DJ...</option>` - no path ref
   - **Status**: NO HARDCODED PATHS - NO CHANGES NEEDED
 
-- **live.html** (similar)
-  - **Status**: NO HARDCODED PATHS - NO CHANGES NEEDED
-
 ### 4. Configuration File
 
 - **audio-source-config.json** (currently at root)
