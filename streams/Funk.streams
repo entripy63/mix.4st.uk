@@ -1,0 +1,21 @@
+{
+  "name": "Funk",
+  "category": "genre",
+  "streams": [
+    {
+      "name": "Nu Disco Funk",
+      "m3u": "https://my.radiolize.com/radio/8090/radio.mp3",
+      "genre": "Funk"
+    },
+    {
+      "name": "Jazz Funk Soul",
+      "m3u": "https://s2.radio.co/s22ae5a8a6/listen",
+      "genre": "Soul"
+    },
+    {
+      "name": "Soul Funk House",
+      "m3u": "https://or.mysonicserver.com/8024/stream",
+      "genre": "Soul, Funk, House"
+    }
+  ]
+}

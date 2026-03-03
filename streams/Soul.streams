@@ -1,0 +1,56 @@
+{
+  "name": "Soul",
+  "category": "genre",
+  "streams": [
+    {
+      "name": "Soultrain Radio",
+      "m3u": "https://stream4.themediasite.co.uk:8154/stream",
+      "genre": "Soul"
+    },
+    {
+      "name": "SOUL RADIO Only Classic Soul",
+      "m3u": "https://listen.soulradio.uk/uk",
+      "genre": "Soul"
+    },
+    {
+      "name": "Total Soul",
+      "m3u": "https://onair7.xdevel.com/proxy/xautocloud_atvn_1069?mp=/;1/",
+      "genre": "Soul"
+    },
+    {
+      "name": "Mi Soul",
+      "m3u": "https://listen-misoul.sharp-stream.com/462_mi_soul_128_mp3",
+      "genre": "Soul"
+    },
+    {
+      "name": "Soul Power Radio",
+      "m3u": "https://eu9.fastcast4u.com/proxy/soulpowerradio?mp=/1",
+      "genre": "Soul"
+    },
+    {
+      "name": "Soul Groove Radio",
+      "m3u": "https://stream6.hippynet.co.uk/proxy/soulg/stream",
+      "genre": "Soul"
+    },
+    {
+      "name": "Soul City Radio",
+      "m3u": "https://stream.soulcityradiouk.com:8000/radio.mp3",
+      "genre": "Soul"
+    },
+    {
+      "name": "Soul Legends Radio",
+      "m3u": "https://streamer.radio.co/s60f3e59d1/listen",
+      "genre": "Soul"
+    },
+    {
+      "name": "Ministry of Soul",
+      "m3u": "https://stream.laut.fm/soul",
+      "genre": "Soul"
+    },
+    {
+      "name": "Soul Rhythms Radio",
+      "m3u": "https://a7.asurahosting.com:8230/radio.mp3",
+      "genre": "Soul"
+    }
+  ]
+}

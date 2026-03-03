@@ -1,0 +1,21 @@
+{
+  "name": "Oldskool",
+  "category": "genre",
+  "streams": [
+    {
+      "name": "Oldskool UK",
+      "m3u": "https://usa10.fastcast4u.com/knr0",
+      "genre": "Oldskool, Hardcore"
+    },
+    {
+      "name": "Oldskool Anthems",
+      "m3u": "https://osa.radioca.st/stream",
+      "genre": "Oldskool"
+    },
+    {
+      "name": "Oldskool Rave Tapes",
+      "m3u": "https://azuracast.oldskoolravetapes.co.uk/listen/old_skool_rave_tapes/listen",
+      "genre": "Oldskool, Rave"
+    }
+  ]
+}

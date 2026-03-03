@@ -36,6 +36,11 @@
       "name": "SomaFM: Heavyweight Reggae",
       "m3u": "https://somafm.com/reggae130.pls",
       "genre": "Reggae, Ska, Rocksteady classic and deep tracks."
+    },
+    {
+      "name": "LWR Radio Reggae",
+      "m3u": "https://lwrreggae-zaklwr10.radioca.st/stream",
+      "genre": "Reggae"
     }
   ]
 }

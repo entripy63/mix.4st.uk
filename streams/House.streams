@@ -63,6 +63,11 @@
       "genre": "House"
     },
     {
+      "name": "House Reaktor",
+      "m3u": "https://stream.zeno.fm/g97d5f6ggfhvv",
+      "genre": "House"
+    },
+    {
       "name": "Music Factory | Athens | Greece",
       "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99449708",
       "genre": null
@@ -71,6 +76,11 @@
       "name": "ENERGY FM",
       "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99608361",
       "genre": " classic dance and the best new music"
+    },
+    {
+      "name": "Raverholics Radio",
+      "m3u": "https://radio.raverholics.com/listen/raverholics/radio.mp3",
+      "genre": null
     }
   ]
 }
