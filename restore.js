@@ -55,12 +55,7 @@ document.getElementById('fileInput').addEventListener('change', async function (
     if (savedPath) {
       // Migrate old DJ paths (e.g., "aboo/mixname" -> "mixes/aboo/mixname")
       if (!savedPath.startsWith('mixes/')) {
-        const parts = savedPath.split('/');
-        if (parts[0] === 'moreDJs') {
-          savedPath = 'mixes/' + savedPath;
-        } else {
-          savedPath = 'mixes/' + savedPath;
-        }
+        savedPath = 'mixes/' + savedPath;
         storage.set('currentMixPath', savedPath);
       }
       const parts = savedPath.split('/');

@@ -132,7 +132,7 @@ function displayLiveStreams() {
     <div class="add-stream-form">
       <div class="add-stream-fields">
         <input type="text" id="newStreamM3U" placeholder="Playlist URL (M3U or PLS)" />
-        <button class="add-stream-btn" onclick="handleAddStream()">Add</button>
+        <button class="tab-action-btn add-stream-plus" onclick="handleAddStream()" title="Add stream">＋</button>
       </div>
     </div>
   `;
@@ -154,7 +154,7 @@ function playLiveStream(index) {
   if (!stream) return;
   
   if (!stream.available) {
-    alert(`Stream not available: ${stream.reason || 'Unknown reason'}`);
+    showAlertDialog('Stream Unavailable', stream.reason || 'Unknown reason');
     return;
   }
   
@@ -179,12 +179,12 @@ async function handleAddStream() {
      const m3u = document.getElementById('newStreamM3U').value.trim();
 
      if (!m3u) {
-       alert('Playlist URL is required');
+       showAlertDialog('Add Stream', 'Playlist URL is required.');
        return;
      }
 
      if (!m3u.startsWith('http://') && !m3u.startsWith('https://')) {
-       alert('Playlist URL must start with http:// or https://');
+       showAlertDialog('Add Stream', 'Playlist URL must start with http:// or https://');
        return;
      }
 
@@ -192,9 +192,19 @@ async function handleAddStream() {
      await addUserStream(null, m3u, null);
      if (shouldRedisplayStreams()) {
        displayLiveStreams();
-       // Scroll the input into view so user can immediately add another
-       const input = document.getElementById('newStreamM3U');
-       if (input) input.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+       // Open info pane for the newly added stream (last in list)
+       const target = getStreamListTarget();
+       const items = target.querySelectorAll('.mix-item');
+       const lastItem = items[items.length - 1];
+       if (lastItem) {
+         const info = lastItem.querySelector('.stream-extra-info');
+         if (info) info.style.display = 'block';
+       }
+       // Scroll to bottom so info pane and add-stream form are visible
+       const scrollContainer = document.getElementById('userStreamsTab');
+       if (scrollContainer) {
+         scrollContainer.scrollTop = scrollContainer.scrollHeight;
+       }
      }
 }
 
@@ -547,6 +557,22 @@ if (streamListElement) {
         if (index >= 0 && index < liveStreams.length) {
           const m3u = liveStreams[index].m3u;
           liveStreams[index].genre = newGenre;
+          // Update display
+          const streamRow = genreInput.closest('.mix-item');
+          const streamInfo = streamRow?.querySelector('.stream-info');
+          if (streamInfo) {
+            let genreSpan = streamInfo.querySelector('.stream-genre');
+            if (newGenre && newGenre !== 'Unknown') {
+              if (!genreSpan) {
+                genreSpan = document.createElement('span');
+                genreSpan.className = 'stream-genre';
+                streamInfo.appendChild(genreSpan);
+              }
+              genreSpan.textContent = newGenre;
+            } else if (genreSpan) {
+              genreSpan.remove();
+            }
+          }
           // Save to storage using m3u as key to avoid index mismatches
           const configs = getUserStreams();
           const storageIndex = configs.findIndex(c => c.m3u === m3u);

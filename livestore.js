@@ -17,7 +17,7 @@ async function saveCollectionToFile() {
   }));
   
   if (streams.length === 0) {
-    alert('No streams to save');
+    showAlertDialog('Save Collection', 'No streams to save.');
     return;
   }
   
@@ -81,7 +81,7 @@ function saveCollectionWithMetadata(streams) {
   const category = document.getElementById('metadataCategory').value;
   
   if (!name) {
-    alert('Please enter a collection name');
+    showAlertDialog('Save Collection', 'Please enter a collection name.');
     return;
   }
   
@@ -119,7 +119,7 @@ function saveCollectionWithMetadata(streams) {
 async function loadCollectionFromFile() {
   const input = document.createElement('input');
   input.type = 'file';
-  input.accept = '.streams,.json';
+  input.accept = '.streams';
   
   input.onchange = async (e) => {
     const file = e.target.files[0];
@@ -166,7 +166,7 @@ async function loadCollectionFromFile() {
       showToast(`Loaded ${data.name || 'collection'} - ready to save with preserved metadata`);
     } catch (err) {
       console.error('Failed to load collection:', err);
-      alert(`Error loading collection: ${err.message}`);
+      showAlertDialog('Load Error', err.message);
     }
   };
   

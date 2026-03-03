@@ -687,6 +687,13 @@
   color: var(--text-primary);
 }
 
+.add-stream-fields .add-stream-plus {
+  padding: 4px 8px;
+  font-size: 22px !important;
+  min-width: 32px;
+  height: 32px;
+}
+
 .add-stream-fields .reload-btn {
   padding: 8px 10px;
   background: transparent;

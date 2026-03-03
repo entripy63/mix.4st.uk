@@ -117,6 +117,62 @@ function showToast(message) {
   setTimeout(() => toast.remove(), 5000);
 }
 
+function showAlertDialog(title, message) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById('confirmDialog');
+    if (!modal) {
+      resolve();
+      return;
+    }
+
+    const titleEl = modal.querySelector('.confirm-title');
+    const messageEl = modal.querySelector('.confirm-message');
+    const cancelBtn = modal.querySelector('.confirm-cancel');
+    const confirmBtn = modal.querySelector('.confirm-confirm');
+
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+
+    // Hide cancel, restyle confirm as neutral OK
+    cancelBtn.style.display = 'none';
+    const origText = confirmBtn.textContent;
+    const origBg = confirmBtn.style.background;
+    confirmBtn.textContent = 'OK';
+    confirmBtn.style.background = '#5c6bc0';
+
+    const content = modal.querySelector('.confirm-content');
+
+    const cleanup = () => {
+      confirmBtn.removeEventListener('click', onOk);
+      document.removeEventListener('keydown', onKeydown);
+      cancelBtn.style.display = '';
+      confirmBtn.textContent = origText;
+      confirmBtn.style.background = origBg;
+      content.style.position = '';
+      content.style.left = '';
+      content.style.top = '';
+    };
+
+    const onOk = () => {
+      cleanup();
+      modal.style.display = 'none';
+      resolve();
+    };
+
+    const onKeydown = (e) => {
+      if (e.key === 'Escape' || e.key === 'Enter') {
+        onOk();
+      }
+    };
+
+    confirmBtn.addEventListener('click', onOk);
+    document.addEventListener('keydown', onKeydown);
+
+    modal.style.display = 'flex';
+    confirmBtn.focus();
+  });
+}
+
 function showConfirmDialog(title, message) {
   return new Promise((resolve) => {
     const modal = document.getElementById('confirmDialog');

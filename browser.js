@@ -75,6 +75,7 @@ async function setCurrentDJ(djPath) {
   storage.set(storageKey, djPath);
   state.currentMixes = await fetchDJMixes(djPath);
   state.currentFilter = '';
+  storage.set('currentFilter', '');
   state.currentGroups = detectGroups(state.currentMixes);
   updateDJButtons();
   displayGroupFilters(state.currentMixes);
@@ -294,7 +295,16 @@ const browserModes = {
       mixList.innerHTML = '';
       
       // Restore DJ mode state (uses currentDJ key for backwards compatibility)
-      const savedDJ = storage.get('currentDJ');
+      // Fall back to deriving DJ from currentMixPath if currentDJ not set
+      let savedDJ = storage.get('currentDJ');
+      if (!savedDJ) {
+        const mixPath = storage.get('currentMixPath');
+        if (mixPath) {
+          const parts = mixPath.split('/');
+          parts.pop();
+          savedDJ = parts.join('/');
+        }
+      }
       if (savedDJ) {
         await setCurrentDJ(savedDJ);
         const savedFilter = storage.get('currentFilter', '');

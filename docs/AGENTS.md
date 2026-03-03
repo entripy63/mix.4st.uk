@@ -61,6 +61,9 @@ Generate covers and peaks before manifest so it can reference them.
 - **Simple Module Loading**: No bundler — script order matters. Check player.html `<script>` tags for load order
 - **Callback Pattern**: Use callbacks (not monkey-patching) for cross-module behavior (see livedata.js `shouldRedisplayAfterProbe` pattern)
 
+## UI Conventions
+- **No browser alerts**: Never use `alert()` — use `showAlertDialog(title, message)` from core.js for informational messages and `showConfirmDialog(title, message)` for destructive confirmations. Both use the in-app modal styling.
+
 ## Code Style
 - HTML: HTML5 doctype, UTF-8, 2-space indent, external stylesheet
 - JavaScript: ESLint configured, run `npm run lint` before pushing
