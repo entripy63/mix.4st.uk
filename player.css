@@ -16,10 +16,10 @@ html, body {
 }
 
 .right-column {
-  width: 520px;
   display: flex;
   flex-direction: column;
   min-height: 0;
+  max-width: 600px;
 }
 
 .left-column, .middle-column {
@@ -188,14 +188,21 @@ html, body {
 }
 
 /* Wide: 3 columns */
-@media (min-width: 1200px) {
+@media (min-width: 1400px) {
   .container {
     grid-template-columns: 1fr 1fr 520px;
+  }
+  .right-column {
+    width: 520px;
+    max-width: 520px;
+  }
+  #audioControls {
+    width: 520px;
   }
 }
 
 /* Single column: portrait/narrow aspect ratio */
-@media (aspect-ratio < 1) {
+@media (aspect-ratio < 1.2) {
   .container {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto;
@@ -209,6 +216,18 @@ html, body {
   #coverArt {
     display: none;
   }
+  #waveform {
+    width: 100%;
+    max-width: 600px;
+  }
+  #waveformResizeHandle {
+    width: 100%;
+    max-width: 600px;
+  }
+  #audioControls {
+    width: 100%;
+    max-width: 600px;
+  }
   #mixBrowser, #mixList, #queueTab, #userStreamsTab {
     max-width: 100%;
     overflow-x: hidden;
@@ -216,51 +235,51 @@ html, body {
   .right-column {
     grid-column: 1;
     grid-row: 1;
-    width: 100%;
-    max-width: none;
     min-height: auto;
+    width: 100%;
+    max-width: 100%;
   }
   .middle-column {
     grid-column: 1;
     grid-row: 2;
-    min-height: 300px;
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
+    max-height: 50vh;
+    overflow-y: auto;
     overflow-x: hidden;
   }
   .left-column {
     grid-column: 1;
     grid-row: 3;
-    min-height: 300px;
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
+    max-height: 50vh;
+    overflow-y: auto;
     overflow-x: hidden;
   }
 }
 
 /* Narrow: 2 columns, browser stacks above queue (wider tablets in landscape) */
-@media (aspect-ratio >= 1) and (max-width: 1199px) {
+@media (aspect-ratio >= 1.2) and (max-width: 1399px) {
   #coverArt {
     display: none;
   }
   .container {
     grid-template-columns: 1fr 520px;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: auto auto;
+    overflow-y: auto;
   }
   .right-column {
     grid-row: 1 / 3;
+    width: 520px;
+    max-width: 520px;
+  }
+  #audioControls {
+    width: 520px;
   }
   .left-column {
     grid-column: 1;
-    grid-row: 1;
+    grid-row: 2;
   }
   .middle-column {
     grid-column: 1;
-    grid-row: 2;
+    grid-row: 1;
   }
 }
 
@@ -796,11 +815,11 @@ td:last-child {
 /* Custom audio controls */
 /* Audio controls styled in common.css - override for player.html */
 #audioControls {
-  width: 500px;
+  width: 100%;
 }
 
 #volumeSlider {
-  width: 100px;
+  width: 200px;
 }
 
 #nowPlaying {
