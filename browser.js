@@ -133,20 +133,26 @@ function applyFilter(group) {
 }
 
 function displayMixList(mixes) {
-    // Filter out hidden mixes (unless showing hidden mixes)
-    const visibleMixes = mixes.filter(mix => {
-      const isHidden = mixFlags.isHidden(getMixId(mix));
-      return !isHidden || state.showHiddenMixes;
-    });
-    state.displayedMixes = visibleMixes;
-    
-    // Heuristic: Show artist if DJ folder has 15+ unique artists
-    const uniqueArtists = new Set(mixes.map(m => m.artist).filter(a => a));
-    const showArtist = uniqueArtists.size >= 15;
-    
-    const mixList = document.getElementById('mixList');
-    const header = visibleMixes.length > 1 ? `<div class="mix-list-header"><button data-action="add-all-queue" class="mix-list-btn" title="Add all to queue">Add All to Queue</button></div>` : '';
-    mixList.innerHTML = header +
+     // Filter out hidden mixes (unless showing hidden mixes)
+     const visibleMixes = mixes.filter(mix => {
+       const isHidden = mixFlags.isHidden(getMixId(mix));
+       return !isHidden || state.showHiddenMixes;
+     });
+     state.displayedMixes = visibleMixes;
+     
+     // Heuristic: Show artist if DJ folder has 15+ unique artists
+     const uniqueArtists = new Set(mixes.map(m => m.artist).filter(a => a));
+     const showArtist = uniqueArtists.size >= 15;
+     
+     const mixList = document.getElementById('mixList');
+     
+     // Show/hide the "Add All" button based on mix count
+     const djAddAllBtn = document.getElementById('djAddAllBtn');
+     if (djAddAllBtn) {
+       djAddAllBtn.style.display = visibleMixes.length > 1 ? '' : 'none';
+     }
+     
+     mixList.innerHTML =
       visibleMixes.map((mix, i) => {
         const mixId = getMixId(mix);
         const isFav = mixFlags.isFavourite(mixId);
@@ -178,6 +184,11 @@ function toggleExtraInfo(btn) {
    if (info) {
       info.style.display = info.style.display === 'none' ? 'block' : 'none';
    }
+}
+
+// Wrapper for button click handler
+function addAllMixesToQueue() {
+  addAllToQueue();
 }
 
 // Delegated event handler for mix list (handles DJ/All/Search modes)

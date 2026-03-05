@@ -124,10 +124,13 @@
           <button onclick="loadDJ('mixes/aboo')">Aboo</button>
         </div>
         <div id="djDropdown" style="display: none;">
-          <select id="djSelect">
-            <option value="">Select a DJ...</option>
-            <!-- Options populated dynamically by buildDJDropdown() -->
-          </select>
+          <div id="djRow" style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px;">
+            <select id="djSelect" style="flex: 1;">
+              <option value="">Select a DJ...</option>
+              <!-- Options populated dynamically by buildDJDropdown() -->
+            </select>
+            <button id="djAddAllBtn" class="tab-action-btn" onclick="addAllMixesToQueue()" title="Add all to queue" style="display: none;">＋</button>
+          </div>
         </div>
         <div id="presetDropdown" style="display: none;">
           <div id="presetRow" style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px;">
