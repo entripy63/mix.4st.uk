@@ -216,15 +216,7 @@ html, body {
   #coverArt {
     display: none;
   }
-  #waveform {
-    width: 100%;
-    max-width: 600px;
-  }
-  #waveformResizeHandle {
-    width: 100%;
-    max-width: 600px;
-  }
-  #audioControls {
+  #waveform, #waveformResizeHandle, #audioControls {
     width: 100%;
     max-width: 600px;
   }
