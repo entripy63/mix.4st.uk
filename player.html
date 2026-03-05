@@ -130,9 +130,12 @@
           </select>
         </div>
         <div id="presetDropdown" style="display: none;">
-          <select id="presetSelect">
-            <option value="">Select a preset...</option>
-          </select>
+          <div id="presetRow" style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px;">
+            <select id="presetSelect" style="flex: 1;">
+              <option value="">Select a preset...</option>
+            </select>
+            <button id="presetAddAllBtn" class="tab-action-btn" onclick="addAllPresetStreams()" title="Add all to user streams" style="display: none;">＋</button>
+          </div>
         </div>
         <div id="searchBox" style="display: none;">
           <input type="text" id="searchInput" placeholder="Search mixes and streams..." autocomplete="off">

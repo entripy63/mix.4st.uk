@@ -403,11 +403,13 @@ function displayPresetStreams(preset) {
     return;
   }
 
-  const header = preset.streams.length > 1
-    ? '<div class="mix-list-header"><button data-action="preset-add-all" class="mix-list-btn" title="Add all to user streams">Add All to User Streams</button></div>'
-    : '';
+  // Show/hide the "Add All" button based on stream count
+  const presetAddAllBtn = document.getElementById('presetAddAllBtn');
+  if (presetAddAllBtn) {
+    presetAddAllBtn.style.display = preset.streams.length > 1 ? '' : 'none';
+  }
 
-  mixList.innerHTML = header + preset.streams.map((stream, i) => {
+  mixList.innerHTML = preset.streams.map((stream, i) => {
     const genre = stream.genre ? `<span class="stream-genre">${escapeHtml(stream.genre)}</span>` : '';
     return `<div class="mix-item" data-preset-stream-index="${i}">
       <div class="mix-item-row">
@@ -499,6 +501,11 @@ async function addPresetStreamToUserStreams(index) {
   await addUserStream(stream.name || null, stream.m3u, stream.genre || null);
   switchMiddleTab('userStreams');
   showToast(`Added ${stream.name || 'stream'}`);
+}
+
+// Wrapper for button click handler
+function addAllPresetStreams() {
+  addAllPresetStreamsToUserStreams();
 }
 
 async function addAllPresetStreamsToUserStreams() {
