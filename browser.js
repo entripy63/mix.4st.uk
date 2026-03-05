@@ -400,7 +400,7 @@ document.querySelectorAll('.mode-btn').forEach(btn => {
   btn.addEventListener('click', () => browserModes.switch(btn.dataset.mode));
 });
 
-document.getElementById('djSelect').addEventListener('change', function() {
+document.getElementById('djSelect')?.addEventListener('change', function() {
   if (this.value) {
     loadDJ(this.value);
   }
