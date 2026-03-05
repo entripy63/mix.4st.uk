@@ -1,6 +1,6 @@
 async function fetchDJMixes(djPath) {
   const cleanPath = djPath.replace(/^mixes\//, '');
-  const response = await fetch(`${MIXES_BASE_URL}${cleanPath}/manifest.json`);
+  const response = await fetch(`${cleanPath}/manifest.json`);
   const manifest = await response.json();
   return manifest.mixes.map(mix => ({
     name: mix.name,
