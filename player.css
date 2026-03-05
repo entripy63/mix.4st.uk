@@ -249,12 +249,10 @@ html, body {
 
 /* Narrow: 2 columns, browser stacks above queue (wider tablets in landscape) */
 @media (aspect-ratio >= 1.2) and (max-width: 1399px) {
-  #coverArt {
-    display: none;
-  }
   .container {
     grid-template-columns: 1fr 520px;
     grid-template-rows: auto auto;
+    height: auto;
     overflow-y: auto;
   }
   .right-column {
@@ -262,16 +260,32 @@ html, body {
     width: 520px;
     max-width: 520px;
   }
+  #coverArt {
+    display: none;
+  }
   #audioControls {
     width: 520px;
   }
   .left-column {
     grid-column: 1;
     grid-row: 2;
+    max-height: 50vh;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
   .middle-column {
     grid-column: 1;
     grid-row: 1;
+    max-height: 50vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  /* Height-constrained landscape (e.g., mobile landscape) */
+  @media (max-height: 500px) {
+    .add-stream-form {
+      display: none;
+    }
   }
 }
 
