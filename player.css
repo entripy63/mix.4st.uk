@@ -269,14 +269,14 @@ html, body {
   .left-column {
     grid-column: 1;
     grid-row: 2;
-    max-height: 50vh;
+    max-height: 75vh;
     overflow-y: auto;
     overflow-x: hidden;
   }
   .middle-column {
     grid-column: 1;
     grid-row: 1;
-    max-height: 50vh;
+    max-height: 75vh;
     overflow-y: auto;
     overflow-x: hidden;
   }

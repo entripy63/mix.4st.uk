@@ -238,7 +238,7 @@ aud.addEventListener("pause", updateQueueInfo);
 function getDJName(htmlPath) {
     if (!htmlPath) return '';
     const dir = htmlPath.split('/')[0];
-    const djNames = { 'trip': 'trip-', 'izmar': 'Izmar', 'aboo': 'Aboo' };
+    const djNames = { 'trip': 'trip-', 'izmar': 'Izmar' };
     return djNames[dir] || dir;
 }
 
