@@ -175,42 +175,42 @@ function parseM3U(text) {
 }
 
 async function fetchPlaylist(playlistUrl) {
-   try {
-     // Use proxy to avoid CORS errors on M3U and PLS playlists
-     const url = `${STREAM_PROXY}?url=${encodeURIComponent(playlistUrl)}`;
-     const controller = new AbortController();
-     const timeout = setTimeout(() => controller.abort(), 5000); // 5 second timeout
-     const resp = await fetch(url, { signal: controller.signal });
-     clearTimeout(timeout);
-     
-     // If it's a direct audio stream (not a playlist format), return empty to fallback to direct probe
-     const contentType = resp.headers.get('content-type') || '';
-     const playlistFormats = ['scpls', 'mpegurl', 'vnd.apple.mpegurl', 'x-mpegurl'];
-     const isPlaylistFormat = playlistFormats.some(fmt => contentType.includes(fmt));
-     
-     // Check if it's audio (including flac, wav, etc.) but not a playlist
-     const isAudioStream = contentType.includes('audio/') && !isPlaylistFormat;
-     
-     // Also check URL extension as fallback
-     const audioExts = ['.mp3', '.aac', '.flac', '.wav', '.ogg', '.opus', '.m4a', '.wma'];
-     const hasAudioExt = audioExts.some(ext => playlistUrl.toLowerCase().includes(ext));
-     
-     if (isAudioStream || hasAudioExt) {
-       controller.abort();
-       return [];
-     }
-     
-     const text = await resp.text();
-     controller.abort();
-     if (text.trim().toLowerCase().startsWith('[playlist]')) {
-       return parsePLS(text);
-     }
-     return parseM3U(text);
-     } catch (e) {
-     controller.abort();
-     // Abort or timeout on streaming audio is expected, treat as audio stream
-     return [];
-     }
+    const controller = new AbortController();
+    try {
+      // Use proxy to avoid CORS errors on M3U and PLS playlists
+      const url = `${STREAM_PROXY}?url=${encodeURIComponent(playlistUrl)}`;
+      const timeout = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+      const resp = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeout);
+      
+      // If it's a direct audio stream (not a playlist format), return empty to fallback to direct probe
+      const contentType = resp.headers.get('content-type') || '';
+      const playlistFormats = ['scpls', 'mpegurl', 'vnd.apple.mpegurl', 'x-mpegurl'];
+      const isPlaylistFormat = playlistFormats.some(fmt => contentType.includes(fmt));
+      
+      // Check if it's audio (including flac, wav, etc.) but not a playlist
+      const isAudioStream = contentType.includes('audio/') && !isPlaylistFormat;
+      
+      // Also check URL extension as fallback
+      const audioExts = ['.mp3', '.aac', '.flac', '.wav', '.ogg', '.opus', '.m4a', '.wma'];
+      const hasAudioExt = audioExts.some(ext => playlistUrl.toLowerCase().includes(ext));
+      
+      if (isAudioStream || hasAudioExt) {
+        controller.abort();
+        return [];
+      }
+      
+      const text = await resp.text();
+      controller.abort();
+      if (text.trim().toLowerCase().startsWith('[playlist]')) {
+        return parsePLS(text);
+      }
+      return parseM3U(text);
+    } catch (e) {
+      controller.abort();
+      // Abort or timeout on streaming audio is expected, treat as audio stream
+      return [];
+    }
 }
 
 // ========== STREAM PROBING & ADDITION ==========

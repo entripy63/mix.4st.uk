@@ -194,8 +194,59 @@ html, body {
   }
 }
 
-/* Narrow: 2 columns, browser stacks above queue */
-@media (max-width: 1199px) {
+/* Single column: portrait/narrow aspect ratio */
+@media (aspect-ratio < 1) {
+  .container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    height: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #coverArt {
+    display: none;
+  }
+  #mixBrowser, #mixList, #queueTab, #userStreamsTab {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  .right-column {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    max-width: none;
+    min-height: auto;
+  }
+  .middle-column {
+    grid-column: 1;
+    grid-row: 2;
+    min-height: 300px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+  .left-column {
+    grid-column: 1;
+    grid-row: 3;
+    min-height: 300px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+}
+
+/* Narrow: 2 columns, browser stacks above queue (wider tablets in landscape) */
+@media (aspect-ratio >= 1) and (max-width: 1199px) {
+  #coverArt {
+    display: none;
+  }
   .container {
     grid-template-columns: 1fr 520px;
     grid-template-rows: 1fr 1fr;
