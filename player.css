@@ -127,7 +127,7 @@ html, body {
 }
 
 #presetDropdown {
-  margin-bottom: 12px;
+  margin-bottom: 4px;
 }
 
 #presetSelect {
@@ -283,7 +283,7 @@ html, body {
 
   /* Height-constrained landscape (e.g., mobile landscape) */
   @media (max-height: 500px) {
-    .add-stream-form {
+    .add-stream-form, #localFiles {
       display: none;
     }
   }
@@ -473,10 +473,6 @@ kbd {
   letter-spacing: 0.3px;
 }
 
-#djDropdown {
-  margin-bottom: 12px;
-}
-
 #djSelect {
   width: 100%;
   padding: 10px 12px;
@@ -544,7 +540,7 @@ kbd {
 }
 
 #djButtons, #groupFilters {
-  margin-bottom: 12px;
+  margin-bottom: 4px;
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
