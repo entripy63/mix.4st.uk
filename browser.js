@@ -77,6 +77,7 @@ async function setCurrentDJ(djPath) {
   state.currentFilter = '';
   storage.set('currentFilter', '');
   state.currentGroups = detectGroups(state.currentMixes);
+  state.djCompactMode = true;
   updateDJButtons();
   displayGroupFilters(state.currentMixes);
   displayMixList(state.currentMixes);
@@ -86,6 +87,7 @@ async function setCurrentDJ(djPath) {
 function clearDJSelection() {
   state.currentDJ = '';
   state.currentFilter = '';
+  state.djCompactMode = false;
   storage.remove('currentDJ');
   storage.set('currentFilter', '');
   
@@ -137,12 +139,13 @@ function displayGroupFilters(mixes) {
   
   const hasDJSelected = state.currentDJ && state.currentDJ.trim() !== '';
   const hasGroups = state.currentGroups.length > 0;
+  const isCompactMode = state.djCompactMode === true;
   
-  // Only show back button and hide DJ row if there are groups to display
-  const backBtn = (hasDJSelected && hasGroups) ? `<button id="backBtn" class="tab-action-btn" onclick="clearDJSelection()" title="Back to DJ selection">◀</button>` : '';
+  // Only show back button and hide DJ row if there are groups to display AND we're in compact mode
+  const backBtn = (hasDJSelected && hasGroups && isCompactMode) ? `<button id="backBtn" class="tab-action-btn" onclick="clearDJSelection()" title="Back to DJ selection">◀</button>` : '';
   
-  // Hide DJ buttons/dropdown when DJ is selected AND there are groups, show the back button in the filter row
-  if (hasDJSelected && hasGroups) {
+  // Hide DJ buttons/dropdown when DJ is selected AND there are groups AND in compact mode
+  if (hasDJSelected && hasGroups && isCompactMode) {
     if (browserModes.current === 'dj') {
       document.getElementById('djButtons').style.display = 'none';
     } else if (browserModes.current === 'all') {
