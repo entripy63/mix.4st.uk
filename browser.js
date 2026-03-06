@@ -82,6 +82,33 @@ async function setCurrentDJ(djPath) {
   displayMixList(state.currentMixes);
 }
 
+// Clear DJ selection and return to DJ list
+function clearDJSelection() {
+  state.currentDJ = '';
+  state.currentFilter = '';
+  storage.remove('currentDJ');
+  storage.set('currentFilter', '');
+  
+  const mixList = document.getElementById('mixList');
+  const groupFilters = document.getElementById('groupFilters');
+  mixList.innerHTML = '';
+  groupFilters.innerHTML = '';
+  
+  const djButtons = document.getElementById('djButtons');
+  const djDropdown = document.getElementById('djDropdown');
+  const djSelect = document.getElementById('djSelect');
+  
+  if (browserModes.current === 'dj') {
+    djButtons.style.display = 'flex';
+    updateDJButtons();
+  } else if (browserModes.current === 'all') {
+    djDropdown.style.display = 'block';
+    if (djSelect) {
+      djSelect.value = '';
+    }
+  }
+}
+
 function setShowHiddenMixes(show) {
   state.showHiddenMixes = show;
   if (state.currentDJ) {
@@ -107,13 +134,36 @@ function displayGroupFilters(mixes) {
   state.currentFilter = '';
   const filterDiv = document.getElementById('groupFilters');
   state.currentGroups = detectGroups(mixes);
-  if (state.currentGroups.length === 0) {
+  
+  const hasDJSelected = state.currentDJ && state.currentDJ.trim() !== '';
+  const hasGroups = state.currentGroups.length > 0;
+  
+  // Only show back button and hide DJ row if there are groups to display
+  const backBtn = (hasDJSelected && hasGroups) ? `<button id="backBtn" class="tab-action-btn" onclick="clearDJSelection()" title="Back to DJ selection">◀</button>` : '';
+  
+  // Hide DJ buttons/dropdown when DJ is selected AND there are groups, show the back button in the filter row
+  if (hasDJSelected && hasGroups) {
+    if (browserModes.current === 'dj') {
+      document.getElementById('djButtons').style.display = 'none';
+    } else if (browserModes.current === 'all') {
+      document.getElementById('djDropdown').style.display = 'none';
+    }
+  } else {
+    if (browserModes.current === 'dj') {
+      document.getElementById('djButtons').style.display = 'flex';
+    } else if (browserModes.current === 'all') {
+      document.getElementById('djDropdown').style.display = 'block';
+    }
+  }
+  
+  if (!hasGroups) {
     filterDiv.innerHTML = '';
     return;
   }
   const otherMixes = filterMixes(mixes, 'Other', state.currentGroups);
   const otherButton = otherMixes.length > 0 ? ` <button onclick="applyFilter('Other')">Other</button>` : '';
-  filterDiv.innerHTML = `<button class="active" onclick="applyFilter('')">All</button> ` +
+  filterDiv.innerHTML = backBtn + (backBtn ? ' ' : '') +
+    `<button class="active" onclick="applyFilter('')">All</button> ` +
     state.currentGroups.map(g => `<button onclick="applyFilter('${g}')">${g}</button>`).join(' ') +
     otherButton;
 }
@@ -340,6 +390,7 @@ const browserModes = {
         // Load mixes for the selected DJ without DJ-mode-specific UI updates
         state.currentDJ = savedDJ;
         state.currentMixes = await fetchDJMixes(savedDJ);
+        displayGroupFilters(state.currentMixes);
         displayMixList(state.currentMixes);
       }
     } else if (mode === 'search') {

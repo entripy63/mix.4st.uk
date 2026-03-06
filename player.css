@@ -248,7 +248,7 @@ html, body {
 }
 
 /* Narrow: 2 columns, browser stacks above queue (wider tablets in landscape) */
-@media (aspect-ratio >= 1.2) and (max-width: 1399px) {
+@media (aspect-ratio >= 1.2) and (min-width: 1000px) and (max-width: 1399px) {
   .container {
     grid-template-columns: 1fr 520px;
     grid-template-rows: auto auto;
@@ -544,6 +544,7 @@ kbd {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 #djButtons button.active,
