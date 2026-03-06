@@ -65,19 +65,7 @@ html, body {
   margin-top: 10px;
 }
 
-#trackList {
-  flex: 1;
-  overflow-y: auto;
-  min-height: 0;
-}
-
-#queueTab {
-  flex: 1;
-  overflow-y: auto;
-  min-height: 0;
-}
-
-#userStreamsTab {
+#queueTab, #userStreamsTab, #trackList {
   flex: 1;
   overflow-y: auto;
   min-height: 0;
@@ -322,19 +310,10 @@ button:active {
    transform: none;
 }
 
-/* Help modal */
-/* .modal styles in common.css */
-
-/* .modal-content, .modal-close styles in common.css */
-
 /* Find/Add Playlists buttons styled in common.css - keep flex grow for narrow column */
 #findPlaylistsBtn, #addPlaylistsBtnPlayer {
   flex: 1 !important;
 }
-
-/* Presets modal and confirmation dialog styles in common.css */
-
-/* Playlist guide styles in common.css */
 
 .shortcuts-table {
   width: 100%;
@@ -530,8 +509,6 @@ kbd {
   color: #fff;
 }
 
-/* .icon-btn, .info-btn styles in common.css */
-
 .mix-list-header {
   margin-bottom: 12px;
   display: flex;
@@ -557,10 +534,6 @@ kbd {
 .mix-item.unavailable .icon-btn {
   cursor: not-allowed;
 }
-
-/* Stream control bar styles in common.css */
-
-/* .delete-stream-btn styles in common.css */
 
 .mix-extra-info {
    flex-basis: 100%;
@@ -632,12 +605,6 @@ kbd {
    color: #888;
    font-size: 12px;
 }
-
-/* .mix-item-row styles in common.css */
-
-/* Stream info styles in common.css */
-
-/* .stream-info-field, .stream-edit-* styles in common.css */
 
 .dj-badge {
   display: inline-block;
