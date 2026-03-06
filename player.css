@@ -242,6 +242,10 @@ html, body {
     grid-template-areas: "left middle right";
   }
 
+  .middle-column, .left-column {
+    max-height: none;
+  }
+
   #coverArt {
     display: block;
   }
