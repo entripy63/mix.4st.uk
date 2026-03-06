@@ -393,6 +393,7 @@ const browserModes = {
         // Load mixes for the selected DJ without DJ-mode-specific UI updates
         state.currentDJ = savedDJ;
         state.currentMixes = await fetchDJMixes(savedDJ);
+        state.djCompactMode = true;
         displayGroupFilters(state.currentMixes);
         displayMixList(state.currentMixes);
       }
