@@ -38,35 +38,35 @@ function saveUserStreams(streams) {
 }
 
 async function addUserStream(name, m3u, genre) {
-   // Step 1: Update canonical source (userStreams)
-   const streams = getUserStreams();
-   const config = { name: name || null, m3u, genre };
-   streams.push(config);
-   saveUserStreams(streams);
-   
-   // Step 2: Keep liveStreams in sync (probe and add if already initialized)
-   if (liveStreamsInitialized) {
-      await probeAndAddStream(config);
-   }
+  // Step 1: Update canonical source (userStreams)
+  const streams = getUserStreams();
+  const config = { name: name || null, m3u, genre };
+  streams.push(config);
+  saveUserStreams(streams);
+
+  // Step 2: Keep liveStreams in sync (probe and add if already initialized)
+  if (liveStreamsInitialized) {
+    await probeAndAddStream(config);
+  }
 }
 
 function removeUserStream(index) {
-    if (index < 0 || index >= liveStreams.length) return;
-    
-    const m3u = liveStreams[index].m3u;
-    
-    // Step 1: Update canonical source (userStreams) - use m3u lookup to find config
-    const streams = getUserStreams();
-    const configIndex = streams.findIndex(s => s.m3u === m3u);
-    if (configIndex >= 0) {
-      streams.splice(configIndex, 1);
-      saveUserStreams(streams);
-    }
-    
-    // Step 2: Keep liveStreams in sync - remove by index
-    if (liveStreamsInitialized) {
-      liveStreams.splice(index, 1);
-    }
+  if (index < 0 || index >= liveStreams.length) return;
+
+  const m3u = liveStreams[index].m3u;
+
+  // Step 1: Update canonical source (userStreams) - use m3u lookup to find config
+  const streams = getUserStreams();
+  const configIndex = streams.findIndex(s => s.m3u === m3u);
+  if (configIndex >= 0) {
+    streams.splice(configIndex, 1);
+    saveUserStreams(streams);
+  }
+
+  // Step 2: Keep liveStreams in sync - remove by index
+  if (liveStreamsInitialized) {
+    liveStreams.splice(index, 1);
+  }
 }
 
 function getLiveStreamConfig() {
@@ -108,280 +108,280 @@ function probeStream(url, timeoutMs = 5000) {
       cleanup();
       resolve(false);
     }, timeoutMs);
-    
+
     audio.addEventListener('canplay', () => {
       clearTimeout(timer);
       cleanup();
       resolve(true);
     }, { once: true });
-    
+
     audio.addEventListener('error', () => {
       clearTimeout(timer);
       resolve(false);
     }, { once: true });
-    
+
     audio.src = url;
     audio.load();
   });
 }
 
 function parsePLS(text) {
-    const entries = [];
-    const lines = text.split('\n');
-    const files = {};
-    const titles = {};
-    const MAX_ENTRIES = 500; // Reasonable limit for any real playlist
-    
-    for (const line of lines) {
-      const fileMatch = line.match(/^File(\d+)=(.+)$/i);
-      if (fileMatch && Object.keys(files).length < MAX_ENTRIES) {
-        files[fileMatch[1]] = fileMatch[2].trim();
-      }
-      const titleMatch = line.match(/^Title(\d+)=(.+)$/i);
-      if (titleMatch) {
-        titles[titleMatch[1]] = titleMatch[2].trim();
-      }
+  const entries = [];
+  const lines = text.split('\n');
+  const files = {};
+  const titles = {};
+  const MAX_ENTRIES = 500; // Reasonable limit for any real playlist
+
+  for (const line of lines) {
+    const fileMatch = line.match(/^File(\d+)=(.+)$/i);
+    if (fileMatch && Object.keys(files).length < MAX_ENTRIES) {
+      files[fileMatch[1]] = fileMatch[2].trim();
     }
-    
-    for (const num of Object.keys(files).sort((a, b) => a - b)) {
-      entries.push({ url: files[num], title: titles[num] || null });
+    const titleMatch = line.match(/^Title(\d+)=(.+)$/i);
+    if (titleMatch) {
+      titles[titleMatch[1]] = titleMatch[2].trim();
     }
-    return entries;
+  }
+
+  for (const num of Object.keys(files).sort((a, b) => a - b)) {
+    entries.push({ url: files[num], title: titles[num] || null });
+  }
+  return entries;
 }
 
 function parseM3U(text) {
-    const entries = [];
-    const lines = text.split('\n').map(line => line.trim());
-    let pendingTitle = null;
-    const MAX_ENTRIES = 500; // Reasonable limit for any real playlist
-    
-    for (const line of lines) {
-      if (entries.length >= MAX_ENTRIES) break; // Stop if too many entries
-      
-      if (line.startsWith('#EXTINF:')) {
-        const commaIndex = line.indexOf(',');
-        if (commaIndex !== -1) {
-          pendingTitle = line.substring(commaIndex + 1).trim();
-        }
-      } else if (line && !line.startsWith('#')) {
-        // Validate line looks like a URL or at least starts with common protocols
-        if (line.startsWith('http://') || line.startsWith('https://') || line.startsWith('mms://') || line.startsWith('rtmp://')) {
-          entries.push({ url: line, title: pendingTitle });
-          pendingTitle = null;
-        }
+  const entries = [];
+  const lines = text.split('\n').map(line => line.trim());
+  let pendingTitle = null;
+  const MAX_ENTRIES = 500; // Reasonable limit for any real playlist
+
+  for (const line of lines) {
+    if (entries.length >= MAX_ENTRIES) break; // Stop if too many entries
+
+    if (line.startsWith('#EXTINF:')) {
+      const commaIndex = line.indexOf(',');
+      if (commaIndex !== -1) {
+        pendingTitle = line.substring(commaIndex + 1).trim();
+      }
+    } else if (line && !line.startsWith('#')) {
+      // Validate line looks like a URL or at least starts with common protocols
+      if (line.startsWith('http://') || line.startsWith('https://') || line.startsWith('mms://') || line.startsWith('rtmp://')) {
+        entries.push({ url: line, title: pendingTitle });
+        pendingTitle = null;
       }
     }
-    return entries;
+  }
+  return entries;
 }
 
 async function fetchPlaylist(playlistUrl) {
-    const controller = new AbortController();
-    try {
-      // Use proxy to avoid CORS errors on M3U and PLS playlists
-      const url = `${STREAM_PROXY}?url=${encodeURIComponent(playlistUrl)}`;
-      const timeout = setTimeout(() => controller.abort(), 5000); // 5 second timeout
-      const resp = await fetch(url, { signal: controller.signal });
-      clearTimeout(timeout);
-      
-      // If it's a direct audio stream (not a playlist format), return empty to fallback to direct probe
-      const contentType = resp.headers.get('content-type') || '';
-      const playlistFormats = ['scpls', 'mpegurl', 'vnd.apple.mpegurl', 'x-mpegurl'];
-      const isPlaylistFormat = playlistFormats.some(fmt => contentType.includes(fmt));
-      
-      // Check if it's audio (including flac, wav, etc.) but not a playlist
-      const isAudioStream = contentType.includes('audio/') && !isPlaylistFormat;
-      
-      // Also check URL extension as fallback
-      const audioExts = ['.mp3', '.aac', '.flac', '.wav', '.ogg', '.opus', '.m4a', '.wma'];
-      const hasAudioExt = audioExts.some(ext => playlistUrl.toLowerCase().includes(ext));
-      
-      if (isAudioStream || hasAudioExt) {
-        controller.abort();
-        return [];
-      }
-      
-      const text = await resp.text();
+  const controller = new AbortController();
+  try {
+    // Use proxy to avoid CORS errors on M3U and PLS playlists
+    const url = `${STREAM_PROXY}?url=${encodeURIComponent(playlistUrl)}`;
+    const timeout = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    const resp = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeout);
+
+    // If it's a direct audio stream (not a playlist format), return empty to fallback to direct probe
+    const contentType = resp.headers.get('content-type') || '';
+    const playlistFormats = ['scpls', 'mpegurl', 'vnd.apple.mpegurl', 'x-mpegurl'];
+    const isPlaylistFormat = playlistFormats.some(fmt => contentType.includes(fmt));
+
+    // Check if it's audio (including flac, wav, etc.) but not a playlist
+    const isAudioStream = contentType.includes('audio/') && !isPlaylistFormat;
+
+    // Also check URL extension as fallback
+    const audioExts = ['.mp3', '.aac', '.flac', '.wav', '.ogg', '.opus', '.m4a', '.wma'];
+    const hasAudioExt = audioExts.some(ext => playlistUrl.toLowerCase().includes(ext));
+
+    if (isAudioStream || hasAudioExt) {
       controller.abort();
-      if (text.trim().toLowerCase().startsWith('[playlist]')) {
-        return parsePLS(text);
-      }
-      return parseM3U(text);
-    } catch (e) {
-      controller.abort();
-      // Abort or timeout on streaming audio is expected, treat as audio stream
       return [];
     }
+
+    const text = await resp.text();
+    controller.abort();
+    if (text.trim().toLowerCase().startsWith('[playlist]')) {
+      return parsePLS(text);
+    }
+    return parseM3U(text);
+  } catch (e) {
+    controller.abort();
+    // Abort or timeout on streaming audio is expected, treat as audio stream
+    return [];
+  }
 }
 
 // ========== STREAM PROBING & ADDITION ==========
 
 async function probeAndAddStream(config, initConfig = {}) {
-     const stream = {
-       m3u: config.m3u,
-       name: config.name,
-       genre: config.genre,
-       url: null,
-       available: false,
-       reason: null
-     };
-     
-     // Skip probing if this stream is currently playing (single-stream-per-IP constraint)
-     // Just mark it as available since it's clearly working
-     if (state.liveStreamM3u && config.m3u === state.liveStreamM3u) {
-       stream.url = state.liveStreamUrl;
-       stream.available = true;
-       stream.reason = null;
-       // Set fallback name if not provided
-       if (!stream.name) {
-         stream.name = config.m3u || 'Unknown Stream';
-       }
-       liveStreams.push(stream);
-       // Call redisplay callback
-       if (window.onStreamAdded) {
-         window.onStreamAdded(initConfig);
-       }
-       return stream;
-     }
-     
-     // Overall timeout for the entire probing process (prevent hanging indefinitely)
-     const probeTimeoutMs = 30000; // 30 seconds max
-     const probeTimeout = new Promise(resolve => {
-       setTimeout(() => {
-         resolve({ timedOut: true });
-       }, probeTimeoutMs);
-     });
-      
-       // Check if it's a direct audio file URL, not a playlist
-      const audioExtensions = ['.mp3', '.aac', '.flac', '.wav', '.ogg', '.opus', '.m4a'];
-      const isDirectAudio = audioExtensions.some(ext => config.m3u.toLowerCase().endsWith(ext));
-      
-      let entries;
-      if (isDirectAudio) {
-        // Treat direct audio URL as single-entry list
-        entries = [{ url: config.m3u, title: null }];
-      } else {
-        // Parse as playlist
-        entries = await fetchPlaylist(config.m3u);
-        // If playlist parsing returned nothing, try URL as direct stream
-        if (entries.length === 0) {
-          entries = [{ url: config.m3u, title: null }];
-        }
-      }
-      
-      // Race against overall timeout
-      const probeResult = await Promise.race([
-        (async () => {
-          for (const entry of entries) {
-            let url = entry.url;
-            
-            // Try direct URL first
-            if (await probeStream(url)) {
-              stream.url = url;
-              stream.playlistTitle = entry.title;
-              stream.available = true;
-              break;
-            }
-           
-           // Try with ';' suffix for Shoutcast servers that redirect to text/html
-           let urlWithSemicolon = url;
-           if (!urlWithSemicolon.endsWith('/')) {
-             urlWithSemicolon += '/';
-           }
-           urlWithSemicolon += ';';
-           
-           if (await probeStream(urlWithSemicolon)) {
-             stream.url = urlWithSemicolon;
-             stream.playlistTitle = entry.title;
-             stream.available = true;
-             break;
-           }
-           
-           // Try via proxy for http:// on https: page
-           // Skip proxy for raw IP URLs (Cloudflare Workers can't reach bare IPs)
-           if (url.startsWith('http://') && location.protocol === 'https:' && !isRawIPURL(url)) {
-             const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(url)}`;
-             if (await probeStream(proxyUrl)) {
-               stream.url = proxyUrl;
-               stream.playlistTitle = entry.title;
-               stream.available = true;
-               break;
-             }
-             
-             // Try proxy with ';' suffix for Shoutcast
-             const proxyUrlWithSemicolon = `${STREAM_PROXY}?url=${encodeURIComponent(urlWithSemicolon)}`;
-             if (await probeStream(proxyUrlWithSemicolon)) {
-               stream.url = proxyUrlWithSemicolon;
-               stream.playlistTitle = entry.title;
-               stream.available = true;
-               break;
-             }
-           }
-         }
-         return null; // Probing completed
-       })(),
-       probeTimeout
-     ]);
-     
-     if (probeResult?.timedOut) {
-       stream.reason = `Probing timeout (no response from stream or server)`;
-     } else if (!stream.available) {
-       stream.reason = `No working stream found (playlist: ${config.m3u})`;
-     }
-    // Track if name was resolved from playlist before setting fallback
-    let nameWasResolved = false;
-    if (!stream.name && stream.playlistTitle) {
-      nameWasResolved = true;
-      const parsed = parseSomaFMStream(stream.playlistTitle, stream.genre);
-      stream.name = parsed.name;
-      if (!stream.genre) {
-        stream.genre = parsed.genre;
-      }
-    }
-    
-    // Set fallback if still no name
+  const stream = {
+    m3u: config.m3u,
+    name: config.name,
+    genre: config.genre,
+    url: null,
+    available: false,
+    reason: null
+  };
+
+  // Skip probing if this stream is currently playing (single-stream-per-IP constraint)
+  // Just mark it as available since it's clearly working
+  if (state.liveStreamM3u && config.m3u === state.liveStreamM3u) {
+    stream.url = state.liveStreamUrl;
+    stream.available = true;
+    stream.reason = null;
+    // Set fallback name if not provided
     if (!stream.name) {
-       stream.name = config.m3u || 'Unknown Stream';
+      stream.name = config.m3u || 'Unknown Stream';
     }
-    
-    // Update the saved config with resolved name/genre if they were null
-    // Only persist if name was actually resolved from playlist, not auto-generated
-    if (!config.name && nameWasResolved) {
-       config.name = stream.name;
-       const configs = getUserStreams();
-       const idx = configs.findIndex(c => c.m3u === config.m3u);
-       if (idx >= 0) {
-           configs[idx] = config;
-           saveUserStreams(configs);
-       }
-    }
-    if (!config.genre && stream.genre) {
-       config.genre = stream.genre;
-       const configs = getUserStreams();
-       const idx = configs.findIndex(c => c.m3u === config.m3u);
-       if (idx >= 0) {
-           configs[idx] = config;
-           saveUserStreams(configs);
-       }
-    }
-    
     liveStreams.push(stream);
-    
-    // Call redisplay callback (liveui.js will decide whether to actually redisplay)
+    // Call redisplay callback
     if (window.onStreamAdded) {
       window.onStreamAdded(initConfig);
     }
-    }
+    return stream;
+  }
 
-    // ========== SOMA FM STREAM PARSING ==========
+  // Overall timeout for the entire probing process (prevent hanging indefinitely)
+  const probeTimeoutMs = 30000; // 30 seconds max
+  const probeTimeout = new Promise(resolve => {
+    setTimeout(() => {
+      resolve({ timedOut: true });
+    }, probeTimeoutMs);
+  });
+
+  // Check if it's a direct audio file URL, not a playlist
+  const audioExtensions = ['.mp3', '.aac', '.flac', '.wav', '.ogg', '.opus', '.m4a'];
+  const isDirectAudio = audioExtensions.some(ext => config.m3u.toLowerCase().endsWith(ext));
+
+  let entries;
+  if (isDirectAudio) {
+    // Treat direct audio URL as single-entry list
+    entries = [{ url: config.m3u, title: null }];
+  } else {
+    // Parse as playlist
+    entries = await fetchPlaylist(config.m3u);
+    // If playlist parsing returned nothing, try URL as direct stream
+    if (entries.length === 0) {
+      entries = [{ url: config.m3u, title: null }];
+    }
+  }
+
+  // Race against overall timeout
+  const probeResult = await Promise.race([
+    (async () => {
+      for (const entry of entries) {
+        let url = entry.url;
+
+        // Try direct URL first
+        if (await probeStream(url)) {
+          stream.url = url;
+          stream.playlistTitle = entry.title;
+          stream.available = true;
+          break;
+        }
+
+        // Try with ';' suffix for Shoutcast servers that redirect to text/html
+        let urlWithSemicolon = url;
+        if (!urlWithSemicolon.endsWith('/')) {
+          urlWithSemicolon += '/';
+        }
+        urlWithSemicolon += ';';
+
+        if (await probeStream(urlWithSemicolon)) {
+          stream.url = urlWithSemicolon;
+          stream.playlistTitle = entry.title;
+          stream.available = true;
+          break;
+        }
+
+        // Try via proxy for http:// on https: page
+        // Skip proxy for raw IP URLs (Cloudflare Workers can't reach bare IPs)
+        if (url.startsWith('http://') && location.protocol === 'https:' && !isRawIPURL(url)) {
+          const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(url)}`;
+          if (await probeStream(proxyUrl)) {
+            stream.url = proxyUrl;
+            stream.playlistTitle = entry.title;
+            stream.available = true;
+            break;
+          }
+
+          // Try proxy with ';' suffix for Shoutcast
+          const proxyUrlWithSemicolon = `${STREAM_PROXY}?url=${encodeURIComponent(urlWithSemicolon)}`;
+          if (await probeStream(proxyUrlWithSemicolon)) {
+            stream.url = proxyUrlWithSemicolon;
+            stream.playlistTitle = entry.title;
+            stream.available = true;
+            break;
+          }
+        }
+      }
+      return null; // Probing completed
+    })(),
+    probeTimeout
+  ]);
+
+  if (probeResult?.timedOut) {
+    stream.reason = `Probing timeout (no response from stream or server)`;
+  } else if (!stream.available) {
+    stream.reason = `No working stream found (playlist: ${config.m3u})`;
+  }
+  // Track if name was resolved from playlist before setting fallback
+  let nameWasResolved = false;
+  if (!stream.name && stream.playlistTitle) {
+    nameWasResolved = true;
+    const parsed = parseSomaFMStream(stream.playlistTitle, stream.genre);
+    stream.name = parsed.name;
+    if (!stream.genre) {
+      stream.genre = parsed.genre;
+    }
+  }
+
+  // Set fallback if still no name
+  if (!stream.name) {
+    stream.name = config.m3u || 'Unknown Stream';
+  }
+
+  // Update the saved config with resolved name/genre if they were null
+  // Only persist if name was actually resolved from playlist, not auto-generated
+  if (!config.name && nameWasResolved) {
+    config.name = stream.name;
+    const configs = getUserStreams();
+    const idx = configs.findIndex(c => c.m3u === config.m3u);
+    if (idx >= 0) {
+      configs[idx] = config;
+      saveUserStreams(configs);
+    }
+  }
+  if (!config.genre && stream.genre) {
+    config.genre = stream.genre;
+    const configs = getUserStreams();
+    const idx = configs.findIndex(c => c.m3u === config.m3u);
+    if (idx >= 0) {
+      configs[idx] = config;
+      saveUserStreams(configs);
+    }
+  }
+
+  liveStreams.push(stream);
+
+  // Call redisplay callback (liveui.js will decide whether to actually redisplay)
+  if (window.onStreamAdded) {
+    window.onStreamAdded(initConfig);
+  }
+}
+
+// ========== SOMA FM STREAM PARSING ==========
 
 function parseSomaFMStream(title, genre) {
   // Parse SomaFM stream names like "Groovesalad;LC 128k aac;http://..."
   // Returns { name: 'Human readable name', genre: 'genre' }
-  
+
   const parts = title.split(';').map(s => s.trim());
   let name = parts[0] || 'SomaFM Stream';
   let detectedGenre = genre;
-  
+
   // Clean up the name if it has quality info
   if (parts[1]) {
     name = parts[0];
@@ -389,82 +389,82 @@ function parseSomaFMStream(title, genre) {
       // Keep quality info if it's useful
     }
   }
-  
+
   return { name, genre: detectedGenre };
 }
 
 // ========== INITIALIZATION ==========
 
 async function loadDefaultStreamsOnFirstRun() {
-     const userStreams = getUserStreams();
-     // Only load default preset if user has NEVER initialized streams
-     // Check if user has explicitly cleared streams (persisted flag)
-     const hasEverInitialized = storage.getBool('streamsEverInitialized', false);
-     
-     if (userStreams.length === 0 && !hasEverInitialized) {
-       try {
-         const response = await fetch('/streams/Default.streams');
-         const preset = await response.json();
-         if (preset.name && Array.isArray(preset.streams)) {
-           for (const stream of preset.streams) {
-             await addUserStream(stream.name || null, stream.m3u, stream.genre || null);
-           }
-         }
-       } catch (e) {
-         // Default preset not available, start with empty list
-         console.log('Default preset not found, starting with empty stream list');
-       }
-     }
-     
-     // Mark that streams have been initialized (prevents reloading defaults on future reloads)
-     storage.set('streamsEverInitialized', true);
-   }
+  const userStreams = getUserStreams();
+  // Only load default preset if user has NEVER initialized streams
+  // Check if user has explicitly cleared streams (persisted flag)
+  const hasEverInitialized = storage.getBool('streamsEverInitialized', false);
+
+  if (userStreams.length === 0 && !hasEverInitialized) {
+    try {
+      const response = await fetch('/streams/Default.streams');
+      const preset = await response.json();
+      if (preset.name && Array.isArray(preset.streams)) {
+        for (const stream of preset.streams) {
+          await addUserStream(stream.name || null, stream.m3u, stream.genre || null);
+        }
+      }
+    } catch (e) {
+      // Default preset not available, start with empty list
+      console.log('Default preset not found, starting with empty stream list');
+    }
+  }
+
+  // Mark that streams have been initialized (prevents reloading defaults on future reloads)
+  storage.set('streamsEverInitialized', true);
+}
 
 async function initLiveStreams(config = {}) {
-   if (liveStreamsInitialized) return;
-   
-   liveStreamsInitialized = true;
-   liveStreams = [];
-   const configs = getLiveStreamConfig();
-   
-   for (const streamConfig of configs) {
-     await probeAndAddStream(streamConfig, config);
-   }
+  if (liveStreamsInitialized) return;
+
+  liveStreamsInitialized = true;
+  liveStreams = [];
+  const configs = getLiveStreamConfig();
+
+  for (const streamConfig of configs) {
+    await probeAndAddStream(streamConfig, config);
+  }
 }
 
 async function restoreLivePlayer() {
-    try {
-      const savedLiveUrl = storage.get('liveStreamUrl');
-      const savedLiveM3u = storage.get('liveStreamM3u');
-      const savedLiveText = storage.get('liveDisplayText');
-      
-      if (savedLiveUrl && savedLiveText) {
-        state.isRestoring = true;
-        state.liveStreamUrl = savedLiveUrl;
-        state.liveStreamM3u = savedLiveM3u;
-        const wasPlaying = storage.getBool('wasPlaying', false);
-        playLive(savedLiveUrl, savedLiveText, wasPlaying);
-        // Keep isRestoring true until after playLive's async setup (canplay listener, timeouts, etc.)
-        setTimeout(() => {
-          state.isRestoring = false;
-        }, 200);
-           const config = {
-          shouldRedisplayAfterProbe: () => browserModes.current === 'live'
-        };
-        await initLiveStreams(config);
-        return true; // Restored live stream
-     }
-   } catch (e) {
-     console.error('Error restoring live stream:', e);
-   }
-   return false; // Did not restore
+  try {
+    const savedLiveUrl = storage.get('liveStreamUrl');
+    const savedLiveM3u = storage.get('liveStreamM3u');
+    const savedLiveText = storage.get('liveDisplayText');
+
+    if (savedLiveUrl && savedLiveText) {
+      state.isRestoring = true;
+      state.liveStreamUrl = savedLiveUrl;
+      state.liveStreamM3u = savedLiveM3u;
+      const wasPlaying = storage.getBool('wasPlaying', false);
+      playLive(savedLiveUrl, savedLiveText, wasPlaying);
+      // Keep isRestoring true until after playLive's async setup (canplay listener, timeouts, etc.)
+      setTimeout(() => {
+        state.isRestoring = false;
+      }, 200);
+      const config = {
+        shouldRedisplayAfterProbe: () => browserModes.current === 'live'
+      };
+      await initLiveStreams(config);
+      return true; // Restored live stream
+    }
+  } catch (e) {
+    console.error('Error restoring live stream:', e);
+  }
+  return false; // Did not restore
 }
 
 // Load default preset on first run, then initialize live streams
 (async () => {
-   await loadDefaultStreamsOnFirstRun();
-   const config = {
-     shouldRedisplayAfterProbe: () => browserModes.current === 'live'
-   };
-   initLiveStreams(config).catch(e => console.error('Failed to initialize live streams:', e));
+  await loadDefaultStreamsOnFirstRun();
+  const config = {
+    shouldRedisplayAfterProbe: () => browserModes.current === 'live'
+  };
+  initLiveStreams(config).catch(e => console.error('Failed to initialize live streams:', e));
 })();
