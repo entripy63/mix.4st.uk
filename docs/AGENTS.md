@@ -15,7 +15,7 @@
 - Static website with a single SPA (player.html)
 
 ### player.html
-- **Location**: mixes.4st.uk
+- **Location**: http://mixes.4st.uk since we can't use https
 - **Layout**: Landing page, Player, Queue/User Streams (tabbed), Browser columns, responsive design
 - **Stylesheets**: `common.css`, `player.css`
 - **JavaScript modules** (no bundler, simple script loading):
