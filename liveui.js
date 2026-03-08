@@ -462,7 +462,7 @@ async function playPresetStream(index) {
       break;
     }
     // Try proxy for http on https page
-    if (entry.url.startsWith('http://') && location.protocol === 'https:' && !isRawIPURL(entry.url)) {
+    if (entry.url.startsWith('http://') && location.protocol === 'https:') {
       const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(entry.url)}`;
       if (await probeStream(proxyUrl)) {
         resolvedUrl = proxyUrl;

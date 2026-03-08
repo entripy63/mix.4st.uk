@@ -21,7 +21,7 @@
 
 // Live streams configuration
 // We can't always use the proxy because it hates jungletrain.net
-const STREAM_PROXY = 'https://stream-proxy.round-bar-e93e.workers.dev';
+const STREAM_PROXY = 'https://proxy.4st.uk/stream';
 
 // Data storage
 let liveStreams = [];
@@ -297,8 +297,7 @@ async function probeAndAddStream(config, initConfig = {}) {
         }
 
         // Try via proxy for http:// on https: page
-        // Skip proxy for raw IP URLs (Cloudflare Workers can't reach bare IPs)
-        if (url.startsWith('http://') && location.protocol === 'https:' && !isRawIPURL(url)) {
+        if (url.startsWith('http://') && location.protocol === 'https:') {
           const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(url)}`;
           if (await probeStream(proxyUrl)) {
             stream.url = proxyUrl;
