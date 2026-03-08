@@ -80,6 +80,46 @@ function resumeLive() {
   }
 }
 
+// Live stream auto-reconnect on error/stall
+let liveReconnectTimer = null;
+const LIVE_RECONNECT_DELAY = 1000;
+const LIVE_STALL_TIMEOUT = 3000;
+
+function liveReconnect() {
+  if (!state.isLive || !state.liveStreamUrl || aud.paused) return;
+  clearTimeout(liveReconnectTimer);
+  liveReconnectTimer = null;
+  resumeLive();
+}
+
+function scheduleLiveReconnect() {
+  if (!state.isLive || aud.paused || liveReconnectTimer) return;
+  liveReconnectTimer = setTimeout(liveReconnect, LIVE_RECONNECT_DELAY);
+}
+
+aud.addEventListener('error', () => {
+  if (state.isLive && !aud.paused) scheduleLiveReconnect();
+});
+
+aud.addEventListener('stalled', () => {
+  if (!state.isLive || aud.paused) return;
+  // Give the stream a chance to recover before reconnecting
+  clearTimeout(liveReconnectTimer);
+  liveReconnectTimer = setTimeout(() => {
+    if (state.isLive && !aud.paused && aud.readyState < 3) {
+      liveReconnect();
+    }
+  }, LIVE_STALL_TIMEOUT);
+});
+
+aud.addEventListener('playing', () => {
+  // Stream recovered, cancel any pending reconnect
+  if (liveReconnectTimer) {
+    clearTimeout(liveReconnectTimer);
+    liveReconnectTimer = null;
+  }
+});
+
 // Start playing a live stream
 function playLive(url, displayText, autoplay = false) {
   state.isLive = true;
