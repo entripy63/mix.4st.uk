@@ -51,9 +51,12 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // Allow client to control ICY metadata via ?icy=0 (default: 1)
+  const icyMeta = url.searchParams.get('icy') === '1' ? '1' : '0';
+
   const fetchHeaders = {
     'User-Agent': 'AudioPlayer/1.0',
-    'Icy-MetaData': '1'
+    'Icy-MetaData': icyMeta
   };
 
   if (req.headers['range']) {
@@ -70,10 +73,7 @@ const server = http.createServer(async (req, res) => {
     const target = new URL(targetUrl);
     const transport = target.protocol === 'https:' ? https : http;
 
-    // Some Shoutcast servers respond with ICY protocol (HTTP/0.9) which
-    // Node's http.request can't handle. Use a raw TCP socket for these.
     const proxyReq = transport.request(target, { headers: fetchHeaders }, (proxyRes) => {
-      // Follow redirects
       if ([301, 302, 307, 308].includes(proxyRes.statusCode) && proxyRes.headers['location']) {
         proxyRes.resume();
         doRequest(proxyRes.headers['location'], redirectCount + 1);
@@ -100,15 +100,12 @@ const server = http.createServer(async (req, res) => {
 
       res.writeHead(proxyRes.statusCode, responseHeaders);
       proxyRes.pipe(res);
-
-      // Clean up upstream when client disconnects (e.g. probe completes)
       res.on('close', () => { proxyRes.destroy(); proxyReq.destroy(); });
     });
 
     proxyReq.on('error', (err) => {
-      // If HTTP parsing fails (e.g. ICY/Shoutcast), fall back to raw TCP
       if (err.code === 'HPE_INVALID_CONSTANT') {
-        doRawRequest(target, res);
+        doRawRequest(target, res, icyMeta);
       } else if (!res.headersSent) {
         res.writeHead(502);
         res.end('Upstream error');
@@ -122,11 +119,11 @@ const server = http.createServer(async (req, res) => {
 });
 
 // Raw TCP fallback for ICY/Shoutcast servers that don't speak valid HTTP
-function doRawRequest(target, res) {
+function doRawRequest(target, res, icyMeta) {
   const port = target.port || 80;
   const path = target.pathname + target.search;
   const socket = net.connect(port, target.hostname, () => {
-    socket.write(`GET ${path} HTTP/1.0\r\nHost: ${target.host}\r\nUser-Agent: AudioPlayer/1.0\r\nIcy-MetaData: 1\r\nConnection: close\r\n\r\n`);
+    socket.write(`GET ${path} HTTP/1.0\r\nHost: ${target.host}\r\nUser-Agent: AudioPlayer/1.0\r\nIcy-MetaData: ${icyMeta}\r\nConnection: close\r\n\r\n`);
   });
 
   let headersParsed = false;
@@ -146,7 +143,6 @@ function doRawRequest(target, res) {
     const body = buffer.slice(headerEnd + 4);
     headersParsed = true;
 
-    // Parse ICY headers
     let contentType = 'audio/mpeg';
     const icyHeaders = {};
     for (const line of headerStr.split('\r\n')) {
@@ -178,5 +174,5 @@ function doRawRequest(target, res) {
 }
 
 server.listen(PORT, () => {
-  console.log(`Stream proxy listening on port ${PORT}`);
+  console.log('Stream proxy listening on port ' + PORT);
 });
