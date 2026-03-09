@@ -75,25 +75,7 @@ function getLiveStreamConfig() {
 
 // ========== STREAM PROBING & PLAYLIST PARSING ==========
 
-function isRawIPURL(url) {
-  // Check if URL contains a raw IP address (IPv4 or IPv6)
-  // e.g., http://185.33.21.112/stream or http://[::1]:8000/stream
-  try {
-    const urlObj = new URL(url);
-    const hostname = urlObj.hostname;
-    // IPv4: check if all parts are numeric (0-255)
-    if (/^(\d{1,3}\.){3}\d{1,3}$/.test(hostname)) {
-      return true;
-    }
-    // IPv6: check if it starts with : or contains only hex digits and colons
-    if (hostname.includes(':') || /^[0-9a-f:]+$/i.test(hostname)) {
-      return true;
-    }
-  } catch (e) {
-    // Invalid URL, assume not an IP
-  }
-  return false;
-}
+
 
 function probeStream(url, timeoutMs = 5000) {
   return new Promise(resolve => {
@@ -274,46 +256,13 @@ async function probeAndAddStream(config, initConfig = {}) {
       for (const entry of entries) {
         let url = entry.url;
 
-        // Try direct URL first
-        if (await probeStream(url)) {
-          stream.url = url;
+        // Try via proxy (handles CORS, mixed content, Shoutcast/ICY, and raw IPs)
+        const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(url)}`;
+        if (await probeStream(proxyUrl)) {
+          stream.url = proxyUrl;
           stream.playlistTitle = entry.title;
           stream.available = true;
           break;
-        }
-
-        // Try with ';' suffix for Shoutcast servers that redirect to text/html
-        let urlWithSemicolon = url;
-        if (!urlWithSemicolon.endsWith('/')) {
-          urlWithSemicolon += '/';
-        }
-        urlWithSemicolon += ';';
-
-        if (await probeStream(urlWithSemicolon)) {
-          stream.url = urlWithSemicolon;
-          stream.playlistTitle = entry.title;
-          stream.available = true;
-          break;
-        }
-
-        // Try via proxy for http:// on https: page
-        if (url.startsWith('http://') && location.protocol === 'https:') {
-          const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(url)}`;
-          if (await probeStream(proxyUrl)) {
-            stream.url = proxyUrl;
-            stream.playlistTitle = entry.title;
-            stream.available = true;
-            break;
-          }
-
-          // Try proxy with ';' suffix for Shoutcast
-          const proxyUrlWithSemicolon = `${STREAM_PROXY}?url=${encodeURIComponent(urlWithSemicolon)}`;
-          if (await probeStream(proxyUrlWithSemicolon)) {
-            stream.url = proxyUrlWithSemicolon;
-            stream.playlistTitle = entry.title;
-            stream.available = true;
-            break;
-          }
         }
       }
       return null; // Probing completed

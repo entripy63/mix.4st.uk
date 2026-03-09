@@ -449,25 +449,11 @@ async function playPresetStream(index) {
 
   let resolvedUrl = null;
   for (const entry of entries) {
-    if (await probeStream(entry.url)) {
-      resolvedUrl = entry.url;
+    // Try via proxy (handles CORS, mixed content, Shoutcast/ICY, and raw IPs)
+    const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(entry.url)}`;
+    if (await probeStream(proxyUrl)) {
+      resolvedUrl = proxyUrl;
       break;
-    }
-    // Try with ; suffix for Shoutcast
-    let urlWithSemicolon = entry.url;
-    if (!urlWithSemicolon.endsWith('/')) urlWithSemicolon += '/';
-    urlWithSemicolon += ';';
-    if (await probeStream(urlWithSemicolon)) {
-      resolvedUrl = urlWithSemicolon;
-      break;
-    }
-    // Try proxy for http on https page
-    if (entry.url.startsWith('http://') && location.protocol === 'https:') {
-      const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(entry.url)}`;
-      if (await probeStream(proxyUrl)) {
-        resolvedUrl = proxyUrl;
-        break;
-      }
     }
   }
 
