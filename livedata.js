@@ -21,7 +21,7 @@
 
 // Live streams configuration
 // We can't always use the proxy because it hates jungletrain.net
-const STREAM_PROXY = 'https://proxy.4st.uk/stream';
+const STREAM_PROXY = 'https://stream-proxy-375114048778.europe-west2.run.app/stream';
 
 // Data storage
 let liveStreams = [];
