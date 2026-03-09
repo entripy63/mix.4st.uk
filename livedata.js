@@ -20,7 +20,6 @@
 // This eliminates sync fragility - liveStreams is always derived from userStreams
 
 // Live streams configuration
-// We can't always use the proxy because it hates jungletrain.net
 const STREAM_PROXY = 'https://proxy.4st.uk/stream';
 
 // Data storage
