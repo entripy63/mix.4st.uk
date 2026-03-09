@@ -45,6 +45,7 @@ function updateMuteBtn() {
 
 // Live stream pause: stop downloading by clearing src
 function pauseLive() {
+  state.userPausedLive = true;
   aud.pause();
   aud.src = '';
   aud.removeAttribute('src');
@@ -58,6 +59,7 @@ function pauseLive() {
 
 // Live stream resume: restore src and play
 function resumeLive() {
+  state.userPausedLive = false;
   if (state.liveStreamUrl) {
     aud.src = state.liveStreamUrl;
     aud.load();
@@ -86,34 +88,39 @@ const LIVE_RECONNECT_DELAY = 1000;
 const LIVE_STALL_TIMEOUT = 3000;
 
 function liveReconnect() {
-  if (!state.isLive || !state.liveStreamUrl || aud.paused) return;
+  if (!state.isLive || !state.liveStreamUrl || state.userPausedLive) return;
   clearTimeout(liveReconnectTimer);
   liveReconnectTimer = null;
   resumeLive();
 }
 
 function scheduleLiveReconnect() {
-  if (!state.isLive || aud.paused || liveReconnectTimer) return;
+  if (!state.isLive || state.userPausedLive || liveReconnectTimer) return;
   liveReconnectTimer = setTimeout(liveReconnect, LIVE_RECONNECT_DELAY);
 }
 
 aud.addEventListener('error', () => {
-  if (state.isLive && !aud.paused) scheduleLiveReconnect();
+  if (state.isLive && !state.userPausedLive) scheduleLiveReconnect();
 });
 
 aud.addEventListener('stalled', () => {
-  if (!state.isLive || aud.paused) return;
-  // Give the stream a chance to recover before reconnecting
+  if (!state.isLive || state.userPausedLive) return;
   clearTimeout(liveReconnectTimer);
   liveReconnectTimer = setTimeout(() => {
-    if (state.isLive && !aud.paused && aud.readyState < 3) {
+    if (state.isLive && !state.userPausedLive && aud.readyState < 3) {
       liveReconnect();
     }
   }, LIVE_STALL_TIMEOUT);
 });
 
+aud.addEventListener('pause', () => {
+  // Stream died if we didn't initiate the pause and src is still set
+  if (state.isLive && !state.userPausedLive && aud.src) {
+    scheduleLiveReconnect();
+  }
+});
+
 aud.addEventListener('playing', () => {
-  // Stream recovered, cancel any pending reconnect
   if (liveReconnectTimer) {
     clearTimeout(liveReconnectTimer);
     liveReconnectTimer = null;
@@ -123,6 +130,7 @@ aud.addEventListener('playing', () => {
 // Start playing a live stream
 function playLive(url, displayText, autoplay = false) {
   state.isLive = true;
+  state.userPausedLive = false;
   state.liveStreamUrl = url;
   state.liveDisplayText = displayText;
   storage.set('liveStreamUrl', url);
