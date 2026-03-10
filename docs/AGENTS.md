@@ -2,6 +2,7 @@
 
 ## Documentation
 - **[ASSETS.md](ASSETS.md)** — Comprehensive asset documentation (HTML, CSS, JavaScript modules, data files)
+- **[PROXY.md](PROXY.md)** — Stream proxy architecture, deployment, and configuration
 - This file — Development instructions and architecture overview
 
 ## Build/Test/Deploy Commands

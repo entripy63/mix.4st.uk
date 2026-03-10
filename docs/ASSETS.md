@@ -146,6 +146,11 @@
 ### audio-source-config.json
 - **Purpose**: Configuration for external audio sources
 
+### streams/proxy-config.json
+- **Purpose**: Stream proxy routing configuration (named vs raw-IP streams)
+- **Format**: JSON array of proxy endpoints with capability tags
+- **See**: [PROXY.md](PROXY.md) for full documentation
+
 ---
 
 ## Configuration & Metadata

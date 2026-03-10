@@ -449,9 +449,9 @@ async function playPresetStream(index) {
 
   let resolvedUrl = null;
   for (const entry of entries) {
-    // Try via proxy (handles CORS, mixed content, Shoutcast/ICY, and raw IPs)
-    const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(entry.url)}`;
-    if (await probeStream(proxyUrl)) {
+    // Route to appropriate proxy based on URL type
+    const proxyUrl = getProxyUrl(entry.url);
+    if (proxyUrl && await probeStream(proxyUrl)) {
       resolvedUrl = proxyUrl;
       break;
     }

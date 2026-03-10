@@ -1,0 +1,12 @@
+[
+  {
+    "url": "https://stream-proxy.round-bar-e93e.workers.dev",
+    "streams": "named",
+    "note": "Cloudflare Worker — reliable, no timeout, but cannot proxy raw IP addresses"
+  },
+  {
+    "url": "https://stream-proxy-375114048778.europe-west2.run.app/stream",
+    "streams": "all",
+    "note": "Google Cloud Run — handles raw IPs and ICY/Shoutcast, 60-min timeout"
+  }
+]

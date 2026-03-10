@@ -19,9 +19,37 @@
 //
 // This eliminates sync fragility - liveStreams is always derived from userStreams
 
-// Live streams configuration
-// We can't always use the proxy because it hates jungletrain.net
-const STREAM_PROXY = 'https://stream-proxy-375114048778.europe-west2.run.app/stream';
+// Proxy configuration — loaded from proxy-config.json at init
+let proxyNamed = null;  // Best proxy for named-URL streams
+let proxyAll = null;    // Best proxy for all streams (including raw IPs)
+
+async function loadProxyConfig() {
+  if (proxyNamed || proxyAll) return; // Already loaded
+  try {
+    const resp = await fetch('/streams/proxy-config.json');
+    const proxies = await resp.json();
+    // Scan in preference order: pick first proxy for each capability
+    for (const p of proxies) {
+      if (!proxyNamed && (p.streams === 'named' || p.streams === 'all')) {
+        proxyNamed = p.url;
+      }
+      if (!proxyAll && p.streams === 'all') {
+        proxyAll = p.url;
+      }
+    }
+    // Fallback: if no "all" proxy, use the named one for everything
+    if (!proxyAll) proxyAll = proxyNamed;
+    if (!proxyNamed) proxyNamed = proxyAll;
+  } catch (e) {
+    console.error('Failed to load proxy-config.json:', e);
+  }
+}
+
+function getProxyUrl(streamUrl) {
+  const proxy = isRawIPURL(streamUrl) ? proxyAll : proxyNamed;
+  if (!proxy) return null;
+  return `${proxy}?url=${encodeURIComponent(streamUrl)}`;
+}
 
 // Data storage
 let liveStreams = [];
@@ -75,6 +103,21 @@ function getLiveStreamConfig() {
 
 // ========== STREAM PROBING & PLAYLIST PARSING ==========
 
+function isRawIPURL(url) {
+  try {
+    const urlObj = new URL(url);
+    const hostname = urlObj.hostname;
+    if (/^(\d{1,3}\.){3}\d{1,3}$/.test(hostname)) {
+      return true;
+    }
+    if (hostname.includes(':') || /^[0-9a-f:]+$/i.test(hostname)) {
+      return true;
+    }
+  } catch (e) {
+    // Invalid URL, assume not an IP
+  }
+  return false;
+}
 
 
 function probeStream(url, timeoutMs = 5000) {
@@ -160,7 +203,8 @@ async function fetchPlaylist(playlistUrl) {
   const controller = new AbortController();
   try {
     // Use proxy to avoid CORS errors on M3U and PLS playlists
-    const url = `${STREAM_PROXY}?url=${encodeURIComponent(playlistUrl)}`;
+    // Always use proxyAll here — we don't know stream IPs until after parsing
+    const url = `${proxyAll}?url=${encodeURIComponent(playlistUrl)}`;
     const timeout = setTimeout(() => controller.abort(), 5000); // 5 second timeout
     const resp = await fetch(url, { signal: controller.signal });
     clearTimeout(timeout);
@@ -256,9 +300,9 @@ async function probeAndAddStream(config, initConfig = {}) {
       for (const entry of entries) {
         let url = entry.url;
 
-        // Try via proxy (handles CORS, mixed content, Shoutcast/ICY, and raw IPs)
-        const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(url)}`;
-        if (await probeStream(proxyUrl)) {
+        // Route to appropriate proxy based on URL type
+        const proxyUrl = getProxyUrl(url);
+        if (proxyUrl && await probeStream(proxyUrl)) {
           stream.url = proxyUrl;
           stream.playlistTitle = entry.title;
           stream.available = true;
@@ -381,6 +425,7 @@ async function initLiveStreams(config = {}) {
 }
 
 async function restoreLivePlayer() {
+  await loadProxyConfig();
   try {
     const savedLiveUrl = storage.get('liveStreamUrl');
     const savedLiveM3u = storage.get('liveStreamM3u');
@@ -408,8 +453,9 @@ async function restoreLivePlayer() {
   return false; // Did not restore
 }
 
-// Load default preset on first run, then initialize live streams
+// Load proxy config, default streams, then initialize live streams
 (async () => {
+  await loadProxyConfig();
   await loadDefaultStreamsOnFirstRun();
   const config = {
     shouldRedisplayAfterProbe: () => browserModes.current === 'live'
