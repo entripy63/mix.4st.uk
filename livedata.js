@@ -20,40 +20,32 @@
 // This eliminates sync fragility - liveStreams is always derived from userStreams
 
 // Proxy configuration — loaded from proxy-config.json at init
-let proxyNamed = null;  // Best proxy for named-URL streams
-let proxyAll = null;    // Best proxy for all streams (including raw IPs)
+// Two ordered lists built from config (in preference order):
+//   proxiesForRawIP — only "all" proxies (can handle raw IP addresses)
+//   proxiesForNamed — all proxies ("all" + "named", can handle named URLs)
+let proxiesForRawIP = [];
+let proxiesForNamed = [];
 
 async function loadProxyConfig() {
-  if (proxyNamed || proxyAll) return; // Already loaded
+  if (proxiesForRawIP.length || proxiesForNamed.length) return; // Already loaded
   try {
     const resp = await fetch('/streams/proxy-config.json');
     const proxies = await resp.json();
-    // Scan in preference order: pick first proxy for each capability
     for (const p of proxies) {
-      if (!proxyNamed && (p.streams === 'named' || p.streams === 'all')) {
-        proxyNamed = p.url;
+      if (p.streams === 'all') {
+        proxiesForRawIP.push(p.url);
       }
-      if (!proxyAll && p.streams === 'all') {
-        proxyAll = p.url;
-      }
+      // Both "all" and "named" proxies can handle named URLs
+      proxiesForNamed.push(p.url);
     }
-    // Fallback: if no "all" proxy, use the named one for everything
-    if (!proxyAll) proxyAll = proxyNamed;
-    if (!proxyNamed) proxyNamed = proxyAll;
   } catch (e) {
     console.error('Failed to load proxy-config.json:', e);
   }
 }
 
 function getProxyUrls(streamUrl) {
-  const primary = isRawIPURL(streamUrl) ? proxyAll : proxyNamed;
-  if (!primary) return [];
-  const urls = [`${primary}?url=${encodeURIComponent(streamUrl)}`];
-  // Add fallback if proxyAll is different from the primary (e.g., ICY streams on named URLs)
-  if (proxyAll && proxyAll !== primary) {
-    urls.push(`${proxyAll}?url=${encodeURIComponent(streamUrl)}`);
-  }
-  return urls;
+  const list = isRawIPURL(streamUrl) ? proxiesForRawIP : proxiesForNamed;
+  return list.map(proxy => `${proxy}?url=${encodeURIComponent(streamUrl)}`);
 }
 
 // Data storage
@@ -205,43 +197,42 @@ function parseM3U(text) {
 }
 
 async function fetchPlaylist(playlistUrl) {
-  const controller = new AbortController();
-  try {
-    // Use proxy to avoid CORS errors on M3U and PLS playlists
-    // Always use proxyAll here — we don't know stream IPs until after parsing
-    const url = `${proxyAll}?url=${encodeURIComponent(playlistUrl)}`;
-    const timeout = setTimeout(() => controller.abort(), 5000); // 5 second timeout
-    const resp = await fetch(url, { signal: controller.signal });
-    clearTimeout(timeout);
+  // Try each proxy in the raw IP list (all proxies that can handle any URL)
+  // We use proxiesForRawIP because we don't know the stream IPs until after parsing
+  for (const proxy of proxiesForRawIP) {
+    const controller = new AbortController();
+    try {
+      const url = `${proxy}?url=${encodeURIComponent(playlistUrl)}`;
+      const timeout = setTimeout(() => controller.abort(), 5000);
+      const resp = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeout);
 
-    // If it's a direct audio stream (not a playlist format), return empty to fallback to direct probe
-    const contentType = resp.headers.get('content-type') || '';
-    const playlistFormats = ['scpls', 'mpegurl', 'vnd.apple.mpegurl', 'x-mpegurl'];
-    const isPlaylistFormat = playlistFormats.some(fmt => contentType.includes(fmt));
+      const contentType = resp.headers.get('content-type') || '';
+      const playlistFormats = ['scpls', 'mpegurl', 'vnd.apple.mpegurl', 'x-mpegurl'];
+      const isPlaylistFormat = playlistFormats.some(fmt => contentType.includes(fmt));
+      const isAudioStream = contentType.includes('audio/') && !isPlaylistFormat;
+      const audioExts = ['.mp3', '.aac', '.flac', '.wav', '.ogg', '.opus', '.m4a', '.wma'];
+      const hasAudioExt = audioExts.some(ext => playlistUrl.toLowerCase().includes(ext));
 
-    // Check if it's audio (including flac, wav, etc.) but not a playlist
-    const isAudioStream = contentType.includes('audio/') && !isPlaylistFormat;
+      if (isAudioStream || hasAudioExt) {
+        controller.abort();
+        return [];
+      }
 
-    // Also check URL extension as fallback
-    const audioExts = ['.mp3', '.aac', '.flac', '.wav', '.ogg', '.opus', '.m4a', '.wma'];
-    const hasAudioExt = audioExts.some(ext => playlistUrl.toLowerCase().includes(ext));
-
-    if (isAudioStream || hasAudioExt) {
+      const text = await resp.text();
       controller.abort();
-      return [];
+      if (text.trim().toLowerCase().startsWith('[playlist]')) {
+        return parsePLS(text);
+      }
+      return parseM3U(text);
+    } catch (e) {
+      controller.abort();
+      // Try next proxy on failure
+      continue;
     }
-
-    const text = await resp.text();
-    controller.abort();
-    if (text.trim().toLowerCase().startsWith('[playlist]')) {
-      return parsePLS(text);
-    }
-    return parseM3U(text);
-  } catch (e) {
-    controller.abort();
-    // Abort or timeout on streaming audio is expected, treat as audio stream
-    return [];
   }
+  // All proxies failed or none configured — treat as direct audio
+  return [];
 }
 
 // ========== STREAM PROBING & ADDITION ==========
