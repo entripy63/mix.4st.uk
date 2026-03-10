@@ -449,12 +449,15 @@ async function playPresetStream(index) {
 
   let resolvedUrl = null;
   for (const entry of entries) {
-    // Route to appropriate proxy based on URL type
-    const proxyUrl = getProxyUrl(entry.url);
-    if (proxyUrl && await probeStream(proxyUrl)) {
-      resolvedUrl = proxyUrl;
-      break;
+    // Route to appropriate proxy, with fallback to proxyAll
+    const proxyUrls = getProxyUrls(entry.url);
+    for (const proxyUrl of proxyUrls) {
+      if (await probeStream(proxyUrl)) {
+        resolvedUrl = proxyUrl;
+        break;
+      }
     }
+    if (resolvedUrl) break;
   }
 
   if (!resolvedUrl) {

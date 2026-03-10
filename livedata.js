@@ -45,10 +45,15 @@ async function loadProxyConfig() {
   }
 }
 
-function getProxyUrl(streamUrl) {
-  const proxy = isRawIPURL(streamUrl) ? proxyAll : proxyNamed;
-  if (!proxy) return null;
-  return `${proxy}?url=${encodeURIComponent(streamUrl)}`;
+function getProxyUrls(streamUrl) {
+  const primary = isRawIPURL(streamUrl) ? proxyAll : proxyNamed;
+  if (!primary) return [];
+  const urls = [`${primary}?url=${encodeURIComponent(streamUrl)}`];
+  // Add fallback if proxyAll is different from the primary (e.g., ICY streams on named URLs)
+  if (proxyAll && proxyAll !== primary) {
+    urls.push(`${proxyAll}?url=${encodeURIComponent(streamUrl)}`);
+  }
+  return urls;
 }
 
 // Data storage
@@ -300,14 +305,17 @@ async function probeAndAddStream(config, initConfig = {}) {
       for (const entry of entries) {
         let url = entry.url;
 
-        // Route to appropriate proxy based on URL type
-        const proxyUrl = getProxyUrl(url);
-        if (proxyUrl && await probeStream(proxyUrl)) {
-          stream.url = proxyUrl;
-          stream.playlistTitle = entry.title;
-          stream.available = true;
-          break;
+        // Route to appropriate proxy, with fallback to proxyAll
+        const proxyUrls = getProxyUrls(url);
+        for (const proxyUrl of proxyUrls) {
+          if (await probeStream(proxyUrl)) {
+            stream.url = proxyUrl;
+            stream.playlistTitle = entry.title;
+            stream.available = true;
+            break;
+          }
         }
+        if (stream.available) break;
       }
       return null; // Probing completed
     })(),
