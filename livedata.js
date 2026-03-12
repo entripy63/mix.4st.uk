@@ -249,7 +249,7 @@ async function probeAndAddStream(config, initConfig = {}) {
 
   // Skip probing if this stream is currently playing (single-stream-per-IP constraint)
   // Just mark it as available since it's clearly working
-  if (state.liveStreamM3u && config.m3u === state.liveStreamM3u) {
+  if (state.liveStreamM3u && config.m3u === state.liveStreamM3u && !aud.paused) {
     stream.url = state.liveStreamUrl;
     stream.available = true;
     stream.reason = null;
