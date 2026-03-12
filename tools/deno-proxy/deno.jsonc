@@ -1,0 +1,6 @@
+{
+  "deploy": {
+    "org": "entripy63",
+    "app": "stream-proxy"
+  }
+}

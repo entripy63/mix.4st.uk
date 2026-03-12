@@ -194,23 +194,22 @@ async function doRawRequest(target: URL, icyMeta: string): Promise<Response> {
         ...icyHeaders,
       };
 
+      const readBuf = new Uint8Array(16384);
       const stream = new ReadableStream({
         start(controller) {
-          // Enqueue any body data we already read
           if (remainingBody.length > 0) {
             controller.enqueue(remainingBody);
           }
         },
         async pull(controller) {
           try {
-            const buf = new Uint8Array(8192);
-            const n = await conn.read(buf);
+            const n = await conn.read(readBuf);
             if (n === null) {
               controller.close();
               conn.close();
               return;
             }
-            controller.enqueue(buf.subarray(0, n));
+            controller.enqueue(buf.slice(0, n));
           } catch {
             controller.close();
             try { conn.close(); } catch { /* ignore */ }
