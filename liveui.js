@@ -94,7 +94,7 @@ function displayLiveStreams() {
     const infoPopout = `<div class="stream-extra-info" style="display:none">
       <div class="stream-info-field">
         <strong>Stream URL:</strong>
-        <a href="${escapeHtml(stream.url || stream.m3u)}" target="_blank" rel="noopener">${escapeHtml(stream.url || stream.m3u)}</a>
+        <a href="${escapeHtml(stream.url || stream.m3u)}" target="_blank" rel="noopener">${escapeHtml(decodeURIComponent(stream.url || stream.m3u))}</a>
       </div>
       <div class="stream-info-field">
         <strong>Name:</strong>
