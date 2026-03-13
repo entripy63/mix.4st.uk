@@ -5,11 +5,11 @@
 // ========== ARCHITECTURE: SINGLE SOURCE OF TRUTH ==========
 // 
 // CANONICAL (persistent): userStreams in localStorage
-//   Structure: [{ name, m3u, genre }, ...]
+//   Structure: [{ name, m3u, genre, website }, ...]
 //   Accessed via: getUserStreams(), saveUserStreams()
 //
 // DERIVED (ephemeral): liveStreams in memory
-//   Structure: [{ name, m3u, genre, url, available, reason, ... }, ...]
+//   Structure: [{ name, m3u, genre, website, url, available, reason, ... }, ...]
 //   Built from userStreams via probeAndAddStream()
 //
 // PATTERN: All mutations update userStreams first, then keep liveStreams in sync
@@ -62,10 +62,10 @@ function saveUserStreams(streams) {
   storage.set('userStreams', streams);
 }
 
-async function addUserStream(name, m3u, genre) {
+async function addUserStream(name, m3u, genre, website) {
   // Step 1: Update canonical source (userStreams)
   const streams = getUserStreams();
-  const config = { name: name || null, m3u, genre };
+  const config = { name: name || null, m3u, genre, website: website || null };
   streams.push(config);
   saveUserStreams(streams);
 
@@ -246,6 +246,7 @@ async function probeAndAddStream(config, initConfig = {}) {
     m3u: config.m3u,
     name: config.name,
     genre: config.genre,
+    website: config.website || null,
     url: null,
     available: false,
     reason: null
@@ -388,7 +389,7 @@ async function loadDefaultStreamsOnFirstRun() {
       const preset = await response.json();
       if (preset.name && Array.isArray(preset.streams)) {
         for (const stream of preset.streams) {
-          await addUserStream(stream.name || null, stream.m3u, stream.genre || null);
+          await addUserStream(stream.name || null, stream.m3u, stream.genre || null, stream.website || null);
         }
       }
     } catch (e) {

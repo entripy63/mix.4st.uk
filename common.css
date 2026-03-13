@@ -158,21 +158,13 @@
 /* ========== STREAM INFO FIELDS ========== */
 
 .stream-info-field {
-  display: grid;
-  grid-template-columns: 100px 1fr;
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.stream-info-field:last-child {
-  margin-bottom: 0;
+  display: contents;
 }
 
 .stream-info-field strong {
   color: #ccc;
   font-weight: 500;
-  text-align: right;
+  white-space: nowrap;
 }
 
 .stream-info-field a {
@@ -492,6 +484,10 @@
   font-size: 13px;
   user-select: text;
   -webkit-user-select: text;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 6px;
+  align-items: center;
 }
 
 /* ========== MIX ITEMS ========== */

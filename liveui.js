@@ -99,6 +99,13 @@ function displayLiveStreams() {
         <strong>Genre:</strong>
         <input type="text" class="stream-edit-genre" value="${escapeHtml(stream.genre || '')}" placeholder="Genre" data-index="${index}" />
       </div>
+      <div class="stream-info-field">
+        <strong>Website:</strong>
+        <span style="display:flex;align-items:center;gap:4px;min-width:0">
+          <input type="text" class="stream-edit-website" value="${escapeHtml(stream.website || '')}" placeholder="https://..." data-index="${index}" style="flex:1;min-width:0" />
+          ${stream.website ? `<a href="${escapeHtml(stream.website)}" target="_blank" rel="noopener" class="icon-btn" title="Visit website" style="text-decoration:none;font-size:16px;">🌐</a>` : ''}
+        </span>
+      </div>
     </div>`;
     
     html += `
@@ -138,7 +145,7 @@ function displayLiveStreams() {
 function toggleStreamInfo(btn) {
   const info = btn.closest('.mix-item').querySelector('.stream-extra-info');
   if (info) {
-    info.style.display = info.style.display === 'none' ? 'block' : 'none';
+    info.style.display = info.style.display === 'none' ? '' : 'none';
   }
 }
 
@@ -335,7 +342,7 @@ async function addStreamsFromPreset(preset) {
          }
          
          // addUserStream will probe and add to liveStreams if initialized
-         await addUserStream(stream.name || null, stream.m3u, stream.genre || null);
+         await addUserStream(stream.name || null, stream.m3u, stream.genre || null, stream.website || null);
          added++;
          
          // Update display after each stream is added for progress feedback
@@ -486,7 +493,7 @@ async function addPresetStreamToUserStreams(index) {
     return;
   }
 
-  await addUserStream(stream.name || null, stream.m3u, stream.genre || null);
+  await addUserStream(stream.name || null, stream.m3u, stream.genre || null, stream.website || null);
   switchMiddleTab('userStreams');
   showToast(`Added ${stream.name || 'stream'}`);
 }
@@ -573,6 +580,43 @@ if (streamListElement) {
           const storageIndex = configs.findIndex(c => c.m3u === m3u);
           if (storageIndex >= 0) {
             configs[storageIndex].genre = newGenre;
+            saveUserStreams(configs);
+          }
+        }
+      }
+      
+      const websiteInput = e.target.closest('.stream-edit-website');
+      if (websiteInput) {
+        const index = parseInt(websiteInput.dataset.index);
+        const newWebsite = websiteInput.value.trim();
+        if (index >= 0 && index < liveStreams.length) {
+          const m3u = liveStreams[index].m3u;
+          liveStreams[index].website = newWebsite || null;
+          // Update visit link visibility
+          const wrapper = websiteInput.parentElement;
+          if (wrapper) {
+            let visitLink = wrapper.querySelector('a');
+            if (newWebsite) {
+              if (!visitLink) {
+                visitLink = document.createElement('a');
+                visitLink.className = 'icon-btn';
+                visitLink.target = '_blank';
+                visitLink.rel = 'noopener';
+                visitLink.title = 'Visit website';
+                visitLink.style.cssText = 'text-decoration:none;font-size:16px;';
+                visitLink.textContent = '🌐';
+                wrapper.appendChild(visitLink);
+              }
+              visitLink.href = newWebsite;
+            } else if (visitLink) {
+              visitLink.remove();
+            }
+          }
+          // Save to storage using m3u as key to avoid index mismatches
+          const configs = getUserStreams();
+          const storageIndex = configs.findIndex(c => c.m3u === m3u);
+          if (storageIndex >= 0) {
+            configs[storageIndex].website = newWebsite || null;
             saveUserStreams(configs);
           }
         }
