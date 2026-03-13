@@ -4,20 +4,13 @@ const net = require('net');
 
 const ALLOWED_ORIGINS = ['4st.uk', 'steveqv225'];
 const PORT = process.env.PORT || 8080;
-const MAX_CONNECTIONS = 10;
 let activeConnections = 0;
 
 const server = http.createServer(async (req, res) => {
   // Status endpoint (no origin check needed)
   if (req.url === '/status') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ active: activeConnections, max: MAX_CONNECTIONS, mem: Math.round(process.memoryUsage().rss / 1048576) + 'MB' }));
-    return;
-  }
-
-  if (activeConnections >= MAX_CONNECTIONS) {
-    res.writeHead(503);
-    res.end('Too many connections');
+    res.end(JSON.stringify({ active: activeConnections, mem: Math.round(process.memoryUsage().rss / 1048576) + 'MB' }));
     return;
   }
 
@@ -101,6 +94,14 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(proxyRes.statusCode, responseHeaders);
       proxyRes.pipe(res);
       res.on('close', () => { proxyRes.destroy(); proxyReq.destroy(); });
+    });
+
+    proxyReq.setTimeout(10000, () => {
+      proxyReq.destroy();
+      if (!res.headersSent) {
+        res.writeHead(504);
+        res.end('Upstream timeout');
+      }
     });
 
     proxyReq.on('error', (err) => {
