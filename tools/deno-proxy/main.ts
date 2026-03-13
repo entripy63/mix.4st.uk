@@ -209,7 +209,7 @@ async function doRawRequest(target: URL, icyMeta: string): Promise<Response> {
               conn.close();
               return;
             }
-            controller.enqueue(buf.slice(0, n));
+            controller.enqueue(readBuf.slice(0, n));
           } catch {
             controller.close();
             try { conn.close(); } catch { /* ignore */ }
