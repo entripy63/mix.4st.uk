@@ -70,11 +70,6 @@ function displayLiveStreams() {
   
   if (!liveStreamsInitialized) {
     target.innerHTML = '<div style="padding: 20px; color: #888;">Checking stream availability...</div>';
-    // Always pass callback - checks shouldRedisplayStreams at invocation time
-    const config = {
-      shouldRedisplayAfterProbe: shouldRedisplayStreams
-    };
-    initLiveStreams(config).then(() => displayLiveStreams());
     return;
   }
   
@@ -233,8 +228,12 @@ async function reloadLiveStreams() {
     liveStreamsInitialized = false;
     liveStreams = [];
     if (shouldRedisplayStreams()) {
-      displayLiveStreams();
+      displayLiveStreams(); // Shows "Checking..." message
     }
+    const config = {
+      shouldRedisplayAfterProbe: shouldRedisplayStreams
+    };
+    await initLiveStreams(config);
 }
 
 // ========== DRAG & DROP REORDERING ==========

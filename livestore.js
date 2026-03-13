@@ -158,7 +158,7 @@ async function loadCollectionFromFile() {
       // Re-initialize to pick up new streams
       liveStreamsInitialized = false;
       const config = {
-        shouldRedisplayAfterProbe: () => browserModes.current === 'live'
+        shouldRedisplayAfterProbe: shouldRedisplayStreams
       };
       await initLiveStreams(config);
       

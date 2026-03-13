@@ -127,6 +127,7 @@ function probeStream(url, timeoutMs = 5000) {
       audio.load();
     };
     const timer = setTimeout(() => {
+      console.log(`Probe timeout (${timeoutMs}ms): ${decodeURIComponent(url)}`);
       cleanup();
       resolve(false);
     }, timeoutMs);
@@ -139,6 +140,9 @@ function probeStream(url, timeoutMs = 5000) {
 
     audio.addEventListener('error', () => {
       clearTimeout(timer);
+      const code = audio.error ? audio.error.code : 'unknown';
+      const msg = audio.error ? audio.error.message : '';
+      console.log(`Probe error (code=${code}${msg ? ', ' + msg : ''}): ${decodeURIComponent(url)}`);
       resolve(false);
     }, { once: true });
 
@@ -265,14 +269,6 @@ async function probeAndAddStream(config, initConfig = {}) {
     return stream;
   }
 
-  // Overall timeout for the entire probing process (prevent hanging indefinitely)
-  const probeTimeoutMs = 30000; // 30 seconds max
-  const probeTimeout = new Promise(resolve => {
-    setTimeout(() => {
-      resolve({ timedOut: true });
-    }, probeTimeoutMs);
-  });
-
   // Check if it's a direct audio file URL, not a playlist
   const audioExtensions = ['.mp3', '.aac', '.flac', '.wav', '.ogg', '.opus', '.m4a'];
   const isDirectAudio = audioExtensions.some(ext => config.m3u.toLowerCase().endsWith(ext));
@@ -290,32 +286,26 @@ async function probeAndAddStream(config, initConfig = {}) {
     }
   }
 
-  // Race against overall timeout
-  const probeResult = await Promise.race([
-    (async () => {
-      for (const entry of entries) {
-        let url = entry.url;
+  const triedUrls = new Set();
+  for (const entry of entries) {
+    let url = entry.url;
+    if (triedUrls.has(url)) continue;
+    triedUrls.add(url);
 
-        // Route to appropriate proxy, with fallback to proxyAll
-        const proxyUrls = getProxyUrls(url);
-        for (const proxyUrl of proxyUrls) {
-          if (await probeStream(proxyUrl)) {
-            stream.url = proxyUrl;
-            stream.playlistTitle = entry.title;
-            stream.available = true;
-            break;
-          }
-        }
-        if (stream.available) break;
+    // Route to appropriate proxy, with fallback to proxyAll
+    const proxyUrls = getProxyUrls(url);
+    for (const proxyUrl of proxyUrls) {
+      if (await probeStream(proxyUrl)) {
+        stream.url = proxyUrl;
+        stream.playlistTitle = entry.title;
+        stream.available = true;
+        break;
       }
-      return null; // Probing completed
-    })(),
-    probeTimeout
-  ]);
+    }
+    if (stream.available) break;
+  }
 
-  if (probeResult?.timedOut) {
-    stream.reason = `Probing timeout (no response from stream or server)`;
-  } else if (!stream.available) {
+  if (!stream.available) {
     stream.reason = `No working stream found (playlist: ${config.m3u})`;
   }
   // Track if name was resolved from playlist before setting fallback
@@ -440,11 +430,7 @@ async function restoreLivePlayer() {
       setTimeout(() => {
         state.isRestoring = false;
       }, 200);
-      const config = {
-        shouldRedisplayAfterProbe: () => browserModes.current === 'live'
-      };
-      await initLiveStreams(config);
-      return true; // Restored live stream
+      return true; // Restored live stream (caller handles tab switch + stream init)
     }
   } catch (e) {
     console.error('Error restoring live stream:', e);
@@ -452,12 +438,7 @@ async function restoreLivePlayer() {
   return false; // Did not restore
 }
 
-// Load proxy config, default streams, then initialize live streams
-(async () => {
-  await loadProxyConfig();
-  await loadDefaultStreamsOnFirstRun();
-  const config = {
-    shouldRedisplayAfterProbe: () => browserModes.current === 'live'
-  };
-  initLiveStreams(config).catch(e => console.error('Failed to initialize live streams:', e));
-})();
+// Pre-load proxy config eagerly (fast, no side effects)
+// Actual stream initialization is triggered by restore.js after all scripts are loaded,
+// ensuring window.onStreamAdded callback is registered before probing begins.
+loadProxyConfig();
