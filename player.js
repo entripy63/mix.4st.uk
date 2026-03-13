@@ -87,40 +87,62 @@ let liveReconnectTimer = null;
 const LIVE_RECONNECT_DELAY = 1000;
 const LIVE_STALL_TIMEOUT = 3000;
 
-function liveReconnect() {
-  if (!state.isLive || !state.liveStreamUrl || state.userPausedLive) return;
+function liveReconnect(reason) {
+  if (!state.isLive || !state.liveStreamUrl || state.userPausedLive) {
+    console.log(`Live reconnect blocked: reason='${reason}' isLive=${state.isLive} url=${!!state.liveStreamUrl} userPaused=${state.userPausedLive}`);
+    return;
+  }
   clearTimeout(liveReconnectTimer);
   liveReconnectTimer = null;
+  console.log(`Live reconnect due to '${reason}' (readyState=${aud.readyState})`);
   resumeLive();
 }
 
-function scheduleLiveReconnect() {
-  if (!state.isLive || state.userPausedLive || liveReconnectTimer) return;
-  liveReconnectTimer = setTimeout(liveReconnect, LIVE_RECONNECT_DELAY);
+let liveReconnectReason = null;
+
+function scheduleLiveReconnect(reason) {
+  if (!state.isLive || state.userPausedLive || liveReconnectTimer) {
+    console.log(`Live reconnect schedule skipped: reason='${reason}' isLive=${state.isLive} userPaused=${state.userPausedLive} timerActive=${!!liveReconnectTimer}`);
+    return;
+  }
+  liveReconnectReason = reason;
+  console.log(`Live reconnect scheduled: reason='${reason}'`);
+  liveReconnectTimer = setTimeout(() => liveReconnect(liveReconnectReason), LIVE_RECONNECT_DELAY);
 }
 
 aud.addEventListener('error', () => {
-  if (state.isLive && !state.userPausedLive) scheduleLiveReconnect();
+  console.log(`Audio event: error (isLive=${state.isLive} userPaused=${state.userPausedLive} readyState=${aud.readyState})`);
+  if (state.isLive && !state.userPausedLive) scheduleLiveReconnect('error');
 });
 
 aud.addEventListener('stalled', () => {
+  console.log(`Audio event: stalled (isLive=${state.isLive} userPaused=${state.userPausedLive} readyState=${aud.readyState})`);
   if (!state.isLive || state.userPausedLive) return;
   clearTimeout(liveReconnectTimer);
   liveReconnectTimer = setTimeout(() => {
     if (state.isLive && !state.userPausedLive && aud.readyState < 3) {
-      liveReconnect();
+      liveReconnect('stalled');
+    } else {
+      console.log(`Stalled reconnect skipped: readyState=${aud.readyState}`);
+      liveReconnectTimer = null;
     }
   }, LIVE_STALL_TIMEOUT);
 });
 
 aud.addEventListener('pause', () => {
-  // Stream died if we didn't initiate the pause and src is still set
+  console.log(`Audio event: pause (isLive=${state.isLive} userPaused=${state.userPausedLive} src=${!!aud.src})`);
   if (state.isLive && !state.userPausedLive && aud.src) {
-    scheduleLiveReconnect();
+    scheduleLiveReconnect('pause');
   }
 });
 
+aud.addEventListener('waiting', () => {
+  console.log(`Audio event: waiting (isLive=${state.isLive} userPaused=${state.userPausedLive} readyState=${aud.readyState} currentTime=${aud.currentTime})`);
+  if (state.isLive && !state.userPausedLive && aud.currentTime > 0) scheduleLiveReconnect('waiting');
+});
+
 aud.addEventListener('playing', () => {
+  console.log(`Audio event: playing (timerActive=${!!liveReconnectTimer} reason=${liveReconnectReason})`);
   if (liveReconnectTimer) {
     clearTimeout(liveReconnectTimer);
     liveReconnectTimer = null;
