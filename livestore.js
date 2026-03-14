@@ -13,7 +13,8 @@ async function saveCollectionToFile() {
   const streams = liveStreams.map(stream => ({
     name: stream.name,
     m3u: stream.m3u,
-    genre: stream.genre || null
+    genre: stream.genre || null,
+    website: stream.website || null
   }));
   
   if (streams.length === 0) {
@@ -151,14 +152,14 @@ async function loadCollectionFromFile() {
           continue;
         }
         
-        await addUserStream(stream.name || null, stream.m3u, stream.genre || null);
+        await addUserStream(stream.name || null, stream.m3u, stream.genre || null, stream.website || null);
         added++;
       }
       
       // Re-initialize to pick up new streams
       liveStreamsInitialized = false;
       const config = {
-        shouldRedisplayAfterProbe: () => browserModes.current === 'live'
+        shouldRedisplayAfterProbe: shouldRedisplayStreams
       };
       await initLiveStreams(config);
       

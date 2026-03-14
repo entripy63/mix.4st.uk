@@ -15,4 +15,5 @@ manifest.json
 **/.mediaartlocal
 **/.directory
 node_modules/
+tools/tool-config.json
 search-index.json

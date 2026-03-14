@@ -134,16 +134,17 @@ def find_dj_directories(base_directory):
      return dj_dirs
 
 def load_config():
-    """Load audio source configuration if it exists."""
+    """Load audio source configuration, merging deployed config with local tool config."""
     import json
-    config_path = 'mixes/audio-source-config.json'
-    if os.path.exists(config_path):
-        try:
-            with open(config_path) as f:
-                return json.load(f)
-        except Exception as e:
-            print(f"Warning: Could not load config: {e}")
-    return None
+    config = {}
+    for config_path in ['mixes/audio-source-config.json', 'tools/tool-config.json']:
+        if os.path.exists(config_path):
+            try:
+                with open(config_path) as f:
+                    config.update(json.load(f))
+            except Exception as e:
+                print(f"Warning: Could not load {config_path}: {e}")
+    return config or None
 
 if __name__ == '__main__':
     import json

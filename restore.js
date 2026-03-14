@@ -42,12 +42,16 @@ document.getElementById('fileInput').addEventListener('change', async function (
       loadPeaks(null);
       document.getElementById('coverArt').innerHTML = '';
       document.getElementById('trackList').innerHTML = '';
-      // Restore middle column tab and browser mode, then return - don't restore mix
+      // Restore middle column tab and browser mode BEFORE probing starts
       await buildDJDropdown();
       const savedMiddleTab = storage.get('middleTab', 'queue');
       switchMiddleTab(savedMiddleTab);
       const savedBrowserMode = storage.get('browserMode', 'live');
       browserModes.switch(savedBrowserMode);
+      // Now start incremental stream probing (fire-and-forget so streams appear one by one)
+      await loadDefaultStreamsOnFirstRun();
+      const config = { shouldRedisplayAfterProbe: shouldRedisplayStreams };
+      initLiveStreams(config).catch(e => console.error('Failed to initialize live streams:', e));
       return;
     }
 
@@ -123,4 +127,13 @@ document.getElementById('fileInput').addEventListener('change', async function (
   // browserModes.switch() handles all mode-specific state restoration
   const savedBrowserMode = storage.get('browserMode', 'dj');
   await browserModes.switch(savedBrowserMode);
+
+  // Initialize live streams (proxy config already loading from livedata.js)
+  // This runs after all scripts are loaded, so window.onStreamAdded is registered
+  await loadProxyConfig();
+  await loadDefaultStreamsOnFirstRun();
+  const config = {
+    shouldRedisplayAfterProbe: shouldRedisplayStreams
+  };
+  initLiveStreams(config).catch(e => console.error('Failed to initialize live streams:', e));
 })();

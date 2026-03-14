@@ -70,11 +70,6 @@ function displayLiveStreams() {
   
   if (!liveStreamsInitialized) {
     target.innerHTML = '<div style="padding: 20px; color: #888;">Checking stream availability...</div>';
-    // Always pass callback - checks shouldRedisplayStreams at invocation time
-    const config = {
-      shouldRedisplayAfterProbe: shouldRedisplayStreams
-    };
-    initLiveStreams(config).then(() => displayLiveStreams());
     return;
   }
   
@@ -94,7 +89,7 @@ function displayLiveStreams() {
     const infoPopout = `<div class="stream-extra-info" style="display:none">
       <div class="stream-info-field">
         <strong>Stream URL:</strong>
-        <a href="${escapeHtml(stream.url || stream.m3u)}" target="_blank" rel="noopener">${escapeHtml(stream.url || stream.m3u)}</a>
+        <a href="${escapeHtml(stream.url || stream.m3u)}" target="_blank" rel="noopener">${escapeHtml(decodeURIComponent(stream.url || stream.m3u))}</a>
       </div>
       <div class="stream-info-field">
         <strong>Name:</strong>
@@ -103,6 +98,13 @@ function displayLiveStreams() {
       <div class="stream-info-field">
         <strong>Genre:</strong>
         <input type="text" class="stream-edit-genre" value="${escapeHtml(stream.genre || '')}" placeholder="Genre" data-index="${index}" />
+      </div>
+      <div class="stream-info-field">
+        <strong>Website:</strong>
+        <span style="display:flex;align-items:center;gap:4px;min-width:0">
+          <input type="text" class="stream-edit-website" value="${escapeHtml(stream.website || '')}" placeholder="https://..." data-index="${index}" style="flex:1;min-width:0" />
+          ${stream.website ? `<a href="${escapeHtml(stream.website)}" target="_blank" rel="noopener" class="icon-btn" title="Visit website" style="text-decoration:none;font-size:16px;">🌐</a>` : ''}
+        </span>
       </div>
     </div>`;
     
@@ -143,7 +145,7 @@ function displayLiveStreams() {
 function toggleStreamInfo(btn) {
   const info = btn.closest('.mix-item').querySelector('.stream-extra-info');
   if (info) {
-    info.style.display = info.style.display === 'none' ? 'block' : 'none';
+    info.style.display = info.style.display === 'none' ? '' : 'none';
   }
 }
 
@@ -233,8 +235,12 @@ async function reloadLiveStreams() {
     liveStreamsInitialized = false;
     liveStreams = [];
     if (shouldRedisplayStreams()) {
-      displayLiveStreams();
+      displayLiveStreams(); // Shows "Checking..." message
     }
+    const config = {
+      shouldRedisplayAfterProbe: shouldRedisplayStreams
+    };
+    await initLiveStreams(config);
 }
 
 // ========== DRAG & DROP REORDERING ==========
@@ -336,7 +342,7 @@ async function addStreamsFromPreset(preset) {
          }
          
          // addUserStream will probe and add to liveStreams if initialized
-         await addUserStream(stream.name || null, stream.m3u, stream.genre || null);
+         await addUserStream(stream.name || null, stream.m3u, stream.genre || null, stream.website || null);
          added++;
          
          // Update display after each stream is added for progress feedback
@@ -449,26 +455,15 @@ async function playPresetStream(index) {
 
   let resolvedUrl = null;
   for (const entry of entries) {
-    if (await probeStream(entry.url)) {
-      resolvedUrl = entry.url;
-      break;
-    }
-    // Try with ; suffix for Shoutcast
-    let urlWithSemicolon = entry.url;
-    if (!urlWithSemicolon.endsWith('/')) urlWithSemicolon += '/';
-    urlWithSemicolon += ';';
-    if (await probeStream(urlWithSemicolon)) {
-      resolvedUrl = urlWithSemicolon;
-      break;
-    }
-    // Try proxy for http on https page
-    if (entry.url.startsWith('http://') && location.protocol === 'https:') {
-      const proxyUrl = `${STREAM_PROXY}?url=${encodeURIComponent(entry.url)}`;
+    // Route to appropriate proxy, with fallback to proxyAll
+    const proxyUrls = getProxyUrls(entry.url);
+    for (const proxyUrl of proxyUrls) {
       if (await probeStream(proxyUrl)) {
         resolvedUrl = proxyUrl;
         break;
       }
     }
+    if (resolvedUrl) break;
   }
 
   if (!resolvedUrl) {
@@ -498,7 +493,7 @@ async function addPresetStreamToUserStreams(index) {
     return;
   }
 
-  await addUserStream(stream.name || null, stream.m3u, stream.genre || null);
+  await addUserStream(stream.name || null, stream.m3u, stream.genre || null, stream.website || null);
   switchMiddleTab('userStreams');
   showToast(`Added ${stream.name || 'stream'}`);
 }
@@ -585,6 +580,43 @@ if (streamListElement) {
           const storageIndex = configs.findIndex(c => c.m3u === m3u);
           if (storageIndex >= 0) {
             configs[storageIndex].genre = newGenre;
+            saveUserStreams(configs);
+          }
+        }
+      }
+      
+      const websiteInput = e.target.closest('.stream-edit-website');
+      if (websiteInput) {
+        const index = parseInt(websiteInput.dataset.index);
+        const newWebsite = websiteInput.value.trim();
+        if (index >= 0 && index < liveStreams.length) {
+          const m3u = liveStreams[index].m3u;
+          liveStreams[index].website = newWebsite || null;
+          // Update visit link visibility
+          const wrapper = websiteInput.parentElement;
+          if (wrapper) {
+            let visitLink = wrapper.querySelector('a');
+            if (newWebsite) {
+              if (!visitLink) {
+                visitLink = document.createElement('a');
+                visitLink.className = 'icon-btn';
+                visitLink.target = '_blank';
+                visitLink.rel = 'noopener';
+                visitLink.title = 'Visit website';
+                visitLink.style.cssText = 'text-decoration:none;font-size:16px;';
+                visitLink.textContent = '🌐';
+                wrapper.appendChild(visitLink);
+              }
+              visitLink.href = newWebsite;
+            } else if (visitLink) {
+              visitLink.remove();
+            }
+          }
+          // Save to storage using m3u as key to avoid index mismatches
+          const configs = getUserStreams();
+          const storageIndex = configs.findIndex(c => c.m3u === m3u);
+          if (storageIndex >= 0) {
+            configs[storageIndex].website = newWebsite || null;
             saveUserStreams(configs);
           }
         }

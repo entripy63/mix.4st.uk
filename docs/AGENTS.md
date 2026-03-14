@@ -2,6 +2,7 @@
 
 ## Documentation
 - **[ASSETS.md](ASSETS.md)** — Comprehensive asset documentation (HTML, CSS, JavaScript modules, data files)
+- **[PROXY.md](PROXY.md)** — Stream proxy architecture, deployment, and configuration
 - This file — Development instructions and architecture overview
 
 ## Build/Test/Deploy Commands
@@ -15,8 +16,8 @@
 - Static website with a single SPA (player.html)
 
 ### player.html
-- **Location**: http://mixes.4st.uk since we can't use https
-- **Layout**: Landing page, Player, Queue/User Streams (tabbed), Browser columns, responsive design
+- **Location**: https://mixes.4st.uk
+- **Layout**: Player, Queue/User Streams (tabbed), Browser columns, responsive design
 - **Stylesheets**: `common.css`, `player.css`
 - **JavaScript modules** (no bundler, simple script loading):
   - `core.js` - Shared utilities, global state, DOM references
