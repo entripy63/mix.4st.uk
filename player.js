@@ -112,7 +112,7 @@ function scheduleLiveReconnect(reason) {
 
 aud.addEventListener('error', () => {
   console.log(`Audio event: error (isLive=${state.isLive} userPaused=${state.userPausedLive} readyState=${aud.readyState})`);
-  if (state.isLive && !state.userPausedLive) scheduleLiveReconnect('error');
+  if (state.isLive && !state.userPausedLive) liveReconnect('error');
 });
 
 aud.addEventListener('stalled', () => {
@@ -132,7 +132,7 @@ aud.addEventListener('stalled', () => {
 aud.addEventListener('pause', () => {
   console.log(`Audio event: pause (isLive=${state.isLive} userPaused=${state.userPausedLive} src=${!!aud.src})`);
   if (state.isLive && !state.userPausedLive && aud.src) {
-    scheduleLiveReconnect('pause');
+    liveReconnect('pause');
   }
 });
 
