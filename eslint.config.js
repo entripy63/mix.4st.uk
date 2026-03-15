@@ -2,7 +2,7 @@ import js from '@eslint/js';
 
 export default [
   {
-    ignores: ['node_modules/', 'docs/', '*.bak*']
+    ignores: ['node_modules/', 'vendor/', 'docs/', '*.bak*']
   },
   {
     files: ['**/*.js'],

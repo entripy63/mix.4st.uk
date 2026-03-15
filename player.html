@@ -69,6 +69,12 @@
                 Show Hidden Mixes
               </label>
             </div>
+            <div class="settings-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="visualiserEnabledCheckbox" onchange="updateVisualiserEnabled(this.checked)">
+                Live Stream Visualiser
+              </label>
+            </div>
           </div>
         </div>
         <div id="helpModal" class="modal" style="display: none;">
@@ -185,7 +191,7 @@
     <div class="right-column">
       <canvas id="waveform"></canvas>
       <div id="waveformResizeHandle"></div>
-      <audio id="audioPlayer"></audio>
+      <audio id="audioPlayer" crossorigin="anonymous"></audio>
       <div id="audioControls">
         <button id="playPauseBtn" class="control-btn" title="Play/Pause (Space)">▶</button>
         <span id="timeDisplay">0:00 / 0:00</span>
@@ -225,6 +231,8 @@
   <script src="mixes.js"></script>
   <script src="queue.js"></script>
   <script src="queuestore.js"></script>
+  <script src="vendor/icecast-metadata-player-1.17.13.main.min.js"></script>
+  <script src="mse-player.js"></script>
   <script src="player.js"></script>
   <script src="player-mix.js"></script>
   <script src="livedata.js"></script>

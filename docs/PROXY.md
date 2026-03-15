@@ -231,8 +231,9 @@ CMD ["node", "--max-old-space-size=64", "index.js"]
 curl -fsSL https://deno.land/install.sh | sh
 export PATH="$HOME/.deno/bin:$PATH"
 
-# Deploy (requires DENO_DEPLOY_TOKEN or interactive login)
-deno deploy --project=stream-proxy tools/deno-proxy/main.ts
+# Deploy from the deno-proxy directory (requires DENO_DEPLOY_TOKEN or interactive login)
+cd tools/deno-proxy
+deno deploy --prod
 ```
 
 ### Access token

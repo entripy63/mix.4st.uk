@@ -138,7 +138,17 @@ function buildProxyResponse(upstream: Response): Response {
     }
   });
 
-  return new Response(upstream.body, {
+  // For live streams (no Content-Length), wrap the body so that a clean
+  // stream end becomes an error — this triggers IcecastMetadataPlayer's
+  // seamless reconnection instead of silently stopping
+  const isLiveStream = !upstream.headers.get("Content-Length");
+  const body = isLiveStream && upstream.body
+    ? upstream.body.pipeThrough(new TransformStream({
+        flush() { throw new Error("network error"); },
+      }))
+    : upstream.body;
+
+  return new Response(body, {
     status: upstream.status,
     headers: responseHeaders,
   });
@@ -205,14 +215,16 @@ async function doRawRequest(target: URL, icyMeta: string): Promise<Response> {
           try {
             const n = await conn.read(readBuf);
             if (n === null) {
-              controller.close();
               conn.close();
+              // Error instead of close — a live stream ending is abnormal,
+              // and this triggers IcecastMetadataPlayer's seamless reconnection
+              controller.error(new Error("network error"));
               return;
             }
             controller.enqueue(readBuf.slice(0, n));
           } catch {
-            controller.close();
             try { conn.close(); } catch { /* ignore */ }
+            controller.error(new Error("network error"));
           }
         },
         cancel() {

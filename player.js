@@ -14,7 +14,7 @@ volumeSlider.value = aud.volume * 100;
 // Update time display
 function updateTimeDisplay() {
   if (state.isLive) {
-    const isPaused = aud.paused || !aud.src;
+    const isPaused = state.userPausedLive || !mseIsActive();
     timeDisplay.textContent = isPaused ? 'PAUSED' : 'LIVE';
     timeDisplay.classList.toggle('live', !isPaused);
   } else {
@@ -27,7 +27,7 @@ function updateTimeDisplay() {
 
 // Update play/pause button icon
 function updatePlayPauseBtn() {
-  const isPaused = state.isLive ? (aud.paused || !aud.src) : aud.paused;
+  const isPaused = state.isLive ? (state.userPausedLive || !mseIsActive()) : aud.paused;
   playPauseBtn.textContent = isPaused ? '▶' : '❚❚';
   playPauseBtn.className = 'control-btn ' + (isPaused ? 'paused' : 'playing');
 }
@@ -43,13 +43,10 @@ function updateMuteBtn() {
   }
 }
 
-// Live stream pause: stop downloading by clearing src
+// Live stream pause: stop MSE player (stops downloading)
 function pauseLive() {
   state.userPausedLive = true;
-  aud.pause();
-  aud.src = '';
-  aud.removeAttribute('src');
-  setTimeout(() => aud.load(), 0);
+  mseStopLive();
   updatePlayPauseBtn();
   updateTimeDisplay();
   if (!state.isRestoring) {
@@ -57,23 +54,11 @@ function pauseLive() {
   }
 }
 
-// Live stream resume: restore src and play
+// Live stream resume: restart MSE player
 function resumeLive() {
   state.userPausedLive = false;
   if (state.liveStreamUrl) {
-    aud.src = state.liveStreamUrl;
-    aud.load();
-    // Wait for canplay before playing
-    const handleCanPlay = () => {
-      aud.play();
-      aud.removeEventListener('canplay', handleCanPlay);
-    };
-    aud.addEventListener('canplay', handleCanPlay, { once: true });
-    // Fallback in case canplay never fires
-    setTimeout(() => {
-      if (!aud.paused) return;
-      aud.play().catch(() => {});
-    }, 100);
+    msePlayLive(state.liveStreamUrl, state.liveDisplayText);
     updatePlayPauseBtn();
     updateTimeDisplay();
     if (!state.isRestoring) {
@@ -82,74 +67,10 @@ function resumeLive() {
   }
 }
 
-// Live stream auto-reconnect on error/stall
-let liveReconnectTimer = null;
-const LIVE_RECONNECT_DELAY = 1000;
-const LIVE_STALL_TIMEOUT = 3000;
+// Live stream reconnection is handled by IcecastMetadataPlayer (MSE)
+// which has built-in retry with exponential back-off and seamless audio buffering.
 
-function liveReconnect(reason) {
-  if (!state.isLive || !state.liveStreamUrl || state.userPausedLive) {
-    console.log(`Live reconnect blocked: reason='${reason}' isLive=${state.isLive} url=${!!state.liveStreamUrl} userPaused=${state.userPausedLive}`);
-    return;
-  }
-  clearTimeout(liveReconnectTimer);
-  liveReconnectTimer = null;
-  console.log(`Live reconnect due to '${reason}' (readyState=${aud.readyState})`);
-  resumeLive();
-}
-
-let liveReconnectReason = null;
-
-function scheduleLiveReconnect(reason) {
-  if (!state.isLive || state.userPausedLive || liveReconnectTimer) {
-    console.log(`Live reconnect schedule skipped: reason='${reason}' isLive=${state.isLive} userPaused=${state.userPausedLive} timerActive=${!!liveReconnectTimer}`);
-    return;
-  }
-  liveReconnectReason = reason;
-  console.log(`Live reconnect scheduled: reason='${reason}'`);
-  liveReconnectTimer = setTimeout(() => liveReconnect(liveReconnectReason), LIVE_RECONNECT_DELAY);
-}
-
-aud.addEventListener('error', () => {
-  console.log(`Audio event: error (isLive=${state.isLive} userPaused=${state.userPausedLive} readyState=${aud.readyState})`);
-  if (state.isLive && !state.userPausedLive) liveReconnect('error');
-});
-
-aud.addEventListener('stalled', () => {
-  console.log(`Audio event: stalled (isLive=${state.isLive} userPaused=${state.userPausedLive} readyState=${aud.readyState})`);
-  if (!state.isLive || state.userPausedLive) return;
-  clearTimeout(liveReconnectTimer);
-  liveReconnectTimer = setTimeout(() => {
-    if (state.isLive && !state.userPausedLive && aud.readyState < 3) {
-      liveReconnect('stalled');
-    } else {
-      console.log(`Stalled reconnect skipped: readyState=${aud.readyState}`);
-      liveReconnectTimer = null;
-    }
-  }, LIVE_STALL_TIMEOUT);
-});
-
-aud.addEventListener('pause', () => {
-  console.log(`Audio event: pause (isLive=${state.isLive} userPaused=${state.userPausedLive} src=${!!aud.src})`);
-  if (state.isLive && !state.userPausedLive && aud.src) {
-    liveReconnect('pause');
-  }
-});
-
-aud.addEventListener('waiting', () => {
-  console.log(`Audio event: waiting (isLive=${state.isLive} userPaused=${state.userPausedLive} readyState=${aud.readyState} currentTime=${aud.currentTime})`);
-  if (state.isLive && !state.userPausedLive && aud.currentTime > 0) scheduleLiveReconnect('waiting');
-});
-
-aud.addEventListener('playing', () => {
-  console.log(`Audio event: playing (timerActive=${!!liveReconnectTimer} reason=${liveReconnectReason})`);
-  if (liveReconnectTimer) {
-    clearTimeout(liveReconnectTimer);
-    liveReconnectTimer = null;
-  }
-});
-
-// Start playing a live stream
+// Start playing a live stream via MSE
 function playLive(url, displayText, autoplay = false) {
   state.isLive = true;
   state.userPausedLive = false;
@@ -165,20 +86,9 @@ function playLive(url, displayText, autoplay = false) {
   }
   
   document.title = 'Live - Player';
-  aud.src = url;
-  aud.load();
-  
+
   if (autoplay) {
-    const handleCanPlay = () => {
-      aud.play();
-      aud.removeEventListener('canplay', handleCanPlay);
-    };
-    aud.addEventListener('canplay', handleCanPlay, { once: true });
-    // Fallback in case canplay never fires
-    setTimeout(() => {
-      if (!aud.paused) return;
-      aud.play().catch(() => {});
-    }, 100);
+    msePlayLive(url, displayText);
   }
   
   updateTimeDisplay();
@@ -207,7 +117,7 @@ function stopLive() {
 // Play/Pause button click
 playPauseBtn?.addEventListener('click', function(e) {
    if (state.isLive) {
-      if (aud.paused) {
+      if (state.userPausedLive || !mseIsActive()) {
         resumeLive();
       } else {
         pauseLive();
@@ -322,8 +232,9 @@ aud.addEventListener("ended", async function () {
    }
 });
 
-function load(url) {
-  // Stop any current playback (especially important when exiting live mode)
+async function load(url) {
+  // Stop MSE player if active (important when exiting live mode)
+  await mseStopLive();
   aud.pause();
   
   // Exit live mode when loading regular content
@@ -339,8 +250,8 @@ function load(url) {
   aud.currentTime = 0;
 }
 
-function play(url) {
-  load(url);
+async function play(url) {
+  await load(url);
   aud.play();
 }
 

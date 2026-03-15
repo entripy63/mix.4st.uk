@@ -91,8 +91,21 @@ const server = http.createServer(async (req, res) => {
         }
       }
 
+      // Detect if this is a live stream (no content-length = infinite stream)
+      const isLiveStream = !proxyRes.headers['content-length'];
+
       res.writeHead(proxyRes.statusCode, responseHeaders);
-      proxyRes.pipe(res);
+
+      if (isLiveStream) {
+        // Don't let pipe() auto-end the response — we want to destroy it
+        // abruptly so the browser sees a network error, triggering
+        // IcecastMetadataPlayer's seamless retry/reconnection logic.
+        proxyRes.pipe(res, { end: false });
+        proxyRes.on('end', () => { res.destroy(); });
+      } else {
+        proxyRes.pipe(res);
+      }
+
       res.on('close', () => { proxyRes.destroy(); proxyReq.destroy(); });
     });
 
@@ -170,7 +183,13 @@ function doRawRequest(target, res, icyMeta) {
     }
   });
 
-  socket.on('end', () => res.end());
+  socket.on('end', () => {
+    // For live streams (no content-length), destroy instead of ending cleanly
+    // to trigger IcecastMetadataPlayer's seamless reconnection
+    if (!res.destroyed) {
+      res.destroy();
+    }
+  });
   res.on('close', () => socket.destroy());
 }
 

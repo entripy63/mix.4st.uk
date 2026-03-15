@@ -66,7 +66,16 @@ export default {
         if (value) responseHeaders[header] = value;
       }
 
-      return new Response(response.body, {
+      // For live streams (no Content-Length), convert a clean stream end
+      // into an error to trigger IcecastMetadataPlayer's seamless reconnection
+      const isLiveStream = !response.headers.get('Content-Length');
+      const body = isLiveStream && response.body
+        ? response.body.pipeThrough(new TransformStream({
+            flush() { throw new Error('network error'); },
+          }))
+        : response.body;
+
+      return new Response(body, {
         status: response.status,
         headers: responseHeaders
       });
