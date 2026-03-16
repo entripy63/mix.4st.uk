@@ -1,6 +1,6 @@
 {
-  "name": "Streams Export 2026-03-13",
-  "category": "other",
+  "name": "Deep House",
+  "category": "genre",
   "streams": [
     {
       "name": "Deepvibes Radio",
@@ -31,12 +31,6 @@
       "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99591153",
       "genre": "Deep House",
       "website": "https://www.extremedeephouse.com/"
-    },
-    {
-      "name": "Radio Viva ",
-      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99623706",
-      "genre": " Deep House and Dance music",
-      "website": null
     },
     {
       "name": "hearMe.FM Deep House",
