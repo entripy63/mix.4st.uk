@@ -777,4 +777,10 @@ td:last-child {
   margin-top: 10px;
 }
 
+#streamTitle {
+  display: none;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
 /* Stream collections menu styles in common.css */

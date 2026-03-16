@@ -549,6 +549,16 @@ function showSettings() {
    const radio = document.querySelector(`input[name="afterPlayNow"][value="${setting}"]`);
    if (radio) radio.checked = true;
    document.getElementById('showHiddenMixesCheckbox').checked = state.showHiddenMixes;
+   document.getElementById('visualiserEnabledCheckbox').checked = storage.getBool('visualiserEnabled', true);
+}
+
+function updateVisualiserEnabled(enabled) {
+   storage.set('visualiserEnabled', enabled);
+   if (!enabled) {
+     stopVisualiser();
+   } else if (state.isLive && mseIsActive()) {
+     startVisualiser();
+   }
 }
 
 function hideSettings() {
