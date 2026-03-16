@@ -535,7 +535,7 @@ kbd {
 
 /* Mix item styles in common.css */
 
-.mix-item.unavailable .icon-btn {
+.mix-item.unavailable .icon-btn:not(.info-btn) {
   cursor: not-allowed;
 }
 
