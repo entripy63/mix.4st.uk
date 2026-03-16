@@ -23,12 +23,8 @@ window.fetch = async function(...args) {
 
 let icecastPlayer = null;
 
-function msePlayLive(url, displayText) {
-  if (icecastPlayer) {
-    icecastPlayer.stop();
-    icecastPlayer.detachAudioElement();
-    icecastPlayer = null;
-  }
+async function msePlayLive(url, displayText) {
+  await mseStopLive();
 
   // Enable ICY metadata support on the proxy
   const icyUrl = url.includes('?') ? url + '&icy=1' : url + '?icy=1';
@@ -52,7 +48,7 @@ function msePlayLive(url, displayText) {
 
 async function mseStopLive() {
   if (icecastPlayer) {
-    await icecastPlayer.stop();
+    try { await icecastPlayer.stop(); } catch (_) { /* abort expected */ }
     icecastPlayer.detachAudioElement();
     icecastPlayer = null;
   }
