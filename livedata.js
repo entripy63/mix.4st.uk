@@ -220,7 +220,7 @@ async function fetchPlaylist(playlistUrl) {
 
       if (isAudioStream || hasAudioExt) {
         controller.abort();
-        return [];
+        return null; // Not a playlist — caller should try as direct stream
       }
 
       const text = await resp.text();
@@ -235,8 +235,8 @@ async function fetchPlaylist(playlistUrl) {
       continue;
     }
   }
-  // All proxies failed or none configured — treat as direct audio
-  return [];
+  // All proxies failed or none configured — unknown, try as direct stream
+  return null;
 }
 
 // ========== STREAM PROBING & ADDITION ==========
@@ -281,8 +281,9 @@ async function probeAndAddStream(config, initConfig = {}) {
   } else {
     // Parse as playlist
     entries = await fetchPlaylist(config.m3u);
-    // If playlist parsing returned nothing, try URL as direct stream
-    if (entries.length === 0) {
+    // null = not a playlist (or fetch failed), try URL as direct stream
+    // [] = valid playlist with zero entries, don't probe the playlist URL itself
+    if (entries === null) {
       entries = [{ url: config.m3u, title: null }];
     }
   }
