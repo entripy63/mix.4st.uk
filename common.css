@@ -165,6 +165,7 @@
   color: #ccc;
   font-weight: 500;
   white-space: nowrap;
+  text-align: right;
 }
 
 .stream-info-field a {
