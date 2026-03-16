@@ -13,12 +13,12 @@ volumeSlider.value = aud.volume * 100;
 
 // Update time display
 function updateTimeDisplay() {
+  const current = formatTime(aud.currentTime);
   if (state.isLive) {
     const isPaused = state.userPausedLive || !mseIsActive();
-    timeDisplay.textContent = isPaused ? 'PAUSED' : 'LIVE';
+    timeDisplay.textContent = isPaused ? 'PAUSED' : `LIVE  ${current}`;
     timeDisplay.classList.toggle('live', !isPaused);
   } else {
-    const current = formatTime(aud.currentTime);
     const duration = formatTime(aud.duration);
     timeDisplay.textContent = `${current} / ${duration}`;
     timeDisplay.classList.remove('live');
