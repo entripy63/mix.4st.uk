@@ -783,4 +783,10 @@ td:last-child {
   color: var(--text-secondary);
 }
 
+#bpmDisplay {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
 /* Stream collections menu styles in common.css */
