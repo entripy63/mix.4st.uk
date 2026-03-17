@@ -1,11 +1,5 @@
 // queue.js - Queue Management
 
-function setQueue(newQueue) {
-  state.queue = newQueue;
-  saveQueue();
-  displayQueue();
-}
-
 function generateQueueId() {
   state.queueIdCounter++;
   storage.set('queueIdCounter', state.queueIdCounter);

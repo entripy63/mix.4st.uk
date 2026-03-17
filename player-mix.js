@@ -1,6 +1,7 @@
 // player-mix.js - Mix Playback, Queue Integration, Waveform, Favourites
 // Dependencies: core.js (state, storage, getMixId, escapeHtml, aud)
 //               player.js (play, load, updateTimeDisplay, updatePlayPauseBtn, updateMuteBtn)
+//               visualiser.js (startVisualiser, stopVisualiser)
 //               mixes.js (fetchMixDetails, state.currentMixes)
 //               queue.js (playFromQueue, saveQueue, displayQueue, updateQueueInfo)
 //               browser.js (filterMixes, displayMixList, displaySearchResults, displayFavourites)
@@ -89,99 +90,6 @@ const mixFlags = {
 // ============================================
 
 const waveformCtx = waveformCanvas.getContext("2d");
-
-// ============================================
-// LIVE STREAM VISUALISER (AudioContext + AnalyserNode)
-// ============================================
-
-let audioCtx = null;
-let analyserNode = null;
-let audioSourceNode = null;
-let visualiserAnimId = null;
-let visualiserMode = 'spectrum'; // 'spectrum' or 'waveform'
-
-function ensureAudioContext() {
-    if (audioCtx) return;
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    analyserNode = audioCtx.createAnalyser();
-    analyserNode.fftSize = 256;
-    audioSourceNode = audioCtx.createMediaElementSource(aud);
-    audioSourceNode.connect(analyserNode);
-    analyserNode.connect(audioCtx.destination);
-}
-
-function startVisualiser() {
-    if (!storage.getBool('visualiserEnabled', true)) return;
-    ensureAudioContext();
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
-    if (visualiserAnimId) return;
-    const freqData = new Uint8Array(analyserNode.frequencyBinCount);
-    const timeData = new Uint8Array(analyserNode.fftSize);
-
-    function drawVisualiser() {
-        visualiserAnimId = requestAnimationFrame(drawVisualiser);
-
-        const w = waveformCanvas.width;
-        const h = waveformCanvas.height;
-        waveformCtx.clearRect(0, 0, w, h);
-
-        if (visualiserMode === 'spectrum') {
-            analyserNode.getByteFrequencyData(freqData);
-            const barCount = freqData.length;
-            const barWidth = w / barCount;
-            for (let i = 0; i < barCount; i++) {
-                const val = freqData[i] / 255;
-                const barHeight = val * h * 0.9;
-                const x = i * barWidth;
-                waveformCtx.fillStyle = val > 0.6 ? '#7986cb' : '#5c6bc0';
-                waveformCtx.fillRect(x, h - barHeight, Math.max(1, barWidth - 1), barHeight);
-            }
-        } else {
-            analyserNode.getByteTimeDomainData(timeData);
-            const sliceWidth = w / timeData.length;
-            const midY = h / 2;
-            waveformCtx.strokeStyle = '#5c6bc0';
-            waveformCtx.lineWidth = 2;
-            waveformCtx.beginPath();
-            for (let i = 0; i < timeData.length; i++) {
-                const val = (timeData[i] - 128) / 128;
-                const y = midY - val * midY * 0.9;
-                const x = i * sliceWidth;
-                if (i === 0) waveformCtx.moveTo(x, y);
-                else waveformCtx.lineTo(x, y);
-            }
-            waveformCtx.stroke();
-        }
-    }
-    drawVisualiser();
-}
-
-function stopVisualiser() {
-    if (visualiserAnimId) {
-        cancelAnimationFrame(visualiserAnimId);
-        visualiserAnimId = null;
-    }
-    waveformCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
-}
-
-// Click canvas to toggle between spectrum and waveform when live
-waveformCanvas.addEventListener('click', (e) => {
-    if (!state.isLive || !visualiserAnimId) return;
-    e.preventDefault();
-    e.stopPropagation();
-    visualiserMode = visualiserMode === 'spectrum' ? 'waveform' : 'spectrum';
-});
-
-aud.addEventListener('playing', () => {
-    if (state.isLive) startVisualiser();
-    else stopVisualiser();
-});
-
-aud.addEventListener('pause', () => {
-    if (state.isLive) stopVisualiser();
-});
 
 // Set canvas resolution to match CSS size
 function resizeWaveformCanvas() {

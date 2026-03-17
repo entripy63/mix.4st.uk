@@ -24,6 +24,7 @@
   - `mixes.js` - Loads mix data from `manifest.json` files
   - `queue.js` - Queue management, drag-drop, queue operations
   - `player.js` - Playback controls, waveform rendering, audio handling
+  - `visualiser.js` - Live stream audio visualisation (spectrum/waveform)
   - `player-mix.js` - Mix-specific playback logic
   - `livedata.js` - Live stream data management, probing, persistence
   - `modals.js` - Modal dialogs, settings, help, playlists

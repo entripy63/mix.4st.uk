@@ -75,25 +75,6 @@ async function addUserStream(name, m3u, genre, website) {
   }
 }
 
-function removeUserStream(index) {
-  if (index < 0 || index >= liveStreams.length) return;
-
-  const m3u = liveStreams[index].m3u;
-
-  // Step 1: Update canonical source (userStreams) - use m3u lookup to find config
-  const streams = getUserStreams();
-  const configIndex = streams.findIndex(s => s.m3u === m3u);
-  if (configIndex >= 0) {
-    streams.splice(configIndex, 1);
-    saveUserStreams(streams);
-  }
-
-  // Step 2: Keep liveStreams in sync - remove by index
-  if (liveStreamsInitialized) {
-    liveStreams.splice(index, 1);
-  }
-}
-
 function getLiveStreamConfig() {
   return getUserStreams();
 }

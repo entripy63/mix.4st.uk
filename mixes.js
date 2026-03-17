@@ -161,12 +161,6 @@ function detectGroups(mixes) {
   return result; // Already sorted by count descending
 }
 
-function longestCommonPrefix(a, b) {
-  let i = 0;
-  while (i < a.length && i < b.length && a[i] === b[i]) i++;
-  return a.substring(0, i);
-}
-
 function filterMixes(mixes, group, allGroups) {
   if (!group) return mixes;
   if (group === 'Other') {

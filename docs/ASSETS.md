@@ -52,9 +52,15 @@
 - **Used by**: player.html
 - **Features**: Add/remove tracks, reorder, shuffle
 
+#### visualiser.js
+- **Purpose**: Live stream audio visualisation (spectrum/waveform)
+- **Dependencies**: core.js
+- **Used by**: player.html
+- **Features**: AudioContext analyser, spectrum bars, waveform oscilloscope, click to toggle mode
+
 #### player-mix.js (300 lines)
 - **Purpose**: Mix-specific playback logic extracted from player.js
-- **Dependencies**: core.js, player.js
+- **Dependencies**: core.js, player.js, visualiser.js
 - **Used by**: player.html
 - **Features**: Track switching, queue integration
 
@@ -266,6 +272,7 @@ core.js           (shared: state, storage, utilities)
 mixes.js          (load mix manifests)
 queue.js          (queue management)
 player.js         (audio playback engine)
+visualiser.js     (live stream audio visualisation)
 player-mix.js     (mix-specific playback)
 livedata.js       (stream data, probing, parsing)
 modals.js         (modal dialogs)
@@ -312,6 +319,7 @@ player.html adds: mixes.js → queue.js → player-mix.js → browser.js → sea
 ├── JavaScript Modules
 │   ├── core.js             # Global state, storage, utilities
 │   ├── player.js           # Audio playback, controls, waveform
+│   ├── visualiser.js       # Live stream audio visualisation
 │   ├── livedata.js         # Stream probing, parsing, persistence
 │   ├── livestore.js        # Collection persistence (save/load/clear)
 │   ├── liveui.js           # Stream rendering, drag-drop, guards
@@ -412,7 +420,7 @@ player.html adds: mixes.js → queue.js → player-mix.js → browser.js → sea
 
 ### mixes.4st.uk (DJ Mixes SPA)
 - **Entry Point**: player.html
-- **JavaScript Modules**: core, mixes, queue, player, player-mix, livedata, modals, livestore, liveui, browser, search, restore
+- **JavaScript Modules**: core, mixes, queue, player, visualiser, player-mix, livedata, modals, livestore, liveui, browser, search, restore
 - **Stylesheets**: common.css, player.css
 - **Data**: DJ folders with manifests, track lists, cover art, waveform data
 - **Size**: ~200MB+ (includes all DJ music archives)

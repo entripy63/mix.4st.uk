@@ -47,22 +47,6 @@ function switchMiddleTab(tab) {
   }
 }
 
-// ========== PRESET CATEGORY BUTTONS ==========
-
-async function renderPresetButtons(container) {
-    const categories = await getAvailableCategories();
-    
-    if (categories.length === 0) return;
-    
-    let html = '';
-    for (const category of categories) {
-        const label = category.charAt(0).toUpperCase() + category.slice(1);
-        html += `<button onclick="showPresetsMenu(event, '${category}')">Add ${label}</button>`;
-    }
-    
-    container.innerHTML = html;
-}
-
 // ========== LIVE STREAM DISPLAY ==========
 
 function displayLiveStreams() {
@@ -86,6 +70,7 @@ function displayLiveStreams() {
     const disabled = stream.available ? '' : ' disabled';
     const deleteBtn = `<button class="delete-btn" onclick="handleRemoveStream(${index})" title="Remove stream">✕</button>`;
     const infoBtn = `<button class="icon-btn info-btn" data-action="toggle-stream-info" title="More info">ⓘ</button>`;
+    const playBtn = `<button class="icon-btn" onclick="playLiveStream(${index})"${disabled} title="${escapeHtml(tooltip)}">▶</button>`
     const infoPopout = `<div class="stream-extra-info" style="display:none">
       <div class="stream-info-field">
         <strong>Stream URL:</strong>
@@ -122,7 +107,7 @@ function displayLiveStreams() {
             <span class="mix-name">${escapeHtml(stream.name)}</span>
             ${stream.genre && stream.genre !== 'Unknown' ? `<span class="stream-genre">${escapeHtml(stream.genre)}</span>` : ''}
           </div>
-          ${infoBtn}<button class="icon-btn" onclick="playLiveStream(${index})"${disabled} title="${escapeHtml(tooltip)}">▶</button>
+          ${infoBtn} ${playBtn}
         </div>
         ${infoPopout}
       </div>
@@ -291,14 +276,6 @@ function onLiveStreamDragEnd(e) {
 // Drag/drop handlers are attached inline via ondragstart/ondrop/etc in displayLiveStreams()
 
 // ========== STREAM COLLECTIONS MENU ==========
-
-function toggleStreamCollectionsMenu() {
-  const menu = document.getElementById('streamCollectionsMenu');
-  if (!menu) return; // Menu created by displayLiveStreams()
-  
-  const isHidden = menu.style.display === 'none';
-  menu.style.display = isHidden ? 'block' : 'none';
-}
 
 function hideStreamCollectionsMenu() {
   const menu = document.getElementById('streamCollectionsMenu');
