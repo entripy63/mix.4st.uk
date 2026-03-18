@@ -16,29 +16,34 @@ let visualiserMode = 'spectrum'; // 'spectrum' or 'waveform'
 // ============================================
 
 const tempo = {
-    // PLL state
+    // PLL state (Type-2: proportional + integral frequency paths)
     phase: 0,           // 0..1 cycle position
-    freq: 2.1,          // beats per second (initial guess ~126 BPM)
+    freqInt: 2.05,      // integral frequency accumulator (Hz, learns true tempo)
+    freq: 2.05,         // working frequency (freqInt + proportional correction)
     lastTime: 0,        // last frame timestamp (seconds)
     bpm: 0,             // displayed BPM (smoothed)
 
-    // Onset detector: fast/slow envelope comparison
-    fastEnv: 0,         // fast-attack envelope (tracks transients)
-    slowEnv: 0,         // slow envelope (tracks average level)
-    wasAbove: false,    // edge detection: were we above threshold last frame?
-    peakCooldown: 0,    // minimum frames between detected beats
+    // Spectral flux onset detector
+    lastSpectrum: null,  // previous frame's frequency data
+    fluxAvg: 0,          // running average of flux
+    fluxVar: 0,          // running variance of flux (tracks peakiness)
+    wasAbove: false,     // edge detection: were we above threshold last frame?
+    peakCooldown: 0,     // minimum frames between detected beats
 
     // PLL tuning
     phaseGain: 0.15,    // how strongly beats correct phase
-    freqGain: 0.008,    // how strongly beats correct frequency
+    propGain: 0.15,     // proportional freq correction (damping, immediate)
+    intGain: 0.015,     // integral freq correction (slow, learns true tempo)
 
     reset() {
         this.phase = 0;
-        this.freq = 2.1;
+        this.freqInt = 2.05;
+        this.freq = 2.05;
         this.lastTime = 0;
         this.bpm = 0;
-        this.fastEnv = 0;
-        this.slowEnv = 0;
+        this.lastSpectrum = null;
+        this.fluxAvg = 0;
+        this.fluxVar = 0;
         this.wasAbove = false;
         this.peakCooldown = 0;
     },
@@ -49,23 +54,35 @@ const tempo = {
         this.lastTime = now;
         if (dt <= 0 || dt > 0.5) return; // skip glitches
 
-        // Use lowest 2 bins only (kick fundamental, up to ~344Hz)
-        const raw = (freqData[0] + freqData[1]) / (2 * 255);
+        const len = freqData.length;
 
-        // Fast envelope (attack ~20ms, release ~50ms at 60fps)
-        const fastUp = 0.6, fastDown = 0.15;
-        this.fastEnv += (raw > this.fastEnv ? fastUp : fastDown) * (raw - this.fastEnv);
+        // Initialise lastSpectrum on first real frame
+        if (!this.lastSpectrum) {
+            this.lastSpectrum = new Float32Array(len);
+            for (let i = 0; i < len; i++) this.lastSpectrum[i] = freqData[i];
+            return;
+        }
 
-        // Slow envelope (tracks average level, ~500ms time constant)
-        this.slowEnv += 0.02 * (raw - this.slowEnv);
+        // Compute spectral flux: sum of positive (increasing) deltas
+        let flux = 0;
+        for (let i = 0; i < len; i++) {
+            const delta = freqData[i] - this.lastSpectrum[i];
+            if (delta > 0) flux += delta;
+            this.lastSpectrum[i] = freqData[i];
+        }
+
+        // Adaptive threshold: track mean and variance of flux
+        const fluxDev = flux - this.fluxAvg;
+        this.fluxAvg += 0.02 * fluxDev;
+        this.fluxVar += 0.02 * (fluxDev * fluxDev - this.fluxVar);
 
         // Advance PLL phase
         this.phase += this.freq * dt;
         if (this.phase >= 1) this.phase -= 1;
 
-        // Onset: fast envelope crosses above slow envelope + margin
-        const threshold = this.slowEnv + 0.08;
-        const isAbove = this.fastEnv > threshold && raw > 0.1;
+        // Onset: flux exceeds mean + 2.5 standard deviations
+        const threshold = this.fluxAvg + 2.5 * Math.sqrt(this.fluxVar);
+        const isAbove = flux > threshold;
 
         if (this.peakCooldown > 0) {
             this.peakCooldown--;
@@ -75,22 +92,28 @@ const tempo = {
             if (phaseError < -0.5) phaseError += 1;
             if (phaseError > 0.5) phaseError -= 1;
 
-            // Correct PLL
+            // Correct PLL phase
             this.phase += phaseError * this.phaseGain;
             if (this.phase < 0) this.phase += 1;
             if (this.phase >= 1) this.phase -= 1;
-            this.freq += phaseError * this.freqGain;
 
-            // Clamp to reasonable BPM range (70-200 BPM)
-            this.freq = Math.max(70 / 60, Math.min(200 / 60, this.freq));
+            // Type-2 frequency correction (dead zone prevents hunting when locked)
+            if (Math.abs(phaseError) > 0.06) {
+                this.freqInt += phaseError * this.intGain;
+                this.freqInt = Math.max(70 / 60, Math.min(200 / 60, this.freqInt));
+                this.freq = this.freqInt + phaseError * this.propGain;
+                this.freq = Math.max(70 / 60, Math.min(200 / 60, this.freq));
+            } else {
+                this.freq = this.freqInt;
+            }
 
-            // Cooldown: ~60% of current beat period
-            this.peakCooldown = Math.round(0.6 / this.freq * 60);
+            // Cooldown: ~80% of current beat period
+            this.peakCooldown = Math.round(0.8 / this.freq * 60);
         }
         this.wasAbove = isAbove;
 
-        // Update display BPM
-        const instantBpm = this.freq * 60;
+        // Update display BPM (from integral, not proportional-boosted freq)
+        const instantBpm = this.freqInt * 60;
         if (this.bpm === 0) {
             this.bpm = instantBpm;
         } else {
