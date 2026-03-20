@@ -12,112 +12,183 @@ let visualiserAnimId = null;
 let visualiserMode = 'spectrum'; // 'spectrum' or 'waveform'
 
 // ============================================
-// TEMPO TRACKER (PLL-based beat detection)
+// TEMPO TRACKER (spectral flux autocorrelation)
 // ============================================
 
 const tempo = {
-    // PLL state (Type-2: proportional + integral frequency paths)
-    phase: 0,           // 0..1 cycle position
-    freqInt: 2.05,      // integral frequency accumulator (Hz, learns true tempo)
-    freq: 2.05,         // working frequency (freqInt + proportional correction)
-    lastTime: 0,        // last frame timestamp (seconds)
-    bpm: 0,             // displayed BPM (smoothed)
+    // Flux history (circular buffer, ~4 seconds at 60fps)
+    bufLen: 240,
+    fluxBuf: new Float32Array(240),
+    bufIdx: 0,
+    bufFilled: 0,        // frames written (capped at bufLen)
+    lastSpectrum: null,   // previous frame's frequency data
 
-    // Spectral flux onset detector
-    lastSpectrum: null,  // previous frame's frequency data
-    fluxAvg: 0,          // running average of flux
-    fluxVar: 0,          // running variance of flux (tracks peakiness)
-    wasAbove: false,     // edge detection: were we above threshold last frame?
-    peakCooldown: 0,     // minimum frames between detected beats
+    // Autocorrelation output
+    bpm: 0,              // displayed BPM (smoothed)
+    rawBpm: 0,           // latest autocorrelation result
+    bpmHistory: [],      // recent estimates for median filtering
+    lastConfidence: 0,   // confidence of last autocorrelation
+    fluxPeak: 1,         // slow-decay peak for flux display scaling
 
-    // PLL tuning
-    phaseGain: 0.15,    // how strongly beats correct phase
-    propGain: 0.15,     // proportional freq correction (damping, immediate)
-    intGain: 0.015,     // integral freq correction (slow, learns true tempo)
+    // Timing
+    lastTime: 0,
+    fps: 60,             // measured frame rate for lag→BPM conversion
+    frameCount: 0,       // frames since last autocorrelation
 
     reset() {
-        this.phase = 0;
-        this.freqInt = 2.05;
-        this.freq = 2.05;
-        this.lastTime = 0;
-        this.bpm = 0;
+        this.fluxBuf.fill(0);
+        this.bufIdx = 0;
+        this.bufFilled = 0;
         this.lastSpectrum = null;
-        this.fluxAvg = 0;
-        this.fluxVar = 0;
-        this.wasAbove = false;
-        this.peakCooldown = 0;
+        this.bpm = 0;
+        this.rawBpm = 0;
+        this.bpmHistory = [];
+        this.lastConfidence = 0;
+        this.fluxPeak = 1;
+        this.lastTime = 0;
+        this.fps = 60;
+        this.frameCount = 0;
     },
 
     update(freqData, now) {
         if (!this.lastTime) { this.lastTime = now; return; }
         const dt = now - this.lastTime;
         this.lastTime = now;
-        if (dt <= 0 || dt > 0.5) return; // skip glitches
+        if (dt <= 0 || dt > 0.5) return;
+
+        // Track actual frame rate (smoothed)
+        this.fps += 0.1 * (1 / dt - this.fps);
 
         const len = freqData.length;
 
         // Initialise lastSpectrum on first real frame
+        const gamma = 1;
         if (!this.lastSpectrum) {
             this.lastSpectrum = new Float32Array(len);
-            for (let i = 0; i < len; i++) this.lastSpectrum[i] = freqData[i];
+            for (let i = 0; i < len; i++) this.lastSpectrum[i] = Math.log1p(gamma * freqData[i]);
             return;
         }
 
-        // Compute spectral flux: sum of positive (increasing) deltas
+        // Spectral flux on log-compressed magnitudes (per literature)
         let flux = 0;
         for (let i = 0; i < len; i++) {
-            const delta = freqData[i] - this.lastSpectrum[i];
+            const compressed = Math.log1p(gamma * freqData[i]);
+            const delta = compressed - this.lastSpectrum[i];
             if (delta > 0) flux += delta;
-            this.lastSpectrum[i] = freqData[i];
+            this.lastSpectrum[i] = compressed;
         }
 
-        // Adaptive threshold: track mean and variance of flux
-        const fluxDev = flux - this.fluxAvg;
-        this.fluxAvg += 0.02 * fluxDev;
-        this.fluxVar += 0.02 * (fluxDev * fluxDev - this.fluxVar);
+        this.fluxBuf[this.bufIdx] = flux;
+        this.bufIdx = (this.bufIdx + 1) % this.bufLen;
+        if (this.bufFilled < this.bufLen) this.bufFilled++;
 
-        // Advance PLL phase
-        this.phase += this.freq * dt;
-        if (this.phase >= 1) this.phase -= 1;
+        // Run autocorrelation ~1x per second (every 60 frames)
+        if (++this.frameCount < 60 || this.bufFilled < this.bufLen) return;
+        this.frameCount = 0;
 
-        // Onset: flux exceeds mean + 2.5 standard deviations
-        const threshold = this.fluxAvg + 2.5 * Math.sqrt(this.fluxVar);
-        const isAbove = flux > threshold;
+        // Compute mean flux for normalisation
+        let mean = 0;
+        for (let i = 0; i < this.bufLen; i++) mean += this.fluxBuf[i];
+        mean /= this.bufLen;
 
-        if (this.peakCooldown > 0) {
-            this.peakCooldown--;
-        } else if (isAbove && !this.wasAbove) {
-            // Rising edge — beat detected
-            let phaseError = -this.phase;
-            if (phaseError < -0.5) phaseError += 1;
-            if (phaseError > 0.5) phaseError -= 1;
+        // Autocorrelation from lag 3 (need short lags for tick detection)
+        const maxLag = Math.min(Math.round(this.fps * 60 / 35), this.bufLen - 1);
+        const corrs = new Float32Array(maxLag + 1);
 
-            // Correct PLL phase
-            this.phase += phaseError * this.phaseGain;
-            if (this.phase < 0) this.phase += 1;
-            if (this.phase >= 1) this.phase -= 1;
-
-            // Type-2 frequency correction (dead zone prevents hunting when locked)
-            if (Math.abs(phaseError) > 0.06) {
-                this.freqInt += phaseError * this.intGain;
-                this.freqInt = Math.max(70 / 60, Math.min(200 / 60, this.freqInt));
-                this.freq = this.freqInt + phaseError * this.propGain;
-                this.freq = Math.max(70 / 60, Math.min(200 / 60, this.freq));
-            } else {
-                this.freq = this.freqInt;
+        for (let lag = 3; lag <= maxLag; lag++) {
+            let corr = 0;
+            for (let i = 0; i < this.bufLen; i++) {
+                const a = this.fluxBuf[(this.bufIdx + i) % this.bufLen] - mean;
+                const b = this.fluxBuf[(this.bufIdx + i + lag) % this.bufLen] - mean;
+                corr += a * b;
             }
-
-            // Cooldown: ~80% of current beat period
-            this.peakCooldown = Math.round(0.8 / this.freq * 60);
+            corrs[lag] = corr;
         }
-        this.wasAbove = isAbove;
 
-        // Update display BPM (from integral, not proportional-boosted freq)
-        const instantBpm = this.freqInt * 60;
-        if (this.bpm === 0) {
-            this.bpm = instantBpm;
-        } else {
-            this.bpm += (instantBpm - this.bpm) * 0.02;
+        // Compute signal energy (zero-lag autocorrelation = variance)
+        let energy = 0;
+        for (let i = 0; i < this.bufLen; i++) {
+            const a = this.fluxBuf[(this.bufIdx + i) % this.bufLen] - mean;
+            energy += a * a;
+        }
+
+        // Find global max for thresholding
+        let globalMax = 0;
+        for (let lag = 3; lag <= maxLag; lag++) {
+            if (corrs[lag] > globalMax) globalMax = corrs[lag];
+        }
+
+        // Skip update if no significant periodicity (hold last good estimate)
+        if (energy <= 0 || globalMax < energy * 0.05) return;
+
+        // Interpolate correlation at fractional lag positions
+        const interpCorr = (exactLag) => {
+            const lo = Math.floor(exactLag);
+            const hi = lo + 1;
+            if (lo < 3 || hi >= corrs.length) return 0;
+            const frac = exactLag - lo;
+            return corrs[lo] * (1 - frac) + corrs[hi] * frac;
+        };
+
+        // Score each lag by own correlation + harmonic subdivision support
+        // A true beat lag has strong correlation at lag/2, lag/4, lag/8 etc.
+        const minLag = Math.round(this.fps * 60 / 200);
+        let bestLag = 0;
+        let bestScore = 0;
+        for (let lag = minLag; lag <= maxLag; lag++) {
+            if (corrs[lag] <= 0) continue;
+            let score = corrs[lag];
+            for (let div = 2; div <= 16; div *= 2) {
+                const subCorr = interpCorr(lag / div);
+                if (subCorr > 0) score += subCorr;
+            }
+            if (score > bestScore) {
+                bestScore = score;
+                bestLag = lag;
+            }
+        }
+        let bestCorr = bestLag > 0 ? corrs[bestLag] : 0;
+
+        if (bestLag > 0) {
+            // Parabolic interpolation for sub-lag BPM precision
+            let refinedLag = bestLag;
+            if (bestLag > 3 && bestLag < maxLag) {
+                const prev = corrs[bestLag - 1];
+                const next = corrs[bestLag + 1];
+                const denom = prev - 2 * bestCorr + next;
+                if (denom < 0) {
+                    const offset = Math.max(-0.5, Math.min(0.5, 0.5 * (prev - next) / denom));
+                    refinedLag = bestLag + offset;
+                }
+            }
+            let detectedBpm = this.fps * 60 / refinedLag;
+            while (detectedBpm < 90) detectedBpm *= 2;
+            while (detectedBpm > 200) detectedBpm /= 2;
+
+            // Confidence-weighted flywheel: strong periodicity trusts
+            // autocorrelation, weak periodicity coasts on current estimate
+            const confidence = Math.min(1, bestCorr / (energy * 0.3));
+            this.lastConfidence = confidence;
+            if (this.bpm > 0) {
+                this.rawBpm = detectedBpm * confidence + this.bpm * (1 - confidence);
+            } else {
+                this.rawBpm = detectedBpm;
+            }
+        }
+
+        // Median filter then smooth for display
+        if (this.rawBpm > 0) {
+            this.bpmHistory.push(this.rawBpm);
+            if (this.bpmHistory.length > 9) this.bpmHistory.shift();
+            const sorted = [...this.bpmHistory].sort((a, b) => a - b);
+            const median = sorted[Math.floor(sorted.length / 2)];
+            if (this.bpm === 0) {
+                this.bpm = median;
+            } else {
+                // Fast convergence when far off, stable when locked
+                const alpha = Math.abs(median - this.bpm) > 2 ? 0.3 : 0.1;
+                this.bpm += (median - this.bpm) * alpha;
+            }
         }
     }
 };
@@ -156,7 +227,10 @@ function startVisualiser() {
         if (++bpmFrameCount >= 15) {
             bpmFrameCount = 0;
             if (tempo.bpm > 0) {
+                //const hist = tempo.bpmHistory.map(v => v.toFixed(1)).join(', ');
+                //const conf = Math.min(1, tempo.lastConfidence).toFixed(2);
                 bpmDisplay.textContent = tempo.bpm.toFixed(1) + ' BPM';
+                //bpmDisplay.textContent = tempo.bpm.toFixed(1) + ' BPM [' + hist + '] ' + conf;
                 bpmDisplay.style.display = '';
             }
         }
@@ -177,7 +251,7 @@ function startVisualiser() {
                 visCtx.fillStyle = val > 0.6 ? '#7986cb' : '#5c6bc0';
                 visCtx.fillRect(x, h - barHeight, Math.max(1, barWidth - 1), barHeight);
             }
-        } else {
+        } else if (visualiserMode === 'waveform') {
             analyserNode.getByteTimeDomainData(timeData);
             const sliceWidth = w / timeData.length;
             const midY = h / 2;
@@ -188,6 +262,41 @@ function startVisualiser() {
                 const val = (timeData[i] - 128) / 128;
                 const y = midY - val * midY * 0.9;
                 const x = i * sliceWidth;
+                if (i === 0) visCtx.moveTo(x, y);
+                else visCtx.lineTo(x, y);
+            }
+            visCtx.stroke();
+        } else if (visualiserMode === 'flux' && tempo.bufFilled > 0) {
+            // Draw spectral flux time series from circular buffer
+            const n = tempo.bufFilled;
+            const sliceWidth = w / n;
+
+            // Slow-decay peak scaling (expands fast, contracts slowly)
+            let bufPeak = 0;
+            for (let i = 0; i < n; i++) {
+                if (tempo.fluxBuf[i] > bufPeak) bufPeak = tempo.fluxBuf[i];
+            }
+            tempo.fluxPeak = Math.max(bufPeak, tempo.fluxPeak * 0.995);
+            const scale = tempo.fluxPeak || 1;
+
+            // Fixed reference line (shows scaling changes)
+            const refY = h - (10 / scale) * h * 0.9;
+            visCtx.strokeStyle = '#ffffff30';
+            visCtx.lineWidth = 1;
+            visCtx.beginPath();
+            visCtx.moveTo(0, refY);
+            visCtx.lineTo(w, refY);
+            visCtx.stroke();
+
+            // Flux time series (clipped at scale, not auto-scaled)
+            visCtx.strokeStyle = '#5c6bc0';
+            visCtx.lineWidth = 2;
+            visCtx.beginPath();
+            for (let i = 0; i < n; i++) {
+                const idx = (tempo.bufIdx + i) % tempo.bufLen;
+                const val = Math.min(1, tempo.fluxBuf[idx] / scale);
+                const x = i * sliceWidth;
+                const y = h - val * h * 0.9;
                 if (i === 0) visCtx.moveTo(x, y);
                 else visCtx.lineTo(x, y);
             }
@@ -213,7 +322,8 @@ visCanvas.addEventListener('click', (e) => {
     if (!state.isLive || !visualiserAnimId) return;
     e.preventDefault();
     e.stopPropagation();
-    visualiserMode = visualiserMode === 'spectrum' ? 'waveform' : 'spectrum';
+    const modes = ['spectrum', 'waveform', 'flux'];
+    visualiserMode = modes[(modes.indexOf(visualiserMode) + 1) % modes.length];
 });
 
 aud.addEventListener('playing', () => {
