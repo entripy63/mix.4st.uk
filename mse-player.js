@@ -32,7 +32,7 @@ async function msePlayLive(url, displayText) {
   icecastPlayer = new IcecastMetadataPlayer(icyUrl, {
     audioElement: aud,
     metadataTypes: ['icy'],
-    bufferLength: 2,
+    bufferLength: 3,
     enableLogging: true,
     onMetadata: (metadata) => {
       document.dispatchEvent(new CustomEvent('liveMetadata', {
