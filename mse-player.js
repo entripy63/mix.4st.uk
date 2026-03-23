@@ -29,21 +29,33 @@ async function msePlayLive(url, displayText) {
   // Enable ICY metadata support on the proxy
   const icyUrl = url.includes('?') ? url + '&icy=1' : url + '?icy=1';
 
-  icecastPlayer = new IcecastMetadataPlayer(icyUrl, {
-    audioElement: aud,
-    metadataTypes: ['icy'],
-    bufferLength: 3,
-    enableLogging: true,
-    onMetadata: (metadata) => {
-      document.dispatchEvent(new CustomEvent('liveMetadata', {
-        detail: { metadata, displayText }
-      }));
-    },
-    onPlay: () => { updatePlayPauseBtn(); updateTimeDisplay(); },
-    onStop: () => { updatePlayPauseBtn(); updateTimeDisplay(); },
-  });
+  const startPlayer = () => {
+    icecastPlayer = new IcecastMetadataPlayer(icyUrl, {
+      audioElement: aud,
+      metadataTypes: ['icy'],
+      bufferLength: 3,
+      enableLogging: true,
+      onMetadata: (metadata) => {
+        document.dispatchEvent(new CustomEvent('liveMetadata', {
+          detail: { metadata, displayText }
+        }));
+      },
+      onPlay: () => { updatePlayPauseBtn(); updateTimeDisplay(); },
+      onStop: () => { updatePlayPauseBtn(); updateTimeDisplay(); },
+      onError: (message, error) => {
+        console.warn('msePlayLive: error, restarting stream:', message, error);
+        if (icecastPlayer) {
+          try { icecastPlayer.detachAudioElement(); } catch (_) { /* detach may fail during error state */ }
+          icecastPlayer = null;
+          startPlayer();
+        }
+      },
+    });
 
-  icecastPlayer.play();
+    icecastPlayer.play();
+  };
+
+  startPlayer();
 }
 
 async function mseStopLive() {
