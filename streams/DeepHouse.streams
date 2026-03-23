@@ -4,13 +4,13 @@
   "streams": [
     {
       "name": "Deepvibes Radio",
-      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=191920",
+      "m3u": "http://88.208.218.19:9106/listen.pls",
       "genre": "Deep House",
       "website": "http://deepvibes.co.uk/site/index.php"
     },
     {
       "name": "Deep House Radio - Bucharest - Romania",
-      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99563196",
+      "m3u": "https://streaming-01.xtservers.com:7000/encoder.mp3",
       "genre": "Deep House",
       "website": "https://www.dancemusic.ro/"
     },
@@ -18,17 +18,17 @@
       "name": "1.FM - Deep House (www.1.fm)",
       "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=1847171",
       "genre": "Deep House",
-      "website": "https://radio.1cloud.fm/station/deephouse"
+      "website": "https://strm112.1.fm/deephouse_mobile_mp3?aw_0_req.gdpr=true"
     },
     {
       "name": "Deep House Network",
-      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99578163",
+      "m3u": "http://158.69.247.54:9000/dhn",
       "genre": "Deep House",
       "website": "https://www.deephousenetwork.media/"
     },
     {
       "name": "Extreme Deep House Radio",
-      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99591153",
+      "m3u": "https://cc7.whsh4u.com:2199/tunein/yfryujzw.pls",
       "genre": "Deep House",
       "website": "https://www.extremedeephouse.com/"
     },
