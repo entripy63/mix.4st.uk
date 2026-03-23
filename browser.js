@@ -556,9 +556,9 @@ function showSettings() {
 function updateBpmEnabled(enabled) {
    storage.set('bpmEnabled', enabled);
    if (!enabled) {
-     tempo.reset();
-     bpmDisplay.style.display = 'none';
-     bpmDisplay.textContent = '';
+     stopTempo();
+   } else if (state.isLive && mseIsActive()) {
+     startTempo();
    }
 }
 

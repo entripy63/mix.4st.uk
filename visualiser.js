@@ -10,13 +10,22 @@ let analyserNode = null;
 let audioSourceNode = null;
 let visualiserAnimId = null;
 let visualiserMode = 'spectrum'; // 'spectrum' or 'waveform'
+let tempoIntervalId = null;
 
 // ============================================
 // TEMPO TRACKER (spectral flux autocorrelation)
 // ============================================
 
+// Precomputed compression LUT for Uint8 frequency bins (0–255)
+// Replaces per-sample Math.log1p with a table lookup
+const compressLUT = new Float32Array(256);
+for (let i = 0; i < 256; i++) compressLUT[i] = Math.log1p(i);
+
 const tempo = {
-    // Flux history (circular buffer, ~4 seconds at 60fps)
+    // Fixed sample rate (Hz) — known constant, no estimation needed
+    sampleRate: 60,
+
+    // Flux history (circular buffer, ~4 seconds at sampleRate)
     bufLen: 240,
     fluxBuf: new Float32Array(240),
     bufIdx: 0,
@@ -37,9 +46,9 @@ const tempo = {
     maxLag: 0,           // max lag computed in last autocorrelation
 
     // Timing
-    lastTime: 0,
-    fps: 60,             // measured frame rate for lag→BPM conversion
     frameCount: 0,       // frames since last autocorrelation
+    totalFrames: 0,      // total frames since start (for rate measurement)
+    startTime: 0,        // timestamp of first sample
 
     reset() {
         this.fluxBuf.fill(0);
@@ -56,34 +65,25 @@ const tempo = {
         this.emaCorrs = null;
         this.bestLag = 0;
         this.maxLag = 0;
-        this.lastTime = 0;
-        this.fps = 60;
         this.frameCount = 0;
+        this.totalFrames = 0;
+        this.startTime = 0;
     },
 
-    update(freqData, now) {
-        if (!this.lastTime) { this.lastTime = now; return; }
-        const dt = now - this.lastTime;
-        this.lastTime = now;
-        if (dt <= 0 || dt > 0.5) return;
-
-        // Track actual frame rate (smoothed)
-        this.fps += 0.1 * (1 / dt - this.fps);
-
+    update(freqData) {
         const len = freqData.length;
 
-        // Initialise lastSpectrum on first real frame
-        const gamma = 1;
+        // Initialise lastSpectrum on first frame
         if (!this.lastSpectrum) {
             this.lastSpectrum = new Float32Array(len);
-            for (let i = 0; i < len; i++) this.lastSpectrum[i] = Math.log1p(gamma * freqData[i]);
+            for (let i = 0; i < len; i++) this.lastSpectrum[i] = compressLUT[freqData[i]];
             return;
         }
 
-        // Spectral flux on log-compressed magnitudes (per literature)
+        // Spectral flux on compressed magnitudes (LUT replaces Math.log1p)
         let flux = 0;
         for (let i = 0; i < len; i++) {
-            const compressed = Math.log1p(gamma * freqData[i]);
+            const compressed = compressLUT[freqData[i]];
             const delta = compressed - this.lastSpectrum[i];
             if (delta > 0) flux += delta;
             this.lastSpectrum[i] = compressed;
@@ -93,19 +93,28 @@ const tempo = {
         this.bufIdx = (this.bufIdx + 1) % this.bufLen;
         if (this.bufFilled < this.bufLen) this.bufFilled++;
 
-        // Run autocorrelation ~1x per second (every 60 frames)
-        if (++this.frameCount < 60 || this.bufFilled < this.bufLen) return;
+        // Measure actual sample rate from real elapsed time
+        if (!this.startTime) {
+            this.startTime = performance.now();
+        }
+        this.totalFrames++;
+
+        // Run autocorrelation ~1x per second
+        if (++this.frameCount < this.sampleRate || this.bufFilled < this.bufLen) return;
         this.frameCount = 0;
+
+        // Update measured sample rate (includes all real-world overhead)
+        const elapsed = (performance.now() - this.startTime) / 1000;
+        if (elapsed > 0) this.sampleRate = this.totalFrames / elapsed;
 
         // Compute mean flux for normalisation
         let mean = 0;
         for (let i = 0; i < this.bufLen; i++) mean += this.fluxBuf[i];
         mean /= this.bufLen;
 
-        // Autocorrelation from lag 3 (need short lags for tick detection)
-        // maxLag varies with fps but array is always bufLen to avoid
-        // resizing the EMA buffer and causing display judder
-        const maxLag = Math.min(Math.round(this.fps * 60 / 35), this.bufLen - 1);
+        // Autocorrelation from lag 3
+        // maxLag is fixed from sampleRate, array is always bufLen
+        const maxLag = Math.min(Math.round(this.sampleRate * 60 / 35), this.bufLen - 1);
         if (maxLag > this.maxLag) this.maxLag = maxLag;
         const corrs = new Float32Array(this.bufLen);
 
@@ -160,7 +169,7 @@ const tempo = {
 
         // Score each lag by own correlation + harmonic subdivision support
         // A true beat lag has strong correlation at lag/2, lag/4, lag/8 etc.
-        const minLag = Math.round(this.fps * 60 / 200);
+        const minLag = Math.round(this.sampleRate * 60 / 200);
         let bestLag = 0;
         let bestScore = 0;
         for (let lag = minLag; lag <= maxLag; lag++) {
@@ -190,7 +199,7 @@ const tempo = {
                     refinedLag = bestLag + offset;
                 }
             }
-            let detectedBpm = this.fps * 60 / refinedLag;
+            let detectedBpm = this.sampleRate * 60 / refinedLag;
             while (detectedBpm < 90) detectedBpm *= 2;
             while (detectedBpm > 200) detectedBpm /= 2;
 
@@ -236,6 +245,32 @@ function ensureAudioContext() {
     analyserNode.connect(audioCtx.destination);
 }
 
+function startTempo() {
+    if (tempoIntervalId) return;
+    ensureAudioContext();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const freqData = new Uint8Array(analyserNode.frequencyBinCount);
+    const intervalMs = Math.round(1000 / tempo.sampleRate);
+    tempoIntervalId = setInterval(() => {
+        analyserNode.getByteFrequencyData(freqData);
+        tempo.update(freqData);
+        if (tempo.bpm > 0) {
+            bpmDisplay.textContent = tempo.bpm.toFixed(1) + ' BPM';
+            bpmDisplay.style.display = '';
+        }
+    }, intervalMs);
+}
+
+function stopTempo() {
+    if (tempoIntervalId) {
+        clearInterval(tempoIntervalId);
+        tempoIntervalId = null;
+    }
+    tempo.reset();
+    bpmDisplay.style.display = 'none';
+    bpmDisplay.textContent = '';
+}
+
 function startVisualiser() {
     ensureAudioContext();
     if (audioCtx.state === 'suspended') {
@@ -245,38 +280,18 @@ function startVisualiser() {
     visCanvas.style.cursor = 'pointer';
     const freqData = new Uint8Array(analyserNode.frequencyBinCount);
     const timeData = new Uint8Array(analyserNode.fftSize);
-    const drawVis = storage.getBool('visualiserEnabled', true);
-
-    let bpmFrameCount = 0;
 
     function drawVisualiser() {
         visualiserAnimId = requestAnimationFrame(drawVisualiser);
 
-        analyserNode.getByteFrequencyData(freqData);
-
-        // Tempo tracking and BPM display (gated by setting)
-        if (storage.getBool('bpmEnabled', true)) {
-            tempo.update(freqData, performance.now() / 1000);
-
-            if (++bpmFrameCount >= 15) {
-                bpmFrameCount = 0;
-                if (tempo.bpm > 0) {
-                    //const hist = tempo.bpmHistory.map(v => v.toFixed(1)).join(', ');
-                    //const conf = Math.min(1, tempo.lastConfidence).toFixed(2);
-                    bpmDisplay.textContent = tempo.bpm.toFixed(1) + ' BPM';
-                    //bpmDisplay.textContent = tempo.bpm.toFixed(1) + ' BPM [' + hist + '] ' + conf;
-                    bpmDisplay.style.display = '';
-                }
-            }
-        }
-
-        if (!drawVis) return;
+        if (!storage.getBool('visualiserEnabled', true)) return;
 
         const w = visCanvas.width;
         const h = visCanvas.height;
         visCtx.clearRect(0, 0, w, h);
 
         if (visualiserMode === 'spectrum') {
+            analyserNode.getByteFrequencyData(freqData);
             const barCount = freqData.length;
             const barWidth = w / barCount;
             for (let i = 0; i < barCount; i++) {
@@ -388,9 +403,6 @@ function stopVisualiser() {
     }
     visCtx.clearRect(0, 0, visCanvas.width, visCanvas.height);
     visCanvas.style.cursor = '';
-    tempo.reset();
-    bpmDisplay.style.display = 'none';
-    bpmDisplay.textContent = '';
 }
 
 // Click canvas to toggle between spectrum and waveform when live
@@ -406,10 +418,18 @@ visCanvas.addEventListener('click', (e) => {
 });
 
 aud.addEventListener('playing', () => {
-    if (state.isLive) startVisualiser();
-    else stopVisualiser();
+    if (state.isLive) {
+        startVisualiser();
+        if (storage.getBool('bpmEnabled', true)) startTempo();
+    } else {
+        stopVisualiser();
+        stopTempo();
+    }
 });
 
 aud.addEventListener('pause', () => {
-    if (state.isLive) stopVisualiser();
+    if (state.isLive) {
+        stopVisualiser();
+        stopTempo();
+    }
 });
