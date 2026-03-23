@@ -247,6 +247,7 @@ function ensureAudioContext() {
 
 function startTempo() {
     if (tempoIntervalId) return;
+    if (!storage.getBool('bpmEnabled', true)) return;
     ensureAudioContext();
     if (audioCtx.state === 'suspended') audioCtx.resume();
     const freqData = new Uint8Array(analyserNode.frequencyBinCount);
@@ -272,19 +273,18 @@ function stopTempo() {
 }
 
 function startVisualiser() {
+    if (visualiserAnimId) return;
+    if (!storage.getBool('visualiserEnabled', true)) return;
     ensureAudioContext();
     if (audioCtx.state === 'suspended') {
         audioCtx.resume();
     }
-    if (visualiserAnimId) return;
     visCanvas.style.cursor = 'pointer';
     const freqData = new Uint8Array(analyserNode.frequencyBinCount);
     const timeData = new Uint8Array(analyserNode.fftSize);
 
     function drawVisualiser() {
         visualiserAnimId = requestAnimationFrame(drawVisualiser);
-
-        if (!storage.getBool('visualiserEnabled', true)) return;
 
         const w = visCanvas.width;
         const h = visCanvas.height;
@@ -417,19 +417,4 @@ visCanvas.addEventListener('click', (e) => {
     visualiserMode = modes[((idx === -1 ? 0 : idx) + 1) % modes.length];
 });
 
-aud.addEventListener('playing', () => {
-    if (state.isLive) {
-        startVisualiser();
-        if (storage.getBool('bpmEnabled', true)) startTempo();
-    } else {
-        stopVisualiser();
-        stopTempo();
-    }
-});
 
-aud.addEventListener('pause', () => {
-    if (state.isLive) {
-        stopVisualiser();
-        stopTempo();
-    }
-});

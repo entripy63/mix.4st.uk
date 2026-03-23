@@ -47,6 +47,8 @@ function updateMuteBtn() {
 function pauseLive() {
   state.userPausedLive = true;
   mseStopLive();
+  stopVisualiser();
+  stopTempo();
   updatePlayPauseBtn();
   updateTimeDisplay();
   if (!state.isRestoring) {
@@ -59,6 +61,9 @@ function resumeLive() {
   state.userPausedLive = false;
   if (state.liveStreamUrl) {
     msePlayLive(state.liveStreamUrl, state.liveDisplayText);
+    ensureAudioContext();
+    startVisualiser();
+    startTempo();
     updatePlayPauseBtn();
     updateTimeDisplay();
     if (!state.isRestoring) {
