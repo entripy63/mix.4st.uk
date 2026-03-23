@@ -106,7 +106,7 @@ const tempo = {
         // maxLag varies with fps but array is always bufLen to avoid
         // resizing the EMA buffer and causing display judder
         const maxLag = Math.min(Math.round(this.fps * 60 / 35), this.bufLen - 1);
-        this.maxLag = maxLag;
+        if (maxLag > this.maxLag) this.maxLag = maxLag;
         const corrs = new Float32Array(this.bufLen);
 
         for (let lag = 3; lag <= maxLag; lag++) {
@@ -242,6 +242,7 @@ function startVisualiser() {
         audioCtx.resume();
     }
     if (visualiserAnimId) return;
+    visCanvas.style.cursor = 'pointer';
     const freqData = new Uint8Array(analyserNode.frequencyBinCount);
     const timeData = new Uint8Array(analyserNode.fftSize);
     const drawVis = storage.getBool('visualiserEnabled', true);
@@ -251,19 +252,21 @@ function startVisualiser() {
     function drawVisualiser() {
         visualiserAnimId = requestAnimationFrame(drawVisualiser);
 
-        // Always read frequency data for tempo tracking
         analyserNode.getByteFrequencyData(freqData);
-        tempo.update(freqData, performance.now() / 1000);
 
-        // Update BPM display ~4x per second
-        if (++bpmFrameCount >= 15) {
-            bpmFrameCount = 0;
-            if (tempo.bpm > 0) {
-                //const hist = tempo.bpmHistory.map(v => v.toFixed(1)).join(', ');
-                //const conf = Math.min(1, tempo.lastConfidence).toFixed(2);
-                bpmDisplay.textContent = tempo.bpm.toFixed(1) + ' BPM';
-                //bpmDisplay.textContent = tempo.bpm.toFixed(1) + ' BPM [' + hist + '] ' + conf;
-                bpmDisplay.style.display = '';
+        // Tempo tracking and BPM display (gated by setting)
+        if (storage.getBool('bpmEnabled', true)) {
+            tempo.update(freqData, performance.now() / 1000);
+
+            if (++bpmFrameCount >= 15) {
+                bpmFrameCount = 0;
+                if (tempo.bpm > 0) {
+                    //const hist = tempo.bpmHistory.map(v => v.toFixed(1)).join(', ');
+                    //const conf = Math.min(1, tempo.lastConfidence).toFixed(2);
+                    bpmDisplay.textContent = tempo.bpm.toFixed(1) + ' BPM';
+                    //bpmDisplay.textContent = tempo.bpm.toFixed(1) + ' BPM [' + hist + '] ' + conf;
+                    bpmDisplay.style.display = '';
+                }
             }
         }
 
@@ -384,6 +387,7 @@ function stopVisualiser() {
         visualiserAnimId = null;
     }
     visCtx.clearRect(0, 0, visCanvas.width, visCanvas.height);
+    visCanvas.style.cursor = '';
     tempo.reset();
     bpmDisplay.style.display = 'none';
     bpmDisplay.textContent = '';
@@ -394,8 +398,11 @@ visCanvas.addEventListener('click', (e) => {
     if (!state.isLive || !visualiserAnimId) return;
     e.preventDefault();
     e.stopPropagation();
-    const modes = ['spectrum', 'waveform', 'flux', 'autocorr'];
-    visualiserMode = modes[(modes.indexOf(visualiserMode) + 1) % modes.length];
+    const modes = storage.getBool('bpmEnabled', true)
+        ? ['spectrum', 'waveform', 'flux', 'autocorr']
+        : ['spectrum', 'waveform'];
+    const idx = modes.indexOf(visualiserMode);
+    visualiserMode = modes[((idx === -1 ? 0 : idx) + 1) % modes.length];
 });
 
 aud.addEventListener('playing', () => {

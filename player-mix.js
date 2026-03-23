@@ -106,6 +106,7 @@ resizeWaveformCanvas();
 window.addEventListener('load', resizeWaveformCanvas);
 
 function drawWaveform(peaks, progress = 0) {
+    waveformCanvas.style.cursor = peaks.length ? 'pointer' : '';
     const w = waveformCanvas.width;
     const h = waveformCanvas.height;
     const barWidth = w / peaks.length;

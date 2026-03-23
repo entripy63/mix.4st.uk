@@ -185,7 +185,6 @@ html, body {
   max-height: 200px;
   background: #1a1a2e;
   border-radius: 6px 6px 0 0;
-  cursor: pointer;
 }
 
 #waveformResizeHandle {
