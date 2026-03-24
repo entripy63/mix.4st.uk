@@ -435,7 +435,7 @@ function probeAudioPlayback(file) {
 }
 
 // Listen for live stream events and clear DJ mix UI
-document.addEventListener('liveStreamStarted', () => {
+document.addEventListener('liveModeEntered', () => {
     storage.remove('currentMixPath');
     loadPeaks(null);
     stopVisualiser();
