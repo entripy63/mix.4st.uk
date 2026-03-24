@@ -76,9 +76,7 @@ async function msePlayLive(url, displayText) {
           }
           console.warn('msePlayLive: non-network error, restarting stream:', message, error);
           if (icecastPlayer) {
-            try { icecastPlayer.detachAudioElement(); } catch (_) { /* detach may fail during error state */ }
-            icecastPlayer = null;
-            startPlayer();
+            mseStopLive().then(() => startPlayer());
           }
         } catch (handlerError) {
           console.error('msePlayLive: onError handler failed:', handlerError);
