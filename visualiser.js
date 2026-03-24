@@ -1,30 +1,15 @@
 // visualiser.js - Live stream audio visualisation (spectrum/waveform)
-// Dependencies: core.js (state, storage, aud), tempo.js (tempo)
+// Dependencies: core.js (state, storage, audioCtx, analyserNode), tempo.js (tempo)
 
 const visCanvas = document.getElementById("waveform");
 const visCtx = visCanvas.getContext("2d");
 
-let audioCtx = null;
-let analyserNode = null;
-let audioSourceNode = null;
 let visualiserAnimId = null;
 let visualiserMode = 'spectrum'; // 'spectrum' or 'waveform'
-
-function ensureAudioContext() {
-    if (audioCtx) return;
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    analyserNode = audioCtx.createAnalyser();
-    analyserNode.fftSize = 256;
-    analyserNode.smoothingTimeConstant = 0.3;
-    audioSourceNode = audioCtx.createMediaElementSource(aud);
-    audioSourceNode.connect(analyserNode);
-    analyserNode.connect(audioCtx.destination);
-}
 
 function startVisualiser() {
     if (visualiserAnimId) return;
     if (!storage.getBool('visualiserEnabled', true)) return;
-    ensureAudioContext();
     if (audioCtx.state === 'suspended') {
         audioCtx.resume();
     }

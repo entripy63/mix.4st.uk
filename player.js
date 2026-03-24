@@ -60,8 +60,8 @@ function pauseLive() {
 function resumeLive() {
   state.userPausedLive = false;
   if (state.liveStreamUrl) {
-    msePlayLive(state.liveStreamUrl, state.liveDisplayText);
     ensureAudioContext();
+    msePlayLive(state.liveStreamUrl, state.liveDisplayText);
     startVisualiser();
     startTempo();
     updatePlayPauseBtn();
@@ -93,14 +93,17 @@ function playLive(url, displayText, autoplay = false) {
   document.title = 'Live - Player';
 
   if (autoplay) {
+    ensureAudioContext();
     msePlayLive(url, displayText);
+    startVisualiser();
+    startTempo();
   }
   
   updateTimeDisplay();
   updatePlayPauseBtn();
   
   // Notify other modules (e.g., player-mix.js) that live stream started
-  document.dispatchEvent(new CustomEvent('liveStreamStarted', {
+  document.dispatchEvent(new CustomEvent('liveModeEntered', {
     detail: { url, displayText }
   }));
 }

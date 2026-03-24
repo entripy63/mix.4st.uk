@@ -1,5 +1,5 @@
 // tempo.js - BPM detection via spectral flux autocorrelation
-// Dependencies: core.js (storage, aud), visualiser.js (ensureAudioContext, analyserNode)
+// Dependencies: core.js (storage, aud, audioCtx, analyserNode)
 
 const bpmDisplay = document.getElementById("bpmDisplay");
 
@@ -226,7 +226,6 @@ const tempo = {
 function startTempo() {
     if (tempoIntervalId) return;
     if (!storage.getBool('bpmEnabled', true)) return;
-    ensureAudioContext();
     if (audioCtx.state === 'suspended') audioCtx.resume();
     const freqData = new Uint8Array(analyserNode.frequencyBinCount);
     const intervalMs = Math.round(1000 / tempo.sampleRate);

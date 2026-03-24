@@ -50,6 +50,23 @@ const storage = {
 
 const aud = document.getElementById("audioPlayer");
 
+// Web Audio API context and nodes — initialised lazily on first user interaction
+// (browsers require a user gesture before creating an AudioContext)
+let audioCtx = null;
+let analyserNode = null;
+let audioSourceNode = null;
+
+function ensureAudioContext() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    analyserNode = audioCtx.createAnalyser();
+    analyserNode.fftSize = 256;
+    analyserNode.smoothingTimeConstant = 0.3;
+    audioSourceNode = audioCtx.createMediaElementSource(aud);
+    audioSourceNode.connect(analyserNode);
+    analyserNode.connect(audioCtx.destination);
+}
+
 const state = {
    currentPeaks: null,
    isResizing: false,
