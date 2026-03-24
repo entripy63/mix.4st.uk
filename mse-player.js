@@ -42,14 +42,23 @@ async function msePlayLive(url, displayText) {
       },
       onPlay: () => { updatePlayPauseBtn(); updateTimeDisplay(); },
       onStop: () => { updatePlayPauseBtn(); updateTimeDisplay(); },
+      /*
       onError: (message, error) => {
-        console.warn('msePlayLive: error, restarting stream:', message, error);
+        const msg = String(message || '') + ' ' + String(error?.message || '');
+        if (/network|fetch|abort/i.test(msg)) {
+          console.warn('msePlayLive: network error (letting library retry):', message, error);
+          return;
+        }
+        console.warn('msePlayLive: non-network error, restarting stream:', message, error);
         if (icecastPlayer) {
-          try { icecastPlayer.detachAudioElement(); } catch (_) { /* detach may fail during error state */ }
+          try { icecastPlayer.detachAudioElement(); } catch (_) { 
+            // detach may fail during error state 
+          }
           icecastPlayer = null;
           startPlayer();
-        }
-      },
+        } 
+      }, 
+      */
     });
 
     icecastPlayer.play();
