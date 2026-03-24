@@ -16,9 +16,9 @@
     },
     {
       "name": "1.FM - Deep House (www.1.fm)",
-      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=1847171",
+      "m3u": "https://strm112.1.fm/deephouse_mobile_mp3?aw_0_req.gdpr=true",
       "genre": "Deep House",
-      "website": "https://strm112.1.fm/deephouse_mobile_mp3?aw_0_req.gdpr=true"
+      "website": "https://radio.1cloud.fm/station/deephouse"
     },
     {
       "name": "Deep House Network",
