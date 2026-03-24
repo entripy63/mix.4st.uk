@@ -33,7 +33,7 @@ export default [
         browserModes: 'writable',
         searchIndex: 'writable',
         liveStreams: 'writable',
-        liveStreamsInitialized: 'writable',
+        liveProbeReady: 'writable',
         // Imported functions (called across file boundaries)
         fetchDJMixes: 'readonly',
         escapeHtml: 'readonly',

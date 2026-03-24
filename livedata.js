@@ -50,7 +50,7 @@ function getProxyUrls(streamUrl) {
 
 // Data storage
 let liveStreams = [];
-let liveStreamsInitialized = false;
+let liveProbeReady = false;
 
 // ========== USER STREAM MANAGEMENT ==========
 
@@ -70,7 +70,7 @@ async function addUserStream(name, m3u, genre, website) {
   saveUserStreams(streams);
 
   // Step 2: Keep liveStreams in sync (probe and add if already initialized)
-  if (liveStreamsInitialized) {
+  if (liveProbeReady) {
     await probeAndAddStream(config);
   }
 }
@@ -385,9 +385,9 @@ async function loadDefaultStreamsOnFirstRun() {
 }
 
 async function initLiveStreams(config = {}) {
-  if (liveStreamsInitialized) return;
+  if (liveProbeReady) return;
 
-  liveStreamsInitialized = true;
+  liveProbeReady = true;
   liveStreams = [];
   const configs = getLiveStreamConfig();
 

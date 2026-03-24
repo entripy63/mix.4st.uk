@@ -52,7 +52,7 @@ function switchMiddleTab(tab) {
 function displayLiveStreams() {
   const target = getStreamListTarget();
   
-  if (!liveStreamsInitialized) {
+  if (!liveProbeReady) {
     target.innerHTML = '<div style="padding: 20px; color: #888;">Checking stream availability...</div>';
     return;
   }
@@ -217,7 +217,7 @@ async function handleRemoveStream(index) {
 }
 
 async function reloadLiveStreams() {
-    liveStreamsInitialized = false;
+    liveProbeReady = false;
     liveStreams = [];
     if (shouldRedisplayStreams()) {
       displayLiveStreams(); // Shows "Checking..." message
@@ -255,7 +255,7 @@ function onLiveStreamDrop(e, dropIndex) {
   saveUserStreams(configs);
   
   // Step 2: Keep liveStreams in sync with new order
-  if (liveStreamsInitialized) {
+  if (liveProbeReady) {
     const tempLive = liveStreams[dragIndex];
     liveStreams.splice(dragIndex, 1);
     liveStreams.splice(dropIndex, 0, tempLive);

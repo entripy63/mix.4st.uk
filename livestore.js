@@ -157,7 +157,7 @@ async function loadCollectionFromFile() {
       }
       
       // Re-initialize to pick up new streams
-      liveStreamsInitialized = false;
+      liveProbeReady = false;
       const config = {
         shouldRedisplayAfterProbe: shouldRedisplayStreams
       };
@@ -179,7 +179,6 @@ async function clearAllStreams() {
    if (!confirmed) return;
    
    saveUserStreams([]);
-   liveStreamsInitialized = false;
    liveStreams = [];
    
    // Notify UI layer
