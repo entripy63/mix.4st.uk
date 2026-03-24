@@ -157,14 +157,14 @@ volumeSlider.addEventListener('input', function() {
 aud.addEventListener('play', () => {
   updatePlayPauseBtn();
   updateTimeDisplay();
-  if (!state.isRestoring) {
+  if (!state.isRestoring && !state.isLive) {
     storage.set('wasPlaying', true);
   }
 });
 aud.addEventListener('pause', () => {
   updatePlayPauseBtn();
   updateTimeDisplay();
-  if (!state.isRestoring) {
+  if (!state.isRestoring && !state.isLive) {
     storage.set('wasPlaying', false);
   }
 });
@@ -197,7 +197,11 @@ aud.addEventListener("pause", function () {
 });
 window.addEventListener("beforeunload", function () {
   storage.set('playerTime', aud.currentTime);
-  // wasPlaying already saved by play/pause button handler
+  // For live streams, the browser fires aud 'pause' during unload which
+  // incorrectly sets wasPlaying=false. Override with the actual live state.
+  if (state.isLive) {
+    storage.set('wasPlaying', !state.userPausedLive && mseIsActive());
+  }
 });
 
 aud.addEventListener("ended", async function () {
