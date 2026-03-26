@@ -555,9 +555,10 @@ function showSettings() {
 
 function updateBpmEnabled(enabled) {
    storage.set('bpmEnabled', enabled);
+   updateVisModeButtons();
    if (!enabled) {
      stopTempo();
-   } else if (state.isLive && mseIsActive()) {
+   } else if (audioCtx && !aud.paused) {
      startTempo();
    }
 }
@@ -566,7 +567,7 @@ function updateVisualiserEnabled(enabled) {
    storage.set('visualiserEnabled', enabled);
    if (!enabled) {
      stopVisualiser();
-   } else if (state.isLive && mseIsActive()) {
+   } else if (audioCtx && !aud.paused) {
      startVisualiser();
    }
 }

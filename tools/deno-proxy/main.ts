@@ -4,6 +4,21 @@
 const ALLOWED_ORIGINS = ["4st.uk", "steveqv225"];
 const CORS_EXPOSE = "Icy-MetaInt, Icy-Br, Icy-Name, Icy-Genre, Icy-Url, Icy-Description, Ice-Audio-Info, Content-Length, Content-Range, Accept-Ranges, Content-Type";
 
+// Infer Content-Type from URL extension when upstream returns a generic type
+function inferContentType(upstreamCT: string | null, targetUrl: string): string {
+  if (upstreamCT && upstreamCT !== "application/octet-stream" && upstreamCT !== "binary/octet-stream") {
+    return upstreamCT;
+  }
+  try {
+    const ext = new URL(targetUrl).pathname.split(".").pop()?.toLowerCase();
+    const types: Record<string, string> = {
+      mp3: "audio/mpeg", m4a: "audio/mp4", ogg: "audio/ogg", opus: "audio/opus",
+      flac: "audio/flac", wav: "audio/wav", aac: "audio/aac", webm: "audio/webm",
+    };
+    return (ext && types[ext]) || upstreamCT || "application/octet-stream";
+  } catch (_) { return upstreamCT || "application/octet-stream"; }
+}
+
 Deno.serve(async (req: Request): Promise<Response> => {
   const url = new URL(req.url);
 
@@ -58,7 +73,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
   }
 
   try {
-    return await doFetchRequest(streamUrl, fetchHeaders, icyMeta, 0);
+    return await doFetchRequest(streamUrl, fetchHeaders, icyMeta, 0, streamUrl);
   } catch (_e) {
     return new Response("Upstream error", {
       status: 502,
@@ -72,6 +87,7 @@ async function doFetchRequest(
   headers: Record<string, string>,
   icyMeta: string,
   redirectCount: number,
+  originalUrl: string,
 ): Promise<Response> {
   if (redirectCount > 5) {
     return new Response("Too many redirects", {
@@ -93,11 +109,11 @@ async function doFetchRequest(
         const location = response.headers.get("Location");
         if (location) {
           response.body?.cancel();
-          return doFetchRequest(location, headers, icyMeta, redirectCount + 1);
+          return doFetchRequest(location, headers, icyMeta, redirectCount + 1, originalUrl);
         }
       }
 
-      return buildProxyResponse(response);
+      return buildProxyResponse(response, originalUrl);
     } catch (_e) {
       // fetch() failed — likely an ICY/Shoutcast server, try raw TCP
       return doRawRequest(target, icyMeta);
@@ -111,16 +127,16 @@ async function doFetchRequest(
     const location = response.headers.get("Location");
     if (location) {
       response.body?.cancel();
-      return doFetchRequest(location, headers, icyMeta, redirectCount + 1);
+      return doFetchRequest(location, headers, icyMeta, redirectCount + 1, originalUrl);
     }
   }
 
-  return buildProxyResponse(response);
+  return buildProxyResponse(response, originalUrl);
 }
 
-function buildProxyResponse(upstream: Response): Response {
+function buildProxyResponse(upstream: Response, originalUrl: string): Response {
   const responseHeaders: Record<string, string> = {
-    "Content-Type": upstream.headers.get("Content-Type") || "application/octet-stream",
+    "Content-Type": inferContentType(upstream.headers.get("Content-Type"), originalUrl),
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Expose-Headers": CORS_EXPOSE,
   };
@@ -138,17 +154,7 @@ function buildProxyResponse(upstream: Response): Response {
     }
   });
 
-  // For live streams (no Content-Length), wrap the body so that a clean
-  // stream end becomes an error — this triggers IcecastMetadataPlayer's
-  // seamless reconnection instead of silently stopping
-  const isLiveStream = !upstream.headers.get("Content-Length");
-  const body = isLiveStream && upstream.body
-    ? upstream.body.pipeThrough(new TransformStream({
-        flush() { throw new Error("network error"); },
-      }))
-    : upstream.body;
-
-  return new Response(body, {
+  return new Response(upstream.body, {
     status: upstream.status,
     headers: responseHeaders,
   });
@@ -216,9 +222,7 @@ async function doRawRequest(target: URL, icyMeta: string): Promise<Response> {
             const n = await conn.read(readBuf);
             if (n === null) {
               conn.close();
-              // Error instead of close — a live stream ending is abnormal,
-              // and this triggers IcecastMetadataPlayer's seamless reconnection
-              controller.error(new Error("network error"));
+              controller.close();
               return;
             }
             controller.enqueue(readBuf.slice(0, n));

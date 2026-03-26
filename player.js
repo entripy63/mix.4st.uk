@@ -1,4 +1,4 @@
-// player.js - Core Playback (Live Streams & Audio Control)
+// player.js - Core Playback (Streams & Mix Audio Control)
 // Waveform code is in player-mix.js
 
 // Custom audio controls
@@ -11,11 +11,18 @@ const timeDisplay = document.getElementById('timeDisplay');
 aud.volume = storage.getNum('playerVolume', 0.5);
 volumeSlider.value = aud.volume * 100;
 
+// Unified paused check — works for both streams and mixes
+function isPlaybackPaused() {
+  return state.isStream
+    ? (state.userPausedStream || !streamIsActive())
+    : aud.paused;
+}
+
 // Update time display
 function updateTimeDisplay() {
   const current = formatTime(aud.currentTime);
-  if (state.isLive) {
-    const isPaused = state.userPausedLive || !mseIsActive();
+  if (state.isStream) {
+    const isPaused = isPlaybackPaused();
     timeDisplay.textContent = isPaused ? 'PAUSED' : `LIVE  ${current}`;
     timeDisplay.classList.toggle('live', !isPaused);
   } else {
@@ -27,7 +34,7 @@ function updateTimeDisplay() {
 
 // Update play/pause button icon
 function updatePlayPauseBtn() {
-  const isPaused = state.isLive ? (state.userPausedLive || !mseIsActive()) : aud.paused;
+  const isPaused = isPlaybackPaused();
   playPauseBtn.textContent = isPaused ? '▶' : '❚❚';
   playPauseBtn.className = 'control-btn ' + (isPaused ? 'paused' : 'playing');
 }
@@ -43,10 +50,10 @@ function updateMuteBtn() {
   }
 }
 
-// Live stream pause: stop MSE player (stops downloading)
-function pauseLive() {
-  state.userPausedLive = true;
-  mseStopLive();
+// Stream pause: stop MSE player (stops downloading)
+function pauseStream() {
+  state.userPausedStream = true;
+  streamStop();
   stopVisualiser();
   stopTempo();
   updatePlayPauseBtn();
@@ -56,12 +63,12 @@ function pauseLive() {
   }
 }
 
-// Live stream resume: restart MSE player
-function resumeLive() {
-  state.userPausedLive = false;
-  if (state.liveStreamUrl) {
+// Stream resume: restart MSE player
+function resumeStream() {
+  state.userPausedStream = false;
+  if (state.streamUrl) {
     ensureAudioContext();
-    msePlayLive(state.liveStreamUrl, state.liveDisplayText);
+    streamPlay(state.streamUrl, state.streamDisplayText);
     startVisualiser();
     startTempo();
     updatePlayPauseBtn();
@@ -72,17 +79,17 @@ function resumeLive() {
   }
 }
 
-// Live stream reconnection is handled by IcecastMetadataPlayer (MSE)
+// Stream reconnection is handled by IcecastMetadataPlayer (MSE)
 // which has built-in retry with exponential back-off and seamless audio buffering.
 
-// Start playing a live stream via MSE
-function playLive(url, displayText, autoplay = false) {
-  state.isLive = true;
-  state.userPausedLive = false;
-  state.liveStreamUrl = url;
-  state.liveDisplayText = displayText;
-  storage.set('liveStreamUrl', url);
-  storage.set('liveDisplayText', displayText);
+// Start playing a stream via MSE
+function playStream(url, displayText, autoplay = false) {
+  state.isStream = true;
+  state.userPausedStream = false;
+  state.streamUrl = url;
+  state.streamDisplayText = displayText;
+  storage.set('streamUrl', url);
+  storage.set('streamDisplayText', displayText);
   
   // Update now playing display
   const nowPlaying = document.getElementById('nowPlaying');
@@ -94,7 +101,7 @@ function playLive(url, displayText, autoplay = false) {
 
   if (autoplay) {
     ensureAudioContext();
-    msePlayLive(url, displayText);
+    streamPlay(url, displayText);
     startVisualiser();
     startTempo();
   }
@@ -102,42 +109,47 @@ function playLive(url, displayText, autoplay = false) {
   updateTimeDisplay();
   updatePlayPauseBtn();
   
-  // Notify other modules (e.g., player-mix.js) that live stream started
-  document.dispatchEvent(new CustomEvent('liveModeEntered', {
+  // Notify other modules (e.g., player-mix.js) that stream started
+  document.dispatchEvent(new CustomEvent('streamModeEntered', {
     detail: { url, displayText }
   }));
 }
 
-// Stop live stream and return to normal mode
-function stopLive() {
-  if (state.isLive) {
-    pauseLive();
-    state.isLive = false;
-    state.liveStreamUrl = null;
-    state.liveDisplayText = null;
-    storage.remove('liveStreamUrl');
-    storage.remove('liveDisplayText');
+// Stop stream and return to normal mode
+function stopStream() {
+  if (state.isStream) {
+    pauseStream();
+    state.isStream = false;
+    state.streamUrl = null;
+    state.streamDisplayText = null;
+    storage.remove('streamUrl');
+    storage.remove('streamDisplayText');
     updateTimeDisplay();
     updatePlayPauseBtn();
   }
 }
 
-// Play/Pause button click
+// Play/Pause button click — unified for both streams and mixes
 playPauseBtn?.addEventListener('click', function(e) {
-   if (state.isLive) {
-      if (state.userPausedLive || !mseIsActive()) {
-        resumeLive();
-      } else {
-        pauseLive();
-      }
+  if (isPlaybackPaused()) {
+    if (state.isStream) {
+      resumeStream();
     } else {
-      if (aud.paused) {
-        aud.play().catch(() => {}); // Ignore aborted/failed plays
-      } else {
-        aud.pause();
-      }
+      ensureAudioContext();
+      aud.play().catch(() => {});
+      startVisualiser();
+      startTempo();
     }
-  });
+  } else {
+    if (state.isStream) {
+      pauseStream();
+    } else {
+      aud.pause();
+      stopVisualiser();
+      stopTempo();
+    }
+  }
+});
 
 // Mute button click
 let volumeBeforeMute = 0.5;
@@ -160,20 +172,31 @@ volumeSlider.addEventListener('input', function() {
 aud.addEventListener('play', () => {
   updatePlayPauseBtn();
   updateTimeDisplay();
-  if (!state.isRestoring && !state.isLive) {
+  if (!state.isRestoring && !state.isStream) {
     storage.set('wasPlaying', true);
   }
 });
 aud.addEventListener('pause', () => {
   updatePlayPauseBtn();
   updateTimeDisplay();
-  if (!state.isRestoring && !state.isLive) {
+  if (!state.isRestoring && !state.isStream) {
     storage.set('wasPlaying', false);
   }
 });
 aud.addEventListener('timeupdate', updateTimeDisplay);
 aud.addEventListener('loadedmetadata', updateTimeDisplay);
 aud.addEventListener('durationchange', updateTimeDisplay);
+
+// Diagnostic: track duration changes to detect shrinking duration
+let _lastKnownDuration = 0;
+aud.addEventListener('durationchange', () => {
+  const d = aud.duration;
+  if (isFinite(d) && isFinite(_lastKnownDuration) && _lastKnownDuration > 0 && d < _lastKnownDuration - 1) {
+    console.error('DURATION SHRUNK', { from: _lastKnownDuration, to: d, currentTime: aud.currentTime, src: aud.currentSrc });
+  }
+  if (isFinite(d)) _lastKnownDuration = d;
+});
+aud.addEventListener('loadstart', () => { _lastKnownDuration = 0; });
 
 // Save volume on change and update UI
 aud.addEventListener("volumechange", function () {
@@ -200,14 +223,30 @@ aud.addEventListener("pause", function () {
 });
 window.addEventListener("beforeunload", function () {
   storage.set('playerTime', aud.currentTime);
-  // For live streams, the browser fires aud 'pause' during unload which
-  // incorrectly sets wasPlaying=false. Override with the actual live state.
-  if (state.isLive) {
-    storage.set('wasPlaying', !state.userPausedLive && mseIsActive());
+  // For streams, the browser fires aud 'pause' during unload which
+  // incorrectly sets wasPlaying=false. Override with the actual stream state.
+  if (state.isStream) {
+    storage.set('wasPlaying', !isPlaybackPaused());
   }
 });
 
 aud.addEventListener("ended", async function () {
+   // Diagnostic: detect premature end (> 60s before expected duration)
+   if (!state.isStream && aud.duration && isFinite(aud.duration) && aud.currentTime < aud.duration - 60) {
+     const bufRanges = [];
+     for (let i = 0; i < aud.buffered.length; i++) bufRanges.push([aud.buffered.start(i), aud.buffered.end(i)]);
+     console.error('PREMATURE END', {
+       currentTime: aud.currentTime,
+       duration: aud.duration,
+       readyState: aud.readyState,
+       networkState: aud.networkState,
+       error: aud.error && { code: aud.error.code, message: aud.error.message },
+       buffered: bufRanges,
+       src: aud.currentSrc
+     });
+   }
+   stopVisualiser();
+   stopTempo();
    // Handle Play Now mix end based on setting
    if (state.playingFromPlayNow) {
      const setting = storage.get('afterPlayNow', 'stop');
@@ -245,17 +284,19 @@ aud.addEventListener("ended", async function () {
 });
 
 async function load(url) {
-  // Stop MSE player if active (important when exiting live mode)
-  await mseStopLive();
+  // Stop MSE player if active (important when exiting stream mode)
+  await streamStop();
   aud.pause();
+  stopVisualiser();
+  stopTempo();
   
-  // Exit live mode when loading regular content
-  if (state.isLive) {
-    state.isLive = false;
-    state.liveStreamUrl = null;
-    state.liveDisplayText = null;
-    storage.remove('liveStreamUrl');
-    storage.remove('liveDisplayText');
+  // Exit stream mode when loading regular content
+  if (state.isStream) {
+    state.isStream = false;
+    state.streamUrl = null;
+    state.streamDisplayText = null;
+    storage.remove('streamUrl');
+    storage.remove('streamDisplayText');
     updateTimeDisplay();
   }
   aud.src = url;
@@ -264,7 +305,10 @@ async function load(url) {
 
 async function play(url) {
   await load(url);
+  ensureAudioContext();
   aud.play();
+  startVisualiser();
+  startTempo();
 }
 
 // Keyboard shortcuts

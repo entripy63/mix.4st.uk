@@ -235,8 +235,8 @@ async function probeAndAddStream(config, initConfig = {}) {
 
   // Skip probing if this stream is currently playing (single-stream-per-IP constraint)
   // Just mark it as available since it's clearly working
-  if (state.liveStreamM3u && config.m3u === state.liveStreamM3u && !aud.paused) {
-    stream.url = state.liveStreamUrl;
+  if (state.streamM3u && config.m3u === state.streamM3u && !aud.paused) {
+    stream.url = state.streamUrl;
     stream.available = true;
     stream.reason = null;
     // Set fallback name if not provided
@@ -396,27 +396,27 @@ async function initLiveStreams(config = {}) {
   }
 }
 
-async function restoreLivePlayer() {
+async function restoreStreamPlayer() {
   await loadProxyConfig();
   try {
-    const savedLiveUrl = storage.get('liveStreamUrl');
-    const savedLiveM3u = storage.get('liveStreamM3u');
-    const savedLiveText = storage.get('liveDisplayText');
+    const savedUrl = storage.get('streamUrl');
+    const savedM3u = storage.get('streamM3u');
+    const savedText = storage.get('streamDisplayText');
 
-    if (savedLiveUrl && savedLiveText) {
+    if (savedUrl && savedText) {
       state.isRestoring = true;
-      state.liveStreamUrl = savedLiveUrl;
-      state.liveStreamM3u = savedLiveM3u;
+      state.streamUrl = savedUrl;
+      state.streamM3u = savedM3u;
       const wasPlaying = storage.getBool('wasPlaying', false);
-      playLive(savedLiveUrl, savedLiveText, wasPlaying);
-      // Keep isRestoring true until after playLive's async setup (canplay listener, timeouts, etc.)
+      playStream(savedUrl, savedText, wasPlaying);
+      // Keep isRestoring true until after playStream's async setup
       setTimeout(() => {
         state.isRestoring = false;
       }, 200);
-      return true; // Restored live stream (caller handles tab switch + stream init)
+      return true; // Restored stream (caller handles tab switch + stream init)
     }
   } catch (e) {
-    console.error('Error restoring live stream:', e);
+    console.error('Error restoring stream:', e);
   }
   return false; // Did not restore
 }

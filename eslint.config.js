@@ -37,7 +37,7 @@ export default [
         // Imported functions (called across file boundaries)
         fetchDJMixes: 'readonly',
         escapeHtml: 'readonly',
-        playLive: 'readonly',
+        playStream: 'readonly',
         addUserStream: 'readonly',
         showConfirmDialog: 'readonly',
         getUserStreams: 'readonly',

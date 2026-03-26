@@ -1,6 +1,6 @@
 // liveui.js - Live stream UI rendering and interactions
 // Dependencies: core.js (state, storage, escapeHtml, showToast)
-//               player.js (playLive, stopLive, updatePlayPauseBtn)
+//               player.js (playStream, stopStream, updatePlayPauseBtn)
 //               livedata.js (stream management, probing, parsing)
 //               modals.js (showPlaylistGuide, hidePlaylistGuide, showPresetsMenu, hidePresetsMenu)
 
@@ -148,15 +148,15 @@ function playLiveStream(index) {
   const name = stream.name || stream.m3u;
   const url = stream.url;
   
-  state.isLive = true;
-  state.liveStreamUrl = url;
-  state.liveStreamM3u = stream.m3u;
-  state.liveDisplayText = name;
-  storage.set('liveStreamUrl', url);
-  storage.set('liveStreamM3u', stream.m3u);
-  storage.set('liveDisplayText', name);
+  state.isStream = true;
+  state.streamUrl = url;
+  state.streamM3u = stream.m3u;
+  state.streamDisplayText = name;
+  storage.set('streamUrl', url);
+  storage.set('streamM3u', stream.m3u);
+  storage.set('streamDisplayText', name);
   
-  playLive(url, name, true);
+  playStream(url, name, true);
   displayLiveStreams();
 }
 
@@ -448,15 +448,15 @@ async function playPresetStream(index) {
     return;
   }
 
-  state.isLive = true;
-  state.liveStreamUrl = resolvedUrl;
-  state.liveStreamM3u = stream.m3u;
-  state.liveDisplayText = name;
-  storage.set('liveStreamUrl', resolvedUrl);
-  storage.set('liveStreamM3u', stream.m3u);
-  storage.set('liveDisplayText', name);
+  state.isStream = true;
+  state.streamUrl = resolvedUrl;
+  state.streamM3u = stream.m3u;
+  state.streamDisplayText = name;
+  storage.set('streamUrl', resolvedUrl);
+  storage.set('streamM3u', stream.m3u);
+  storage.set('streamDisplayText', name);
 
-  playLive(resolvedUrl, name, true);
+  playStream(resolvedUrl, name, true);
 }
 
 async function addPresetStreamToUserStreams(index) {

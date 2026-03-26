@@ -72,7 +72,7 @@
             <div class="settings-group">
               <label class="checkbox-label">
                 <input type="checkbox" id="visualiserEnabledCheckbox" onchange="updateVisualiserEnabled(this.checked)">
-                Live Stream Visualiser
+                Audio Visualiser
               </label>
             </div>
             <div class="settings-group">
@@ -195,8 +195,18 @@
       </div>
     </div>
     <div class="right-column">
-      <canvas id="waveform"></canvas>
+      <div id="waveformContainer">
+        <canvas id="waveform"></canvas>
+        <canvas id="visualiserCanvas"></canvas>
+      </div>
       <div id="waveformResizeHandle"></div>
+      <div id="visualiserModes">
+        <button class="vis-mode-btn active" data-vis="spectrum" title="Spectrum">▮▮▮</button>
+        <button class="vis-mode-btn" data-vis="waveform" title="Waveform">∿</button>
+        <button class="vis-mode-btn bpm-only" data-vis="flux" title="Spectral flux">⚡</button>
+        <button class="vis-mode-btn bpm-only" data-vis="autocorr" title="Autocorrelation">∞</button>
+        <button class="vis-mode-btn" data-vis="off" title="Visualiser off">✕</button>
+      </div>
       <audio id="audioPlayer" crossorigin="anonymous"></audio>
       <div id="audioControls">
         <button id="playPauseBtn" class="control-btn" title="Play/Pause (Space)">▶</button>
@@ -240,7 +250,7 @@
   <script src="queue.js"></script>
   <script src="queuestore.js"></script>
   <script src="vendor/icecast-metadata-player-1.17.13.main.min.js"></script>
-  <script src="mse-player.js"></script>
+  <script src="stream-player.js"></script>
   <script src="player.js"></script>
   <script src="tempo.js"></script>
   <script src="visualiser.js"></script>

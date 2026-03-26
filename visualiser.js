@@ -1,19 +1,30 @@
-// visualiser.js - Live stream audio visualisation (spectrum/waveform)
+// visualiser.js - Live audio visualisation (spectrum/waveform/flux/autocorr)
 // Dependencies: core.js (state, storage, audioCtx, analyserNode), tempo.js (tempo)
+// Draws on a separate overlay canvas (#visualiserCanvas) above the peaks waveform.
 
-const visCanvas = document.getElementById("waveform");
+const visCanvas = document.getElementById("visualiserCanvas");
 const visCtx = visCanvas.getContext("2d");
 
 let visualiserAnimId = null;
-let visualiserMode = 'spectrum'; // 'spectrum' or 'waveform'
+let visualiserMode = storage.get('visualiserMode', 'spectrum');
+
+// Sync overlay canvas resolution to match the peaks canvas beneath it
+function resizeVisualiserCanvas() {
+    const wf = document.getElementById("waveform");
+    const w = wf.width;
+    const h = wf.height;
+    if (visCanvas.width !== w) visCanvas.width = w;
+    if (visCanvas.height !== h) visCanvas.height = h;
+}
 
 function startVisualiser() {
     if (visualiserAnimId) return;
+    if (visualiserMode === 'off') return;
     if (!storage.getBool('visualiserEnabled', true)) return;
     if (audioCtx.state === 'suspended') {
         audioCtx.resume();
     }
-    visCanvas.style.cursor = 'pointer';
+    resizeVisualiserCanvas();
     const freqData = new Uint8Array(analyserNode.frequencyBinCount);
     const timeData = new Uint8Array(analyserNode.fftSize);
 
@@ -51,11 +62,10 @@ function startVisualiser() {
             }
             visCtx.stroke();
         } else if (visualiserMode === 'flux' && tempo.bufFilled > 0) {
-            // Draw spectral flux time series from circular buffer
             const n = tempo.bufFilled;
             const sliceWidth = w / n;
 
-            // Slow-decay peak scaling (expands fast, contracts slowly)
+            // Slow-decay peak scaling
             let bufPeak = 0;
             for (let i = 0; i < n; i++) {
                 if (tempo.fluxBuf[i] > bufPeak) bufPeak = tempo.fluxBuf[i];
@@ -63,7 +73,7 @@ function startVisualiser() {
             tempo.fluxPeak = Math.max(bufPeak, tempo.fluxPeak * 0.995);
             const scale = tempo.fluxPeak || 1;
 
-            // Fixed reference line (shows scaling changes)
+            // Fixed reference line
             const refY = h - (10 / scale) * h * 0.9;
             visCtx.strokeStyle = '#ffffff30';
             visCtx.lineWidth = 1;
@@ -72,7 +82,7 @@ function startVisualiser() {
             visCtx.lineTo(w, refY);
             visCtx.stroke();
 
-            // Flux time series (clipped at scale, not auto-scaled)
+            // Flux time series
             visCtx.strokeStyle = '#5c6bc0';
             visCtx.lineWidth = 2;
             visCtx.beginPath();
@@ -100,12 +110,12 @@ function startVisualiser() {
             visCtx.lineTo(w, zeroY);
             visCtx.stroke();
 
-            // Autocorrelation curve (positive above centre, negative below)
+            // Autocorrelation curve
             visCtx.strokeStyle = '#5c6bc0';
             visCtx.lineWidth = 2;
             visCtx.beginPath();
             for (let i = 0; i < n; i++) {
-                const val = corrs[i] / scale; // -1..1 range roughly
+                const val = corrs[i] / scale;
                 const y = zeroY - val * zeroY * 0.85;
                 const x = i * sliceWidth;
                 if (i === 0) visCtx.moveTo(x, y);
@@ -136,17 +146,45 @@ function stopVisualiser() {
         visualiserAnimId = null;
     }
     visCtx.clearRect(0, 0, visCanvas.width, visCanvas.height);
-    visCanvas.style.cursor = '';
 }
 
-// Click canvas to toggle between spectrum and waveform when live
-visCanvas.addEventListener('click', (e) => {
-    if (!state.isLive || !visualiserAnimId) return;
-    e.preventDefault();
-    e.stopPropagation();
-    const modes = storage.getBool('bpmEnabled', true)
-        ? ['spectrum', 'waveform', 'flux', 'autocorr']
-        : ['spectrum', 'waveform'];
-    const idx = modes.indexOf(visualiserMode);
-    visualiserMode = modes[((idx === -1 ? 0 : idx) + 1) % modes.length];
+// Mode button handling
+function setVisualiserMode(mode) {
+    visualiserMode = mode;
+    storage.set('visualiserMode', mode);
+
+    // Update button active states
+    document.querySelectorAll('.vis-mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.vis === mode);
+    });
+
+    if (mode === 'off') {
+        stopVisualiser();
+    } else if (audioCtx && !aud.paused) {
+        // Restart if audio is playing but visualiser was stopped (e.g. was 'off')
+        if (!visualiserAnimId) startVisualiser();
+    }
+}
+
+// Update BPM-only button visibility
+function updateVisModeButtons() {
+    const bpmEnabled = storage.getBool('bpmEnabled', true);
+    document.querySelectorAll('.vis-mode-btn.bpm-only').forEach(btn => {
+        btn.hidden = !bpmEnabled;
+    });
+    // If current mode is a bpm-only mode and BPM was just disabled, fall back
+    if (!bpmEnabled && (visualiserMode === 'flux' || visualiserMode === 'autocorr')) {
+        setVisualiserMode('spectrum');
+    }
+}
+
+// Initialise mode buttons
+document.querySelectorAll('.vis-mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => setVisualiserMode(btn.dataset.vis));
 });
+
+// Set initial button states from persisted mode
+document.querySelectorAll('.vis-mode-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.vis === visualiserMode);
+});
+updateVisModeButtons();

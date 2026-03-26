@@ -22,6 +22,19 @@ export default {
 
     const url = new URL(request.url);
     const streamUrl = url.searchParams.get('url');
+
+    // Infer Content-Type from URL extension when upstream returns a generic type
+    const inferContentType = (upstreamCT, targetUrl) => {
+      if (upstreamCT && upstreamCT !== 'application/octet-stream' && upstreamCT !== 'binary/octet-stream') {
+        return upstreamCT;
+      }
+      try {
+        const ext = new URL(targetUrl).pathname.split('.').pop().toLowerCase();
+        const types = { mp3: 'audio/mpeg', m4a: 'audio/mp4', ogg: 'audio/ogg', opus: 'audio/opus',
+                        flac: 'audio/flac', wav: 'audio/wav', aac: 'audio/aac', webm: 'audio/webm' };
+        return types[ext] || upstreamCT || 'application/octet-stream';
+      } catch (_) { return upstreamCT || 'application/octet-stream'; }
+    };
     if (!streamUrl) {
       // Status endpoint
       if (url.pathname === '/status') {
@@ -35,10 +48,13 @@ export default {
       });
     }
 
+    // Check if this is a live stream request (icy=1 added by stream-player.js)
+    const icyMeta = url.searchParams.get('icy') === '1' ? '1' : '0';
+
     // Build upstream request headers
     const fetchHeaders = {
       'User-Agent': 'AudioPlayer/1.0',
-      'Icy-MetaData': '0'
+      'Icy-MetaData': icyMeta
     };
 
     const rangeHeader = request.headers.get('Range');
@@ -55,7 +71,7 @@ export default {
 
       // Build response headers
       const responseHeaders = {
-        'Content-Type': response.headers.get('Content-Type') || 'application/octet-stream',
+        'Content-Type': inferContentType(response.headers.get('Content-Type'), streamUrl),
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Expose-Headers': 'Content-Length, Content-Range, Accept-Ranges, Content-Type'
       };
@@ -66,16 +82,7 @@ export default {
         if (value) responseHeaders[header] = value;
       }
 
-      // For live streams (no Content-Length), convert a clean stream end
-      // into an error to trigger IcecastMetadataPlayer's seamless reconnection
-      const isLiveStream = !response.headers.get('Content-Length');
-      const body = isLiveStream && response.body
-        ? response.body.pipeThrough(new TransformStream({
-            flush() { throw new Error('network error'); },
-          }))
-        : response.body;
-
-      return new Response(body, {
+      return new Response(response.body, {
         status: response.status,
         headers: responseHeaders
       });

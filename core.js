@@ -54,6 +54,7 @@ const aud = document.getElementById("audioPlayer");
 // (browsers require a user gesture before creating an AudioContext)
 let audioCtx = null;
 let analyserNode = null;
+let gainNode = null;
 let audioSourceNode = null;
 
 function ensureAudioContext() {
@@ -62,8 +63,10 @@ function ensureAudioContext() {
     analyserNode = audioCtx.createAnalyser();
     analyserNode.fftSize = 256;
     analyserNode.smoothingTimeConstant = 0.3;
+    gainNode = audioCtx.createGain();
     audioSourceNode = audioCtx.createMediaElementSource(aud);
-    audioSourceNode.connect(analyserNode);
+    audioSourceNode.connect(gainNode);
+    gainNode.connect(analyserNode);
     analyserNode.connect(audioCtx.destination);
 }
 
@@ -86,10 +89,26 @@ const state = {
    previousQueueIndex: -1,
    previousQueueTime: 0,
    showHiddenMixes: false,  // Ephemeral, not persisted
-   isLive: false,           // Currently playing a live stream
-   liveStreamUrl: null,     // URL to restore on live resume
-   liveDisplayText: null    // Display text for current live stream
+   isStream: false,         // Currently playing a stream (not a file)
+   streamUrl: null,         // URL of current stream
+   streamDisplayText: null  // Display text for current stream
    };
+
+   // Migrate old localStorage keys (liveStreamUrl → streamUrl, etc.)
+   (function migrateStreamKeys() {
+     const keyMap = {
+       'liveStreamUrl': 'streamUrl',
+       'liveStreamM3u': 'streamM3u',
+       'liveDisplayText': 'streamDisplayText'
+     };
+     for (const [oldKey, newKey] of Object.entries(keyMap)) {
+       const val = localStorage.getItem(oldKey);
+       if (val !== null && localStorage.getItem(newKey) === null) {
+         localStorage.setItem(newKey, val);
+         localStorage.removeItem(oldKey);
+       }
+     }
+   })();
 
    // Migrate old DJ paths in queue to new mixes/ paths
    (function migrateQueuePaths() {

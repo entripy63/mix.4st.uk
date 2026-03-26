@@ -91,12 +91,13 @@ const mixFlags = {
 
 const waveformCtx = waveformCanvas.getContext("2d");
 
-// Set canvas resolution to match CSS size
+// Set canvas resolution to match CSS size (both peaks and visualiser overlay)
 function resizeWaveformCanvas() {
     const w = waveformCanvas.offsetWidth || 500;
     const h = waveformCanvas.offsetHeight || 60;
     if (waveformCanvas.width !== w) waveformCanvas.width = w;
     if (waveformCanvas.height !== h) waveformCanvas.height = h;
+    resizeVisualiserCanvas();
     if (state.currentPeaks) {
         const progress = aud.duration ? aud.currentTime / aud.duration : 0;
         drawWaveform(state.currentPeaks, progress);
@@ -147,15 +148,16 @@ function updateWaveformCursor() {
 aud.addEventListener('timeupdate', updateWaveformCursor);
 aud.addEventListener('seeked', updateWaveformCursor);
 
-// Click on waveform to seek
+// Click on waveform to seek (only when peaks are loaded, i.e. a mix is playing)
 waveformCanvas.addEventListener('click', function (e) {
+    if (!state.currentPeaks) return;
     e.preventDefault();
     e.stopPropagation();
     
     if (aud.duration && isFinite(aud.duration)) {
         const rect = waveformCanvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
-        const progress = Math.max(0, Math.min(1, x / waveformCanvas.width));
+        const progress = Math.max(0, Math.min(1, x / rect.width));
         let newTime = progress * aud.duration;
         
         // Clamp to seekable range
@@ -177,12 +179,14 @@ drawWaveform([], 0);
 
 // Waveform resize handling
 const resizeHandle = document.getElementById('waveformResizeHandle');
+const waveformContainer = document.getElementById('waveformContainer');
 
 // Restore saved height
 const savedHeight = storage.getNum('waveformHeight', 0);
 if (savedHeight) {
-    waveformCanvas.style.height = savedHeight + 'px';
+    waveformContainer.style.height = savedHeight + 'px';
     waveformCanvas.height = savedHeight;
+    resizeVisualiserCanvas();
 }
 
 resizeHandle.addEventListener('mousedown', startResize);
@@ -201,11 +205,12 @@ function doResize(e) {
     if (!state.isResizing) return;
     e.preventDefault();
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    const rect = waveformCanvas.getBoundingClientRect();
+    const rect = waveformContainer.getBoundingClientRect();
     let newHeight = clientY - rect.top;
     newHeight = Math.max(30, Math.min(200, newHeight));
-    waveformCanvas.style.height = newHeight + 'px';
+    waveformContainer.style.height = newHeight + 'px';
     waveformCanvas.height = newHeight;
+    resizeVisualiserCanvas();
     if (state.currentPeaks) drawWaveform(state.currentPeaks, aud.currentTime / aud.duration || 0);
 }
 
@@ -435,10 +440,9 @@ function probeAudioPlayback(file) {
 }
 
 // Listen for live stream events and clear DJ mix UI
-document.addEventListener('liveModeEntered', () => {
+document.addEventListener('streamModeEntered', () => {
     storage.remove('currentMixPath');
     loadPeaks(null);
-    stopVisualiser();
     const coverArt = document.getElementById('coverArt');
     const trackList = document.getElementById('trackList');
     const streamTitle = document.getElementById('streamTitle');
@@ -448,7 +452,7 @@ document.addEventListener('liveModeEntered', () => {
 });
 
 // Update stream title from ICY metadata
-document.addEventListener('liveMetadata', (e) => {
+document.addEventListener('streamMetadata', (e) => {
     const title = e.detail?.metadata?.StreamTitle;
     const streamTitle = document.getElementById('streamTitle');
     if (streamTitle && title) {

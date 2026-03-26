@@ -6,6 +6,19 @@ const ALLOWED_ORIGINS = ['4st.uk', 'steveqv225'];
 const PORT = process.env.PORT || 8080;
 let activeConnections = 0;
 
+// Infer Content-Type from URL extension when upstream returns a generic type
+function inferContentType(upstreamCT, targetUrl) {
+  if (upstreamCT && upstreamCT !== 'application/octet-stream' && upstreamCT !== 'binary/octet-stream') {
+    return upstreamCT;
+  }
+  try {
+    const ext = new URL(targetUrl).pathname.split('.').pop().toLowerCase();
+    const types = { mp3: 'audio/mpeg', m4a: 'audio/mp4', ogg: 'audio/ogg', opus: 'audio/opus',
+                    flac: 'audio/flac', wav: 'audio/wav', aac: 'audio/aac', webm: 'audio/webm' };
+    return types[ext] || upstreamCT || 'application/octet-stream';
+  } catch (_) { return upstreamCT || 'application/octet-stream'; }
+}
+
 const server = http.createServer(async (req, res) => {
   // Status endpoint (no origin check needed)
   if (req.url === '/status') {
@@ -74,7 +87,7 @@ const server = http.createServer(async (req, res) => {
       }
 
       const responseHeaders = {
-        'Content-Type': proxyRes.headers['content-type'] || '',
+        'Content-Type': inferContentType(proxyRes.headers['content-type'], streamUrl),
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Expose-Headers': 'Icy-MetaInt, Icy-Br, Icy-Name, Icy-Genre, Icy-Url, Icy-Description, Ice-Audio-Info, Content-Length, Content-Range, Accept-Ranges'
       };
@@ -91,20 +104,8 @@ const server = http.createServer(async (req, res) => {
         }
       }
 
-      // Detect if this is a live stream (no content-length = infinite stream)
-      const isLiveStream = !proxyRes.headers['content-length'];
-
       res.writeHead(proxyRes.statusCode, responseHeaders);
-
-      if (isLiveStream) {
-        // Don't let pipe() auto-end the response — we want to destroy it
-        // abruptly so the browser sees a network error, triggering
-        // IcecastMetadataPlayer's seamless retry/reconnection logic.
-        proxyRes.pipe(res, { end: false });
-        proxyRes.on('end', () => { res.destroy(); });
-      } else {
-        proxyRes.pipe(res);
-      }
+      proxyRes.pipe(res);
 
       res.on('close', () => { proxyRes.destroy(); proxyReq.destroy(); });
     });
@@ -184,10 +185,8 @@ function doRawRequest(target, res, icyMeta) {
   });
 
   socket.on('end', () => {
-    // For live streams (no content-length), destroy instead of ending cleanly
-    // to trigger IcecastMetadataPlayer's seamless reconnection
     if (!res.destroyed) {
-      res.destroy();
+      res.end();
     }
   });
   res.on('close', () => socket.destroy());

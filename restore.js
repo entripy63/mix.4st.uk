@@ -36,9 +36,9 @@ document.getElementById('fileInput').addEventListener('change', async function (
 (async function restorePlayer() {
   try {
     // Try restoring live stream first (handles both mix and live restoration)
-    const liveRestored = await restoreLivePlayer();
+    const liveRestored = await restoreStreamPlayer();
     if (liveRestored) {
-      // Clear player.html-specific DOM after playLive() call
+      // Clear player.html-specific DOM after playStream() call
       loadPeaks(null);
       document.getElementById('coverArt').innerHTML = '';
       document.getElementById('trackList').innerHTML = '';
@@ -89,7 +89,10 @@ document.getElementById('fileInput').addEventListener('change', async function (
           state.isRestoring = false;
 
           if (wasPlaying) {
+            ensureAudioContext();
             aud.play().catch(() => { });
+            startVisualiser();
+            startTempo();
           }
         };
         aud.addEventListener('loadedmetadata', handleMetadataLoaded, { once: true });
@@ -99,7 +102,10 @@ document.getElementById('fileInput').addEventListener('change', async function (
           if (state.isRestoring) {
             state.isRestoring = false;
             if (wasPlaying && aud.paused) {
+              ensureAudioContext();
               aud.play().catch(() => { });
+              startVisualiser();
+              startTempo();
             }
           }
         }, 2000);

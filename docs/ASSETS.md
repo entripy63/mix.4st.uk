@@ -52,11 +52,17 @@
 - **Used by**: player.html
 - **Features**: Add/remove tracks, reorder, shuffle
 
+#### stream-player.js
+- **Purpose**: IcecastMetadataPlayer wrapper for stream playback (MSE)
+- **Dependencies**: core.js, player.js
+- **Used by**: player.html
+- **Features**: Stream play/stop, ICY metadata events, error handling with restart limits
+
 #### visualiser.js
-- **Purpose**: Live stream audio visualisation (spectrum/waveform)
+- **Purpose**: Audio visualisation overlay (spectrum, waveform, spectral flux, autocorrelation)
 - **Dependencies**: core.js
 - **Used by**: player.html
-- **Features**: AudioContext analyser, spectrum bars, waveform oscilloscope, click to toggle mode
+- **Features**: Real-time analyser rendering on overlay canvas, multiple visualiser modes, works for both DJ mixes and streams
 
 #### player-mix.js (300 lines)
 - **Purpose**: Mix-specific playback logic extracted from player.js
@@ -268,11 +274,13 @@ python3 tools/generate-manifest.py --source /alternate/audio/path .
 
 ### player.html Load Order
 ```
-core.js           (shared: state, storage, utilities)
+core.js           (shared: state, storage, utilities, Web Audio graph)
 mixes.js          (load mix manifests)
 queue.js          (queue management)
+queuestore.js     (queue save/load to file)
+stream-player.js  (IcecastMetadataPlayer wrapper for streams)
 player.js         (audio playback engine)
-visualiser.js     (live stream audio visualisation)
+visualiser.js     (audio visualisation overlay)
 player-mix.js     (mix-specific playback)
 livedata.js       (stream data, probing, parsing)
 modals.js         (modal dialogs)
@@ -319,7 +327,8 @@ player.html adds: mixes.js → queue.js → player-mix.js → browser.js → sea
 ├── JavaScript Modules
 │   ├── core.js             # Global state, storage, utilities
 │   ├── player.js           # Audio playback, controls, waveform
-│   ├── visualiser.js       # Live stream audio visualisation
+│   ├── stream-player.js    # IcecastMetadataPlayer wrapper
+│   ├── visualiser.js       # Audio visualisation overlay
 │   ├── livedata.js         # Stream probing, parsing, persistence
 │   ├── livestore.js        # Collection persistence (save/load/clear)
 │   ├── liveui.js           # Stream rendering, drag-drop, guards
@@ -420,7 +429,7 @@ player.html adds: mixes.js → queue.js → player-mix.js → browser.js → sea
 
 ### mixes.4st.uk (DJ Mixes SPA)
 - **Entry Point**: player.html
-- **JavaScript Modules**: core, mixes, queue, player, visualiser, player-mix, livedata, modals, livestore, liveui, browser, search, restore
+- **JavaScript Modules**: core, mixes, queue, queuestore, stream-player, player, tempo, visualiser, player-mix, livedata, modals, livestore, liveui, browser, search, restore
 - **Stylesheets**: common.css, player.css
 - **Data**: DJ folders with manifests, track lists, cover art, waveform data
 - **Size**: ~200MB+ (includes all DJ music archives)
