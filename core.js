@@ -1,13 +1,31 @@
 // core.js - Shared utilities, global state, and DOM references
 
-// Mixes base URL - defaults to local, overridden by mixes-config.json
-let MIXES_BASE_URL = '/mixes/';
+// Mixes base URLs - ordered list of sources to try, loaded from mixes-config.json
+let MIXES_BASE_URLS = ['/mixes/'];
 
 async function loadMixesConfig() {
   try {
     const resp = await fetch('mixes/mixes-config.json');
     const config = await resp.json();
-    MIXES_BASE_URL = config.mixesBaseUrl;
+    const urls = config.mixesBaseUrls || (config.mixesBaseUrl ? [config.mixesBaseUrl] : null);
+    if (urls && urls.length > 0) {
+      // Filter out remote URLs that resolve to our own origin, either directly
+      // (e.g. https://mixes.4st.uk/mixes/) or via a proxy wrapper
+      // (e.g. https://proxy.example.com/?url=https://mixes.4st.uk/mixes/)
+      const ownOrigin = window.location.origin;
+      MIXES_BASE_URLS = urls.filter(url => {
+        // Relative URLs: always keep
+        if (!url.startsWith('http://') && !url.startsWith('https://')) return true;
+        // Direct absolute URL to our own origin
+        try { if (new URL(url).origin === ownOrigin) return false; }
+        catch { /* keep */ }
+        // Proxy URL wrapping our own origin (contains our origin in the URL string)
+        if (url.includes(ownOrigin + '/')) return false;
+        return true;
+      });
+      // Must have at least one URL; if all were filtered, keep the original list
+      if (MIXES_BASE_URLS.length === 0) MIXES_BASE_URLS = urls;
+    }
   } catch (e) {
     console.warn('Failed to load mixes/mixes-config.json, using local fallback:', e);
   }

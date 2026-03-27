@@ -176,6 +176,22 @@ function encodeFilename(filename) {
   return filename.split('/').map(part => encodeURIComponent(part)).join('/');
 }
 
+// Try to fetch a media file from each base URL in order, returning the first that responds OK.
+// Returns the working URL, or null if none succeed.
+async function resolveMediaUrl(relativePath) {
+  for (const baseUrl of MIXES_BASE_URLS) {
+    const url = baseUrl + relativePath;
+    try {
+      const resp = await fetch(url, { method: 'HEAD' });
+      if (resp.ok) return url;
+    } catch {
+      // Network error, try next
+    }
+  }
+  // All failed — return the first URL as a last resort (browser may still handle it)
+  return MIXES_BASE_URLS[0] + relativePath;
+}
+
 async function fetchMixDetails(mix) {
   const djPath = mix.djPath || mix.dj;
   const localDir = `${djPath}/`;
@@ -211,12 +227,15 @@ async function fetchMixDetails(mix) {
   // Cover art URL (local)
   const coverSrc = mix.coverFile ? localDir + encodeFilename(mix.coverFile) : null;
   
-  // Audio source uses configurable MIXES_BASE_URL (may be remote)
+  // Resolve audio source from configured base URLs (tries each in order)
   const cleanPath = djPath.replace(/^mixes\//, '');
-  const audioSrc = `${MIXES_BASE_URL}${cleanPath}/${encodeFilename(mix.audioFile)}`;
-  // Build download links (may be remote)
+  const audioRelPath = cleanPath + '/' + encodeFilename(mix.audioFile);
+  const audioSrc = await resolveMediaUrl(audioRelPath);
+
+  // Build download links using the same base URL that worked for audio
+  const workingBase = audioSrc.substring(0, audioSrc.length - audioRelPath.length);
   const downloadLinks = (mix.downloads || []).map(d => ({
-    href: MIXES_BASE_URL + cleanPath + '/' + encodeFilename(d.file),
+    href: workingBase + cleanPath + '/' + encodeFilename(d.file),
     label: d.label
   }));
   
