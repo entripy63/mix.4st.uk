@@ -84,6 +84,7 @@ function resumeStream() {
 
 // Start playing a stream via MSE
 function playStream(url, displayText, autoplay = false) {
+  timeDisplay.title = decodeURIComponent(url);
   state.isStream = true;
   state.userPausedStream = false;
   state.streamUrl = url;
@@ -304,6 +305,7 @@ async function load(url) {
 }
 
 async function play(url) {
+  timeDisplay.title = decodeURIComponent(url);
   await load(url);
   ensureAudioContext();
   aud.play();
