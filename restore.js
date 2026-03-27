@@ -91,6 +91,7 @@ document.getElementById('fileInput').addEventListener('change', async function (
           if (wasPlaying) {
             ensureAudioContext();
             aud.play().catch(() => { });
+            declick.fadeIn();
             startVisualiser();
             startTempo();
           }
@@ -104,6 +105,7 @@ document.getElementById('fileInput').addEventListener('change', async function (
             if (wasPlaying && aud.paused) {
               ensureAudioContext();
               aud.play().catch(() => { });
+              declick.fadeIn();
               startVisualiser();
               startTempo();
             }

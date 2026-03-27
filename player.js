@@ -51,8 +51,9 @@ function updateMuteBtn() {
 }
 
 // Stream pause: stop MSE player (stops downloading)
-function pauseStream() {
+async function pauseStream() {
   state.userPausedStream = true;
+  await declick.fadeOut();
   streamStop();
   stopVisualiser();
   stopTempo();
@@ -69,6 +70,7 @@ function resumeStream() {
   if (state.streamUrl) {
     ensureAudioContext();
     streamPlay(state.streamUrl, state.streamDisplayText);
+    declick.fadeIn();
     startVisualiser();
     startTempo();
     updatePlayPauseBtn();
@@ -103,6 +105,7 @@ function playStream(url, displayText, autoplay = false) {
   if (autoplay) {
     ensureAudioContext();
     streamPlay(url, displayText);
+    declick.fadeIn();
     startVisualiser();
     startTempo();
   }
@@ -131,13 +134,14 @@ function stopStream() {
 }
 
 // Play/Pause button click — unified for both streams and mixes
-playPauseBtn?.addEventListener('click', function(e) {
+playPauseBtn?.addEventListener('click', async function(e) {
   if (isPlaybackPaused()) {
     if (state.isStream) {
       resumeStream();
     } else {
       ensureAudioContext();
       aud.play().catch(() => {});
+      declick.fadeIn();
       startVisualiser();
       startTempo();
     }
@@ -145,6 +149,7 @@ playPauseBtn?.addEventListener('click', function(e) {
     if (state.isStream) {
       pauseStream();
     } else {
+      await declick.fadeOut();
       aud.pause();
       stopVisualiser();
       stopTempo();
@@ -250,6 +255,7 @@ aud.addEventListener("ended", async function () {
      if (setting === 'loop') {
        aud.currentTime = 0;
        aud.play();
+       declick.fadeIn();
        return;
      } else if (setting === 'continue') {
        // Restore previous queue position
@@ -280,6 +286,8 @@ aud.addEventListener("ended", async function () {
 });
 
 async function load(url) {
+  // Declick before stopping current playback
+  await declick.fadeOut();
   // Stop MSE player if active (important when exiting stream mode)
   await streamStop();
   aud.pause();
@@ -304,6 +312,7 @@ async function play(url) {
   await load(url);
   ensureAudioContext();
   aud.play();
+  declick.fadeIn();
   startVisualiser();
   startTempo();
 }

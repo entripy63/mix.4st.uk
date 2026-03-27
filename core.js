@@ -72,6 +72,7 @@ const aud = document.getElementById("audioPlayer");
 // (browsers require a user gesture before creating an AudioContext)
 let audioCtx = null;
 let analyserNode = null;
+let declickNode = null;
 let gainNode = null;
 let audioSourceNode = null;
 
@@ -81,12 +82,15 @@ function ensureAudioContext() {
     analyserNode = audioCtx.createAnalyser();
     analyserNode.fftSize = 256;
     analyserNode.smoothingTimeConstant = 0.3;
+    declickNode = audioCtx.createGain();
     gainNode = audioCtx.createGain();
     audioSourceNode = audioCtx.createMediaElementSource(aud);
-    // Chain: source → analyser → gain → destination
-    // Analyser sees full-level signal; gain controls output volume.
+    // Chain: source → analyser → declick → gain → destination
+    // Analyser sees full-level signal; declick handles pause/resume fades;
+    // gain controls output volume.
     audioSourceNode.connect(analyserNode);
-    analyserNode.connect(gainNode);
+    analyserNode.connect(declickNode);
+    declickNode.connect(gainNode);
     gainNode.connect(audioCtx.destination);
     // Force HTML element to full volume — all attenuation via gainNode
     aud.volume = 1;
@@ -144,6 +148,25 @@ const volume = {
         if (!gainNode) return;
         const target = this._muted ? 0 : this._toGain(this._level);
         gainNode.gain.setTargetAtTime(target, audioCtx.currentTime, this._ramp);
+    }
+};
+
+// Declick: fast fade-out before pause, fade-in after resume to eliminate glitches
+const declick = {
+    _tau: 0.005,     // 5ms time constant — 3τ (15ms) reaches 95%
+    _wait: 0.020,    // 20ms settle time before acting on pause
+
+    fadeOut() {
+        if (!declickNode) return Promise.resolve();
+        declickNode.gain.cancelScheduledValues(audioCtx.currentTime);
+        declickNode.gain.setTargetAtTime(0, audioCtx.currentTime, this._tau);
+        return new Promise(resolve => setTimeout(resolve, this._wait * 1000));
+    },
+
+    fadeIn() {
+        if (!declickNode) return;
+        declickNode.gain.cancelScheduledValues(audioCtx.currentTime);
+        declickNode.gain.setTargetAtTime(1, audioCtx.currentTime, this._tau);
     }
 };
 
