@@ -565,6 +565,7 @@ function updateBpmEnabled(enabled) {
 
 function updateVisualiserEnabled(enabled) {
    storage.set('visualiserEnabled', enabled);
+   updateVisModeButtons();
    if (!enabled) {
      stopVisualiser();
    } else if (audioCtx && !aud.paused) {

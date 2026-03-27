@@ -3,6 +3,7 @@
 // Draws on a separate overlay canvas (#visualiserCanvas) above the peaks waveform.
 
 const visCanvas = document.getElementById("visualiserCanvas");
+const visModes = document.getElementById('visualiserModes');
 const visCtx = visCanvas.getContext("2d");
 
 let visualiserAnimId = null;
@@ -20,7 +21,9 @@ function resizeVisualiserCanvas() {
 function startVisualiser() {
     if (visualiserAnimId) return;
     if (visualiserMode === 'off') return;
-    if (!storage.getBool('visualiserEnabled', true)) return;
+    if (!storage.getBool('visualiserEnabled', true)) {
+        return;
+    }
     if (audioCtx.state === 'suspended') {
         audioCtx.resume();
     }
@@ -166,8 +169,11 @@ function setVisualiserMode(mode) {
     }
 }
 
-// Update BPM-only button visibility
+// Update BPM-only button visibility and container visibility
 function updateVisModeButtons() {
+    const visEnabled = storage.getBool('visualiserEnabled', true);
+    visModes.style.display = visEnabled ? '' : 'none';
+
     const bpmEnabled = storage.getBool('bpmEnabled', true);
     document.querySelectorAll('.vis-mode-btn.bpm-only').forEach(btn => {
         btn.hidden = !bpmEnabled;
