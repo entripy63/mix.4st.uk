@@ -7,9 +7,8 @@ const muteBtn = document.getElementById('muteBtn');
 const volumeSlider = document.getElementById('volumeSlider');
 const timeDisplay = document.getElementById('timeDisplay');
 
-// Restore volume from localStorage, default to 50%
-aud.volume = storage.getNum('playerVolume', 0.5);
-volumeSlider.value = aud.volume * 100;
+// Restore volume slider from persisted level (actual gain applied in ensureAudioContext)
+volumeSlider.value = volume.get() * 100;
 
 // Unified paused check — works for both streams and mixes
 function isPlaybackPaused() {
@@ -41,9 +40,10 @@ function updatePlayPauseBtn() {
 
 // Update mute button icon
 function updateMuteBtn() {
-  if (aud.muted || aud.volume === 0) {
+  const level = volume.get();
+  if (volume.isMuted() || level === 0) {
     muteBtn.textContent = '🔇';
-  } else if (aud.volume < 0.5) {
+  } else if (level < 0.5) {
     muteBtn.textContent = '🔉';
   } else {
     muteBtn.textContent = '🔊';
@@ -153,20 +153,16 @@ playPauseBtn?.addEventListener('click', function(e) {
 });
 
 // Mute button click
-let volumeBeforeMute = 0.5;
 muteBtn.addEventListener('click', function() {
-  if (aud.muted) {
-    aud.muted = false;
-  } else {
-    volumeBeforeMute = aud.volume;
-    aud.muted = true;
-  }
+  volume.toggleMute();
+  updateMuteBtn();
 });
 
 // Volume slider change
 volumeSlider.addEventListener('input', function() {
-  aud.volume = this.value / 100;
-  aud.muted = false;
+  volume.set(this.value / 100);
+  volumeSlider.value = volume.get() * 100;
+  updateMuteBtn();
 });
 
 // Audio element events (just for UI, not for state tracking)
@@ -199,11 +195,10 @@ aud.addEventListener('durationchange', () => {
 });
 aud.addEventListener('loadstart', () => { _lastKnownDuration = 0; });
 
-// Save volume on change and update UI
+// Keep HTML element at full volume — all gain control via Web Audio gainNode
 aud.addEventListener("volumechange", function () {
-  storage.set('playerVolume', aud.volume);
-  volumeSlider.value = aud.volume * 100;
-  updateMuteBtn();
+  if (aud.volume < 1) aud.volume = 1;
+  if (aud.muted) aud.muted = false;
 });
 
 // Initialize UI state

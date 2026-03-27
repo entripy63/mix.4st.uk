@@ -83,10 +83,69 @@ function ensureAudioContext() {
     analyserNode.smoothingTimeConstant = 0.3;
     gainNode = audioCtx.createGain();
     audioSourceNode = audioCtx.createMediaElementSource(aud);
-    audioSourceNode.connect(gainNode);
-    gainNode.connect(analyserNode);
-    analyserNode.connect(audioCtx.destination);
+    // Chain: source → analyser → gain → destination
+    // Analyser sees full-level signal; gain controls output volume.
+    audioSourceNode.connect(analyserNode);
+    analyserNode.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    // Force HTML element to full volume — all attenuation via gainNode
+    aud.volume = 1;
+    aud.muted = false;
+    // Apply persisted volume
+    const saved = storage.getNum('playerVolume', 0.5);
+    volume.set(saved);
 }
+
+// Volume control via gainNode — smooth, zipper-free, perceptual curve
+const volume = {
+    _level: storage.getNum('playerVolume', 0.5),  // linear 0-1 slider position
+    _muted: false,
+    _ramp: 0.015,  // single-pole LPF time constant (seconds)
+
+    // Two-segment linear taper (audio pot approximation)
+    // 0–50% slider → 0–35% gain, 50–100% slider → 35–100% gain
+    _toGain(x) {
+        if (x <= 0) return 0;
+        if (x < 0.5) return x * 0.7;
+        return 0.35 + (x - 0.5) * 1.3;
+    },
+
+    set(linear) {
+        this._level = Math.max(0, Math.min(1, linear));
+        this._muted = false;
+        this._apply();
+        storage.set('playerVolume', this._level);
+    },
+
+    get() {
+        return this._level;
+    },
+
+    mute() {
+        this._muted = true;
+        this._apply();
+    },
+
+    unmute() {
+        this._muted = false;
+        this._apply();
+    },
+
+    toggleMute() {
+        this._muted = !this._muted;
+        this._apply();
+    },
+
+    isMuted() {
+        return this._muted;
+    },
+
+    _apply() {
+        if (!gainNode) return;
+        const target = this._muted ? 0 : this._toGain(this._level);
+        gainNode.gain.setTargetAtTime(target, audioCtx.currentTime, this._ramp);
+    }
+};
 
 const state = {
    currentPeaks: null,
