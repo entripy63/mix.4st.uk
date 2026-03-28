@@ -465,6 +465,10 @@ button:active {
    accent-color: #5c6bc0;
 }
 
+.tf-active-label {
+   font-weight: normal;
+}
+
 .fadeout-status {
    margin-top: 6px;
    font-size: 12px;

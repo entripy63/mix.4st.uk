@@ -551,14 +551,14 @@ function showSettings() {
    document.getElementById('showHiddenMixesCheckbox').checked = state.showHiddenMixes;
    document.getElementById('visualiserEnabledCheckbox').checked = storage.getBool('visualiserEnabled', true);
    document.getElementById('bpmEnabledCheckbox').checked = storage.getBool('bpmEnabled', true);
-   // Fadeout settings
-   const fadeEnabled = storage.getBool('fadeoutEnabled');
-   document.getElementById('fadeoutEnabledCheckbox').checked = fadeEnabled;
-   document.getElementById('fadeoutOptions').style.display = fadeEnabled ? '' : 'none';
-   document.getElementById('fadeoutDuration').value = storage.get('fadeoutDuration', '3');
-   document.getElementById('fadeoutMode').value = storage.get('fadeoutMode', 'at');
-   document.getElementById('fadeoutTime').value = storage.get('fadeoutTime', '23:00');
-   fadeout._updateStatus();
+   // Timed Fades settings
+   const tfEnabled = storage.getBool('timedFadesEnabled');
+   document.getElementById('timedFadesCheckbox').checked = tfEnabled;
+   document.getElementById('timedFadesOptions').style.display = tfEnabled ? '' : 'none';
+   const tfType = storage.get('timedFadesType', 'fadeout');
+   document.getElementById('tfType').value = tfType;
+   loadTimedFadeTypeUI(tfType);
+   timedFades.updateStatus();
 }
 
 function updateBpmEnabled(enabled) {
@@ -585,26 +585,58 @@ function hideSettings() {
    document.getElementById('settingsModal').style.display = 'none';
 }
 
-function updateFadeoutEnabled(checked) {
-   storage.set('fadeoutEnabled', checked);
-   document.getElementById('fadeoutOptions').style.display = checked ? '' : 'none';
+function updateTimedFadesEnabled(checked) {
+   storage.set('timedFadesEnabled', checked);
+   document.getElementById('timedFadesOptions').style.display = checked ? '' : 'none';
    if (checked) {
-     updateFadeoutSetting();
+     // Schedule any active timers
+     timedFades.schedule('fadeout');
+     timedFades.schedule('fadein');
    } else {
-     fadeout.cancel();
+     timedFades.cancel();
    }
 }
 
-function updateFadeoutSetting() {
-   const duration = document.getElementById('fadeoutDuration').value;
-   const mode = document.getElementById('fadeoutMode').value;
-   const time = document.getElementById('fadeoutTime').value;
-   storage.set('fadeoutDuration', duration);
-   storage.set('fadeoutMode', mode);
-   storage.set('fadeoutTime', time);
-   if (storage.getBool('fadeoutEnabled')) {
-     fadeout.schedule();
+function loadTimedFadeTypeUI(type) {
+   document.getElementById('tfActive').checked = storage.getBool(`tf.${type}.active`);
+   document.getElementById('tfDuration').value = storage.get(`tf.${type}.duration`, '3');
+   document.getElementById('tfMode').value = storage.get(`tf.${type}.mode`, 'at');
+   document.getElementById('tfTime').value = storage.get(`tf.${type}.time`, type === 'fadeout' ? '23:00' : '07:00');
+   document.getElementById('tfRepeat').value = storage.get(`tf.${type}.repeat`, 'none');
+   document.getElementById('tfPlayStream').checked = storage.getBool(`tf.${type}.playStream`);
+   // Hide repeat for "after" mode
+   const mode = storage.get(`tf.${type}.mode`, 'at');
+   document.getElementById('tfRepeatRow').style.display = mode === 'at' ? '' : 'none';
+   // Show stream option only for fadein
+   document.getElementById('tfStreamRow').style.display = type === 'fadein' ? '' : 'none';
+}
+
+function switchTimedFadeType(type) {
+   storage.set('timedFadesType', type);
+   loadTimedFadeTypeUI(type);
+   timedFades.updateStatus();
+}
+
+function updateTimedFadeSetting() {
+   const type = document.getElementById('tfType').value;
+   const active = document.getElementById('tfActive').checked;
+   const duration = document.getElementById('tfDuration').value;
+   const mode = document.getElementById('tfMode').value;
+   const time = document.getElementById('tfTime').value;
+   const repeat = document.getElementById('tfRepeat').value;
+   const playStream = document.getElementById('tfPlayStream').checked;
+   storage.set(`tf.${type}.active`, active);
+   storage.set(`tf.${type}.duration`, duration);
+   storage.set(`tf.${type}.mode`, mode);
+   storage.set(`tf.${type}.time`, time);
+   storage.set(`tf.${type}.repeat`, repeat);
+   storage.set(`tf.${type}.playStream`, playStream);
+   // Hide repeat for "after" mode
+   document.getElementById('tfRepeatRow').style.display = mode === 'at' ? '' : 'none';
+   if (storage.getBool('timedFadesEnabled')) {
+     timedFades.schedule(type);
    }
+   timedFades.updateStatus();
 }
 
 function updateSetting(key, value) {

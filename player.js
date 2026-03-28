@@ -317,76 +317,168 @@ async function play(url) {
   startTempo();
 }
 
-// Fadeout then Pause — timer and fade logic
-const fadeout = {
-  _timerId: null,
-  _fadeInterval: null,
-  _savedLevel: null,
+// Timed Fades — two independent timers: fadeout (pause) and fadein (play)
+const timedFades = {
+  _timers: { fadeout: null, fadein: null },
+  _intervals: { fadeout: null, fadein: null },
+  _savedLevel: { fadeout: null, fadein: null },
+  _dueTime: { fadeout: null, fadein: null },
 
-  schedule() {
-    this.cancel();
-    const enabled = storage.getBool('fadeoutEnabled');
-    if (!enabled) return;
+  // Calculate ms until the next occurrence of hh:mm for "at" mode
+  _calcAtDelay(h, m) {
+    const now = new Date();
+    const target = new Date(now);
+    target.setHours(h, m, 0, 0);
+    if (target <= now) target.setDate(target.getDate() + 1);
+    return target - now;
+  },
 
-    const mode = storage.get('fadeoutMode', 'at');
-    const timeStr = storage.get('fadeoutTime', '23:00');
-    const fadeSecs = storage.getNum('fadeoutDuration', 3);
+  // Check if today qualifies for the repeat setting
+  _shouldFireToday(repeat) {
+    if (repeat === 'all') return true;
+    if (repeat === 'weekdays') {
+      const day = new Date().getDay();
+      return day >= 1 && day <= 5;
+    }
+    return true; // 'none' — always fire (one-shot)
+  },
+
+  schedule(type) {
+    this._cancelTimer(type);
+    if (!storage.getBool('timedFadesEnabled')) return;
+    if (!storage.getBool(`tf.${type}.active`)) return;
+
+    const mode = storage.get(`tf.${type}.mode`, 'at');
+    const timeStr = storage.get(`tf.${type}.time`, type === 'fadeout' ? '23:00' : '07:00');
+    const fadeSecs = storage.getNum(`tf.${type}.duration`, 3);
     const [h, m] = timeStr.split(':').map(Number);
     if (isNaN(h) || isNaN(m)) return;
 
     let dueMs;
     if (mode === 'at') {
-      const now = new Date();
-      const target = new Date(now);
-      target.setHours(h, m, 0, 0);
-      if (target <= now) target.setDate(target.getDate() + 1);
-      dueMs = target - now;
+      dueMs = this._calcAtDelay(h, m);
     } else {
       dueMs = (h * 3600 + m * 60) * 1000;
       if (dueMs <= 0) return;
     }
 
-    // Start fade early so it completes at the due time
-    const fadeStartMs = Math.max(0, dueMs - fadeSecs * 1000);
+    // For fadein with stream playback, account for ~3s buffering latency
+    const streamDelay = (type === 'fadein' && storage.getBool('tf.fadein.playStream')) ? 3000 : 0;
+    const fadeStartMs = Math.max(0, dueMs - fadeSecs * 1000 - streamDelay);
+    this._dueTime[type] = Date.now() + dueMs;
 
-    this._dueTime = Date.now() + dueMs;
-
-    this._timerId = setTimeout(() => {
-      this._timerId = null;
-      this._startFade(fadeSecs);
+    this._timers[type] = setTimeout(() => {
+      this._timers[type] = null;
+      this._startFade(type, fadeSecs);
     }, fadeStartMs);
-
-    this._updateStatus();
   },
 
-  _startFade(fadeSecs) {
-    if (isPlaybackPaused()) {
-      this._finish(false);
+  _startFade(type, fadeSecs) {
+    if (type === 'fadeout') {
+      this._startFadeOut(fadeSecs);
+    } else {
+      this._startFadeIn(fadeSecs);
+    }
+  },
+
+  _startFadeOut(fadeSecs) {
+    const repeat = storage.get('tf.fadeout.repeat', 'none');
+    if (!this._shouldFireToday(repeat)) {
+      this._scheduleRepeat('fadeout');
       return;
     }
-
-    this._savedLevel = volume.get();
-    const startLevel = this._savedLevel;
+    if (isPlaybackPaused()) {
+      this._finish('fadeout', false);
+      return;
+    }
+    this._savedLevel.fadeout = volume.get();
+    const startLevel = this._savedLevel.fadeout;
     const steps = Math.max(1, Math.round(fadeSecs / 0.05));
     const decrement = startLevel / steps;
     let step = 0;
 
-    this._fadeInterval = setInterval(() => {
+    showToast('Fading out...', fadeSecs);
+    this._intervals.fadeout = setInterval(() => {
       step++;
       const level = Math.max(0, startLevel - decrement * step);
       volume.set(level);
       volumeSlider.value = level * 100;
-
-      if (step >= steps) {
-        this._finish(true);
-      }
+      if (step >= steps) this._finish('fadeout', true);
     }, fadeSecs * 1000 / steps);
   },
 
-  _finish(doPause) {
-    if (this._fadeInterval) {
-      clearInterval(this._fadeInterval);
-      this._fadeInterval = null;
+  _startFadeIn(fadeSecs) {
+    const repeat = storage.get('tf.fadein.repeat', 'none');
+    if (!this._shouldFireToday(repeat)) {
+      this._scheduleRepeat('fadein');
+      return;
+    }
+    if (!isPlaybackPaused()) {
+      this._finish('fadein', false);
+      return;
+    }
+    this._savedLevel.fadein = volume.get();
+    volume.set(0);
+    volumeSlider.value = 0;
+
+    // Optionally play first user stream instead of resuming current
+    const useStream = storage.getBool('tf.fadein.playStream');
+    let isStreamPlayback = false;
+
+    ensureAudioContext();
+    if (useStream) {
+      const streams = getUserStreams();
+      if (streams.length > 0 && liveStreams.length > 0 && liveStreams[0].available) {
+        playLiveStream(0);
+        isStreamPlayback = true;
+      }
+    }
+
+    if (!isStreamPlayback) {
+      // Resume whatever was playing
+      if (state.isStream && state.streamUrl) {
+        resumeStream();
+        isStreamPlayback = true;
+      } else if (state.currentQueueIndex >= 0 && state.currentQueueIndex < state.queue.length) {
+        aud.play().catch(() => {});
+        declick.fadeIn();
+        startVisualiser();
+        startTempo();
+      } else {
+        // Nothing to play — restore and bail
+        volume.set(this._savedLevel.fadein);
+        volumeSlider.value = this._savedLevel.fadein * 100;
+        this._savedLevel.fadein = null;
+        this._finish('fadein', false);
+        return;
+      }
+    }
+
+    // Streams have ~3s buffering latency; delay fade start to avoid
+    // volume jumps when audio actually begins
+    const delay = isStreamPlayback ? 3000 : 0;
+    setTimeout(() => {
+      if (!this._savedLevel.fadein) return; // cancelled during delay
+      const targetLevel = this._savedLevel.fadein;
+      const steps = Math.max(1, Math.round(fadeSecs / 0.05));
+      const increment = targetLevel / steps;
+      let step = 0;
+
+      showToast('Fading in...', fadeSecs);
+      this._intervals.fadein = setInterval(() => {
+        step++;
+        const level = Math.min(targetLevel, increment * step);
+        volume.set(level);
+        volumeSlider.value = level * 100;
+        if (step >= steps) this._finish('fadein', false);
+      }, fadeSecs * 1000 / steps);
+    }, delay);
+  },
+
+  _finish(type, doPause) {
+    if (this._intervals[type]) {
+      clearInterval(this._intervals[type]);
+      this._intervals[type] = null;
     }
     if (doPause) {
       if (state.isStream) {
@@ -399,66 +491,103 @@ const fadeout = {
         });
       }
     }
-    // Restore volume after a short delay to let pause settle
-    if (this._savedLevel !== null) {
-      const restore = this._savedLevel;
-      this._savedLevel = null;
-      setTimeout(() => {
-        volume.set(restore);
-        volumeSlider.value = restore * 100;
-        updateMuteBtn();
-      }, 100);
-    }
-    // Disable after firing
-    storage.set('fadeoutEnabled', false);
-    const cb = document.getElementById('fadeoutEnabledCheckbox');
-    if (cb) cb.checked = false;
-    const opts = document.getElementById('fadeoutOptions');
-    if (opts) opts.style.display = 'none';
-    this._dueTime = null;
-    this._updateStatus();
-  },
-
-  cancel() {
-    if (this._timerId) {
-      clearTimeout(this._timerId);
-      this._timerId = null;
-    }
-    if (this._fadeInterval) {
-      clearInterval(this._fadeInterval);
-      this._fadeInterval = null;
-      // Restore volume if cancelled mid-fade
-      if (this._savedLevel !== null) {
-        volume.set(this._savedLevel);
-        volumeSlider.value = this._savedLevel * 100;
-        updateMuteBtn();
-        this._savedLevel = null;
+    // Restore volume (for fadeout: after pause; for fadein: already at target)
+    if (this._savedLevel[type] !== null) {
+      const restore = this._savedLevel[type];
+      this._savedLevel[type] = null;
+      if (type === 'fadeout') {
+        setTimeout(() => {
+          volume.set(restore);
+          volumeSlider.value = restore * 100;
+          updateMuteBtn();
+        }, 100);
       }
     }
-    this._dueTime = null;
-    this._updateStatus();
+    this._dueTime[type] = null;
+
+    const repeat = storage.get(`tf.${type}.repeat`, 'none');
+    const mode = storage.get(`tf.${type}.mode`, 'at');
+    if (repeat !== 'none' && mode === 'at') {
+      this._scheduleRepeat(type);
+    } else {
+      // One-shot: deactivate this type
+      storage.set(`tf.${type}.active`, false);
+      this._updateUI(type);
+    }
   },
 
-  _updateStatus() {
-    const el = document.getElementById('fadeoutStatus');
-    if (!el) return;
-    if (!this._dueTime) {
-      el.textContent = '';
-      return;
+  _scheduleRepeat(type) {
+    this._cancelTimer(type);
+    // Re-schedule for next "at" occurrence
+    const timeStr = storage.get(`tf.${type}.time`, type === 'fadeout' ? '23:00' : '07:00');
+    const fadeSecs = storage.getNum(`tf.${type}.duration`, 3);
+    const [h, m] = timeStr.split(':').map(Number);
+    if (isNaN(h) || isNaN(m)) return;
+
+    const dueMs = this._calcAtDelay(h, m);
+    const streamDelay = (type === 'fadein' && storage.getBool('tf.fadein.playStream')) ? 3000 : 0;
+    const fadeStartMs = Math.max(0, dueMs - fadeSecs * 1000 - streamDelay);
+    this._dueTime[type] = Date.now() + dueMs;
+
+    this._timers[type] = setTimeout(() => {
+      this._timers[type] = null;
+      this._startFade(type, fadeSecs);
+    }, fadeStartMs);
+  },
+
+  _updateUI(type) {
+    const typeEl = document.getElementById('tfType');
+    if (typeEl && typeEl.value === type) {
+      const activeEl = document.getElementById('tfActive');
+      if (activeEl) activeEl.checked = storage.getBool(`tf.${type}.active`);
     }
-    const remainMs = this._dueTime - Date.now();
-    if (remainMs <= 0) {
-      el.textContent = '';
-      return;
+    this.updateStatus();
+  },
+
+  _cancelTimer(type) {
+    if (this._timers[type]) {
+      clearTimeout(this._timers[type]);
+      this._timers[type] = null;
     }
-    const dueSecs = Math.round(remainMs / 1000);
-    const h = Math.floor(dueSecs / 3600);
-    const m = Math.floor((dueSecs % 3600) / 60);
-    if (h > 0) {
-      el.textContent = `Will pause in ${h}h ${m}m`;
+    if (this._intervals[type]) {
+      clearInterval(this._intervals[type]);
+      this._intervals[type] = null;
+      if (this._savedLevel[type] !== null) {
+        volume.set(this._savedLevel[type]);
+        volumeSlider.value = this._savedLevel[type] * 100;
+        updateMuteBtn();
+        this._savedLevel[type] = null;
+      }
+    }
+    this._dueTime[type] = null;
+  },
+
+  cancel(type) {
+    if (type) {
+      this._cancelTimer(type);
     } else {
-      el.textContent = `Will pause in ${m}m`;
+      this._cancelTimer('fadeout');
+      this._cancelTimer('fadein');
     }
+    this.updateStatus();
+  },
+
+  updateStatus() {
+    const el = document.getElementById('tfStatus');
+    if (!el) return;
+    const parts = [];
+    for (const type of ['fadeout', 'fadein']) {
+      if (!this._dueTime[type]) continue;
+      const remainMs = this._dueTime[type] - Date.now();
+      if (remainMs <= 0) continue;
+      const dueSecs = Math.round(remainMs / 1000);
+      const h = Math.floor(dueSecs / 3600);
+      const m = Math.floor((dueSecs % 3600) / 60);
+      const verb = type === 'fadeout' ? 'pause' : 'play';
+      const timeStr = h > 0 ? `${h}h ${m}m` : `${m}m`;
+      parts.push(`Will ${verb} in ${timeStr}`);
+    }
+    el.textContent = parts.join(' · ');
   }
 };
 

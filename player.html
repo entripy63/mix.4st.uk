@@ -83,30 +83,58 @@
             </div>
             <div class="settings-group">
               <label class="checkbox-label">
-                <input type="checkbox" id="fadeoutEnabledCheckbox" onchange="updateFadeoutEnabled(this.checked)">
-                Fadeout then Pause
+                <input type="checkbox" id="timedFadesCheckbox" onchange="updateTimedFadesEnabled(this.checked)">
+                Timed Fades
               </label>
-              <div id="fadeoutOptions" class="fadeout-options" style="display:none">
+              <div id="timedFadesOptions" class="fadeout-options" style="display:none">
+                <div class="fadeout-row">
+                  <label>
+                    <select id="tfType" onchange="switchTimedFadeType(this.value)">
+                      <option value="fadeout">Fadeout then Pause</option>
+                      <option value="fadein">Play then Fade In</option>
+                    </select>
+                  </label>
+                  <label class="checkbox-label tf-active-label">
+                    <input type="checkbox" id="tfActive" onchange="updateTimedFadeSetting()"> Active
+                  </label>
+                </div>
                 <div class="fadeout-row">
                   <label>Fade:
-                    <select id="fadeoutDuration" onchange="updateFadeoutSetting()">
+                    <select id="tfDuration" onchange="updateTimedFadeSetting()">
                       <option value="1">1s</option>
                       <option value="2">2s</option>
-                      <option value="3" selected>3s</option>
+                      <option value="3">3s</option>
                       <option value="5">5s</option>
                       <option value="10">10s</option>
                       <option value="20">20s</option>
+                      <option value="30">30s</option>
+                      <option value="60">60s</option>
                     </select>
                   </label>
                   <label>
-                    <select id="fadeoutMode" onchange="updateFadeoutSetting()">
+                    <select id="tfMode" onchange="updateTimedFadeSetting()">
                       <option value="at">At</option>
                       <option value="after">After</option>
                     </select>
                   </label>
-                  <input type="time" id="fadeoutTime" value="23:00" onchange="updateFadeoutSetting()">
+                  <input type="time" id="tfTime" value="23:00" onchange="updateTimedFadeSetting()">
                 </div>
-                <div id="fadeoutStatus" class="fadeout-status"></div>
+                <div class="fadeout-row" id="tfRepeatRow">
+                  <label>Repeat:
+                    <select id="tfRepeat" onchange="updateTimedFadeSetting()">
+                      <option value="none">None</option>
+                      <option value="weekdays">Week Days</option>
+                      <option value="all">All Days</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="fadeout-row" id="tfStreamRow" style="display:none">
+                  <label class="checkbox-label tf-active-label">
+                    <input type="checkbox" id="tfPlayStream" onchange="updateTimedFadeSetting()">
+                    Play First User Stream
+                  </label>
+                </div>
+                <div id="tfStatus" class="fadeout-status"></div>
               </div>
             </div>
           </div>

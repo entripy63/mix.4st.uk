@@ -241,16 +241,16 @@ function formatTime(seconds) {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-function showToast(message) {
+function showToast(message, durationSecs = 5) {
   const toast = document.createElement('div');
   toast.style.cssText = `
     position: fixed; bottom: 20px; right: 20px;
     background: #4a4a4a; color: #fff; padding: 10px 20px;
-    border-radius: 4px; z-index: 10000; animation: fadeOut 5s forwards;
+    border-radius: 4px; z-index: 10000; animation: fadeOut ${durationSecs}s forwards;
   `;
   toast.textContent = message;
   document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 5000);
+  setTimeout(() => toast.remove(), durationSecs * 1000);
 }
 
 function showAlertDialog(title, message) {
