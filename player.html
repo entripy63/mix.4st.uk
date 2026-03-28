@@ -81,6 +81,34 @@
                 BPM Detection
               </label>
             </div>
+            <div class="settings-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="fadeoutEnabledCheckbox" onchange="updateFadeoutEnabled(this.checked)">
+                Fadeout then Pause
+              </label>
+              <div id="fadeoutOptions" class="fadeout-options" style="display:none">
+                <div class="fadeout-row">
+                  <label>Fade:
+                    <select id="fadeoutDuration" onchange="updateFadeoutSetting()">
+                      <option value="1">1s</option>
+                      <option value="2">2s</option>
+                      <option value="3" selected>3s</option>
+                      <option value="5">5s</option>
+                      <option value="10">10s</option>
+                      <option value="20">20s</option>
+                    </select>
+                  </label>
+                  <label>
+                    <select id="fadeoutMode" onchange="updateFadeoutSetting()">
+                      <option value="at">At</option>
+                      <option value="after">After</option>
+                    </select>
+                  </label>
+                  <input type="time" id="fadeoutTime" value="23:00" onchange="updateFadeoutSetting()">
+                </div>
+                <div id="fadeoutStatus" class="fadeout-status"></div>
+              </div>
+            </div>
           </div>
         </div>
         <div id="helpModal" class="modal" style="display: none;">

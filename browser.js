@@ -551,6 +551,14 @@ function showSettings() {
    document.getElementById('showHiddenMixesCheckbox').checked = state.showHiddenMixes;
    document.getElementById('visualiserEnabledCheckbox').checked = storage.getBool('visualiserEnabled', true);
    document.getElementById('bpmEnabledCheckbox').checked = storage.getBool('bpmEnabled', true);
+   // Fadeout settings
+   const fadeEnabled = storage.getBool('fadeoutEnabled');
+   document.getElementById('fadeoutEnabledCheckbox').checked = fadeEnabled;
+   document.getElementById('fadeoutOptions').style.display = fadeEnabled ? '' : 'none';
+   document.getElementById('fadeoutDuration').value = storage.get('fadeoutDuration', '3');
+   document.getElementById('fadeoutMode').value = storage.get('fadeoutMode', 'at');
+   document.getElementById('fadeoutTime').value = storage.get('fadeoutTime', '23:00');
+   fadeout._updateStatus();
 }
 
 function updateBpmEnabled(enabled) {
@@ -575,6 +583,28 @@ function updateVisualiserEnabled(enabled) {
 
 function hideSettings() {
    document.getElementById('settingsModal').style.display = 'none';
+}
+
+function updateFadeoutEnabled(checked) {
+   storage.set('fadeoutEnabled', checked);
+   document.getElementById('fadeoutOptions').style.display = checked ? '' : 'none';
+   if (checked) {
+     updateFadeoutSetting();
+   } else {
+     fadeout.cancel();
+   }
+}
+
+function updateFadeoutSetting() {
+   const duration = document.getElementById('fadeoutDuration').value;
+   const mode = document.getElementById('fadeoutMode').value;
+   const time = document.getElementById('fadeoutTime').value;
+   storage.set('fadeoutDuration', duration);
+   storage.set('fadeoutMode', mode);
+   storage.set('fadeoutTime', time);
+   if (storage.getBool('fadeoutEnabled')) {
+     fadeout.schedule();
+   }
 }
 
 function updateSetting(key, value) {

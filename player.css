@@ -434,6 +434,43 @@ button:active {
    accent-color: #5c6bc0;
 }
 
+.fadeout-options {
+   margin-top: 10px;
+   padding-left: 26px;
+}
+
+.fadeout-row {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   flex-wrap: wrap;
+}
+
+.fadeout-row label {
+   display: flex;
+   align-items: center;
+   gap: 4px;
+   color: #e0e0e0;
+   font-weight: normal;
+}
+
+.fadeout-row select,
+.fadeout-row input[type="time"] {
+   background: #1a1a2e;
+   color: #e0e0e0;
+   border: 1px solid #3d3d5c;
+   border-radius: 4px;
+   padding: 4px 6px;
+   font-size: 13px;
+   accent-color: #5c6bc0;
+}
+
+.fadeout-status {
+   margin-top: 6px;
+   font-size: 12px;
+   color: #888;
+}
+
 kbd {
   display: inline-block;
   padding: 3px 6px;

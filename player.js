@@ -317,6 +317,151 @@ async function play(url) {
   startTempo();
 }
 
+// Fadeout then Pause — timer and fade logic
+const fadeout = {
+  _timerId: null,
+  _fadeInterval: null,
+  _savedLevel: null,
+
+  schedule() {
+    this.cancel();
+    const enabled = storage.getBool('fadeoutEnabled');
+    if (!enabled) return;
+
+    const mode = storage.get('fadeoutMode', 'at');
+    const timeStr = storage.get('fadeoutTime', '23:00');
+    const fadeSecs = storage.getNum('fadeoutDuration', 3);
+    const [h, m] = timeStr.split(':').map(Number);
+    if (isNaN(h) || isNaN(m)) return;
+
+    let dueMs;
+    if (mode === 'at') {
+      const now = new Date();
+      const target = new Date(now);
+      target.setHours(h, m, 0, 0);
+      if (target <= now) target.setDate(target.getDate() + 1);
+      dueMs = target - now;
+    } else {
+      dueMs = (h * 3600 + m * 60) * 1000;
+      if (dueMs <= 0) return;
+    }
+
+    // Start fade early so it completes at the due time
+    const fadeStartMs = Math.max(0, dueMs - fadeSecs * 1000);
+
+    this._dueTime = Date.now() + dueMs;
+
+    this._timerId = setTimeout(() => {
+      this._timerId = null;
+      this._startFade(fadeSecs);
+    }, fadeStartMs);
+
+    this._updateStatus();
+  },
+
+  _startFade(fadeSecs) {
+    if (isPlaybackPaused()) {
+      this._finish(false);
+      return;
+    }
+
+    this._savedLevel = volume.get();
+    const startLevel = this._savedLevel;
+    const steps = Math.max(1, Math.round(fadeSecs / 0.05));
+    const decrement = startLevel / steps;
+    let step = 0;
+
+    this._fadeInterval = setInterval(() => {
+      step++;
+      const level = Math.max(0, startLevel - decrement * step);
+      volume.set(level);
+      volumeSlider.value = level * 100;
+
+      if (step >= steps) {
+        this._finish(true);
+      }
+    }, fadeSecs * 1000 / steps);
+  },
+
+  _finish(doPause) {
+    if (this._fadeInterval) {
+      clearInterval(this._fadeInterval);
+      this._fadeInterval = null;
+    }
+    if (doPause) {
+      if (state.isStream) {
+        pauseStream();
+      } else {
+        declick.fadeOut().then(() => {
+          aud.pause();
+          stopVisualiser();
+          stopTempo();
+        });
+      }
+    }
+    // Restore volume after a short delay to let pause settle
+    if (this._savedLevel !== null) {
+      const restore = this._savedLevel;
+      this._savedLevel = null;
+      setTimeout(() => {
+        volume.set(restore);
+        volumeSlider.value = restore * 100;
+        updateMuteBtn();
+      }, 100);
+    }
+    // Disable after firing
+    storage.set('fadeoutEnabled', false);
+    const cb = document.getElementById('fadeoutEnabledCheckbox');
+    if (cb) cb.checked = false;
+    const opts = document.getElementById('fadeoutOptions');
+    if (opts) opts.style.display = 'none';
+    this._dueTime = null;
+    this._updateStatus();
+  },
+
+  cancel() {
+    if (this._timerId) {
+      clearTimeout(this._timerId);
+      this._timerId = null;
+    }
+    if (this._fadeInterval) {
+      clearInterval(this._fadeInterval);
+      this._fadeInterval = null;
+      // Restore volume if cancelled mid-fade
+      if (this._savedLevel !== null) {
+        volume.set(this._savedLevel);
+        volumeSlider.value = this._savedLevel * 100;
+        updateMuteBtn();
+        this._savedLevel = null;
+      }
+    }
+    this._dueTime = null;
+    this._updateStatus();
+  },
+
+  _updateStatus() {
+    const el = document.getElementById('fadeoutStatus');
+    if (!el) return;
+    if (!this._dueTime) {
+      el.textContent = '';
+      return;
+    }
+    const remainMs = this._dueTime - Date.now();
+    if (remainMs <= 0) {
+      el.textContent = '';
+      return;
+    }
+    const dueSecs = Math.round(remainMs / 1000);
+    const h = Math.floor(dueSecs / 3600);
+    const m = Math.floor((dueSecs % 3600) / 60);
+    if (h > 0) {
+      el.textContent = `Will pause in ${h}h ${m}m`;
+    } else {
+      el.textContent = `Will pause in ${m}m`;
+    }
+  }
+};
+
 // Keyboard shortcuts
 document.addEventListener('keydown', function(e) {
   if (e.target.tagName === 'INPUT') return;
