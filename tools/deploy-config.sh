@@ -18,7 +18,6 @@ declare -A REMOTE_DIRS=(
 )
 
 # Mirror commands for each target
-# Note: mixes/mixes-config.json is excluded - manage per-server to avoid overwrites
 # Media files (mp3, m4a, flac, wav, opus, peaks.json, images) are excluded to
 # prevent --delete from removing server-only media not present locally
 MIRROR_EXCLUDES="-x .git/ -x .github/ -x .gitignore -x AGENTS.md -x docs/ -x tools/ -x node_modules/ -x lib/ -X package* -X eslint.*"
