@@ -28,6 +28,12 @@ function detectGroups(mixes) {
     return [];
   }
   
+  // Special case: estimulo — group by year extracted from filename
+  const djPath = mixes[0]?.djPath || '';
+  if (djPath.includes('estimulo')) {
+    return detectEstimuloGroups(mixes);
+  }
+  
   const names = mixes.map(m => m.name.toLowerCase());
   const originalNames = mixes.map(m => m.name);
   const djName = mixes[0]?.dj?.toLowerCase() || '';
@@ -161,12 +167,39 @@ function detectGroups(mixes) {
   return result; // Already sorted by count descending
 }
 
+function detectEstimuloGroups(mixes) {
+  const yearCounts = new Map();
+  for (const mix of mixes) {
+    const match = mix.file?.match(/[_ ]20(\d{2})[-_ ]/);
+    if (match) {
+      const year = match[1];
+      yearCounts.set(year, (yearCounts.get(year) || 0) + 1);
+    }
+  }
+  // Return years sorted chronologically, only those with 3+ mixes
+  return Array.from(yearCounts.entries())
+    .filter(([_, count]) => count >= 3)
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([year]) => year);
+}
+
 function filterMixes(mixes, group, allGroups) {
   if (!group) return mixes;
+  // Year-based groups (2-digit numbers) match against filename date pattern
+  const isYearGroup = (g) => /^\d{2}$/.test(g);
+  const matchesYear = (mix, year) => {
+    const re = new RegExp(`[_ ]20${year}[-_ ]`);
+    return re.test(mix.file || '');
+  };
   if (group === 'Other') {
     return mixes.filter(mix => 
-      !allGroups.some(g => mix.name.toLowerCase().includes(g.toLowerCase()))
+      !allGroups.some(g => isYearGroup(g)
+        ? matchesYear(mix, g)
+        : mix.name.toLowerCase().includes(g.toLowerCase()))
     );
+  }
+  if (isYearGroup(group)) {
+    return mixes.filter(mix => matchesYear(mix, group));
   }
   return mixes.filter(mix => mix.name.toLowerCase().includes(group.toLowerCase()));
 }
@@ -194,7 +227,7 @@ async function resolveMediaUrl(relativePath) {
 
 async function fetchMixDetails(mix) {
   const djPath = mix.djPath || mix.dj;
-  const localDir = `${djPath}/`;
+  const localDir = `${djPath.startsWith('mixes/') ? '' : 'mixes/'}${djPath}/`;
   
   // Load peaks if available (local)
   let peaks = null;

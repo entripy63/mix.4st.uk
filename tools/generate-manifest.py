@@ -108,6 +108,9 @@ def extract_dj_and_mix_from_filename(filename, folder_name):
         # Also replace hyphens with spaces in the remainder for better display
         remainder = remainder.replace('-', ' ')
         
+        # Strip leading "Show" / "show" left over from compound names like "EstimuloShow"
+        remainder = re.sub(r'^[Ss]how\s*', '', remainder).strip()
+        
         if remainder:
             return folder_name, remainder
         else:
@@ -178,6 +181,13 @@ def process_directory_split(source_directory, output_directory):
             # Fallback: extract from filename
             _, mix_name = extract_dj_and_mix_from_filename(base_name, source_directory.name)
             title = mix_name
+        
+        # Special case: strip "estimulo", "show", "estimuloshow" prefixes for estimulo
+        if source_directory.name.lower() == 'estimulo':
+            cleaned = re.sub(r'^(estimuloshow|estimulo\s*show|estimulo|show)\s*', '', title, flags=re.IGNORECASE).strip()
+            cleaned = cleaned.lstrip('_- ')
+            if cleaned:
+                title = cleaned
         
         # Check for peaks file in output directory
         peaks_file = output_directory / f"{base_name}.peaks.json"
