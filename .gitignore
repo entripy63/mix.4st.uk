@@ -4,6 +4,7 @@
 *.wav
 *.opus
 *.peaks.json
+*.tracks.txt
 manifest.json
 *.mediaartlocal
 *.jpg
