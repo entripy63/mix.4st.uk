@@ -165,10 +165,11 @@ function displayGroupFilters(mixes) {
   }
   const otherMixes = filterMixes(mixes, 'Other', state.currentGroups);
   const otherButton = otherMixes.length > 0 ? ` <button onclick="applyFilter('Other')">Other</button>` : '';
+  const addAllBtn = `<button id="djAddAllBtn" class="tab-action-btn" onclick="addAllMixesToQueue()" title="Add all to queue" style="margin-left:auto;display:none">＋</button>`;
   filterDiv.innerHTML = backBtn + (backBtn ? ' ' : '') +
     `<button class="active" onclick="applyFilter('')">All</button> ` +
     state.currentGroups.map(g => `<button onclick="applyFilter('${g}')">${g}</button>`).join(' ') +
-    otherButton;
+    otherButton + addAllBtn;
 }
 
 function updateFilterButtons() {
