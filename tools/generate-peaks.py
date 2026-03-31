@@ -6,11 +6,13 @@ Requires: ffmpeg
 Usage: 
     python3 generate-peaks.py [directory]
     python3 generate-peaks.py --source /path/to/audio [output_directory]
+    python3 generate-peaks.py --force [directory] [dj_name ...]
 
 Default directory is current directory.
 Processes all .mp3 and .flac files, creates .peaks.json files.
 
 If --source is specified, reads audio from source and writes peaks to output directory.
+If --force is specified, regenerates peaks even if they already exist.
 """
 
 import subprocess
@@ -19,7 +21,8 @@ import os
 import sys
 import struct
 
-SAMPLES_PER_PEAK = 4000  # Number of peaks to generate
+SAMPLES_PER_PEAK = 1000  # Number of peaks to generate
+PRECISION = 3            # Decimal digits for peak values
 
 def get_audio_peaks(audio_path, num_peaks=SAMPLES_PER_PEAK):
     """Extract peaks from audio file using ffmpeg."""
@@ -72,15 +75,15 @@ def get_audio_peaks(audio_path, num_peaks=SAMPLES_PER_PEAK):
     # Normalize to 0-1 range based on max peak
     max_peak = max(peaks) if peaks else 1
     if max_peak > 0:
-        peaks = [p / max_peak for p in peaks]
+        peaks = [round(p / max_peak, PRECISION) for p in peaks]
     
     return peaks, duration
 
-def process_directory(directory):
+def process_directory(directory, force=False):
     """Process all audio files in directory (read and write in same directory)."""
-    process_directory_split(directory, directory)
+    process_directory_split(directory, directory, force)
 
-def process_directory_split(source_directory, output_directory):
+def process_directory_split(source_directory, output_directory, force=False):
     """Process audio files from source directory, write peaks to output directory."""
     
     extensions = ('.mp3', '.flac', '.m4a', '.wav', '.opus')
@@ -92,7 +95,7 @@ def process_directory_split(source_directory, output_directory):
         source_path = os.path.join(source_directory, filename)
         peaks_path = os.path.join(output_directory, os.path.splitext(filename)[0] + '.peaks.json')
         
-        if os.path.exists(peaks_path):
+        if os.path.exists(peaks_path) and not force:
             print(f"Skipping {filename} (peaks file exists)")
             continue
         
@@ -152,24 +155,29 @@ if __name__ == '__main__':
     output_dir = None
     config = load_config()
     specific_djs = []
+    force = False
+    
+    # Extract --force flag from arguments
+    args = [a for a in sys.argv[1:] if a != '--force']
+    force = len(args) < len(sys.argv) - 1
     
     # Parse arguments
-    if len(sys.argv) > 1 and sys.argv[1] == '--source':
-        if len(sys.argv) < 3:
+    if args and args[0] == '--source':
+        if len(args) < 2:
             print("Error: --source requires a path argument")
             sys.exit(1)
-        source_dir = sys.argv[2]
-        output_dir = sys.argv[3] if len(sys.argv) > 3 else '.'
+        source_dir = args[1]
+        output_dir = args[2] if len(args) > 2 else '.'
         
         if not os.path.exists(source_dir):
             print(f"Error: source directory {source_dir} does not exist")
             sys.exit(1)
     else:
-        directory = sys.argv[1] if len(sys.argv) > 1 else '.'
+        directory = args[0] if args else '.'
         output_dir = directory
         # Any additional arguments are specific DJ folder names
-        if len(sys.argv) > 2:
-            specific_djs = sys.argv[2:]
+        if len(args) > 1:
+            specific_djs = args[1:]
         
         # Check config file (applies even when specific DJs are named)
         if config and 'source_directory' in config:
@@ -177,6 +185,9 @@ if __name__ == '__main__':
             if not os.path.exists(source_dir):
                 print(f"Error: source directory in config {source_dir} does not exist")
                 sys.exit(1)
+    
+    if force:
+        print("Force mode: regenerating all peaks files")
     
     extensions = ('.mp3', '.flac', '.m4a', '.wav', '.opus')
     
@@ -210,12 +221,12 @@ if __name__ == '__main__':
             os.makedirs(output_path, exist_ok=True)
             
             print(f"\n=== {source_name} ===")
-            process_directory_split(source_path, output_path)
+            process_directory_split(source_path, output_path, force)
     else:
         # Original behavior: check if a specific DJ directory is given
-        if len(sys.argv) > 1 and any(f.lower().endswith(extensions) for f in os.listdir(output_dir)):
+        if args and any(f.lower().endswith(extensions) for f in os.listdir(output_dir)):
             print(f"\n=== {os.path.basename(output_dir)} ===")
-            process_directory(output_dir)
+            process_directory(output_dir, force)
         else:
             # Process all DJ directories
             if specific_djs:
@@ -233,4 +244,4 @@ if __name__ == '__main__':
             
             for name, path in dj_dirs:
                 print(f"\n=== {name} ===")
-                process_directory(path)
+                process_directory(path, force)
