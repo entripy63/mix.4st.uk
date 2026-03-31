@@ -17,7 +17,7 @@ if [ ! -f "$CONFIG" ]; then
 fi
 
 # Valid targets
-VALID_TARGETS=("test" "prod" "test-backup" "prod-backup" "all-test" "all-prod")
+VALID_TARGETS=("test" "prod" "home-test" "all-test" "all-prod")
 TARGET="${1:-all-test}"
 
 # Validate target
@@ -29,9 +29,9 @@ fi
 
 # Determine which targets to deploy to
 if [[ "$TARGET" == "all-test" ]]; then
-  TARGETS=("test" "test-backup")
+  TARGETS=("test" "home-test")
 elif [[ "$TARGET" == "all-prod" ]]; then
-  TARGETS=("prod" "prod-backup")
+  TARGETS=("prod")
 else
   TARGETS=("$TARGET")
 fi
@@ -50,10 +50,19 @@ for t in "${TARGETS[@]}"; do
     exit 1
   fi
   
+  if [ "$REMOTE_DIR" = "/" ]; then
+    echo "❌ Refusing to deploy to / — check REMOTE_DIRS for $t"
+    exit 1
+  fi
+  
   cd "$PROJECT_ROOT"
   
-  # Build lftp command
-  LFTP_CMD="open $BOOKMARK; cd $REMOTE_DIR; $MIRROR_CMD; quit"
+  # Build lftp command (skip cd if no remote dir specified)
+  if [ -n "$REMOTE_DIR" ]; then
+    LFTP_CMD="open $BOOKMARK; cd $REMOTE_DIR; $MIRROR_CMD; quit"
+  else
+    LFTP_CMD="open $BOOKMARK; $MIRROR_CMD; quit"
+  fi
   
   echo "📡 Command: lftp -e \"$LFTP_CMD\""
   lftp -e "$LFTP_CMD"
@@ -67,4 +76,4 @@ for t in "${TARGETS[@]}"; do
 done
 
 echo ""
-echo "✅ All deployments complete!"
+echo "✅ All deployments complete! ($(date '+%Y-%m-%d %H:%M:%S'))"
