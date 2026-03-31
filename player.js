@@ -143,7 +143,7 @@ playPauseBtn?.addEventListener('click', async function(e) {
       aud.play().catch(() => {});
       declick.fadeIn();
       startVisualiser();
-      startTempo();
+      resumeTempo();
     }
   } else {
     if (state.isStream) {
@@ -152,7 +152,7 @@ playPauseBtn?.addEventListener('click', async function(e) {
       await declick.fadeOut();
       aud.pause();
       stopVisualiser();
-      stopTempo();
+      pauseTempo();
     }
   }
 });
@@ -303,12 +303,12 @@ async function load(url) {
     storage.remove('streamDisplayText');
     updateTimeDisplay();
   }
+  timeDisplay.title = decodeURIComponent(url);
   aud.src = url;
   aud.currentTime = 0;
 }
 
 async function play(url) {
-  timeDisplay.title = decodeURIComponent(url);
   await load(url);
   ensureAudioContext();
   aud.play();
@@ -443,7 +443,7 @@ const timedFades = {
         aud.play().catch(() => {});
         declick.fadeIn();
         startVisualiser();
-        startTempo();
+        resumeTempo();
       } else {
         // Nothing to play — restore and bail
         volume.set(this._savedLevel.fadein);
@@ -487,7 +487,7 @@ const timedFades = {
         declick.fadeOut().then(() => {
           aud.pause();
           stopVisualiser();
-          stopTempo();
+          pauseTempo();
         });
       }
     }
