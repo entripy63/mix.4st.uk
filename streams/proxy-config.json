@@ -13,5 +13,10 @@
     "url": "https://d.proxy.4st.uk",
     "streams": "all",
     "note": "Deno Deploy — handles raw IPs and ICY/Shoutcast via raw TCP, unstable on cold start"
+  },
+  {
+    "url": "https://h.proxy.4st.uk",
+    "streams": "all",
+    "note": "Home NUC — handles everything, no timeout, no request limits"
   }
 ]

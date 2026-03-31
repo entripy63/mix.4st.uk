@@ -1,6 +1,7 @@
 {
   "mixesBaseUrls": [
     "/mixes/",
-    "https://stream-proxy.round-bar-e93e.workers.dev/?url=https://mixes.4st.uk/mixes/"
+    "https://stream-proxy.round-bar-e93e.workers.dev/?url=https://mixes.4st.uk/mixes/",
+    "https://m.4st.uk/mixes/"
   ]
 }
