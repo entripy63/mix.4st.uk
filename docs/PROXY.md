@@ -270,6 +270,8 @@ Create at the Deno Deploy dashboard under account settings → Access Tokens.
 ### Limitations
 
 - **Depends on home internet uplink** (10 Mbit/s upload) — sufficient for personal use but not high-traffic scenarios
+robots.txt, fail2ban and Apache2 rewrite rules to harden it from abuse.
+
 - **Availability** — depends on home power and internet staying up
 
 ### Project details
@@ -287,7 +289,6 @@ Apache serves as a reverse proxy, terminating SSL and forwarding to the Node.js 
 ```
 Client → https://h.proxy.4st.uk → Apache (SSL) → localhost:8080 → Node.js proxy → upstream stream
 ```
-
 ### systemd units
 
 The proxy runs as a systemd service with a path unit that auto-restarts on file changes:
