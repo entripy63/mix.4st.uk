@@ -6,4 +6,28 @@ AddType application/octet-stream .m4a
 AddType application/octet-stream .flac
 AddType application/octet-stream .wav
 
+# === Bot / crawler protection ===
+
+<IfModule mod_rewrite.c>
+  # Block known aggressive bots and AI crawlers by User-Agent
+  RewriteEngine On
+  RewriteCond %{HTTP_USER_AGENT} (AhrefsBot|Amazonbot|Bytespider|CCBot|ChatGPT|ClaudeBot|Claudebot|Diffbot|DotBot|FacebookBot|GPTBot|Google-Extended|ImagesiftBot|MJ12bot|PetalBot|SemrushBot|Sogou|barkrowler|crawl|scrapy|spider|wget|curl|python-requests|python-urllib|libwww-perl|Go-http-client|Java|fetch|node-fetch|axios) [NC]
+  RewriteRule \.(mp3|m4a|flac|wav)$ - [F,L]
+
+  # Block requests for audio files with no Referer (direct URL grabs)
+  # This allows browser playback (which sends a Referer) but blocks scrapers
+  RewriteCond %{HTTP_REFERER} ^$ [NC]
+  RewriteCond %{HTTP_USER_AGENT} !^Mozilla [NC]
+  RewriteRule \.(mp3|m4a|flac|wav)$ - [F,L]
+</IfModule>
+
+# Rate-limit audio downloads per IP (requires mod_ratelimit)
+# Limits each connection to 512KB/s (~4Mbit/s) for audio files
+<FilesMatch "\.(mp3|m4a|flac|wav)$">
+    <IfModule mod_ratelimit.c>
+        SetOutputFilter RATE_LIMIT
+        SetEnv rate-limit 512
+    </IfModule>
+</FilesMatch>
+
 
