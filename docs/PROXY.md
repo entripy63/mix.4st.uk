@@ -11,6 +11,7 @@ We use **multiple proxies** to split load and provide redundancy:
 | Deno Deploy | Deno | All streams | TBD | Free tier, raw TCP via `Deno.connect()`, ICY/Shoutcast support |
 | Cloudflare Worker | Cloudflare | Named URLs only | None (streaming) | Free tier, very reliable, but `fetch()` cannot connect to raw IPs |
 | Cloud Run | Google Cloud | All streams | 60 min | Handles raw IPs via raw TCP fallback, ICY/Shoutcast protocol |
+| Home NUC | Self-hosted | All streams | None | No limitations, depends on home internet uplink |
 
 ### Why multiple proxies?
 
@@ -38,6 +39,11 @@ The app loads proxy routing from `/streams/proxy-config.json` at startup:
     "url": "https://stream-proxy-375114048778.europe-west2.run.app/stream",
     "streams": "all",
     "note": "Google Cloud Run — handles raw IPs and ICY/Shoutcast, 60-min timeout"
+  },
+  {
+    "url": "https://h.proxy.4st.uk",
+    "streams": "all",
+    "note": "Home NUC — handles everything, no timeout, no request limits"
   }
 ]
 ```
@@ -242,6 +248,83 @@ Create at the Deno Deploy dashboard under account settings → Access Tokens.
 
 ---
 
+## Home NUC
+
+### Source code
+
+`tools/cloudrun-proxy/index.js` — same Node.js proxy as Cloud Run, deployed to the home NUC (Intel NUC8i3BNK, 16GB RAM, Debian 13.4).
+
+### Features
+
+- Full CORS handling (preflight, expose headers)
+- Origin validation (4st.uk, steveqv225)
+- HTTP/HTTPS redirect following (up to 5 hops)
+- Range header forwarding
+- ICY/Shoutcast raw TCP fallback (for servers using HTTP/0.9)
+- ICY metadata header proxying
+- Memory-efficient streaming (no buffering)
+- Status endpoint at `/status` (shows active connections, memory usage)
+- **No timeout** — streams run indefinitely
+- **No request limits** — self-hosted, no free-tier quotas
+
+### Limitations
+
+- **Depends on home internet uplink** (10 Mbit/s upload) — sufficient for personal use but not high-traffic scenarios
+- **Availability** — depends on home power and internet staying up
+
+### Project details
+
+- **Hardware**: Intel NUC8i3BNK, 16GB RAM, 512GB m.2 SATA SSD
+- **OS**: Debian 13.4 (no desktop environment, SSH only)
+- **Proxy path**: `/opt/stream-proxy/index.js`
+- **URL**: `https://h.proxy.4st.uk`
+- **SSL**: Certbot via Apache reverse proxy
+
+### Architecture
+
+Apache serves as a reverse proxy, terminating SSL and forwarding to the Node.js proxy:
+
+```
+Client → https://h.proxy.4st.uk → Apache (SSL) → localhost:8080 → Node.js proxy → upstream stream
+```
+
+### systemd units
+
+The proxy runs as a systemd service with a path unit that auto-restarts on file changes:
+
+- **`stream-proxy.service`** — runs `/usr/bin/node /opt/stream-proxy/index.js` on port 8080 as `www-data`
+- **`stream-proxy-watcher.path`** — watches `/opt/stream-proxy/index.js` for changes
+- **`stream-proxy-watcher.service`** — restarts `stream-proxy.service` when triggered by the path unit
+
+Unit files are in `/etc/systemd/system/` on the NUC.
+
+### Deployment
+
+Upload the updated proxy file to the NUC — the path unit handles the restart automatically:
+
+```bash
+scp tools/cloudrun-proxy/index.js nuc:/opt/stream-proxy/index.js
+```
+
+Or via SFTP. The `stream-proxy-watcher.path` unit detects the file change and restarts `stream-proxy.service`.
+
+### Apache vhost
+
+Configured at `/etc/apache2/sites-available/h.proxy.4st.uk.conf` with SSL managed by certbot:
+
+```apache
+<VirtualHost *:80>
+    ServerName h.proxy.4st.uk
+    ProxyPreserveHost On
+    ProxyPass / http://localhost:8080/
+    ProxyPassReverse / http://localhost:8080/
+</VirtualHost>
+```
+
+Requires Apache modules: `proxy`, `proxy_http`, `headers`.
+
+---
+
 ## Disaster Recovery
 
 With the fallback architecture, single proxy failures are handled automatically — the app tries each proxy in order. Manual intervention is only needed if you want to change priority or remove a broken proxy.
@@ -262,4 +345,6 @@ Streams will fail to probe. Deploy a replacement to any provider and add it to `
 - **Oracle Cloud VM**: Tried Ampere A1 (unavailable), got E2-micro — handled everything but VM kept crashing under minimal load
 - **Google Cloud Run**: Reliable, handles everything, 60-minute timeout acceptable with auto-reconnect
 - **Multi-proxy split**: Cloudflare Worker for named URLs (no timeout), Cloud Run for raw IPs (60-min timeout)
-- **Current**: Three proxies (Deno Deploy, Cloudflare Worker, Cloud Run) with ordered fallback chains
+- **Deno Deploy**: Added as third proxy — free tier, raw TCP support via `Deno.connect()`, handles raw IPs and ICY/Shoutcast
+- **Home NUC**: Self-hosted Node.js proxy on Intel NUC — no timeouts, no request limits, no IP restrictions
+- **Current**: Four proxies (Cloudflare Worker, Cloud Run, Deno Deploy, Home NUC) with ordered fallback chains
