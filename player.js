@@ -151,7 +151,7 @@ playPauseBtn?.addEventListener('click', async function(e) {
     } else {
       await declick.fadeOut();
       aud.pause();
-      stopVisualiser();
+      pauseVisualiser();
       pauseTempo();
     }
   }

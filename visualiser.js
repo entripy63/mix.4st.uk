@@ -114,7 +114,7 @@ function startVisualiser() {
             visCtx.stroke();
 
             // Autocorrelation curve
-            visCtx.strokeStyle = '#5c6bc0';
+            visCtx.strokeStyle = '#c5cae9';
             visCtx.lineWidth = 2;
             visCtx.beginPath();
             for (let i = 0; i < n; i++) {
@@ -126,21 +126,69 @@ function startVisualiser() {
             }
             visCtx.stroke();
 
-            // Mark the best-lag peak
+            // Peak count [N] top-right
+            visCtx.font = '10px monospace';
+            visCtx.textAlign = 'right';
+            visCtx.fillStyle = '#ffffff80';
+            visCtx.fillText('[' + tempo.debugPeakCount + ']', w - 4, 12);
+
+            // Mark best-lag and subdivision peaks
             if (tempo.bestLag > 0 && tempo.bestLag < n) {
-                const px = tempo.bestLag * sliceWidth;
-                visCtx.strokeStyle = '#7986cb';
-                visCtx.lineWidth = 1;
-                visCtx.setLineDash([4, 4]);
-                visCtx.beginPath();
-                visCtx.moveTo(px, 0);
-                visCtx.lineTo(px, h);
-                visCtx.stroke();
+                // Unfolded BPM above the interp lag marker
+                if (tempo.unfoldedBpm > 0 && tempo.interpLag >= 3 && tempo.interpLag < n) {
+                    const bpmPx = tempo.interpLag * sliceWidth;
+                    visCtx.font = '10px monospace';
+                    visCtx.textAlign = 'center';
+                    visCtx.fillStyle = '#40c4ff';
+                    visCtx.fillText(tempo.unfoldedBpm.toFixed(1), bpmPx, 12);
+                }
+
+                const markers = [
+                    { lag: tempo.bestLag,         color: '#ffab00' },  // full lag — amber
+                    { lag: tempo.bestLag / 2,     color: '#00e676' },  // lag/2 — green
+                    { lag: tempo.interpLag,       color: '#40c4ff' },  // interp peak — cyan
+                ];
+                for (const m of markers) {
+                    if (m.lag < 3 || m.lag >= n) continue;
+                    const px = m.lag * sliceWidth;
+                    visCtx.strokeStyle = m.color;
+                    visCtx.lineWidth = 1;
+                    visCtx.setLineDash([4, 4]);
+                    visCtx.beginPath();
+                    visCtx.moveTo(px, 16);
+                    visCtx.lineTo(px, h - 14);
+                    visCtx.stroke();
+                }
                 visCtx.setLineDash([]);
+            }
+
+            // Draw top-N candidate scores at their lag positions
+            if (tempo.topScores && tempo.topScores.length > 0) {
+                visCtx.font = '10px monospace';
+                visCtx.textAlign = 'center';
+                for (let i = 0; i < tempo.topScores.length; i++) {
+                    const c = tempo.topScores[i];
+                    if (c.lag < 3 || c.lag >= n) continue;
+                    const px = c.lag * sliceWidth;
+                    const label = c.score >= 10 ? c.score.toFixed(1)
+                                : c.score >= 1  ? c.score.toFixed(2)
+                                :                  c.score.toFixed(3);
+                    // Winner in amber, runners-up in dim white
+                    visCtx.fillStyle = (i === 0) ? '#ffab00' : '#ffffff80';
+                    visCtx.fillText(label, px, h - 3);
+                }
             }
         }
     }
     drawVisualiser();
+}
+
+function pauseVisualiser() {
+    if (visualiserAnimId) {
+        cancelAnimationFrame(visualiserAnimId);
+        visualiserAnimId = null;
+    }
+    // Keep last frame visible (no clearRect)
 }
 
 function stopVisualiser() {

@@ -80,7 +80,7 @@ function ensureAudioContext() {
     if (audioCtx) return;
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     analyserNode = audioCtx.createAnalyser();
-    analyserNode.fftSize = 256;
+    analyserNode.fftSize = 128;
     analyserNode.smoothingTimeConstant = 0.3;
     declickNode = audioCtx.createGain();
     gainNode = audioCtx.createGain();
