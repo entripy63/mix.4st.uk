@@ -126,11 +126,11 @@ function startVisualiser() {
             }
             visCtx.stroke();
 
-            // Peak count [N] top-right
+            // Peak count and lag/4 weight regime top-right
             visCtx.font = '10px monospace';
             visCtx.textAlign = 'right';
             visCtx.fillStyle = '#ffffff80';
-            visCtx.fillText('[' + tempo.debugPeakCount + ']', w - 4, 12);
+            visCtx.fillText('[' + tempo.debugPeakCount + '] w' + (tempo.w4Weight || 0), w - 4, 12);
 
             // Mark best-lag and subdivision peaks
             if (tempo.bestLag > 0 && tempo.bestLag < n) {

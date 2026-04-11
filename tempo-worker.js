@@ -2,6 +2,9 @@
 // Receives spectral flux values from main thread, runs autocorrelation
 // and peak scoring, posts results back for display.
 
+const BPM_MIN = 50;
+const BPM_MAX = 200;
+
 const s = {
     sampleRate: 120,
     bufLen: 480,
@@ -12,8 +15,6 @@ const s = {
     bpm: 0,
     rawBpm: 0,
     instantBpm: 0,
-    bpmHistory: [],
-    lastConfidence: 0,
 
     emaCorrs: null,
     emaCorrAlpha: 0.05,
@@ -26,8 +27,11 @@ const s = {
     debugPeakCount: 0,
     debugTroughCount: 0,
     unfoldedBpm: 0,
-    rejectCount: 0,      // consecutive outlier rejections
-    bpmTarget: 0,        // last credible smoothing target
+    stabilityCount: 0,   // consecutive passes where winning lag agrees
+    bpmTarget: 0,        // current smoothing target
+    w4Low: true,         // true = low-tempo weight, false = high-tempo weight
+    w4Weight: 0,         // current lag/4 weight
+    w4LockCount: 0,      // passes remaining before weight can change
     skipReason: '',      // why estimation was skipped (empty = normal)
     topScores: [],       // top scored candidates [{lag, score}]
 
@@ -43,16 +47,17 @@ function reset() {
     s.bpm = 0;
     s.rawBpm = 0;
     s.instantBpm = 0;
-    s.bpmHistory = [];
-    s.lastConfidence = 0;
     s.emaCorrs = null;
     s.smoothCorrs = null;
     s.bestLag = 0;
     s.interpLag = 0;
     s.maxLag = 0;
     s.debugRefinedLag = 0;
-    s.rejectCount = 0;
+    s.stabilityCount = 0;
     s.bpmTarget = 0;
+    s.w4Low = true;
+    s.w4Weight = 0;
+    s.w4LockCount = 0;
     s.skipReason = '';
     s.topScores = [];
     s.frameCount = 0;
@@ -67,7 +72,7 @@ function postResult(lastCorrMax) {
         bpm: s.bpm,
         rawBpm: s.rawBpm,
         instantBpm: s.instantBpm,
-        lastConfidence: s.lastConfidence,
+        stabilityCount: s.stabilityCount,
         bestLag: s.bestLag,
         interpLag: s.interpLag,
         maxLag: s.maxLag,
@@ -75,6 +80,7 @@ function postResult(lastCorrMax) {
         debugRefinedLag: s.debugRefinedLag,
         debugPeakCount: s.debugPeakCount,
         debugTroughCount: s.debugTroughCount,
+        w4Weight: s.w4Weight,
         unfoldedBpm: s.unfoldedBpm,
         sampleRate: s.sampleRate,
         skipReason: s.skipReason,
@@ -145,17 +151,20 @@ function processFlux(flux) {
     }
 
     // Symmetric FIR smoothing along lag axis (linear phase — no peak shift)
-    // Triangular kernel [1,2,3,2,1]/9
+    // 11-tap triangular kernel [1,2,3,4,5,6,5,4,3,2,1]/36
+    // Sized for ~136 Hz sample rate (equivalent to 5-tap at 60 Hz)
     if (!s.smoothCorrs) {
         s.smoothCorrs = new Float32Array(s.bufLen);
     }
     const ec = s.emaCorrs;
-    s.smoothCorrs[0] = ec[0];
-    s.smoothCorrs[1] = ec[1];
-    s.smoothCorrs[s.bufLen - 1] = ec[s.bufLen - 1];
-    s.smoothCorrs[s.bufLen - 2] = ec[s.bufLen - 2];
-    for (let i = 2; i < s.bufLen - 2; i++) {
-        s.smoothCorrs[i] = (ec[i-2] + 2*ec[i-1] + 3*ec[i] + 2*ec[i+1] + ec[i+2]) / 9;
+    for (let i = 0; i < 5; i++) s.smoothCorrs[i] = ec[i];
+    for (let i = s.bufLen - 5; i < s.bufLen; i++) s.smoothCorrs[i] = ec[i];
+    for (let i = 5; i < s.bufLen - 5; i++) {
+        s.smoothCorrs[i] = (
+            ec[i-5] + 2*ec[i-4] + 3*ec[i-3] + 4*ec[i-2] + 5*ec[i-1]
+            + 6*ec[i]
+            + 5*ec[i+1] + 4*ec[i+2] + 3*ec[i+3] + 2*ec[i+4] + ec[i+5]
+        ) / 36;
     }
 
     // Find peak of smoothed correlations for thresholding
@@ -208,9 +217,7 @@ function processFlux(flux) {
 
         // Windowed subdivision support: check if a fractional lag position
         // has a nearby peak (positive support) or trough (negative support)
-        // within ±1.5 samples. Uses prominence to ignore noise peaks.
-        // Normalised by globalMax so scores reflect structural support
-        // (is the harmonic pattern there?) not absolute peak magnitude.
+        // within ±1.5 samples. Normalised by globalMax for readable scores.
         const norm = globalMax || 1;
         const subdivSupport = (target) => {
             if (target < 4) return 0;
@@ -231,53 +238,31 @@ function processFlux(flux) {
             return (bestPeak - bestTrough) / norm;
         };
 
-        // Score peaks by contiguous subdivision depth: count how many
-        // binary subdivisions (lag/2, lag/4, lag/8) have peak support
-        // without interruption. Short-circuits on first failure —
-        // prevents trough candidates from accumulating partial scores
-        // at higher subdivisions via phase-halving alignment.
-        // Prominence tiebreaks within the same depth level.
-        const minLag = Math.round(s.sampleRate * 60 / 200);
-
-        // Prior bias: when stably locked, gently favour the current lag's
-        // neighbourhood to resist transient noise. Lightweight alternative
-        // to full Bayesian tracking — just a small additive bonus that
-        // can't promote a candidate to the next depth level (depths are
-        // integers), only break ties within the same level.
-        const priorLag = s.bestLag;
-        const hasPrior = priorLag > 0 && s.bpm > 0 && s.lastConfidence > 0.2;
+        const minLag = Math.round(s.sampleRate * 60 / BPM_MAX);
+        const maxBpmLag = Math.round(s.sampleRate * 60 / BPM_MIN);
 
         let bestLag = 0;
         let bestScore = -Infinity;
         const topN = [];  // top scored candidates for debug visualisation
         for (const pk of peaks) {
-            if (pk.idx < minLag || pk.idx > maxLag) continue;
+            if (pk.idx < minLag || pk.idx > maxBpmLag) continue;
             if (pk.prominence <= 0) continue;
-            // Contiguous binary subdivision chain: lag → lag/2 → lag/4 → lag/8
-            // Each level halves the lag and requires a peak; short-circuits
-            // on first failure. Depth 0 rejects troughs, 1 rejects odd peaks,
-            // 2 rejects 6T, 3 rejects 12T, 4 accepts only 8T/16T.
-            let depth = 0;
-            if (subdivSupport(pk.idx) > 0) {
-                depth = 1;
-                if (subdivSupport(pk.idx / 2) > 0) {
-                    depth = 2;
-                    if (subdivSupport(pk.idx / 4) > 0) {
-                        depth = 3;
-                        if (pk.idx / 8 >= 4 && subdivSupport(pk.idx / 8) > 0) {
-                            depth = 4;
-                        }
-                    }
-                }
-            }
-            // Favour longer lags: same absolute estimation error gives
-            // proportionally smaller BPM error at longer lags. Lag-length
-            // bonus dominates tiebreak; prominence is minor insurance
-            // against noise-floor candidates.
-            let score = depth + 0.5 * pk.idx / maxLag
-                              + 0.05 * pk.prominence / norm;
-            if (hasPrior && Math.abs(pk.idx - priorLag) / priorLag < 0.1) {
-                score += 0.15;
+            // Cumulative binary subdivision support: lag + lag/2, with a
+            // partial lag/4 contribution (clamped to zero) to gently bias
+            // toward longer-lag candidates (4 8 over 2 4) without
+            // penalising non-binary peaks (6, 10) whose lag/4 hits troughs.
+            // Weight adapts to tempo regime: below 100 BPM only double-time
+            // errors are possible, above only half-time — opposite
+            // corrections needed either side of the boundary.
+            const support = subdivSupport(pk.idx)
+                          + subdivSupport(pk.idx / 2)
+                          + s.w4Weight * Math.max(0, subdivSupport(pk.idx / 4));
+            // Stability hysteresis: gently boost candidates near the current
+            // bestLag to resist dithering. Grows with stability so fresh
+            // estimates compete freely but locked ones resist transient noise.
+            let score = support;
+            if (s.bestLag > 0 && Math.abs(pk.idx - s.bestLag) / s.bestLag < 0.1) {
+                score += 0.05 * Math.min(s.stabilityCount, 10) / 10;
             }
             if (score > bestScore) {
                 bestScore = score;
@@ -290,43 +275,20 @@ function processFlux(flux) {
                 if (topN.length > 6) topN.length = 6;
             }
         }
-        s.topScores = topN;
-        let bestCorr = bestLag > 0 ? Math.max(0, sc[bestLag]) : 0;
+        s.topScores = topN.filter(c => c.score >= 1);
 
         if (bestLag > 0) {
             s.bestLag = bestLag;
 
-            // Use lag/2 for interpolation — sharper than full lag but safe
-            // from the ±0.5 sample limit of Gaussian interpolation.
-            let interpLag = bestLag;
-            const findSubPeak = (divLag) => {
-                const est = Math.round(divLag);
-                const lo = Math.max(4, est - 2);
-                const hi = Math.min(sc.length - 2, est + 2);
-                let best = 0, bestVal = 0;
-                for (let q = lo; q <= hi; q++) {
-                    if (sc[q] > bestVal && sc[q] > sc[q - 1] && sc[q] > sc[q + 1]) {
-                        bestVal = sc[q];
-                        best = q;
-                    }
-                }
-                if (best > 0) {
-                    const dip = Math.min(sc[best - 1], sc[best + 1]);
-                    if (dip > bestVal * 0.95) return 0;  // plateau, not a peak
-                }
-                return best;
-            };
-            const q2 = findSubPeak(bestLag / 2);
-            if (q2 > 0) interpLag = q2;
-            s.interpLag = interpLag;
+            s.interpLag = bestLag;
 
-            // Sub-lag BPM precision: Gaussian interpolation when all three
+            // Sub-sample BPM precision: Gaussian interpolation when all three
             // points are positive, else parabolic (handles negative baselines)
-            let refinedLag = interpLag;
-            if (interpLag > 3 && interpLag < sc.length - 1) {
-                const prev = sc[interpLag - 1];
-                const peak = sc[interpLag];
-                const next = sc[interpLag + 1];
+            let refinedLag = bestLag;
+            if (bestLag > 3 && bestLag < sc.length - 1) {
+                const prev = sc[bestLag - 1];
+                const peak = sc[bestLag];
+                const next = sc[bestLag + 1];
                 if (prev > 0 && peak > 0 && next > 0) {
                     const lnPrev = Math.log(prev);
                     const lnPeak = Math.log(peak);
@@ -334,79 +296,86 @@ function processFlux(flux) {
                     const denom = 2 * (2 * lnPeak - lnPrev - lnNext);
                     if (denom > 0) {
                         const offset = (lnPrev - lnNext) / denom;
-                        refinedLag = interpLag + Math.max(-0.5, Math.min(0.5, offset));
+                        refinedLag = bestLag + Math.max(-0.5, Math.min(0.5, offset));
                     }
                 } else {
                     const denom = 2 * (2 * peak - prev - next);
                     if (denom > 0) {
                         const offset = (prev - next) / denom;
-                        refinedLag = interpLag + Math.max(-0.5, Math.min(0.5, offset));
+                        refinedLag = bestLag + Math.max(-0.5, Math.min(0.5, offset));
                     }
                 }
             }
             s.debugRefinedLag = refinedLag;
             let detectedBpm = s.sampleRate * 60 / refinedLag;
             s.unfoldedBpm = detectedBpm;
-            while (detectedBpm < 90) detectedBpm *= 2;
-            while (detectedBpm > 200) detectedBpm /= 2;
+            while (detectedBpm < BPM_MIN) detectedBpm *= 2;
+            while (detectedBpm > BPM_MAX) detectedBpm /= 2;
             s.instantBpm = detectedBpm;
-
-            const confidence = Math.max(0, Math.min(1, bestCorr / (energy * 0.3)));
-            s.lastConfidence = confidence;
-
-            // Outlier rejection: skip flywheel when detectedBpm jumps >20%
-            // from a stable estimate. Octave-normalize first so dithering
-            // across a folding boundary (e.g. 90.6→89.4→178.8) doesn't
-            // appear as a ~100% step change.
-            // After 5 consecutive rejections, accept as genuine tempo change.
-            // Compare to s.bpmTarget to avoid issues with s.bpm lagging
-            let compareBpm = detectedBpm;
-            while (compareBpm > s.bpmTarget * 1.41) compareBpm /= 2;
-            while (compareBpm < s.bpmTarget * 0.71) compareBpm *= 2;
-            if (s.bpmTarget > 0 && Math.abs(compareBpm - s.bpmTarget) / s.bpmTarget > 0.2) {
-                s.rejectCount++;
-                if (s.rejectCount >= 5) {
-                    s.bpmTarget = detectedBpm;
-                    s.rawBpm = detectedBpm;
-                    s.bpmHistory = [];
-                    s.rejectCount = 0;
-                } else {
-                    s.skipReason = 'Outlier rejected (' + s.rejectCount + '/5, detected=' + detectedBpm.toFixed(1) + ')';
-                }
-                return;
-            }
-            s.rejectCount = 0;
-
-            // Confidence-weighted flywheel
-            if (s.bpm > 0) {
-                s.rawBpm = detectedBpm * confidence + s.bpm * (1 - confidence);
-            } else {
-                s.rawBpm = detectedBpm;
-            }
+            s.rawBpm = detectedBpm;
         }
 
-        // Update target from median-filtered flywheel output
+        // Stability-aware target update
         if (s.rawBpm > 0) {
-            if (s.bpm === 0 && (s.corrCount < 8 || s.lastConfidence < 0.15)) {
-                s.skipReason = 'Waiting (' + s.corrCount + '/8 passes, conf=' + s.lastConfidence.toFixed(3) + ')';
+            // Wait for a few passes before first estimate
+            if (s.bpm === 0 && s.corrCount < 4) {
+                s.skipReason = 'Waiting (' + s.corrCount + '/4 passes)';
                 return;
             }
 
-            s.bpmHistory.push(s.rawBpm);
-            if (s.bpmHistory.length > 9) s.bpmHistory.shift();
-            const sorted = [...s.bpmHistory].sort((a, b) => a - b);
-            s.bpmTarget = sorted[Math.floor(sorted.length / 2)];
+            if (s.bpmTarget > 0) {
+                // Detect octave jump from raw ratio BEFORE normalisation.
+                // Octave jumps (ratio ≈ 2.0 or 0.5) are almost always
+                // estimation errors — lock the weight to prevent
+                // reinforcing the error. Non-octave changes are genuine
+                // tempo changes — allow weight to adapt quickly.
+                const ratio = s.rawBpm / s.bpmTarget;
+                const isOctave = (ratio > 1.85 && ratio < 2.15)
+                              || (ratio > 0.46 && ratio < 0.54);
+                if (isOctave) {
+                    s.w4LockCount = 60;
+                } else if (Math.abs(ratio - 1) > 0.1) {
+                    // Non-octave jump crossing a meaningful distance
+                    s.w4LockCount = Math.min(s.w4LockCount, 3);
+                }
+
+                // Octave-normalise for stability comparison
+                let compareBpm = s.rawBpm;
+                while (compareBpm > s.bpmTarget * 1.41) compareBpm /= 2;
+                while (compareBpm < s.bpmTarget * 0.71) compareBpm *= 2;
+
+                const drift = Math.abs(compareBpm - s.bpmTarget) / s.bpmTarget;
+                // Threshold scales with stability: starts at 25%, narrows
+                // to 10% after many stable passes (capped at 30)
+                const threshold = 0.10 + 0.15 / (1 + s.stabilityCount / 5);
+                if (drift < threshold) {
+                    s.stabilityCount = Math.min(30, s.stabilityCount + 1);
+                } else {
+                    s.stabilityCount = 0;
+                }
+                s.bpmTarget = s.rawBpm;
+            } else {
+                s.bpmTarget = s.rawBpm;
+            }
+
+            // Update weight regime when unlocked
+            if (s.w4LockCount > 0) {
+                s.w4LockCount--;
+            } else {
+                s.w4Low = s.bpmTarget < 100;
+                s.w4Weight = s.w4Low ? 0.5 : 0.0;
+            }
         }
         s.skipReason = '';
     } finally {
-        // Display smoothing: always continues toward last target,
-        // even during outlier rejection or noisy passes
+        // Display smoothing: rate scales with stability.
+        // Low stability = fast response (0.6), high stability = slow (0.15).
         if (s.bpmTarget > 0) {
             if (s.bpm === 0) {
                 s.bpm = s.bpmTarget;
             } else {
-                const a = Math.abs(s.bpmTarget - s.bpm) > 1 ? 0.6 : 0.2;
-                s.bpm += (s.bpmTarget - s.bpm) * a;
+                const rate = 0.15 + 0.45 / (1 + s.stabilityCount / 3);
+                s.bpm += (s.bpmTarget - s.bpm) * rate;
             }
         }
         postResult(lastCorrMax);

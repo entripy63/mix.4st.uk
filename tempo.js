@@ -26,7 +26,7 @@ const tempo = {
     bpm: 0,
     rawBpm: 0,
     instantBpm: 0,
-    lastConfidence: 0,
+    stabilityCount: 0,
     fluxPeak: 1,          // slow-decay peak for flux display scaling (set by visualiser)
     lastCorrs: null,      // most recent smoothed autocorrelation array (from worker)
     lastCorrMax: 0,
@@ -71,7 +71,7 @@ const tempo = {
         this.bpm = 0;
         this.rawBpm = 0;
         this.instantBpm = 0;
-        this.lastConfidence = 0;
+        this.stabilityCount = 0;
         this.fluxPeak = 1;
         this.lastCorrs = null;
         this.lastCorrMax = 0;
@@ -103,7 +103,7 @@ function startTempo() {
             tempo.bpm = msg.bpm;
             tempo.rawBpm = msg.rawBpm;
             tempo.instantBpm = msg.instantBpm;
-            tempo.lastConfidence = msg.lastConfidence;
+            tempo.stabilityCount = msg.stabilityCount;
             tempo.bestLag = msg.bestLag;
             tempo.interpLag = msg.interpLag;
             tempo.maxLag = msg.maxLag;
@@ -111,6 +111,7 @@ function startTempo() {
             tempo.debugRefinedLag = msg.debugRefinedLag;
             tempo.debugPeakCount = msg.debugPeakCount;
             tempo.debugTroughCount = msg.debugTroughCount;
+            tempo.w4Weight = msg.w4Weight;
             tempo.unfoldedBpm = msg.unfoldedBpm;
             tempo.sampleRate = msg.sampleRate;
             tempo.skipReason = msg.skipReason || '';
