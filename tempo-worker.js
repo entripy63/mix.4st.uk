@@ -32,6 +32,7 @@ const s = {
     w4Low: true,         // true = low-tempo weight, false = high-tempo weight
     w4Weight: 0,         // current lag/4 weight
     w4LockCount: 0,      // passes remaining before weight can change
+    w4LastFlipPass: 0,   // corrCount when w4Low last flipped
     skipReason: '',      // why estimation was skipped (empty = normal)
     topScores: [],       // top scored candidates [{lag, score}]
 
@@ -58,6 +59,7 @@ function reset() {
     s.w4Low = true;
     s.w4Weight = 0;
     s.w4LockCount = 0;
+    s.w4LastFlipPass = 0;
     s.skipReason = '';
     s.topScores = [];
     s.frameCount = 0;
@@ -335,8 +337,9 @@ function processFlux(flux) {
                 if (isOctave) {
                     s.w4LockCount = 60;
                 } else if (Math.abs(ratio - 1) > 0.1) {
-                    // Non-octave jump crossing a meaningful distance
-                    s.w4LockCount = Math.min(s.w4LockCount, 3);
+                    // Non-octave jump — release octave locks quickly but
+                    // don't undercut oscillation locks (≤30 passes)
+                    if (s.w4LockCount > 30) s.w4LockCount = 3;
                 }
 
                 // Octave-normalise for stability comparison
@@ -362,8 +365,17 @@ function processFlux(flux) {
             if (s.w4LockCount > 0) {
                 s.w4LockCount--;
             } else {
-                s.w4Low = s.bpmTarget < 100;
-                s.w4Weight = s.w4Low ? 0.5 : 0.0;
+                const shouldBeLow = s.bpmTarget < 100;
+                if (shouldBeLow !== s.w4Low) {
+                    if (s.corrCount - s.w4LastFlipPass < 15) {
+                        // Second flip within 15 passes = oscillation — lock
+                        s.w4LockCount = 30;
+                    } else {
+                        s.w4Low = shouldBeLow;
+                        s.w4Weight = s.w4Low ? 0.5 : 0.0;
+                        s.w4LastFlipPass = s.corrCount;
+                    }
+                }
             }
         }
         s.skipReason = '';
