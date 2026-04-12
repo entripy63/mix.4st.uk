@@ -29,8 +29,8 @@ const s = {
     unfoldedBpm: 0,
     stabilityCount: 0,   // consecutive passes where winning lag agrees
     bpmTarget: 0,        // current smoothing target
-    w4Low: true,         // true = low-tempo weight, false = high-tempo weight
-    w4Weight: 0,         // current lag/4 weight
+    w4Low: true,        // true = low-tempo weight, false = high-tempo weight
+    w4Weight: 0.5,       // current lag/4 weight
     w4LockCount: 0,      // passes remaining before weight can change
     w4LastFlipPass: 0,   // corrCount when w4Low last flipped
     skipReason: '',      // why estimation was skipped (empty = normal)
@@ -57,7 +57,7 @@ function reset() {
     s.stabilityCount = 0;
     s.bpmTarget = 0;
     s.w4Low = true;
-    s.w4Weight = 0;
+    s.w4Weight = 0.5;
     s.w4LockCount = 0;
     s.w4LastFlipPass = 0;
     s.skipReason = '';
@@ -386,7 +386,11 @@ function processFlux(flux) {
             if (s.bpm === 0) {
                 s.bpm = s.bpmTarget;
             } else {
-                const rate = 0.15 + 0.45 / (1 + s.stabilityCount / 3);
+                // Base rate: slow when stable (0.08), fast when unstable (0.50)
+                const baseRate = 0.08 + 0.42 / (1 + s.stabilityCount / 3);
+                // >1 BPM away: lock to 0.85 so octave jumps converge in
+                // ~3 passes (70→10.5→1.6→0.2); ≤1 BPM: gentle baseRate
+                const rate = Math.abs(s.bpmTarget - s.bpm) > 1 ? Math.max(baseRate, 0.85) : baseRate;
                 s.bpm += (s.bpmTarget - s.bpm) * rate;
             }
         }
