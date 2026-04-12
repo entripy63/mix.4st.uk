@@ -6,6 +6,43 @@
 const bpmDisplay = document.getElementById("bpmDisplay");
 
 let tempoWorker = null;
+let tempoWorkerGeneration = 0;
+let tempoWatchdogInterval = null;
+let tempoLastTickTs = 0;
+const tempoDebug = {
+    starts: 0,
+    restarts: 0,
+    lastStartAt: 0,
+    lastRestartAt: 0,
+    lastRestartReason: '',
+    lastWatchdogAgeMs: 0,
+    lastVisibilityResumeAt: 0,
+};
+
+function isTempoDebugEnabled() {
+    return storage.getBool('tempoDebug', false);
+}
+
+function logTempoDebug(message, extra = null) {
+    if (!isTempoDebugEnabled()) return;
+    if (extra) {
+        console.info('[tempo-debug]', message, extra);
+    } else {
+        console.info('[tempo-debug]', message);
+    }
+}
+
+function renderTempoDebugTitle(baseTitle) {
+    if (!isTempoDebugEnabled()) return baseTitle;
+    const tickAge = tempoLastTickTs > 0 ? Math.round(performance.now() - tempoLastTickTs) : 0;
+    const debugTitle = 'tempo dbg: starts=' + tempoDebug.starts
+        + ' restarts=' + tempoDebug.restarts
+        + ' tickAge=' + tickAge + 'ms'
+        + (tempoDebug.lastRestartReason ? ' last=' + tempoDebug.lastRestartReason : '');
+    return baseTitle ? baseTitle + ' | ' + debugTitle : debugTitle;
+}
+
+window.tempoDebugState = tempoDebug;
 
 // Precomputed compression LUT for Uint8 frequency bins (0–255)
 // Replaces per-sample Math.log1p with a table lookup
@@ -89,11 +126,20 @@ function startTempo() {
     if (audioCtx.state === 'suspended') audioCtx.resume();
 
     tempoWorker = new Worker('tempo-worker.js');
+    const workerGeneration = ++tempoWorkerGeneration;
+    tempoLastTickTs = performance.now();
+    tempoDebug.starts++;
+    tempoDebug.lastStartAt = Date.now();
+    logTempoDebug('worker started', { generation: workerGeneration, starts: tempoDebug.starts });
     const freqData = new Uint8Array(analyserNode.frequencyBinCount);
 
     tempoWorker.onmessage = function(e) {
+        // Ignore stale worker messages after a restart.
+        if (workerGeneration !== tempoWorkerGeneration || !tempoWorker) return;
+
         const msg = e.data;
         if (msg.type === 'tick') {
+            tempoLastTickTs = performance.now();
             analyserNode.getByteFrequencyData(freqData);
             const flux = tempo.computeFlux(freqData);
             if (flux !== null) {
@@ -124,12 +170,51 @@ function startTempo() {
                 bpmDisplay.textContent = tempo.bpm.toFixed(1) + ' BPM';
                 bpmDisplay.style.display = '';
             }
-            bpmDisplay.title = tempo.skipReason;
+            bpmDisplay.title = renderTempoDebugTitle(tempo.skipReason);
             bpmDisplay.style.color = tempo.skipReason ? '#ffd740' : '';
         }
     };
 
     tempoWorker.postMessage({ type: 'start' });
+    ensureTempoWatchdog();
+}
+
+function restartTempoWorker(reason = 'manual') {
+    tempoDebug.restarts++;
+    tempoDebug.lastRestartAt = Date.now();
+    tempoDebug.lastRestartReason = reason;
+    logTempoDebug('restarting worker', {
+        reason,
+        restarts: tempoDebug.restarts,
+        tickAgeMs: tempoLastTickTs > 0 ? Math.round(performance.now() - tempoLastTickTs) : 0,
+    });
+    if (tempoWorker) {
+        tempoWorker.postMessage({ type: 'stop' });
+        tempoWorker.terminate();
+        tempoWorker = null;
+    }
+    startTempo();
+}
+
+function ensureTempoWatchdog() {
+    if (tempoWatchdogInterval) return;
+    tempoWatchdogInterval = setInterval(() => {
+        if (document.hidden) return;
+        // Only enforce liveness while actively playing local audio and BPM is enabled.
+        if (!tempoWorker || aud.paused || state.isStream || !storage.getBool('bpmEnabled', true)) return;
+
+        const ageMs = performance.now() - tempoLastTickTs;
+        if (ageMs > 3000) {
+            tempoDebug.lastWatchdogAgeMs = Math.round(ageMs);
+            restartTempoWorker('watchdog-no-tick');
+        }
+    }, 1000);
+}
+
+function stopTempoWatchdog() {
+    if (!tempoWatchdogInterval) return;
+    clearInterval(tempoWatchdogInterval);
+    tempoWatchdogInterval = null;
 }
 
 let tempoPausedAt = null;
@@ -162,8 +247,19 @@ function stopTempo() {
         tempoWorker.terminate();
         tempoWorker = null;
     }
+    stopTempoWatchdog();
     tempoPausedAt = null;
+    tempoLastTickTs = 0;
     tempo.reset();
     bpmDisplay.style.display = 'none';
     bpmDisplay.textContent = '';
 }
+
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) return;
+    if (!tempoWorker || aud.paused || state.isStream || !storage.getBool('bpmEnabled', true)) return;
+    // Nudge the worker when returning to foreground after potential background throttling.
+    tempoDebug.lastVisibilityResumeAt = Date.now();
+    logTempoDebug('visibility resume nudge');
+    tempoWorker.postMessage({ type: 'resume' });
+});

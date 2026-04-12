@@ -4,6 +4,8 @@
 
 const BPM_MIN = 50;
 const BPM_MAX = 200;
+const SAMPLE_RATE_MIN = 30;
+const SAMPLE_RATE_MAX = 240;
 
 const s = {
     sampleRate: 120,
@@ -106,9 +108,12 @@ function processFlux(flux) {
     const now = performance.now();
     if (s.lastCorrTime > 0) {
         const dt = (now - s.lastCorrTime) / 1000;
-        if (dt > 0.1) {
+        if (dt > 0) {
             const instantRate = s.frameCount / dt;
-            s.sampleRate = 0.7 * s.sampleRate + 0.3 * instantRate;
+            if (Number.isFinite(instantRate) && instantRate > 0) {
+                const blended = 0.7 * s.sampleRate + 0.3 * instantRate;
+                s.sampleRate = Math.max(SAMPLE_RATE_MIN, Math.min(SAMPLE_RATE_MAX, blended));
+            }
         }
     }
     s.lastCorrTime = now;
