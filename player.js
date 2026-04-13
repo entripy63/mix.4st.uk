@@ -232,8 +232,14 @@ window.addEventListener("beforeunload", function () {
 });
 
 aud.addEventListener("ended", async function () {
+   // Ignore ended events while in stream mode. Stream lifecycle is handled
+   // by IcecastMetadataPlayer and should not stop tempo/visualiser state.
+   if (state.isStream) {
+     return;
+   }
+
    // Diagnostic: detect premature end (> 60s before expected duration)
-   if (!state.isStream && aud.duration && isFinite(aud.duration) && aud.currentTime < aud.duration - 60) {
+   if (aud.duration && isFinite(aud.duration) && aud.currentTime < aud.duration - 60) {
      const bufRanges = [];
      for (let i = 0; i < aud.buffered.length; i++) bufRanges.push([aud.buffered.start(i), aud.buffered.end(i)]);
      console.error('PREMATURE END', {
