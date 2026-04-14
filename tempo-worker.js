@@ -31,12 +31,20 @@ const s = {
     unfoldedBpm: 0,
     stabilityCount: 0,   // consecutive passes where winning lag agrees
     bpmTarget: 0,        // current smoothing target
-    w4Low: true,        // true = low-tempo weight, false = high-tempo weight
-    w4Weight: 0.5,       // current lag/4 weight
+    w4Low: false,        // true = low-tempo weight, false = high-tempo weight
+    w4Weight: 0.0,       // current lag/4 weight
     w4LockCount: 0,      // passes remaining before weight can change
     w4LastFlipPass: 0,   // corrCount when w4Low last flipped
     skipReason: '',      // why estimation was skipped (empty = normal)
     topScores: [],       // top scored candidates [{lag, score}]
+
+    // Tracking state machine: locking → locked → holding
+    trackState: 'locking',
+    lockLag: 0,          // lag we're locked to
+    lockConfirm: 0,      // consecutive ordinal-confirmed passes
+    holdRemaining: 0,    // passes remaining in holding before giving up
+    altBetterCount: 0,   // consecutive passes where bestLag disagrees with lock
+    altBetterLag: 0,     // the disagreeing bestLag being tracked
 
     frameCount: 0,
     corrCount: 0,
@@ -58,16 +66,41 @@ function reset() {
     s.debugRefinedLag = 0;
     s.stabilityCount = 0;
     s.bpmTarget = 0;
-    s.w4Low = true;
-    s.w4Weight = 0.5;
+    s.w4Low = false;
+    s.w4Weight = 0.0;
     s.w4LockCount = 0;
     s.w4LastFlipPass = 0;
     s.skipReason = '';
     s.topScores = [];
+    s.trackState = 'locking';
+    s.lockLag = 0;
+    s.lockConfirm = 0;
+    s.holdRemaining = 0;
+    s.altBetterCount = 0;
+    s.altBetterLag = 0;
     s.frameCount = 0;
     s.corrCount = 0;
     s.lastCorrTime = 0;
     s.sampleRate = 120;
+}
+
+// Update lag/4 weight regime based on current tempo estimate
+function updateW4Weight() {
+    if (s.bpmTarget <= 0) return;
+    if (s.w4LockCount > 0) {
+        s.w4LockCount--;
+        return;
+    }
+    const shouldBeLow = s.bpmTarget < 100;
+    if (shouldBeLow !== s.w4Low) {
+        if (s.corrCount - s.w4LastFlipPass < 15) {
+            s.w4LockCount = 30;
+        } else {
+            s.w4Low = shouldBeLow;
+            s.w4Weight = s.w4Low ? 0.5 : 0.0;
+            s.w4LastFlipPass = s.corrCount;
+        }
+    }
 }
 
 function postResult(lastCorrMax) {
@@ -89,6 +122,8 @@ function postResult(lastCorrMax) {
         sampleRate: s.sampleRate,
         skipReason: s.skipReason,
         topScores: s.topScores,
+        peakLags: s.peakLags || [],
+        trackState: s.trackState,
     };
     if (s.smoothCorrs) {
         msg.smoothCorrs = new Float32Array(s.smoothCorrs);
@@ -174,9 +209,24 @@ function processFlux(flux) {
         ) / 36;
     }
 
+    // Suppress lag=0 decay: find the first local minimum after the initial
+    // descent — everything before it is lag=0 artifact whose width varies
+    // with tempo. Zeroing both arrays prevents EMA accumulation.
+    let firstMin = 3;
+    for (let i = 4; i < maxLag; i++) {
+        if (s.smoothCorrs[i] <= s.smoothCorrs[i - 1] && s.smoothCorrs[i] <= s.smoothCorrs[i + 1]) {
+            firstMin = i;
+            break;
+        }
+    }
+    for (let i = 0; i <= firstMin; i++) {
+        s.smoothCorrs[i] = 0;
+        s.emaCorrs[i] = 0;
+    }
+
     // Find peak of smoothed correlations for thresholding
     let globalMax = 0;
-    for (let lag = 3; lag <= maxLag; lag++) {
+    for (let lag = firstMin + 1; lag <= maxLag; lag++) {
         if (s.smoothCorrs[lag] > globalMax) globalMax = s.smoothCorrs[lag];
     }
 
@@ -242,148 +292,240 @@ function processFlux(flux) {
                 }
                 if (tr.idx > target + 2) break;
             }
+            // Concavity fallback: detect vestigial peaks that don't form
+            // strict local maxima but show downward curvature (negative d2)
+            if (bestPeak === 0) {
+                const t = Math.round(target);
+                if (t > 0 && t < sc.length - 1) {
+                    const d2 = sc[t - 1] - 2 * sc[t] + sc[t + 1];
+                    if (d2 < 0) bestPeak = -d2;
+                }
+            }
             return (bestPeak - bestTrough) / norm;
         };
 
         const minLag = Math.round(s.sampleRate * 60 / BPM_MAX);
         const maxBpmLag = Math.round(s.sampleRate * 60 / BPM_MIN);
+        s.peakLags = peaks.map(pk => pk.idx);
 
-        let bestLag = 0;
-        let bestScore = -Infinity;
-        const topN = [];  // top scored candidates for debug visualisation
-        for (const pk of peaks) {
-            if (pk.idx < minLag || pk.idx > maxBpmLag) continue;
-            if (pk.prominence <= 0) continue;
-            // Cumulative binary subdivision support: lag + lag/2, with a
-            // partial lag/4 contribution (clamped to zero) to gently bias
-            // toward longer-lag candidates (4 8 over 2 4) without
-            // penalising non-binary peaks (6, 10) whose lag/4 hits troughs.
-            // Weight adapts to tempo regime: below 100 BPM only double-time
-            // errors are possible, above only half-time — opposite
-            // corrections needed either side of the boundary.
-            const support = subdivSupport(pk.idx)
-                          + subdivSupport(pk.idx / 2)
-                          + s.w4Weight * Math.max(0, subdivSupport(pk.idx / 4));
-            // Stability hysteresis: gently boost candidates near the current
-            // bestLag to resist dithering. Grows with stability so fresh
-            // estimates compete freely but locked ones resist transient noise.
-            let score = support;
-            if (s.bestLag > 0 && Math.abs(pk.idx - s.bestLag) / s.bestLag < 0.1) {
-                score += 0.05 * Math.min(s.stabilityCount, 10) / 10;
-            }
-            if (score > bestScore) {
-                bestScore = score;
-                bestLag = pk.idx;
-            }
-            // Insert into top-N list (kept sorted descending by score)
-            if (topN.length < 6 || score > topN[topN.length - 1].score) {
-                topN.push({ lag: pk.idx, score });
-                topN.sort((a, b) => b.score - a.score);
-                if (topN.length > 6) topN.length = 6;
-            }
-        }
-        s.topScores = topN.filter(c => c.score >= 1);
-
-        if (bestLag > 0) {
-            s.bestLag = bestLag;
-
-            s.interpLag = bestLag;
-
-            // Sub-sample BPM precision: Gaussian interpolation when all three
-            // points are positive, else parabolic (handles negative baselines)
-            let refinedLag = bestLag;
-            if (bestLag > 3 && bestLag < sc.length - 1) {
-                const prev = sc[bestLag - 1];
-                const peak = sc[bestLag];
-                const next = sc[bestLag + 1];
-                if (prev > 0 && peak > 0 && next > 0) {
-                    const lnPrev = Math.log(prev);
-                    const lnPeak = Math.log(peak);
-                    const lnNext = Math.log(next);
-                    const denom = 2 * (2 * lnPeak - lnPrev - lnNext);
-                    if (denom > 0) {
-                        const offset = (lnPrev - lnNext) / denom;
-                        refinedLag = bestLag + Math.max(-0.5, Math.min(0.5, offset));
-                    }
-                } else {
-                    const denom = 2 * (2 * peak - prev - next);
-                    if (denom > 0) {
-                        const offset = (prev - next) / denom;
-                        refinedLag = bestLag + Math.max(-0.5, Math.min(0.5, offset));
-                    }
+        // Helper: find nearest peak to a target lag within tolerance
+        const findNearPeak = (target, tolerance) => {
+            let best = null, bestDist = Infinity;
+            for (const pk of peaks) {
+                const dist = Math.abs(pk.idx - target);
+                if (dist < bestDist && dist <= tolerance) {
+                    best = pk;
+                    bestDist = dist;
                 }
             }
-            s.debugRefinedLag = refinedLag;
-            let detectedBpm = s.sampleRate * 60 / refinedLag;
+            return best;
+        };
+
+        // Helper: refine a lag to sub-sample precision
+        const refineLag = (lag) => {
+            if (lag <= 3 || lag >= sc.length - 1) return lag;
+            const prev = sc[lag - 1], peak = sc[lag], next = sc[lag + 1];
+            if (prev > 0 && peak > 0 && next > 0) {
+                const lnPrev = Math.log(prev);
+                const lnPeak = Math.log(peak);
+                const lnNext = Math.log(next);
+                const denom = 2 * (2 * lnPeak - lnPrev - lnNext);
+                if (denom > 0) {
+                    const offset = (lnPrev - lnNext) / denom;
+                    return lag + Math.max(-0.5, Math.min(0.5, offset));
+                }
+            } else {
+                const denom = 2 * (2 * peak - prev - next);
+                if (denom > 0) {
+                    const offset = (prev - next) / denom;
+                    return lag + Math.max(-0.5, Math.min(0.5, offset));
+                }
+            }
+            return lag;
+        };
+
+        // Helper: compute BPM from a refined lag and update state
+        const applyLag = (lag) => {
+            s.bestLag = lag;
+            s.interpLag = lag;
+            const refined = refineLag(lag);
+            s.debugRefinedLag = refined;
+            let detectedBpm = s.sampleRate * 60 / refined;
             s.unfoldedBpm = detectedBpm;
             while (detectedBpm < BPM_MIN) detectedBpm *= 2;
             while (detectedBpm > BPM_MAX) detectedBpm /= 2;
             s.instantBpm = detectedBpm;
             s.rawBpm = detectedBpm;
+            s.bpmTarget = detectedBpm;
+        };
+
+        // ── Evaluate bestLag for all states except holding ──
+        let bestLag = 0;
+        let bestScore = -Infinity;
+        let bestOrdinalConfirmed = false;
+        const topN = [];
+
+        if (s.trackState !== 'holding') {
+            for (const pk of peaks) {
+                if (pk.idx < minLag || pk.idx > maxBpmLag) continue;
+                if (pk.prominence <= 0) continue;
+                const support = subdivSupport(pk.idx)
+                              + subdivSupport(pk.idx / 2)
+                              + s.w4Weight * Math.max(0, subdivSupport(pk.idx / 4));
+                // Perceptual tempo prior
+                let candBpm = s.sampleRate * 60 / pk.idx;
+                while (candBpm < BPM_MIN) candBpm *= 2;
+                while (candBpm > BPM_MAX) candBpm /= 2;
+                const tempoPrior = 0.1 * Math.exp(-0.5 * ((candBpm - 120) / 50) ** 2);
+                // Peak ordinal bias
+                let ordinalBoost = 0;
+                let isOrdinalConfirmed = false;
+                const myOrd = peaks.indexOf(pk) + 1;
+                // Case 1: I'm ~4th, half-lag peak is ~2nd
+                if (myOrd >= 3) {
+                    const halfLag = pk.idx / 2;
+                    for (let j = 0; j < peaks.length; j++) {
+                        if (Math.abs(peaks[j].idx - halfLag) <= 1.5) {
+                            const halfOrd = j + 1;
+                            const k = 2 * halfOrd - myOrd;
+                            if (k >= 0 && k <= 2 && halfOrd - k === 2) {
+                                ordinalBoost = 0.75;
+                                isOrdinalConfirmed = true;
+                            }
+                            break;
+                        }
+                    }
+                }
+                // Case 2: I'm ~4th, double-lag peak is ~8th
+                if (ordinalBoost === 0 && myOrd >= 3) {
+                    const dblLag = pk.idx * 2;
+                    for (let j = peaks.length - 1; j >= 0; j--) {
+                        if (Math.abs(peaks[j].idx - dblLag) <= 1.5) {
+                            const dblOrd = j + 1;
+                            const k = 2 * myOrd - dblOrd;
+                            if (k >= 0 && k <= 2 && myOrd - k === 4) {
+                                ordinalBoost = 0.75;
+                                isOrdinalConfirmed = true;
+                            }
+                            break;
+                        }
+                    }
+                }
+                let score = support + tempoPrior + ordinalBoost;
+                if (s.bestLag > 0 && Math.abs(pk.idx - s.bestLag) / s.bestLag < 0.1) {
+                    score += 0.05 * Math.min(s.stabilityCount, 10) / 10;
+                }
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestLag = pk.idx;
+                    bestOrdinalConfirmed = isOrdinalConfirmed;
+                }
+                if (topN.length < 6 || score > topN[topN.length - 1].score) {
+                    topN.push({ lag: pk.idx, score });
+                    topN.sort((a, b) => b.score - a.score);
+                    if (topN.length > 6) topN.length = 6;
+                }
+                // Early exit: ordinal-confirmed candidate can't be beaten
+                if (isOrdinalConfirmed) break;
+            }
+            s.topScores = topN.filter(c => c.score >= 1);
         }
 
-        // Stability-aware target update
-        if (s.rawBpm > 0) {
-            // Wait for a few passes before first estimate
-            if (s.bpm === 0 && s.corrCount < 4) {
-                s.skipReason = 'Waiting (' + s.corrCount + '/4 passes)';
-                return;
+        // ── LOCKED state: track the locked peak, quality gate only ──
+        if (s.trackState === 'locked') {
+            const tolerance = Math.max(3, s.lockLag * 0.08);
+            const tracked = findNearPeak(s.lockLag, tolerance);
+            if (!tracked) {
+                // Peak lost — transition to holding
+                s.trackState = 'holding';
+                s.holdRemaining = 5;
+                s.skipReason = 'Holding (peak lost)';
+            } else {
+                const lockScore = subdivSupport(tracked.idx)
+                                + subdivSupport(tracked.idx / 2)
+                                + s.w4Weight * Math.max(0, subdivSupport(tracked.idx / 4));
+                if (lockScore < 1) {
+                    s.trackState = 'locking';
+                    s.lockConfirm = 0;
+                    s.stabilityCount = 0;
+                    s.skipReason = 'Lock broken (score=' + lockScore.toFixed(2) + ')';
+                } else {
+                    s.lockLag = tracked.idx;
+                    applyLag(tracked.idx);
+                    s.topScores = [{ lag: tracked.idx, score: lockScore }];
+                    s.skipReason = 'Locked (' + lockScore.toFixed(2) + ')';
+                }
             }
+            updateW4Weight();
+        }
 
-            if (s.bpmTarget > 0) {
-                // Detect octave jump from raw ratio BEFORE normalisation.
-                // Octave jumps (ratio ≈ 2.0 or 0.5) are almost always
-                // estimation errors — lock the weight to prevent
-                // reinforcing the error. Non-octave changes are genuine
-                // tempo changes — allow weight to adapt quickly.
-                const ratio = s.rawBpm / s.bpmTarget;
-                const isOctave = (ratio > 1.85 && ratio < 2.15)
-                              || (ratio > 0.46 && ratio < 0.54);
-                if (isOctave) {
-                    s.w4LockCount = 60;
-                } else if (Math.abs(ratio - 1) > 0.1) {
-                    // Non-octave jump — release octave locks quickly but
-                    // don't undercut oscillation locks (≤30 passes)
-                    if (s.w4LockCount > 30) s.w4LockCount = 3;
+        // ── HOLDING state: wait for locked peak to reappear ──
+        else if (s.trackState === 'holding') {
+            const tolerance = Math.max(3, s.lockLag * 0.08);
+            const tracked = findNearPeak(s.lockLag, tolerance);
+            if (tracked) {
+                s.lockLag = tracked.idx;
+                s.trackState = 'locked';
+                applyLag(tracked.idx);
+                s.skipReason = 'Locked (reacquired)';
+            } else {
+                s.holdRemaining--;
+                if (s.holdRemaining <= 0) {
+                    s.trackState = 'locking';
+                    s.lockConfirm = 0;
+                    s.stabilityCount = 0;
+                    s.skipReason = 'Hold expired → locking';
+                } else {
+                    s.skipReason = 'Holding (' + s.holdRemaining + ' left)';
+                }
+            }
+            updateW4Weight();
+        }
+
+        // ── LOCKING state: use pre-computed bestLag ──
+        else {
+            if (bestLag > 0) {
+                applyLag(bestLag);
+
+                // Track ordinal confirmations for lock transition
+                if (bestOrdinalConfirmed) {
+                    s.lockConfirm++;
+                } else {
+                    s.lockConfirm = 0;
                 }
 
-                // Octave-normalise for stability comparison
+                // Transition to locked after enough consecutive confirmations
+                if (s.lockConfirm >= 3) {
+                    s.trackState = 'locked';
+                    s.lockLag = bestLag;
+                    s.altBetterCount = 0;
+                    s.skipReason = 'Locked';
+                } else {
+                    // Wait for a few passes before first estimate
+                    if (s.bpm === 0 && s.corrCount < 4) {
+                        s.skipReason = 'Waiting (' + s.corrCount + '/4 passes)';
+                        return;
+                    }
+                    s.skipReason = 'Locking (' + s.lockConfirm + '/3)';
+                }
+            }
+
+            // Stability tracking (still useful for display smoothing)
+            if (s.rawBpm > 0 && s.bpmTarget > 0) {
                 let compareBpm = s.rawBpm;
                 while (compareBpm > s.bpmTarget * 1.41) compareBpm /= 2;
                 while (compareBpm < s.bpmTarget * 0.71) compareBpm *= 2;
-
                 const drift = Math.abs(compareBpm - s.bpmTarget) / s.bpmTarget;
-                // Threshold scales with stability: starts at 25%, narrows
-                // to 10% after many stable passes (capped at 30)
                 const threshold = 0.10 + 0.15 / (1 + s.stabilityCount / 5);
                 if (drift < threshold) {
                     s.stabilityCount = Math.min(30, s.stabilityCount + 1);
                 } else {
                     s.stabilityCount = 0;
                 }
-                s.bpmTarget = s.rawBpm;
-            } else {
-                s.bpmTarget = s.rawBpm;
             }
 
-            // Update weight regime when unlocked
-            if (s.w4LockCount > 0) {
-                s.w4LockCount--;
-            } else {
-                const shouldBeLow = s.bpmTarget < 100;
-                if (shouldBeLow !== s.w4Low) {
-                    if (s.corrCount - s.w4LastFlipPass < 15) {
-                        // Second flip within 15 passes = oscillation — lock
-                        s.w4LockCount = 30;
-                    } else {
-                        s.w4Low = shouldBeLow;
-                        s.w4Weight = s.w4Low ? 0.5 : 0.0;
-                        s.w4LastFlipPass = s.corrCount;
-                    }
-                }
-            }
+            updateW4Weight();
         }
-        s.skipReason = '';
     } finally {
         // Display smoothing: rate scales with stability.
         // Low stability = fast response (0.6), high stability = slow (0.15).

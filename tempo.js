@@ -162,6 +162,8 @@ function startTempo() {
             tempo.sampleRate = msg.sampleRate;
             tempo.skipReason = msg.skipReason || '';
             tempo.topScores = msg.topScores || [];
+            tempo.peakLags = msg.peakLags || [];
+            tempo.trackState = msg.trackState || 'locking';
             if (msg.smoothCorrs) {
                 tempo.lastCorrs = msg.smoothCorrs;
             }

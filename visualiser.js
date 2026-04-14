@@ -126,11 +126,27 @@ function startVisualiser() {
             }
             visCtx.stroke();
 
+            // Peak ordinal labels at each detected peak
+            if (tempo.peakLags && tempo.peakLags.length > 0) {
+                visCtx.font = '9px monospace';
+                visCtx.textAlign = 'center';
+                visCtx.fillStyle = '#ffffff50';
+                for (let i = 0; i < tempo.peakLags.length; i++) {
+                    const lag = tempo.peakLags[i];
+                    if (lag < 3 || lag >= n) continue;
+                    const px = lag * sliceWidth;
+                    const val = corrs[lag] / scale;
+                    const peakY = zeroY - val * zeroY * 0.85;
+                    visCtx.fillText(i + 1, px, peakY - 4);
+                }
+            }
+
             // Peak count and lag/4 weight regime top-right
             visCtx.font = '10px monospace';
             visCtx.textAlign = 'right';
             visCtx.fillStyle = '#ffffff80';
-            visCtx.fillText('[' + tempo.debugPeakCount + '] w' + (tempo.w4Weight || 0), w - 4, 12);
+            const stateLabel = (tempo.trackState || 'locking').toUpperCase();
+            visCtx.fillText(stateLabel + ' [' + tempo.debugPeakCount + '] w' + (tempo.w4Weight || 0), w - 4, 12);
 
             // Mark best-lag and subdivision peaks
             if (tempo.bestLag > 0 && tempo.bestLag < n) {
