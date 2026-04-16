@@ -168,6 +168,14 @@ function startTempo() {
                 tempo.lastCorrs = msg.smoothCorrs;
             }
 
+            // Log octave corrections with playback position
+            if (tempo.skipReason.includes('BPM fix')) {
+                const t = aud.currentTime;
+                const mm = Math.floor(t / 60);
+                const ss = Math.floor(t % 60).toString().padStart(2, '0');
+                console.warn('[tempo] ' + tempo.skipReason + ' at ' + mm + ':' + ss + ' → ' + tempo.bpm.toFixed(1) + ' BPM');
+            }
+
             if (tempo.bpm > 0) {
                 bpmDisplay.textContent = tempo.bpm.toFixed(1) + ' BPM';
                 bpmDisplay.style.display = '';
