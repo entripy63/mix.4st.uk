@@ -173,15 +173,17 @@ function startTempo() {
                 const t = aud.currentTime;
                 const mm = Math.floor(t / 60);
                 const ss = Math.floor(t % 60).toString().padStart(2, '0');
-                console.warn('[tempo] ' + tempo.skipReason + ' at ' + mm + ':' + ss + ' → ' + tempo.bpm.toFixed(1) + ' BPM');
+                console.info('[tempo] ' + tempo.skipReason + ' at ' + mm + ':' + ss + ' → ' + tempo.bpm.toFixed(1) + ' BPM');
             }
 
             if (tempo.bpm > 0) {
                 bpmDisplay.textContent = tempo.bpm.toFixed(1) + ' BPM';
                 bpmDisplay.style.display = '';
             }
-            bpmDisplay.title = renderTempoDebugTitle(tempo.skipReason);
-            bpmDisplay.style.color = tempo.skipReason ? '#ffd740' : '';
+            // Latch: keep last non-empty skipReason for display title
+            const displayReason = tempo.skipReason || bpmDisplay.title.split(' | ')[0] || '';
+            bpmDisplay.title = renderTempoDebugTitle(displayReason);
+            bpmDisplay.style.color = displayReason ? '#ffd740' : '';
         }
     };
 

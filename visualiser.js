@@ -129,15 +129,15 @@ function startVisualiser() {
             // Peak ordinal labels at each detected peak
             if (tempo.peakLags && tempo.peakLags.length > 0) {
                 visCtx.font = '9px monospace';
-                visCtx.textAlign = 'center';
-                visCtx.fillStyle = '#ffffff50';
+                visCtx.textAlign = 'right';
+                visCtx.fillStyle = '#ffffffc0';
                 for (let i = 0; i < tempo.peakLags.length; i++) {
                     const lag = tempo.peakLags[i];
                     if (lag < 3 || lag >= n) continue;
                     const px = lag * sliceWidth;
                     const val = corrs[lag] / scale;
                     const peakY = zeroY - val * zeroY * 0.85;
-                    visCtx.fillText(i + 1, px, peakY - 4);
+                    visCtx.fillText(i + 1, px - 8, peakY + 8);
                 }
             }
 

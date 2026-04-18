@@ -60,7 +60,7 @@ This difference is 4 (or 6 or 10) whereas for the correct lag the differences ar
 
 We note that there is an overlap, the sets of numbers are not disjoint, so no single threshold can discriminate between all cases. We argue that periodicity based on tens is so rare that we will simply not handle that case correctly.
 
-A threshold of 4 or greater will now indicate a half BPM error which can be corrected by halving lag. This will correct the BPM for periodicities based on fours (by far the most common) and on sixes (less common but not rare).
+An index (+/-1) of 8 or 12 will now indicate a half BPM error which can be corrected by halving lag if the resulting lag is still within bounds. This will correct the BPM for periodicities based on fours (by far the most common) and on sixes (less common but not rare).
 
 ## Correcting for a double BPM error (octave too high)
 
@@ -72,15 +72,9 @@ This difference is 1 (or 1.5 or 2.5) whereas for the correct lag the differences
 
 Again there is an overlap, the sets of numbers are not disjoint, so no single threshold can discriminate between all cases. We again argue that peridicity based on tens is so rare that we will simply not handle that case correctly. We then only need to discriminate 1 (or 1.5) from 2 (or 3)
 
-A threshold of 1.5 or less will now indicate a double BPM error which can be corrected by doubling lag. This will correct the BPM for periodicities based on fours (by far the most common) and on sixes (less common but not rare).
+An index of <= 2 will now indicate a double BPM error which can be corrected by doubling lag if the resulting lag is still within bounds. This will correct the BPM for periodicities based on fours (by far the most common) and on sixes (less common but not rare).
 
-## Threshold Conditions
-
-Comparing to the difference between indices of current lag and half lag peaks.
-Double BPM if <= 1.5
-Half BPM if >= 4
-
-Hence the correct lag will have an index difference greater than 1.5 but less than 4.
+We do not allow much tolerance here in order to avoid a trap we found, where 7 is close enough to 8 to be accepted, the half lag index is then 3.5, rounded down to 3 (which has the required gap of 4 to 7) which immediately is accepted as close enough to 2 to trigger an immediate octave change reversal which then continues an infinite loop until 8 is detected and the loop is broken. This is known as the 3 <-> 7 trap and must be avoided by careful limitation of tolerances preventing 3 ever being accepted as close enough to 2. If 3 is prevented, 7 is safe.
 
 ## Periodicity based on tens
 
