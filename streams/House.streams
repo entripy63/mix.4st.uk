@@ -3,21 +3,6 @@
   "category": "genre",
   "streams": [
     {
-      "name": "hearMe.FM Glenn Cooper",
-      "m3u": "https://radio.hearme.fm:8170/stream",
-      "genre": "House, Deep House, Soulful House, Tech House"
-    },
-    {
-      "name": "hearMe.FM Strictly House",
-      "m3u": "https://radio.hearme.fm:8020/stream",
-      "genre": "House, Deep House, Soulful House, Tech House"
-    },
-    {
-      "name": "hearMe.FM House",
-      "m3u": "https://radio.hearme.fm:8060/stream",
-      "genre": "House"
-    },
-    {
       "name": "House Nation UK",
       "m3u": "https://streaming.radio.co/s06bd9d805/listen",
       "genre": "House"

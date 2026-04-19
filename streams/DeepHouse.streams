@@ -31,18 +31,6 @@
       "m3u": "https://cc7.whsh4u.com:2199/tunein/yfryujzw.pls",
       "genre": "Deep House",
       "website": "https://www.extremedeephouse.com/"
-    },
-    {
-      "name": "hearMe.FM Deep House",
-      "m3u": "https://radio.hearme.fm:8170/stream",
-      "genre": "Deep House",
-      "website": "https://hearme.fm/radio/deep-house/"
-    },
-    {
-      "name": "hearMe.FM Deep Progressive House",
-      "m3u": "https://radio.hearme.fm:8420/stream",
-      "genre": "Deep Progressive House",
-      "website": "https://hearme.fm/radio/deep-progressive-house/"
     }
   ]
 }

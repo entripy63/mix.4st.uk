@@ -3,33 +3,8 @@
   "category": "genre",
   "streams": [
     {
-      "name": "hearMe.FM Ambient",
-      "m3u": "https://radio.hearme.fm:9930/stream",
-      "genre": "Ambient"
-    },
-    {
-      "name": "hearMe.FM Zen",
-      "m3u": "https://radio.hearme.fm:8216/stream",
-      "genre": "Ambient"
-    },
-    {
-      "name": "hearMe.FM Atmospheric Dreams",
-      "m3u": "https://radio.hearme.fm:8126/stream",
-      "genre": "Ambient"
-    },
-    {
-      "name": "hearMe.FM Space Dreams",
-      "m3u": "https://radio.hearme.fm:8194/stream",
-      "genre": "Ambient"
-    },
-    {
-      "name": "hearMe.FM Meditation",
-      "m3u": "https://radio.hearme.fm:8940/stream",
-      "genre": "Ambient"
-    },
-    {
-      "name": "hearMe.FM Reiki",
-      "m3u": "https://radio.hearme.fm:8168/stream",
+      "name": "Sleepbot Environmental Broadcast",
+      "m3u": "http://sleepbot.com/ambience/cgi/listen.m3u",
       "genre": "Ambient"
     }
   ]

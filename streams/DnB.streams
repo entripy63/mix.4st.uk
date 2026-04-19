@@ -28,16 +28,6 @@
       "genre": "Jungle"
     },
     {
-      "name": "hearMe.FM Liquid Drum & Bass",
-      "m3u": "https://radio.hearme.fm:8430/stream",
-      "genre": "Drum & Bass"
-    },
-    {
-      "name": "hearMe.FM Dark Drum & Bass",
-      "m3u": "https://radio.hearme.fm:8276/stream",
-      "genre": "Drum & Bass"
-    },
-    {
       "name": "Drum and Bass UK Radio",
       "m3u": "https://radio.drumandbassuk.com/listen/drum_and_bass_uk_radio/radio.mp3",
       "genre": "Drum & Bass"
