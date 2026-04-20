@@ -169,7 +169,7 @@ function startTempo() {
             }
 
             // Log octave corrections with playback position
-            if (tempo.skipReason.includes('BPM fix')) {
+            if (tempo.skipReason.includes('Lock')) {
                 const t = aud.currentTime;
                 const mm = Math.floor(t / 60);
                 const ss = Math.floor(t % 60).toString().padStart(2, '0');

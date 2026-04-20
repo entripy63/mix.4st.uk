@@ -43,14 +43,11 @@ const s = {
     lockLag: 0,          // lag we're locked to
     lockConfirm: 0,      // consecutive ordinal-confirmed passes
     holdRemaining: 0,    // passes remaining in holding before giving up
-    altBetterCount: 0,   // consecutive passes where bestLag disagrees with lock
-    altBetterLag: 0,     // the disagreeing bestLag being tracked
-    lockHasHalf: false,  // whether lag/2 peak existed at lock time
-    lockHalfMissCount: 0, // consecutive passes where lag/2 peak is missing
-    octaveFixCount: 0,   // consecutive passes where octave fix condition holds
-    octaveFixDir: 0,     // pending fix direction: -1=halve, +1=double, 0=none
+    altBetterCount: 0,   // consecutive passes where top scorer disagrees with lock
+    altBetterLag: 0,     // the disagreeing lag being tracked
+    octaveFixCount: 0,   // consecutive passes where half-BPM condition holds
     octaveCooldown: 0,   // passes remaining before another octave correction allowed
-    octaveLastFixDir: 0, // direction of last correction (-1=halve, +1=double)
+    lockingStallCount: 0, // consecutive locking passes with no confirmed candidate
 
     frameCount: 0,
     corrCount: 0,
@@ -84,12 +81,9 @@ function reset() {
     s.holdRemaining = 0;
     s.altBetterCount = 0;
     s.altBetterLag = 0;
-    s.lockHasHalf = false;
-    s.lockHalfMissCount = 0;
     s.octaveFixCount = 0;
-    s.octaveFixDir = 0;
     s.octaveCooldown = 0;
-    s.octaveLastFixDir = 0;
+    s.lockingStallCount = 0;
     s.frameCount = 0;
     s.corrCount = 0;
     s.lastCorrTime = 0;
@@ -215,9 +209,9 @@ function processFlux(flux) {
     for (let i = s.bufLen - 5; i < s.bufLen; i++) s.smoothCorrs[i] = ec[i];
     for (let i = 5; i < s.bufLen - 5; i++) {
         s.smoothCorrs[i] = (
-            ec[i-5] + 2*ec[i-4] + 3*ec[i-3] + 4*ec[i-2] + 5*ec[i-1]
-            + 6*ec[i]
-            + 5*ec[i+1] + 4*ec[i+2] + 3*ec[i+3] + 2*ec[i+4] + ec[i+5]
+            ec[i - 5] + 2 * ec[i - 4] + 3 * ec[i - 3] + 4 * ec[i - 2] + 5 * ec[i - 1]
+            + 6 * ec[i]
+            + 5 * ec[i + 1] + 4 * ec[i + 2] + 3 * ec[i + 3] + 2 * ec[i + 4] + ec[i + 5]
         ) / 36;
     }
 
@@ -234,42 +228,18 @@ function processFlux(flux) {
         s.smoothCorrs[i] = 0;
     }
 
-    // Second FIR pass on the first half of the lag range.
-    // Early lags have narrower peaks more susceptible to noise-induced
-    // splits; an extra smoothing pass cleans these without broadening
-    // the wider peaks at longer lags. Linear phase preserved.
-    // Runs after lag-0 suppression so the zeroed region is already clean.
-    // Amplitude-corrected: the double pass attenuates peaks, so we
-    // rescale the region to preserve its original peak amplitude.
-    const halfLag = Math.round(maxLag / 2);
-    const fadeZone = 10;
-    const fadeEnd = Math.min(halfLag + fadeZone, s.bufLen - 5);
-    const snap = new Float32Array(s.smoothCorrs.subarray(0, fadeEnd + 6));
-    let preMax = 0;
-    for (let i = firstMin + 1; i < halfLag; i++) {
-        if (snap[i] > preMax) preMax = snap[i];
-    }
-    for (let i = firstMin + 1; i < fadeEnd; i++) {
-        const smoothed = (
-            snap[i-5] + 2*snap[i-4] + 3*snap[i-3] + 4*snap[i-2] + 5*snap[i-1]
-            + 6*snap[i]
-            + 5*snap[i+1] + 4*snap[i+2] + 3*snap[i+3] + 2*snap[i+4] + snap[i+5]
+    // Second FIR pass on the full lag range (same triangular kernel).
+    // Uniform double-filtering eliminates amplitude mismatch between
+    // halves and further cleans ripple artifacts from peak tops.
+    // Wider peaks at long lags are barely affected (already wider than
+    // the kernel), so no amplitude correction is needed.
+    const snap = new Float32Array(s.smoothCorrs);
+    for (let i = 5; i < s.bufLen - 5; i++) {
+        s.smoothCorrs[i] = (
+            snap[i - 5] + 2 * snap[i - 4] + 3 * snap[i - 3] + 4 * snap[i - 2] + 5 * snap[i - 1]
+            + 6 * snap[i]
+            + 5 * snap[i + 1] + 4 * snap[i + 2] + 3 * snap[i + 3] + 2 * snap[i + 4] + snap[i + 5]
         ) / 36;
-        const w = i < halfLag ? 1.0 : 1.0 - (i - halfLag) / fadeZone;
-        s.smoothCorrs[i] = w * smoothed + (1 - w) * snap[i];
-    }
-    if (preMax > 0) {
-        let postMax = 0;
-        for (let i = firstMin + 1; i < halfLag; i++) {
-            if (s.smoothCorrs[i] > postMax) postMax = s.smoothCorrs[i];
-        }
-        if (postMax > 0) {
-            const scale = preMax / postMax;
-            for (let i = firstMin + 1; i < fadeEnd; i++) {
-                const w = i < halfLag ? scale : 1 + (scale - 1) * (1 - (i - halfLag) / fadeZone);
-                s.smoothCorrs[i] = snap[i] + w * (s.smoothCorrs[i] - snap[i]);
-            }
-        }
     }
 
     // Find peak of smoothed correlations for thresholding
@@ -285,7 +255,7 @@ function processFlux(flux) {
     try {
         // Skip update if no significant periodicity (hold last good estimate)
         if (energy <= 0 || globalMax < energy * 0.02) {
-            s.skipReason = 'No periodicity (globalMax/energy=' + (energy > 0 ? (globalMax/energy).toFixed(3) : '0') + ')';
+            s.skipReason = 'No periodicity (globalMax/energy=' + (energy > 0 ? (globalMax / energy).toFixed(3) : '0') + ')';
             return;
         }
 
@@ -313,7 +283,7 @@ function processFlux(flux) {
         // At ~136 Hz sample rate the shortest meaningful lag is ~41 (200 BPM),
         // so 10 samples is safe and catches wider split peaks.
         // Apply to peaks: keep tallest in each clump.
-        for (let i = 0; i < peaks.length - 1; ) {
+        for (let i = 0; i < peaks.length - 1;) {
             if (peaks[i + 1].idx - peaks[i].idx < 10) {
                 if (sc[peaks[i].idx] >= sc[peaks[i + 1].idx]) {
                     peaks.splice(i + 1, 1);
@@ -326,8 +296,10 @@ function processFlux(flux) {
         }
         // Apply to troughs: keep deepest in each clump, then remove
         // any peaks that were between the merged troughs.
-        for (let i = 0; i < troughs.length - 1; ) {
-            if (troughs[i + 1].idx - troughs[i].idx < 6) {
+        // Same 10-sample threshold as peaks so ripple troughs on peak
+        // tops get merged, preventing them from poisoning prominence.
+        for (let i = 0; i < troughs.length - 1;) {
+            if (troughs[i + 1].idx - troughs[i].idx < 10) {
                 const loIdx = troughs[i].idx;
                 const hiIdx = troughs[i + 1].idx;
                 if (sc[troughs[i].idx] <= sc[troughs[i + 1].idx]) {
@@ -396,8 +368,20 @@ function processFlux(flux) {
                     if (sc[j] > bestVal) { bestVal = sc[j]; bestIdx = j; }
                 }
                 if (bestIdx < 0) continue;
-                // Prominence: height above the higher of the two gap edges
-                const edgeProm = bestVal - Math.max(sc[boundaries[g]], sc[boundaries[g + 1]]);
+                // Prominence: find the trough on each side of the best
+                // point (between it and each boundary peak) and measure
+                // height above the higher trough — standard prominence.
+                // Falls back to boundary peak value if no trough exists
+                // (monotonic slope), preserving original conservative behavior.
+                let leftMin = sc[boundaries[g]];
+                for (let j = lo; j < bestIdx; j++) {
+                    if (sc[j] < leftMin) leftMin = sc[j];
+                }
+                let rightMin = sc[boundaries[g + 1]];
+                for (let j = bestIdx + 1; j <= hi; j++) {
+                    if (sc[j] < rightMin) rightMin = sc[j];
+                }
+                const edgeProm = bestVal - Math.max(leftMin, rightMin);
                 if (edgeProm >= promThreshold) {
                     gapPeaks.push({ idx: bestIdx, prominence: edgeProm });
                 }
@@ -512,9 +496,6 @@ function processFlux(flux) {
         // ── Evaluate bestLag for all states except holding ──
         let bestLag = 0;
         let bestScore = -Infinity;
-        let bestOrdinalConfirmed = false;
-        let bestConfirmedLag = 0;
-        let bestConfirmedScore = -Infinity;
         const topN = [];
 
         if (s.trackState !== 'holding') {
@@ -522,8 +503,8 @@ function processFlux(flux) {
                 if (pk.idx < minLag || pk.idx > maxBpmLag) continue;
                 if (pk.prominence <= 0) continue;
                 const support = subdivSupport(pk.idx)
-                              + subdivSupport(pk.idx / 2)
-                              + s.w4Weight * Math.max(0, subdivSupport(pk.idx / 4));
+                    + subdivSupport(pk.idx / 2)
+                    + s.w4Weight * Math.max(0, subdivSupport(pk.idx / 4));
                 // Perceptual tempo prior
                 let candBpm = s.sampleRate * 60 / pk.idx;
                 while (candBpm < BPM_MIN) candBpm *= 2;
@@ -597,14 +578,9 @@ function processFlux(flux) {
                 if (s.bestLag > 0 && Math.abs(pk.idx - s.bestLag) / s.bestLag < 0.1) {
                     score += 0.05 * Math.min(s.stabilityCount, 10) / 10;
                 }
-                if (score > bestScore) {
+                if (isOrdinalConfirmed && score > bestScore) {
                     bestScore = score;
                     bestLag = pk.idx;
-                    bestOrdinalConfirmed = isOrdinalConfirmed;
-                }
-                if (isOrdinalConfirmed && score > bestConfirmedScore) {
-                    bestConfirmedScore = score;
-                    bestConfirmedLag = pk.idx;
                 }
                 if (topN.length < 6 || score > topN[topN.length - 1].score) {
                     topN.push({ lag: pk.idx, score });
@@ -613,12 +589,14 @@ function processFlux(flux) {
                 }
             }
             s.topScores = topN.filter(c => c.score >= 1);
-
-            // Prefer ordinal-confirmed candidate: a non-confirmed bestLag
-            // can never lock, so it can't really be the best.
-            if (!bestOrdinalConfirmed && bestConfirmedLag > 0) {
-                bestLag = bestConfirmedLag;
-                bestOrdinalConfirmed = true;
+            // If no confirmed candidate, or top scorer dominates at 2x,
+            // use the top scorer as bestLag so downstream code doesn't
+            // need to handle a separate fallback path.
+            if (topN.length > 0 && topN[0].score >= 1) {
+                if (bestLag === 0 || topN[0].score >= bestScore * 2) {
+                    bestLag = topN[0].lag;
+                    bestScore = topN[0].score;
+                }
             }
         }
 
@@ -633,8 +611,8 @@ function processFlux(flux) {
                 s.skipReason = 'Holding (peak lost)';
             } else {
                 const lockScore = subdivSupport(tracked.idx)
-                                + subdivSupport(tracked.idx / 2)
-                                + s.w4Weight * Math.max(0, subdivSupport(tracked.idx / 4));
+                    + subdivSupport(tracked.idx / 2)
+                    + s.w4Weight * Math.max(0, subdivSupport(tracked.idx / 4));
                 if (lockScore < 1) {
                     s.trackState = 'locking';
                     s.lockConfirm = 0;
@@ -643,95 +621,74 @@ function processFlux(flux) {
                 } else {
                     s.lockLag = tracked.idx;
                     applyLag(tracked.idx);
-                    // lag/2 companion check: if we had a half-lag peak at
-                    // lock time but it's gone now, we're likely at an odd
-                    // ordinal (structure changed around us). Break lock.
-                    if (s.lockHasHalf) {
-                        const halfTol = Math.max(2, tracked.idx * 0.04);
-                        const halfPeak = findNearPeak(tracked.idx / 2, halfTol);
-                        if (!halfPeak || halfPeak.prominence <= 0) {
-                            s.lockHalfMissCount++;
-                            if (s.lockHalfMissCount >= 3) {
-                                s.trackState = 'locking';
-                                s.lockConfirm = 0;
-                                s.stabilityCount = 0;
-                                s.lockHalfMissCount = 0;
-                                s.skipReason = 'Lock broken (lag/2 lost)';
-                                updateW4Weight();
-                                postResult(lastCorrMax);
-                                return;
-                            }
-                        } else {
-                            s.lockHalfMissCount = 0;
-                        }
-                    }
-                    // Octave error detection (see ACF-PEAKS.md).
-                    // Uses exact gap values and ordinal ranges to avoid
-                    // noise-inflated gaps, plus hysteresis (3 consecutive
-                    // confirmations) to prevent correction loops.
-                    // A cooldown prevents organic loops (genuine ACF changes
-                    // causing repeated back-and-forth corrections).
+                    // Half-BPM octave correction (see ACF-PEAKS.md).
+                    // When odd-numbered peaks vanish, the locked peak's
+                    // ordinal doubles (4→8, 6→12), detectable via the gap
+                    // between it and its half-lag companion.
+                    // Double-BPM correction is intentionally omitted: scoring
+                    // never produces a double-BPM error (it requires odd peaks
+                    // present, which always yields the correct octave).
                     if (s.octaveCooldown > 0) s.octaveCooldown--;
-                    const myOrdLock = peaks.indexOf(tracked) + 1;
-                    let octaveDir = 0;
-                    if (myOrdLock > 0 && s.octaveCooldown === 0) {
-                        const halfTolOct = Math.max(2, tracked.idx * 0.04);
-                        const halfPeakOct = findNearPeak(tracked.idx / 2, halfTolOct);
-                        if (halfPeakOct) {
-                            const halfOrdLock = peaks.indexOf(halfPeakOct) + 1;
-                            if (halfOrdLock > 0) {
-                                const ordGap = myOrdLock - halfOrdLock;
-                                // Half BPM: gap exactly 4 or 6, ordinal 7-9 or 11-13
-                                // (±1 tolerance safe because double-BPM requires ≤ 2)
-                                // Only if halved lag stays in range
-                                if ((ordGap === 4 && myOrdLock >= 7 && myOrdLock <= 9)
-                                    || (ordGap === 6 && myOrdLock >= 11 && myOrdLock <= 13)) {
-                                    if (Math.round(tracked.idx / 2) >= minLag) octaveDir = -1;
-                                }
-                                // Double BPM: gap exactly 1, ordinal ≤ 2
-                                // Only if doubled lag stays in range
-                                else if (ordGap === 1 && myOrdLock <= 2) {
-                                    if (Math.round(tracked.idx * 2) <= maxBpmLag) octaveDir = 1;
+                    if (s.octaveCooldown === 0) {
+                        const myOrdLock = peaks.indexOf(tracked) + 1;
+                        let halfBpmDetected = false;
+                        if (myOrdLock > 0) {
+                            const halfTolOct = Math.max(2, tracked.idx * 0.04);
+                            const halfPeakOct = findNearPeak(tracked.idx / 2, halfTolOct);
+                            if (halfPeakOct) {
+                                const halfOrdLock = peaks.indexOf(halfPeakOct) + 1;
+                                if (halfOrdLock > 0) {
+                                    const ordGap = myOrdLock - halfOrdLock;
+                                    if ((ordGap === 4 && myOrdLock >= 7 && myOrdLock <= 9)
+                                        || (ordGap === 6 && myOrdLock >= 11 && myOrdLock <= 13)) {
+                                        if (Math.round(tracked.idx / 2) >= minLag) {
+                                            halfBpmDetected = true;
+                                        }
+                                    }
                                 }
                             }
                         }
-                    }
-                    // Hysteresis: require 3 consecutive same-direction confirmations
-                    if (octaveDir !== 0 && octaveDir === s.octaveFixDir) {
-                        s.octaveFixCount++;
-                    } else {
-                        s.octaveFixCount = octaveDir !== 0 ? 1 : 0;
-                        s.octaveFixDir = octaveDir;
-                    }
-                    if (s.octaveFixCount >= 3) {
-                        if (s.octaveFixDir === -1) {
+                        // Hysteresis: 3 consecutive confirmations
+                        if (halfBpmDetected) {
+                            s.octaveFixCount++;
+                        } else {
+                            s.octaveFixCount = 0;
+                        }
+                        if (s.octaveFixCount >= 3) {
                             const halfTolOct = Math.max(2, tracked.idx * 0.04);
                             const halfPeakOct = findNearPeak(tracked.idx / 2, halfTolOct);
                             if (halfPeakOct) {
                                 s.lockLag = halfPeakOct.idx;
                                 applyLag(halfPeakOct.idx);
-                                s.skipReason = 'Locked (half BPM fix ' + myOrdLock + ')';
+                                s.skipReason = 'Locked (half BPM fix)';
                             }
-                        } else {
-                            const dblTolOct = Math.max(3, tracked.idx * 0.08);
-                            const dblPeakOct = findNearPeak(tracked.idx * 2, dblTolOct);
-                            if (dblPeakOct) {
-                                s.lockLag = dblPeakOct.idx;
-                                applyLag(dblPeakOct.idx);
-                                s.skipReason = 'Locked (dbl BPM fix ' + myOrdLock + ')';
-                            }
+                            s.octaveFixCount = 0;
+                            s.octaveCooldown = 15;
                         }
-                        // Reversal (opposite of last fix) = allow but then
-                        // cooldown to prevent a third leg (organic loop).
-                        // First fix or same direction = no cooldown.
-                        const isReversal = s.octaveLastFixDir !== 0
-                                        && s.octaveFixDir !== s.octaveLastFixDir;
-                        s.octaveLastFixDir = s.octaveFixDir;
-                        s.octaveFixCount = 0;
-                        s.octaveFixDir = 0;
-                        if (isReversal) s.octaveCooldown = 15;
                     }
-                    if (!s.skipReason) s.skipReason = 'Locked (' + lockScore.toFixed(2) + ')';
+                    // Alternative lag monitoring: if the bestLag
+                    // consistently disagrees with the lock, the BPM
+                    // may have changed (e.g. 80→120 where peak 4 becomes
+                    // peak 6 but still passes all lock checks).
+                    if (bestLag > 0 && bestScore > lockScore) {
+                        const lockTol = Math.max(3, s.lockLag * 0.08);
+                        if (Math.abs(bestLag - s.lockLag) > lockTol) {
+                            s.altBetterCount++;
+                            s.altBetterLag = bestLag;
+                        } else {
+                            s.altBetterCount = 0;
+                        }
+                        if (s.altBetterCount >= 5) {
+                            s.trackState = 'locking';
+                            s.lockConfirm = 0;
+                            s.stabilityCount = 0;
+                            s.altBetterCount = 0;
+                            s.skipReason = 'Lock broken (better alternative)';
+                        }
+                    } else {
+                        s.altBetterCount = 0;
+                    }
+                    //if (!s.skipReason) s.skipReason = 'Locked (' + lockScore.toFixed(2) + ')';
                 }
             }
             updateW4Weight();
@@ -745,15 +702,9 @@ function processFlux(flux) {
                 s.lockLag = tracked.idx;
                 s.trackState = 'locked';
                 applyLag(tracked.idx);
-                // Re-record lag/2 companion state on reacquire
-                const halfTol = Math.max(2, tracked.idx * 0.04);
-                const halfAtLock = findNearPeak(tracked.idx / 2, halfTol);
-                s.lockHasHalf = !!(halfAtLock && halfAtLock.prominence > 0);
-                s.lockHalfMissCount = 0;
                 s.octaveFixCount = 0;
-                s.octaveFixDir = 0;
                 s.octaveCooldown = 0;
-                s.octaveLastFixDir = 0;
+                s.altBetterCount = 0;
                 s.skipReason = 'Locked (reacquired)';
             } else {
                 s.holdRemaining--;
@@ -771,30 +722,24 @@ function processFlux(flux) {
 
         // ── LOCKING state: use pre-computed bestLag ──
         else {
+            s.lockingStallCount++;
+
             if (bestLag > 0) {
                 applyLag(bestLag);
+                s.lockConfirm++;
+            } else {
+                s.lockConfirm = 0;
+            }
 
-                // Track ordinal confirmations for lock transition
-                if (bestOrdinalConfirmed) {
-                    s.lockConfirm++;
-                } else {
-                    s.lockConfirm = 0;
-                }
-
+            if (bestLag > 0) {
                 // Transition to locked after enough consecutive confirmations
                 if (s.lockConfirm >= 3) {
                     s.trackState = 'locked';
                     s.lockLag = bestLag;
                     s.altBetterCount = 0;
-                    // Record whether lag/2 companion peak exists at lock time
-                    const halfTol = Math.max(2, bestLag * 0.04);
-                    const halfAtLock = findNearPeak(bestLag / 2, halfTol);
-                    s.lockHasHalf = !!(halfAtLock && halfAtLock.prominence > 0);
-                    s.lockHalfMissCount = 0;
                     s.octaveFixCount = 0;
-                    s.octaveFixDir = 0;
                     s.octaveCooldown = 0;
-                    s.octaveLastFixDir = 0;
+                    s.lockingStallCount = 0;
                     s.skipReason = 'Locked';
                 } else {
                     // Wait for a few passes before first estimate
@@ -806,21 +751,21 @@ function processFlux(flux) {
                 }
             }
 
-            // Stability tracking (still useful for display smoothing)
-            if (s.rawBpm > 0 && s.bpmTarget > 0) {
-                let compareBpm = s.rawBpm;
-                while (compareBpm > s.bpmTarget * 1.41) compareBpm /= 2;
-                while (compareBpm < s.bpmTarget * 0.71) compareBpm *= 2;
-                const drift = Math.abs(compareBpm - s.bpmTarget) / s.bpmTarget;
-                const threshold = 0.10 + 0.15 / (1 + s.stabilityCount / 5);
-                if (drift < threshold) {
-                    s.stabilityCount = Math.min(30, s.stabilityCount + 1);
-                } else {
-                    s.stabilityCount = 0;
-                }
-            }
-
             updateW4Weight();
+        }
+
+        // Stability tracking: feeds display smoothing rate in all states
+        if (s.rawBpm > 0 && s.bpmTarget > 0) {
+            let compareBpm = s.rawBpm;
+            while (compareBpm > s.bpmTarget * 1.41) compareBpm /= 2;
+            while (compareBpm < s.bpmTarget * 0.71) compareBpm *= 2;
+            const drift = Math.abs(compareBpm - s.bpmTarget) / s.bpmTarget;
+            const threshold = 0.10 + 0.15 / (1 + s.stabilityCount / 5);
+            if (drift < threshold) {
+                s.stabilityCount = Math.min(30, s.stabilityCount + 1);
+            } else {
+                s.stabilityCount = 0;
+            }
         }
     } finally {
         // Display smoothing: rate scales with stability.
@@ -843,7 +788,7 @@ function processFlux(flux) {
 
 let tickInterval = null;
 
-self.onmessage = function(e) {
+self.onmessage = function (e) {
     switch (e.data.type) {
         case 'start':
             if (!tickInterval) {
