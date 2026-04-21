@@ -141,6 +141,28 @@ function startVisualiser() {
                 }
             }
 
+            // SHS fundamental period T: vertical lines at multiples of T
+            if (tempo.shsPeriod > 0) {
+                visCtx.strokeStyle = '#ff4081';
+                visCtx.lineWidth = 1;
+                visCtx.setLineDash([2, 3]);
+                const T = tempo.shsPeriod;
+                for (let h = 1; h * T < n; h++) {
+                    const px = h * T * sliceWidth;
+                    visCtx.beginPath();
+                    visCtx.moveTo(px, 16);
+                    visCtx.lineTo(px, h - 14);
+                    visCtx.stroke();
+                }
+                visCtx.setLineDash([]);
+                // Show T value and implied BPM top-left
+                visCtx.font = '10px monospace';
+                visCtx.textAlign = 'left';
+                visCtx.fillStyle = '#ff4081';
+                const shsBpm = tempo.sampleRate * 60 / T;
+                visCtx.fillText('T=' + T.toFixed(1) + ' (' + shsBpm.toFixed(1) + ')', 4, 12);
+            }
+
             // Peak count and lag/4 weight regime top-right
             visCtx.font = '10px monospace';
             visCtx.textAlign = 'right';

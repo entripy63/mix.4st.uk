@@ -48,6 +48,7 @@ const s = {
     octaveFixCount: 0,   // consecutive passes where half-BPM condition holds
     octaveCooldown: 0,   // passes remaining before another octave correction allowed
     lockingStallCount: 0, // consecutive locking passes with no confirmed candidate
+    shsPeriod: 0,        // fundamental period T from subharmonic summation
 
     frameCount: 0,
     corrCount: 0,
@@ -84,6 +85,7 @@ function reset() {
     s.octaveFixCount = 0;
     s.octaveCooldown = 0;
     s.lockingStallCount = 0;
+    s.shsPeriod = 0;
     s.frameCount = 0;
     s.corrCount = 0;
     s.lastCorrTime = 0;
@@ -130,6 +132,7 @@ function postResult(lastCorrMax) {
         topScores: s.topScores,
         peakLags: s.peakLags || [],
         trackState: s.trackState,
+        shsPeriod: s.shsPeriod || 0,
     };
     if (s.smoothCorrs) {
         msg.smoothCorrs = new Float32Array(s.smoothCorrs);
@@ -451,6 +454,71 @@ function processFlux(flux) {
         const minLag = Math.round(s.sampleRate * 60 / BPM_MAX);
         const maxBpmLag = Math.round(s.sampleRate * 60 / BPM_MIN);
         s.peakLags = peaks.map(pk => pk.lag);
+
+        // ── Subharmonic Summation: find fundamental period T ──
+        // Step 1: find candidate T with highest sum of sc[T] + sc[2T] + …
+        // This tends to find 4×T because even-harmonic peaks dominate.
+        // Step 2: repeatedly halve T while any odd multiple of T/2 shows
+        // positive autocorrelation above noise — a single trace suffices.
+        s.shsPeriod = 0;
+        {
+            let bestShsScore = -Infinity;
+            let bestT = 0;
+            const minT = 10;
+            const maxT = Math.floor(maxLag / 2);
+            for (let t = minT; t <= maxT; t++) {
+                let sum = 0;
+                for (let h = 1; h * t <= maxLag; h++) {
+                    sum += sc[h * t];
+                }
+                if (sum > bestShsScore) {
+                    bestShsScore = sum;
+                    bestT = t;
+                }
+            }
+            // Reduce T by small divisors (2, 3, 5) to find the true
+            // fundamental. Tries largest divisor first for maximum reduction.
+            // Periodicity-4: dominant spacing 2T, needs /2
+            // Periodicity-6: dominant spacing 3T, needs /3
+            // Periodicity-10: dominant spacing 5T, needs /5
+            // A local maximum near any non-aligned multiple confirms the
+            // smaller period — even the faintest bump suffices.
+            for (;;) {
+                let reduced = false;
+                for (const d of [5, 3, 2]) {
+                    const candidateT = Math.round(bestT / d);
+                    if (candidateT < minT) continue;
+                    let support = false;
+                    for (let h = 1; h * candidateT <= maxLag; h++) {
+                        if (h % d === 0) continue;
+                        const target = h * candidateT;
+                        const lo = Math.max(1, target - 2);
+                        const hi = Math.min(sc.length - 2, target + 2);
+                        for (let i = lo; i <= hi; i++) {
+                            if (sc[i] > sc[i - 1] && sc[i] > sc[i + 1]) {
+                                support = true;
+                                break;
+                            }
+                        }
+                        if (support) break;
+                    }
+                    if (support) {
+                        bestT = candidateT;
+                        reduced = true;
+                        break;
+                    }
+                }
+                if (!reduced) break;
+            }
+            // Refine T to sub-sample precision using the highest-lag peak
+            let refinedT = bestT;
+            if (bestT > 0 && peaks.length > 0) {
+                const lastPeak = peaks[peaks.length - 1];
+                const h = Math.round(lastPeak.lag / bestT);
+                if (h > 0) refinedT = lastPeak.lag / h;
+            }
+            s.shsPeriod = refinedT;
+        }
 
         // Helper: find nearest peak to a target lag within tolerance
         const findNearPeak = (target, tolerance) => {
