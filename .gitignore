@@ -19,3 +19,4 @@ node_modules/
 tools/tool-config.json
 **/search-index.json
 .codex
+vendor/*
