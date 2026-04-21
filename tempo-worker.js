@@ -256,6 +256,10 @@ function processFlux(flux) {
         // Skip update if no significant periodicity (hold last good estimate)
         if (energy <= 0 || globalMax < energy * 0.02) {
             s.skipReason = 'No periodicity (globalMax/energy=' + (energy > 0 ? (globalMax / energy).toFixed(3) : '0') + ')';
+            s.peakLags = [];
+            s.topScores = [];
+            s.debugPeakCount = 0;
+            s.debugTroughCount = 0;
             return;
         }
 
@@ -266,9 +270,9 @@ function processFlux(flux) {
         const troughs = [];
         for (let i = 4; i < maxLag; i++) {
             if (sc[i] > sc[i - 1] && sc[i] > sc[i + 1]) {
-                peaks.push({ idx: i, prominence: 0 });
+                peaks.push({ lag: i, prominence: 0 });
             } else if (sc[i] < sc[i - 1] && sc[i] < sc[i + 1]) {
-                troughs.push({ idx: i });
+                troughs.push({ lag: i });
             }
         }
         // Too many extrema = noisy autocorrelation, skip scoring
@@ -284,8 +288,8 @@ function processFlux(flux) {
         // so 10 samples is safe and catches wider split peaks.
         // Apply to peaks: keep tallest in each clump.
         for (let i = 0; i < peaks.length - 1;) {
-            if (peaks[i + 1].idx - peaks[i].idx < 10) {
-                if (sc[peaks[i].idx] >= sc[peaks[i + 1].idx]) {
+            if (peaks[i + 1].lag - peaks[i].lag < 10) {
+                if (sc[peaks[i].lag] >= sc[peaks[i + 1].lag]) {
                     peaks.splice(i + 1, 1);
                 } else {
                     peaks.splice(i, 1);
@@ -299,17 +303,17 @@ function processFlux(flux) {
         // Same 10-sample threshold as peaks so ripple troughs on peak
         // tops get merged, preventing them from poisoning prominence.
         for (let i = 0; i < troughs.length - 1;) {
-            if (troughs[i + 1].idx - troughs[i].idx < 10) {
-                const loIdx = troughs[i].idx;
-                const hiIdx = troughs[i + 1].idx;
-                if (sc[troughs[i].idx] <= sc[troughs[i + 1].idx]) {
+            if (troughs[i + 1].lag - troughs[i].lag < 10) {
+                const loIdx = troughs[i].lag;
+                const hiIdx = troughs[i + 1].lag;
+                if (sc[troughs[i].lag] <= sc[troughs[i + 1].lag]) {
                     troughs.splice(i + 1, 1);
                 } else {
                     troughs.splice(i, 1);
                 }
                 // Remove any peak trapped between the merged troughs
                 for (let j = peaks.length - 1; j >= 0; j--) {
-                    if (peaks[j].idx > loIdx && peaks[j].idx < hiIdx) {
+                    if (peaks[j].lag > loIdx && peaks[j].lag < hiIdx) {
                         peaks.splice(j, 1);
                     }
                 }
@@ -325,21 +329,21 @@ function processFlux(flux) {
         for (const pk of peaks) {
             let leftTrough = null, rightTrough = null;
             for (let t = troughs.length - 1; t >= 0; t--) {
-                if (troughs[t].idx < pk.idx) { leftTrough = sc[troughs[t].idx]; break; }
+                if (troughs[t].lag < pk.lag) { leftTrough = sc[troughs[t].lag]; break; }
             }
             for (let t = 0; t < troughs.length; t++) {
-                if (troughs[t].idx > pk.idx) { rightTrough = sc[troughs[t].idx]; break; }
+                if (troughs[t].lag > pk.lag) { rightTrough = sc[troughs[t].lag]; break; }
             }
             if (leftTrough === null && rightTrough === null) {
-                pk.prominence = sc[pk.idx];
+                pk.prominence = sc[pk.lag];
             } else if (leftTrough === null) {
                 // First peak: left side is the zeroed lag-0 region (baseline 0)
-                pk.prominence = sc[pk.idx] - Math.min(0, rightTrough);
+                pk.prominence = sc[pk.lag] - Math.min(0, rightTrough);
             } else if (rightTrough === null) {
                 // Last peak: right side cut off at maxLag
-                pk.prominence = sc[pk.idx] - Math.min(0, leftTrough);
+                pk.prominence = sc[pk.lag] - Math.min(0, leftTrough);
             } else {
-                pk.prominence = sc[pk.idx] - Math.max(leftTrough, rightTrough);
+                pk.prominence = sc[pk.lag] - Math.max(leftTrough, rightTrough);
             }
         }
 
@@ -349,7 +353,7 @@ function processFlux(flux) {
         for (let i = peaks.length - 1; i >= 0; i--) {
             const pk = peaks[i];
             if (pk.prominence < promThreshold          // prominence too small
-                || (sc[pk.idx] > 0 && pk.prominence / sc[pk.idx] < 0.10)) { // flank jaggy / slope ripple
+                || (sc[pk.lag] > 0 && pk.prominence / sc[pk.lag] < 0.10)) { // flank jaggy / slope ripple
                 peaks.splice(i, 1);
             }
         }
@@ -358,7 +362,7 @@ function processFlux(flux) {
         // only represented by now-removed noise sub-peaks (split peaks)
         if (peaks.length > 0) {
             const gapPeaks = [];
-            const boundaries = [firstMin + 1, ...peaks.map(p => p.idx), maxLag];
+            const boundaries = [firstMin + 1, ...peaks.map(p => p.lag), maxLag];
             for (let g = 0; g < boundaries.length - 1; g++) {
                 const lo = boundaries[g] + 2;
                 const hi = boundaries[g + 1] - 2;
@@ -383,21 +387,21 @@ function processFlux(flux) {
                 }
                 const edgeProm = bestVal - Math.max(leftMin, rightMin);
                 if (edgeProm >= promThreshold) {
-                    gapPeaks.push({ idx: bestIdx, prominence: edgeProm });
+                    gapPeaks.push({ lag: bestIdx, prominence: edgeProm });
                 }
             }
             if (gapPeaks.length > 0) {
                 peaks.push(...gapPeaks);
-                peaks.sort((a, b) => a.idx - b.idx);
+                peaks.sort((a, b) => a.lag - b.lag);
             }
         }
 
         // Also remove troughs not between surviving peaks
         if (peaks.length > 0) {
-            const firstPeakIdx = peaks[0].idx;
-            const lastPeakIdx = peaks[peaks.length - 1].idx;
+            const firstPeakIdx = peaks[0].lag;
+            const lastPeakIdx = peaks[peaks.length - 1].lag;
             for (let i = troughs.length - 1; i >= 0; i--) {
-                if (troughs[i].idx < firstPeakIdx || troughs[i].idx > lastPeakIdx) {
+                if (troughs[i].lag < firstPeakIdx || troughs[i].lag > lastPeakIdx) {
                     troughs.splice(i, 1);
                 }
             }
@@ -414,17 +418,17 @@ function processFlux(flux) {
             if (target < 4) return 0;
             let bestPeak = 0, bestTrough = 0;
             for (const pk of peaks) {
-                if (Math.abs(pk.idx - target) <= 1.5 && pk.prominence > bestPeak) {
+                if (Math.abs(pk.lag - target) <= 1.5 && pk.prominence > bestPeak) {
                     bestPeak = pk.prominence;
                 }
-                if (pk.idx > target + 2) break;
+                if (pk.lag > target + 2) break;
             }
             for (const tr of troughs) {
-                if (Math.abs(tr.idx - target) <= 1.5) {
-                    const depth = Math.min(sc[tr.idx - 1], sc[tr.idx + 1]) - sc[tr.idx];
+                if (Math.abs(tr.lag - target) <= 1.5) {
+                    const depth = Math.min(sc[tr.lag - 1], sc[tr.lag + 1]) - sc[tr.lag];
                     if (depth > bestTrough) bestTrough = depth;
                 }
-                if (tr.idx > target + 2) break;
+                if (tr.lag > target + 2) break;
             }
             // Concavity fallback: detect vestigial peaks that don't form
             // strict local maxima but show downward curvature (negative d2)
@@ -438,15 +442,21 @@ function processFlux(flux) {
             return (bestPeak - bestTrough) / norm;
         };
 
+        // Combined subdivision support: lag + half-lag + weighted quarter-lag
+        const fullSupport = (lag) =>
+            subdivSupport(lag)
+            + subdivSupport(lag / 2)
+            + s.w4Weight * Math.max(0, subdivSupport(lag / 4));
+
         const minLag = Math.round(s.sampleRate * 60 / BPM_MAX);
         const maxBpmLag = Math.round(s.sampleRate * 60 / BPM_MIN);
-        s.peakLags = peaks.map(pk => pk.idx);
+        s.peakLags = peaks.map(pk => pk.lag);
 
         // Helper: find nearest peak to a target lag within tolerance
         const findNearPeak = (target, tolerance) => {
             let best = null, bestDist = Infinity;
             for (const pk of peaks) {
-                const dist = Math.abs(pk.idx - target);
+                const dist = Math.abs(pk.lag - target);
                 if (dist < bestDist && dist <= tolerance) {
                     best = pk;
                     bestDist = dist;
@@ -500,29 +510,20 @@ function processFlux(flux) {
 
         if (s.trackState !== 'holding') {
             for (const pk of peaks) {
-                if (pk.idx < minLag || pk.idx > maxBpmLag) continue;
+                if (pk.lag < minLag || pk.lag > maxBpmLag) continue;
                 if (pk.prominence <= 0) continue;
-                const support = subdivSupport(pk.idx)
-                    + subdivSupport(pk.idx / 2)
-                    + s.w4Weight * Math.max(0, subdivSupport(pk.idx / 4));
-                // Perceptual tempo prior
-                let candBpm = s.sampleRate * 60 / pk.idx;
-                while (candBpm < BPM_MIN) candBpm *= 2;
-                while (candBpm > BPM_MAX) candBpm /= 2;
-                const tempoPrior = 0.1 * Math.exp(-0.5 * ((candBpm - 120) / 50) ** 2);
+                const support = fullSupport(pk.lag);
                 // Peak ordinal bias
-                let ordinalBoost = 0;
                 let isOrdinalConfirmed = false;
                 const myOrd = peaks.indexOf(pk) + 1;
                 // Case 1: I'm ~4th, half-lag peak is ~2nd
                 if (myOrd >= 3) {
-                    const halfLag = pk.idx / 2;
+                    const halfLag = pk.lag / 2;
                     for (let j = 0; j < peaks.length; j++) {
-                        if (Math.abs(peaks[j].idx - halfLag) <= 1.5) {
+                        if (Math.abs(peaks[j].lag - halfLag) <= 1.5) {
                             const halfOrd = j + 1;
                             const k = 2 * halfOrd - myOrd;
                             if (k >= 0 && k <= 2 && halfOrd - k === 2) {
-                                ordinalBoost = 0.75;
                                 isOrdinalConfirmed = true;
                             }
                             break;
@@ -530,14 +531,13 @@ function processFlux(flux) {
                     }
                 }
                 // Case 2: I'm ~4th, double-lag peak is ~8th
-                if (ordinalBoost === 0 && myOrd >= 3) {
-                    const dblLag = pk.idx * 2;
+                if (!isOrdinalConfirmed && myOrd >= 3) {
+                    const dblLag = pk.lag * 2;
                     for (let j = peaks.length - 1; j >= 0; j--) {
-                        if (Math.abs(peaks[j].idx - dblLag) <= 1.5) {
+                        if (Math.abs(peaks[j].lag - dblLag) <= 1.5) {
                             const dblOrd = j + 1;
                             const k = 2 * myOrd - dblOrd;
                             if (k >= 0 && k <= 2 && myOrd - k === 4) {
-                                ordinalBoost = 0.75;
                                 isOrdinalConfirmed = true;
                             }
                             break;
@@ -545,14 +545,13 @@ function processFlux(flux) {
                     }
                 }
                 // Case 3: periodicity-6 — I'm ~6th, half-lag peak is ~3rd
-                if (ordinalBoost === 0 && myOrd >= 4) {
-                    const halfLag = pk.idx / 2;
+                if (!isOrdinalConfirmed && myOrd >= 4) {
+                    const halfLag = pk.lag / 2;
                     for (let j = 0; j < peaks.length; j++) {
-                        if (Math.abs(peaks[j].idx - halfLag) <= 1.5) {
+                        if (Math.abs(peaks[j].lag - halfLag) <= 1.5) {
                             const halfOrd = j + 1;
                             const k = 2 * halfOrd - myOrd;
                             if (k >= 0 && k <= 2 && halfOrd - k === 3) {
-                                ordinalBoost = 0.75;
                                 isOrdinalConfirmed = true;
                             }
                             break;
@@ -560,39 +559,36 @@ function processFlux(flux) {
                     }
                 }
                 // Case 4: periodicity-6 — I'm ~6th, double-lag peak is ~12th
-                if (ordinalBoost === 0 && myOrd >= 4) {
-                    const dblLag = pk.idx * 2;
+                if (!isOrdinalConfirmed && myOrd >= 4) {
+                    const dblLag = pk.lag * 2;
                     for (let j = peaks.length - 1; j >= 0; j--) {
-                        if (Math.abs(peaks[j].idx - dblLag) <= 1.5) {
+                        if (Math.abs(peaks[j].lag - dblLag) <= 1.5) {
                             const dblOrd = j + 1;
                             const k = 2 * myOrd - dblOrd;
                             if (k >= 0 && k <= 2 && myOrd - k === 6) {
-                                ordinalBoost = 0.75;
                                 isOrdinalConfirmed = true;
                             }
                             break;
                         }
                     }
                 }
-                let score = support + tempoPrior + ordinalBoost;
-                if (s.bestLag > 0 && Math.abs(pk.idx - s.bestLag) / s.bestLag < 0.1) {
-                    score += 0.05 * Math.min(s.stabilityCount, 10) / 10;
-                }
+                let score = support;
+                if (!isOrdinalConfirmed) score -= 0.75;
                 if (isOrdinalConfirmed && score > bestScore) {
                     bestScore = score;
-                    bestLag = pk.idx;
+                    bestLag = pk.lag;
                 }
                 if (topN.length < 6 || score > topN[topN.length - 1].score) {
-                    topN.push({ lag: pk.idx, score });
+                    topN.push({ lag: pk.lag, score });
                     topN.sort((a, b) => b.score - a.score);
                     if (topN.length > 6) topN.length = 6;
                 }
             }
-            s.topScores = topN.filter(c => c.score >= 1);
+            s.topScores = topN.filter(c => c.score >= 0);
             // If no confirmed candidate, or top scorer dominates at 2x,
             // use the top scorer as bestLag so downstream code doesn't
             // need to handle a separate fallback path.
-            if (topN.length > 0 && topN[0].score >= 1) {
+            if (topN.length > 0) {
                 if (bestLag === 0 || topN[0].score >= bestScore * 2) {
                     bestLag = topN[0].lag;
                     bestScore = topN[0].score;
@@ -610,17 +606,15 @@ function processFlux(flux) {
                 s.holdRemaining = 5;
                 s.skipReason = 'Holding (peak lost)';
             } else {
-                const lockScore = subdivSupport(tracked.idx)
-                    + subdivSupport(tracked.idx / 2)
-                    + s.w4Weight * Math.max(0, subdivSupport(tracked.idx / 4));
-                if (lockScore < 1) {
+                const lockScore = fullSupport(tracked.lag);
+                if (lockScore < 0.5) {
                     s.trackState = 'locking';
                     s.lockConfirm = 0;
                     s.stabilityCount = 0;
                     s.skipReason = 'Lock broken (score=' + lockScore.toFixed(2) + ')';
                 } else {
-                    s.lockLag = tracked.idx;
-                    applyLag(tracked.idx);
+                    s.lockLag = tracked.lag;
+                    applyLag(tracked.lag);
                     // Half-BPM octave correction (see ACF-PEAKS.md).
                     // When odd-numbered peaks vanish, the locked peak's
                     // ordinal doubles (4→8, 6→12), detectable via the gap
@@ -633,15 +627,15 @@ function processFlux(flux) {
                         const myOrdLock = peaks.indexOf(tracked) + 1;
                         let halfBpmDetected = false;
                         if (myOrdLock > 0) {
-                            const halfTolOct = Math.max(2, tracked.idx * 0.04);
-                            const halfPeakOct = findNearPeak(tracked.idx / 2, halfTolOct);
+                            const halfTolOct = Math.max(2, tracked.lag * 0.04);
+                            const halfPeakOct = findNearPeak(tracked.lag / 2, halfTolOct);
                             if (halfPeakOct) {
                                 const halfOrdLock = peaks.indexOf(halfPeakOct) + 1;
                                 if (halfOrdLock > 0) {
                                     const ordGap = myOrdLock - halfOrdLock;
                                     if ((ordGap === 4 && myOrdLock >= 7 && myOrdLock <= 9)
                                         || (ordGap === 6 && myOrdLock >= 11 && myOrdLock <= 13)) {
-                                        if (Math.round(tracked.idx / 2) >= minLag) {
+                                        if (Math.round(tracked.lag / 2) >= minLag) {
                                             halfBpmDetected = true;
                                         }
                                     }
@@ -655,11 +649,11 @@ function processFlux(flux) {
                             s.octaveFixCount = 0;
                         }
                         if (s.octaveFixCount >= 3) {
-                            const halfTolOct = Math.max(2, tracked.idx * 0.04);
-                            const halfPeakOct = findNearPeak(tracked.idx / 2, halfTolOct);
+                            const halfTolOct = Math.max(2, tracked.lag * 0.04);
+                            const halfPeakOct = findNearPeak(tracked.lag / 2, halfTolOct);
                             if (halfPeakOct) {
-                                s.lockLag = halfPeakOct.idx;
-                                applyLag(halfPeakOct.idx);
+                                s.lockLag = halfPeakOct.lag;
+                                applyLag(halfPeakOct.lag);
                                 s.skipReason = 'Locked (half BPM fix)';
                             }
                             s.octaveFixCount = 0;
@@ -667,10 +661,10 @@ function processFlux(flux) {
                         }
                     }
                     // Alternative lag monitoring: if the bestLag
-                    // consistently disagrees with the lock, the BPM
+                    // consistently disagrees with a poor lock, the BPM
                     // may have changed (e.g. 80→120 where peak 4 becomes
                     // peak 6 but still passes all lock checks).
-                    if (bestLag > 0 && bestScore > lockScore) {
+                    if (bestLag > 0 && lockScore < 1) {
                         const lockTol = Math.max(3, s.lockLag * 0.08);
                         if (Math.abs(bestLag - s.lockLag) > lockTol) {
                             s.altBetterCount++;
@@ -683,7 +677,8 @@ function processFlux(flux) {
                             s.lockConfirm = 0;
                             s.stabilityCount = 0;
                             s.altBetterCount = 0;
-                            s.skipReason = 'Lock broken (better alternative)';
+                            s.skipReason = 'Lock broken (better alternative: '+
+                                bestScore.toFixed(2)+' > '+lockScore.toFixed(2)+')';
                         }
                     } else {
                         s.altBetterCount = 0;
@@ -699,9 +694,9 @@ function processFlux(flux) {
             const tolerance = Math.max(3, s.lockLag * 0.08);
             const tracked = findNearPeak(s.lockLag, tolerance);
             if (tracked) {
-                s.lockLag = tracked.idx;
+                s.lockLag = tracked.lag;
                 s.trackState = 'locked';
-                applyLag(tracked.idx);
+                applyLag(tracked.lag);
                 s.octaveFixCount = 0;
                 s.octaveCooldown = 0;
                 s.altBetterCount = 0;
