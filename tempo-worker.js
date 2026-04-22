@@ -456,66 +456,52 @@ function processFlux(flux) {
         s.peakLags = peaks.map(pk => pk.lag);
 
         // ── Subharmonic Summation: find fundamental period T ──
-        // Step 1: find candidate T with highest sum of sc[T] + sc[2T] + …
-        // This tends to find 4×T because even-harmonic peaks dominate.
-        // Step 2: repeatedly halve T while any odd multiple of T/2 shows
-        // positive autocorrelation above noise — a single trace suffices.
+        // Peak-aligned SHS: for each candidate T, find the nearest local
+        // maximum within ±2 of each harmonic h*T. Only actual peaks
+        // contribute — slopes and troughs score zero. Weighted by 1/h
+        // so early harmonics dominate over noisy high-lag peaks.
         s.shsPeriod = 0;
         {
             let bestShsScore = -Infinity;
             let bestT = 0;
-            const minT = 10;
+            const minT = firstMin + 1;
             const maxT = Math.floor(maxLag / 2);
             for (let t = minT; t <= maxT; t++) {
                 let sum = 0;
                 for (let h = 1; h * t <= maxLag; h++) {
-                    sum += sc[h * t];
+                    const idx = h * t;
+                    if (idx < 1 || idx >= sc.length - 1) break;
+                    // Concavity with amplitude gate: only score
+                    // positions above 25% of globalMax to filter noise
+                    // curvature without biasing toward the tallest peaks.
+                    if (sc[idx] > globalMax * 0.25) {
+                        const d2 = sc[idx - 1] - 2 * sc[idx] + sc[idx + 1];
+                        sum += Math.max(0, -d2) / h;
+                    }
                 }
                 if (sum > bestShsScore) {
                     bestShsScore = sum;
                     bestT = t;
                 }
             }
-            // Reduce T by small divisors (2, 3, 5) to find the true
-            // fundamental. Tries largest divisor first for maximum reduction.
-            // Periodicity-4: dominant spacing 2T, needs /2
-            // Periodicity-6: dominant spacing 3T, needs /3
-            // Periodicity-10: dominant spacing 5T, needs /5
-            // A local maximum near any non-aligned multiple confirms the
-            // smaller period — even the faintest bump suffices.
-            for (;;) {
-                let reduced = false;
-                for (const d of [5, 3, 2]) {
-                    const candidateT = Math.round(bestT / d);
-                    if (candidateT < minT) continue;
-                    let support = false;
-                    for (let h = 1; h * candidateT <= maxLag; h++) {
-                        if (h % d === 0) continue;
-                        const target = h * candidateT;
-                        const lo = Math.max(1, target - 2);
-                        const hi = Math.min(sc.length - 2, target + 2);
-                        for (let i = lo; i <= hi; i++) {
-                            if (sc[i] > sc[i - 1] && sc[i] > sc[i + 1]) {
-                                support = true;
-                                break;
-                            }
-                        }
-                        if (support) break;
-                    }
-                    if (support) {
-                        bestT = candidateT;
-                        reduced = true;
-                        break;
-                    }
-                }
-                if (!reduced) break;
-            }
-            // Refine T to sub-sample precision using the highest-lag peak
+            // Refine T using the peak most closely aligned to a
+            // multiple of bestT (smallest fractional residual).
             let refinedT = bestT;
             if (bestT > 0 && peaks.length > 0) {
-                const lastPeak = peaks[peaks.length - 1];
-                const h = Math.round(lastPeak.lag / bestT);
-                if (h > 0) refinedT = lastPeak.lag / h;
+                let bestResidual = Infinity;
+                let bestPeak = null;
+                let bestH = 0;
+                for (const pk of peaks) {
+                    const h = Math.round(pk.lag / bestT);
+                    if (h < 1) continue;
+                    const residual = Math.abs(pk.lag - h * bestT);
+                    if (residual < bestResidual) {
+                        bestResidual = residual;
+                        bestPeak = pk;
+                        bestH = h;
+                    }
+                }
+                if (bestPeak && bestH > 0) refinedT = bestPeak.lag / bestH;
             }
             s.shsPeriod = refinedT;
         }
@@ -732,7 +718,7 @@ function processFlux(flux) {
                     // consistently disagrees with a poor lock, the BPM
                     // may have changed (e.g. 80→120 where peak 4 becomes
                     // peak 6 but still passes all lock checks).
-                    if (bestLag > 0 && lockScore < 1) {
+                    if (bestLag > 0 && lockScore < 0.9 * bestScore) {
                         const lockTol = Math.max(3, s.lockLag * 0.08);
                         if (Math.abs(bestLag - s.lockLag) > lockTol) {
                             s.altBetterCount++;

@@ -143,7 +143,7 @@ function startVisualiser() {
 
             // SHS fundamental period T: vertical lines at multiples of T
             if (tempo.shsPeriod > 0) {
-                visCtx.strokeStyle = '#ff4081';
+                visCtx.strokeStyle = '#c7bf51';
                 visCtx.lineWidth = 1;
                 visCtx.setLineDash([2, 3]);
                 const T = tempo.shsPeriod;
@@ -155,7 +155,7 @@ function startVisualiser() {
                     visCtx.stroke();
                 }
                 visCtx.setLineDash([]);
-                // Show T value and implied BPM top-left
+                 // Show T value and implied BPM top-left
                 visCtx.font = '10px monospace';
                 visCtx.textAlign = 'left';
                 visCtx.fillStyle = '#ff4081';
