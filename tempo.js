@@ -165,6 +165,8 @@ function startTempo() {
             tempo.peakLags = msg.peakLags || [];
             tempo.trackState = msg.trackState || 'locking';
             tempo.shsPeriod = msg.shsPeriod || 0;
+            tempo.shsHalfPct = msg.shsHalfPct || 0;
+            tempo.shsQtrPct = msg.shsQtrPct || 0;
             if (msg.smoothCorrs) {
                 tempo.lastCorrs = msg.smoothCorrs;
             }

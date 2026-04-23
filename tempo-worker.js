@@ -133,6 +133,8 @@ function postResult(lastCorrMax) {
         peakLags: s.peakLags || [],
         trackState: s.trackState,
         shsPeriod: s.shsPeriod || 0,
+        shsHalfPct: s.shsHalfPct || 0,
+        shsQtrPct: s.shsQtrPct || 0,
     };
     if (s.smoothCorrs) {
         msg.smoothCorrs = new Float32Array(s.smoothCorrs);
@@ -455,11 +457,26 @@ function processFlux(flux) {
         const maxBpmLag = Math.round(s.sampleRate * 60 / BPM_MIN);
         s.peakLags = peaks.map(pk => pk.lag);
 
+        // SHS scoring helper: concavity-weighted score for a candidate
+        // period. Only positions above the amplitude gate contribute.
+        // Returns the 1/h-weighted concavity sum.
+        const shsScore = (t, gate) => {
+            let sum = 0;
+            for (let h = 1; h * t <= maxLag; h++) {
+                const idx = Math.round(h * t);
+                if (idx < 1 || idx >= sc.length - 1) break;
+                const d2 = sc[idx - 1] - 2 * sc[idx] + sc[idx + 1];
+                const concavity = -d2;
+                if (concavity > 0 && sc[idx] > globalMax * gate) {
+                    sum += concavity / h;  // peaks above gate
+                } else if (concavity < 0) {
+                    sum += concavity / h;  // troughs always penalise
+                }
+            }
+            return sum;
+        };
+
         // ── Subharmonic Summation: find fundamental period T ──
-        // Peak-aligned SHS: for each candidate T, find the nearest local
-        // maximum within ±2 of each harmonic h*T. Only actual peaks
-        // contribute — slopes and troughs score zero. Weighted by 1/h
-        // so early harmonics dominate over noisy high-lag peaks.
         s.shsPeriod = 0;
         {
             let bestShsScore = -Infinity;
@@ -467,41 +484,49 @@ function processFlux(flux) {
             const minT = firstMin + 1;
             const maxT = Math.floor(maxLag / 2);
             for (let t = minT; t <= maxT; t++) {
-                let sum = 0;
-                for (let h = 1; h * t <= maxLag; h++) {
-                    const idx = h * t;
-                    if (idx < 1 || idx >= sc.length - 1) break;
-                    // Concavity with amplitude gate: only score
-                    // positions above 25% of globalMax to filter noise
-                    // curvature without biasing toward the tallest peaks.
-                    if (sc[idx] > globalMax * 0.25) {
-                        const d2 = sc[idx - 1] - 2 * sc[idx] + sc[idx + 1];
-                        sum += Math.max(0, -d2) / h;
-                    }
-                }
-                if (sum > bestShsScore) {
-                    bestShsScore = sum;
+                const score = shsScore(t, 0.25);
+                if (score > bestShsScore) {
+                    bestShsScore = score;
                     bestT = t;
                 }
             }
-            // Refine T using the peak most closely aligned to a
-            // multiple of bestT (smallest fractional residual).
+            // Octave correction: if half or quarter period has
+            // meaningful support, halve bestT accordingly.
+            const halfScore = bestT > 0 ? shsScore(bestT / 2, 0.25) : 0;
+            const qtrScore = bestT > 0 ? shsScore(bestT / 4, 0.25) : 0;
+            const halfPct = bestShsScore > 0 ? halfScore / bestShsScore : 0;
+            const qtrPct = bestShsScore > 0 ? qtrScore / bestShsScore : 0;
+            s.shsHalfPct = halfPct;
+            s.shsQtrPct = qtrPct;
+            if (halfScore > 0.5 * bestShsScore) bestT = Math.round(bestT / 2);
+            if (qtrScore > 0.5 * bestShsScore) bestT = Math.round(bestT / 2);
+
+            // Refine T by finding the local maximum in sc[] nearest
+            // to 4*bestT (or 8*bestT), then dividing that lag by 4
+            // (or 8). These are strong even-harmonic peaks independent
+            // of the peaks array.
             let refinedT = bestT;
-            if (bestT > 0 && peaks.length > 0) {
-                let bestResidual = Infinity;
-                let bestPeak = null;
-                let bestH = 0;
-                for (const pk of peaks) {
-                    const h = Math.round(pk.lag / bestT);
-                    if (h < 1) continue;
-                    const residual = Math.abs(pk.lag - h * bestT);
-                    if (residual < bestResidual) {
-                        bestResidual = residual;
-                        bestPeak = pk;
-                        bestH = h;
+            if (bestT > 0) {
+                // Try 8*T first (better precision), fall back to 4*T
+                for (const mult of [8, 4]) {
+                    const target = Math.round(mult * bestT);
+                    if (target < 2 || target >= sc.length - 1) continue;
+                    // Search ±bestT/2 around target for the local max
+                    const window = Math.max(2, Math.round(bestT / 2));
+                    const lo = Math.max(1, target - window);
+                    const hi = Math.min(sc.length - 2, target + window);
+                    let peakIdx = -1, peakVal = -Infinity;
+                    for (let i = lo; i <= hi; i++) {
+                        if (sc[i] > sc[i - 1] && sc[i] > sc[i + 1] && sc[i] > peakVal) {
+                            peakVal = sc[i];
+                            peakIdx = i;
+                        }
+                    }
+                    if (peakIdx > 0) {
+                        refinedT = peakIdx / mult;
+                        break;
                     }
                 }
-                if (bestPeak && bestH > 0) refinedT = bestPeak.lag / bestH;
             }
             s.shsPeriod = refinedT;
         }
