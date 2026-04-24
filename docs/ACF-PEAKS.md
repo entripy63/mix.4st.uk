@@ -50,6 +50,8 @@ There is another complication when the single odd-numbered unstable peaks are re
 
 It can be seen that this series is similar to a periodicity based on fours and we have therefore ignored it. Although theoretically possible I don't belive I have ever seen this case, although I have possibly mistaken it for a periodicity based on fours if it really does exist.
 
+It should be noted that these so-called periodicities are the fully mature forms where the peaks are indistinguishable from the stable peaks. The precursor to these periodicities are malformed peaks beginning to split from the unstable peaks where the immature sub peaks are not even properly periodic. Therefore there is a grey area around when an immature peak should be counted as a peak. In some cases this problem goes away by just ignoring them.
+
 ## Correcting a half BPM error (octave too low)
 
 We note that half BPM is double lag.
