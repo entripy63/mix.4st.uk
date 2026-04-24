@@ -19,7 +19,7 @@ const s = {
     instantBpm: 0,
 
     emaCorrs: null,
-    emaCorrAlpha: 0.05,
+    emaCorrAlpha: 0.1,  // was 0.05 2026-04-23
     smoothCorrs: null,
 
     bestLag: 0,
@@ -457,6 +457,29 @@ function processFlux(flux) {
         const maxBpmLag = Math.round(s.sampleRate * 60 / BPM_MIN);
         s.peakLags = peaks.map(pk => pk.lag);
 
+        // Helper: refine a lag to sub-sample precision
+        const refineLag = (lag) => {
+            if (lag <= 3 || lag >= sc.length - 1) return lag;
+            const prev = sc[lag - 1], peak = sc[lag], next = sc[lag + 1];
+            if (prev > 0 && peak > 0 && next > 0) {
+                const lnPrev = Math.log(prev);
+                const lnPeak = Math.log(peak);
+                const lnNext = Math.log(next);
+                const denom = 2 * (2 * lnPeak - lnPrev - lnNext);
+                if (denom > 0) {
+                    const offset = (lnPrev - lnNext) / denom;
+                    return lag + Math.max(-0.5, Math.min(0.5, offset));
+                }
+            } else {
+                const denom = 2 * (2 * peak - prev - next);
+                if (denom > 0) {
+                    const offset = (prev - next) / denom;
+                    return lag + Math.max(-0.5, Math.min(0.5, offset));
+                }
+            }
+            return lag;
+        };
+
         // SHS scoring helper: concavity-weighted score for a candidate
         // period. Only positions above the amplitude gate contribute.
         // Returns the 1/h-weighted concavity sum.
@@ -498,8 +521,8 @@ function processFlux(flux) {
             const qtrPct = bestShsScore > 0 ? qtrScore / bestShsScore : 0;
             s.shsHalfPct = halfPct;
             s.shsQtrPct = qtrPct;
-            if (halfScore > 0.5 * bestShsScore) bestT = Math.round(bestT / 2);
-            if (qtrScore > 0.5 * bestShsScore) bestT = Math.round(bestT / 2);
+            if (halfScore > 0.45 * bestShsScore) bestT = bestT / 2;
+            if (qtrScore > 0.45 * bestShsScore) bestT = bestT / 2;
 
             // Refine T by finding the local maximum in sc[] nearest
             // to 4*bestT (or 8*bestT), then dividing that lag by 4
@@ -511,8 +534,8 @@ function processFlux(flux) {
                 for (const mult of [8, 4]) {
                     const target = Math.round(mult * bestT);
                     if (target < 2 || target >= sc.length - 1) continue;
-                    // Search ±bestT/2 around target for the local max
-                    const window = Math.max(2, Math.round(bestT / 2));
+                    // Window ±mult covers ±1 integer wobble in bestT
+                    const window = mult + 2;
                     const lo = Math.max(1, target - window);
                     const hi = Math.min(sc.length - 2, target + window);
                     let peakIdx = -1, peakVal = -Infinity;
@@ -523,7 +546,7 @@ function processFlux(flux) {
                         }
                     }
                     if (peakIdx > 0) {
-                        refinedT = peakIdx / mult;
+                        refinedT = refineLag(peakIdx) / mult;
                         break;
                     }
                 }
@@ -542,29 +565,6 @@ function processFlux(flux) {
                 }
             }
             return best;
-        };
-
-        // Helper: refine a lag to sub-sample precision
-        const refineLag = (lag) => {
-            if (lag <= 3 || lag >= sc.length - 1) return lag;
-            const prev = sc[lag - 1], peak = sc[lag], next = sc[lag + 1];
-            if (prev > 0 && peak > 0 && next > 0) {
-                const lnPrev = Math.log(prev);
-                const lnPeak = Math.log(peak);
-                const lnNext = Math.log(next);
-                const denom = 2 * (2 * lnPeak - lnPrev - lnNext);
-                if (denom > 0) {
-                    const offset = (lnPrev - lnNext) / denom;
-                    return lag + Math.max(-0.5, Math.min(0.5, offset));
-                }
-            } else {
-                const denom = 2 * (2 * peak - prev - next);
-                if (denom > 0) {
-                    const offset = (prev - next) / denom;
-                    return lag + Math.max(-0.5, Math.min(0.5, offset));
-                }
-            }
-            return lag;
         };
 
         // Helper: compute BPM from a refined lag and update state
