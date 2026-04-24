@@ -165,6 +165,7 @@ function startTempo() {
             tempo.peakLags = msg.peakLags || [];
             tempo.trackState = msg.trackState || 'locking';
             tempo.shsPeriod = msg.shsPeriod || 0;
+            tempo.shsBpm = msg.shsBpm || 0;
             tempo.shsHalfPct = msg.shsHalfPct || 0;
             tempo.shsQtrPct = msg.shsQtrPct || 0;
             if (msg.smoothCorrs) {
@@ -180,7 +181,11 @@ function startTempo() {
             }
 
             if (tempo.bpm > 0) {
-                bpmDisplay.textContent = tempo.bpm.toFixed(1) + ' BPM';
+                let bpmText = tempo.bpm.toFixed(1) + ' BPM';
+                if (tempo.shsBpm > 0) {
+                    bpmText += ' (' + tempo.shsBpm.toFixed(1) + ')';
+                }
+                bpmDisplay.textContent = bpmText;
                 bpmDisplay.style.display = '';
             }
             // Latch: keep last non-empty skipReason for display title

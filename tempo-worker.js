@@ -49,6 +49,8 @@ const s = {
     octaveCooldown: 0,   // passes remaining before another octave correction allowed
     lockingStallCount: 0, // consecutive locking passes with no confirmed candidate
     shsPeriod: 0,        // fundamental period T from subharmonic summation
+    shsBpm: 0,           // BPM derived from SHS period
+    latchT: 0,           // latched minimum octave-related T
 
     frameCount: 0,
     corrCount: 0,
@@ -86,6 +88,8 @@ function reset() {
     s.octaveCooldown = 0;
     s.lockingStallCount = 0;
     s.shsPeriod = 0;
+    s.shsBpm = 0;
+    s.latchT = 0;
     s.frameCount = 0;
     s.corrCount = 0;
     s.lastCorrTime = 0;
@@ -133,6 +137,7 @@ function postResult(lastCorrMax) {
         peakLags: s.peakLags || [],
         trackState: s.trackState,
         shsPeriod: s.shsPeriod || 0,
+        shsBpm: s.shsBpm || 0,
         shsHalfPct: s.shsHalfPct || 0,
         shsQtrPct: s.shsQtrPct || 0,
     };
@@ -480,21 +485,22 @@ function processFlux(flux) {
             return lag;
         };
 
-        // SHS scoring helper: concavity-weighted score for a candidate
-        // period. Only positions above the amplitude gate contribute.
-        // Returns the 1/h-weighted concavity sum.
-        const shsScore = (t, gate) => {
+        // SHS scoring helper: prominence-weighted score for a candidate
+        // period. Each harmonic h*t is compared to the midpoints between
+        // harmonics at (h±0.5)*t — a second derivative at the scale of t.
+        // Peaks score positive, troughs negative, regardless of sharpness
+        // or absolute amplitude.
+        const shsScore = (t) => {
             let sum = 0;
+            const halfT = Math.round(t / 2);
             for (let h = 1; h * t <= maxLag; h++) {
                 const idx = Math.round(h * t);
                 if (idx < 1 || idx >= sc.length - 1) break;
-                const d2 = sc[idx - 1] - 2 * sc[idx] + sc[idx + 1];
-                const concavity = -d2;
-                if (concavity > 0 && sc[idx] > globalMax * gate) {
-                    sum += concavity / h;  // peaks above gate
-                } else if (concavity < 0) {
-                    sum += concavity / h;  // troughs always penalise
-                }
+                const left = idx - halfT;
+                const right = idx + halfT;
+                if (left < 0 || right >= sc.length) break;
+                const prominence = sc[idx] - (sc[left] + sc[right]) / 2;
+                sum += prominence / h;
             }
             return sum;
         };
@@ -507,31 +513,89 @@ function processFlux(flux) {
             const minT = firstMin + 1;
             const maxT = Math.floor(maxLag / 2);
             for (let t = minT; t <= maxT; t++) {
-                const score = shsScore(t, 0.25);
+                const score = shsScore(t);
                 if (score > bestShsScore) {
                     bestShsScore = score;
                     bestT = t;
                 }
             }
-            // Octave correction: if half or quarter period has
-            // meaningful support, halve bestT accordingly.
-            const halfScore = bestT > 0 ? shsScore(bestT / 2, 0.25) : 0;
-            const qtrScore = bestT > 0 ? shsScore(bestT / 4, 0.25) : 0;
-            const halfPct = bestShsScore > 0 ? halfScore / bestShsScore : 0;
-            const qtrPct = bestShsScore > 0 ? qtrScore / bestShsScore : 0;
-            s.shsHalfPct = halfPct;
-            s.shsQtrPct = qtrPct;
-            if (halfScore > 0.45 * bestShsScore) bestT = bestT / 2;
-            if (qtrScore > 0.45 * bestShsScore) bestT = bestT / 2;
+            // Space ratio at a candidate period: peak width at zero
+            // crossings vs gap width. See docs/SPACE-RATIO.md
+            // Returns ratio or -1 if unmeasurable.
+            const spaceRatioAt = (t) => {
+                const tLag = Math.round(t);
+                if (tLag < 2 || tLag >= sc.length - 1 || sc[tLag] <= 0) return -1;
+                let left = tLag, right = tLag;
+                while (left > 0 && sc[left] > 0) left--;
+                while (right < sc.length - 1 && sc[right] > 0) right++;
+                const peakWidth = right - left;
+                if (peakWidth <= 0) return -1;
+                return (t - peakWidth) / peakWidth;
+            };
+
+            // Octave correction: cascading SHS division to find
+            // true fundamental period T from N*T.
+            // See docs/BPM-CORRECT.md for algorithm derivation.
+            const threshold = 0.2 * bestShsScore;
+            let div = 1;
+            let periodicity = 4;
+            if (bestT > 0 && bestShsScore > 0) {
+                if (shsScore(bestT / 2) > threshold) {
+                    // Before dividing further: if space ratio at bestT/2
+                    // is ≤ 2, odd peaks are present and div=2 is correct.
+                    const sr = spaceRatioAt(bestT / 2);
+                    if (sr >= 0 && sr <= 2) {
+                        div = 2;
+                    } else if (shsScore(bestT / 4) > threshold) {
+                        if (shsScore(bestT / 8) > threshold) {
+                            div = 8;
+                        } else {
+                            div = 4;
+                        }
+                    } else if (shsScore(bestT / 6) > threshold) {
+                        div = 6;
+                        periodicity = 6;
+                    } else if (shsScore(bestT / 10) > threshold) {
+                        div = 10;
+                        periodicity = 10;
+                    } else {
+                        div = 2;
+                    }
+                } else if (shsScore(bestT / 3) > threshold) {
+                    div = 3;
+                    periodicity = 6;
+                } else if (shsScore(bestT / 5) > threshold) {
+                    div = 5;
+                    periodicity = 10;
+                } else {
+                    // Fallback: if odd peaks fully formed, N=1;
+                    // check if periodicity-6 fits better than 4
+                    // i.e. 3:6:9:12 better than 2:4:8:10
+                    if (shsScore(3 * bestT) > shsScore(2 * bestT)) {
+                        periodicity = 6;
+                    }
+                }
+                bestT /= div;
+            }
+            // Space ratio post-check: detect absent odd peaks that
+            // SHS can't see. Ratio > 2 means N=2.
+            if (bestT > 0 && div === 1) {
+                const sr = spaceRatioAt(bestT);
+                if (sr > 2) {
+                    bestT /= 2;
+                    div *= 2;
+                }
+            }
+
+            s.shsHalfPct = div;
+            s.shsQtrPct = periodicity;
 
             // Refine T by finding the local maximum in sc[] nearest
-            // to 4*bestT (or 8*bestT), then dividing that lag by 4
-            // (or 8). These are strong even-harmonic peaks independent
-            // of the peaks array.
+            // to a known-strong harmonic, then dividing back.
             let refinedT = bestT;
             if (bestT > 0) {
-                // Try 8*T first (better precision), fall back to 4*T
-                for (const mult of [8, 4]) {
+                // Try 2× periodicity first (better precision), fall back to 1×
+                for (const mult of [periodicity * 2, periodicity]) {
                     const target = Math.round(mult * bestT);
                     if (target < 2 || target >= sc.length - 1) continue;
                     // Window ±mult covers ±1 integer wobble in bestT
@@ -552,6 +616,35 @@ function processFlux(flux) {
                 }
             }
             s.shsPeriod = refinedT;
+
+            // Correct T into valid BPM range by octave-shifting
+            if (refinedT > 0) {
+                const maxT = s.sampleRate * 60 / (periodicity * BPM_MIN);
+                const minT = s.sampleRate * 60 / (periodicity * BPM_MAX);
+                while (refinedT > maxT) refinedT /= 2;
+                while (refinedT < minT) refinedT *= 2;
+            }
+            s.shsPeriod = refinedT;
+            // Derive BPM from the actual peak nearest periodicity*T
+            s.shsBpm = 0;
+            if (refinedT > 0) {
+                const bpmLag = Math.round(periodicity * refinedT);
+                const win = Math.max(3, periodicity);
+                const lo = Math.max(1, bpmLag - win);
+                const hi = Math.min(sc.length - 2, bpmLag + win);
+                let peakIdx = -1, peakVal = -Infinity;
+                for (let i = lo; i <= hi; i++) {
+                    if (sc[i] > sc[i - 1] && sc[i] > sc[i + 1] && sc[i] > peakVal) {
+                        peakVal = sc[i];
+                        peakIdx = i;
+                    }
+                }
+                if (peakIdx > 0) {
+                    s.shsBpm = s.sampleRate * 60 / refineLag(peakIdx);
+                } else {
+                    s.shsBpm = s.sampleRate * 60 / (periodicity * refinedT);
+                }
+            }
         }
 
         // Helper: find nearest peak to a target lag within tolerance

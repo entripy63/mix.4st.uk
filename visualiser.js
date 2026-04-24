@@ -159,10 +159,7 @@ function startVisualiser() {
                 visCtx.font = '10px monospace';
                 visCtx.textAlign = 'left';
                 visCtx.fillStyle = '#ff4081';
-                const shsBpm = tempo.sampleRate * 60 / T;
-                const h2 = (tempo.shsHalfPct * 100).toFixed(0);
-                const q = (tempo.shsQtrPct * 100).toFixed(0);
-                visCtx.fillText('T=' + T.toFixed(1) + ' /2:' + h2 + '% /4:' + q + '%', 4, 12);
+                visCtx.fillText('T=' + T.toFixed(1) + ' div=' + tempo.shsHalfPct + ' per=' + tempo.shsQtrPct, 4, 12);
             }
 
             // Peak count and lag/4 weight regime top-right
