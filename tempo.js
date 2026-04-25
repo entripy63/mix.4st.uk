@@ -61,21 +61,14 @@ const tempo = {
     lastSpectrum: null,   // previous frame's compressed frequency data
 
     bpm: 0,
-    rawBpm: 0,
-    instantBpm: 0,
-    stabilityCount: 0,
     fluxPeak: 1,          // slow-decay peak for flux display scaling (set by visualiser)
     lastCorrs: null,      // most recent smoothed autocorrelation array (from worker)
     lastCorrMax: 0,
-    bestLag: 0,
-    interpLag: 0,
     maxLag: 0,
-    debugRefinedLag: 0,
-    debugPeakCount: 0,
-    debugTroughCount: 0,
-    unfoldedBpm: 0,
-    skipReason: '',
-    topScores: [],       // top scored candidates [{lag, score}]
+    shsPeriod: 0,
+    shsBpm: 0,
+    shsDiv: 0,
+    shsPer: 0,
 
     // Compute spectral flux on main thread (needs analyserNode data)
     // Returns flux value to send to worker, or null on first frame
@@ -106,16 +99,14 @@ const tempo = {
         this.bufFilled = 0;
         this.lastSpectrum = null;
         this.bpm = 0;
-        this.rawBpm = 0;
-        this.instantBpm = 0;
-        this.stabilityCount = 0;
         this.fluxPeak = 1;
         this.lastCorrs = null;
         this.lastCorrMax = 0;
-        this.bestLag = 0;
-        this.interpLag = 0;
         this.maxLag = 0;
-        this.debugRefinedLag = 0;
+        this.shsPeriod = 0;
+        this.shsBpm = 0;
+        this.shsDiv = 0;
+        this.shsPer = 0;
         this.sampleRate = 120;
     }
 };
@@ -147,51 +138,22 @@ function startTempo() {
             }
         } else if (msg.type === 'result') {
             tempo.bpm = msg.bpm;
-            tempo.rawBpm = msg.rawBpm;
-            tempo.instantBpm = msg.instantBpm;
-            tempo.stabilityCount = msg.stabilityCount;
-            tempo.bestLag = msg.bestLag;
-            tempo.interpLag = msg.interpLag;
             tempo.maxLag = msg.maxLag;
             tempo.lastCorrMax = msg.lastCorrMax;
-            tempo.debugRefinedLag = msg.debugRefinedLag;
-            tempo.debugPeakCount = msg.debugPeakCount;
-            tempo.debugTroughCount = msg.debugTroughCount;
-            tempo.w4Weight = msg.w4Weight;
-            tempo.unfoldedBpm = msg.unfoldedBpm;
             tempo.sampleRate = msg.sampleRate;
-            tempo.skipReason = msg.skipReason || '';
-            tempo.topScores = msg.topScores || [];
-            tempo.peakLags = msg.peakLags || [];
-            tempo.trackState = msg.trackState || 'locking';
             tempo.shsPeriod = msg.shsPeriod || 0;
             tempo.shsBpm = msg.shsBpm || 0;
-            tempo.shsHalfPct = msg.shsHalfPct || 0;
-            tempo.shsQtrPct = msg.shsQtrPct || 0;
+            tempo.shsDiv = msg.shsDiv || 0;
+            tempo.shsPer = msg.shsPer || 0;
             if (msg.smoothCorrs) {
                 tempo.lastCorrs = msg.smoothCorrs;
             }
 
-            // Log octave corrections with playback position
-            if (tempo.skipReason.includes('Lock')) {
-                const t = aud.currentTime;
-                const mm = Math.floor(t / 60);
-                const ss = Math.floor(t % 60).toString().padStart(2, '0');
-                console.info('[tempo] ' + tempo.skipReason + ' at ' + mm + ':' + ss + ' → ' + tempo.bpm.toFixed(1) + ' BPM');
-            }
-
             if (tempo.bpm > 0) {
-                let bpmText = tempo.bpm.toFixed(1) + ' BPM';
-                if (tempo.shsBpm > 0) {
-                    bpmText += ' (' + tempo.shsBpm.toFixed(1) + ')';
-                }
-                bpmDisplay.textContent = bpmText;
+                bpmDisplay.textContent = tempo.bpm.toFixed(1) + ' BPM';
                 bpmDisplay.style.display = '';
             }
-            // Latch: keep last non-empty skipReason for display title
-            const displayReason = tempo.skipReason || bpmDisplay.title.split(' | ')[0] || '';
-            bpmDisplay.title = renderTempoDebugTitle(displayReason);
-            bpmDisplay.style.color = displayReason ? '#ffd740' : '';
+            bpmDisplay.title = renderTempoDebugTitle('');
         }
     };
 

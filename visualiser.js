@@ -126,94 +126,30 @@ function startVisualiser() {
             }
             visCtx.stroke();
 
-            // Peak ordinal labels at each detected peak
-            if (tempo.peakLags && tempo.peakLags.length > 0) {
-                visCtx.font = '9px monospace';
-                visCtx.textAlign = 'right';
-                visCtx.fillStyle = '#ffffffc0';
-                for (let i = 0; i < tempo.peakLags.length; i++) {
-                    const lag = tempo.peakLags[i];
-                    if (lag < 3 || lag >= n) continue;
-                    const px = lag * sliceWidth;
-                    const val = corrs[lag] / scale;
-                    const peakY = zeroY - val * zeroY * 0.85;
-                    visCtx.fillText(i + 1, px - 8, peakY + 8);
-                }
-            }
-
             // SHS fundamental period T: vertical lines at multiples of T
             if (tempo.shsPeriod > 0) {
                 visCtx.strokeStyle = '#c7bf51';
                 visCtx.lineWidth = 1;
                 visCtx.setLineDash([2, 3]);
                 const T = tempo.shsPeriod;
-                for (let h = 1; h * T < n; h++) {
-                    const px = h * T * sliceWidth;
+                for (let m = 1; m * T < n; m++) {
+                    const px = m * T * sliceWidth;
                     visCtx.beginPath();
-                    visCtx.moveTo(px, 16);
+                    visCtx.moveTo(px, 0);
                     visCtx.lineTo(px, h - 14);
                     visCtx.stroke();
                 }
                 visCtx.setLineDash([]);
-                 // Show T value and implied BPM top-left
+            }
+
+            // Debug info bottom-left
+            if (tempo.shsPeriod > 0) {
                 visCtx.font = '10px monospace';
                 visCtx.textAlign = 'left';
                 visCtx.fillStyle = '#ff4081';
-                visCtx.fillText('T=' + T.toFixed(1) + ' div=' + tempo.shsHalfPct + ' per=' + tempo.shsQtrPct, 4, 12);
-            }
-
-            // Peak count and lag/4 weight regime top-right
-            visCtx.font = '10px monospace';
-            visCtx.textAlign = 'right';
-            visCtx.fillStyle = '#ffffff80';
-            const stateLabel = (tempo.trackState || 'locking').toUpperCase();
-            visCtx.fillText(stateLabel + ' [' + tempo.debugPeakCount + '] w' + (tempo.w4Weight || 0), w - 4, 12);
-
-            // Mark best-lag and subdivision peaks
-            if (tempo.bestLag > 0 && tempo.bestLag < n) {
-                // Unfolded BPM above the interp lag marker
-                if (tempo.unfoldedBpm > 0 && tempo.interpLag >= 3 && tempo.interpLag < n) {
-                    const bpmPx = tempo.interpLag * sliceWidth;
-                    visCtx.font = '10px monospace';
-                    visCtx.textAlign = 'center';
-                    visCtx.fillStyle = '#40c4ff';
-                    visCtx.fillText(tempo.unfoldedBpm.toFixed(1), bpmPx, 12);
-                }
-
-                const markers = [
-                    { lag: tempo.bestLag,         color: '#ffab00' },  // full lag — amber
-                    { lag: tempo.bestLag / 2,     color: '#00e676' },  // lag/2 — green
-                    { lag: tempo.interpLag,       color: '#40c4ff' },  // interp peak — cyan
-                ];
-                for (const m of markers) {
-                    if (m.lag < 3 || m.lag >= n) continue;
-                    const px = m.lag * sliceWidth;
-                    visCtx.strokeStyle = m.color;
-                    visCtx.lineWidth = 1;
-                    visCtx.setLineDash([4, 4]);
-                    visCtx.beginPath();
-                    visCtx.moveTo(px, 16);
-                    visCtx.lineTo(px, h - 14);
-                    visCtx.stroke();
-                }
-                visCtx.setLineDash([]);
-            }
-
-            // Draw top-N candidate scores at their lag positions
-            if (tempo.topScores && tempo.topScores.length > 0) {
-                visCtx.font = '10px monospace';
-                visCtx.textAlign = 'center';
-                for (let i = 0; i < tempo.topScores.length; i++) {
-                    const c = tempo.topScores[i];
-                    if (c.lag < 3 || c.lag >= n) continue;
-                    const px = c.lag * sliceWidth;
-                    const label = c.score >= 10 ? c.score.toFixed(1)
-                                : c.score >= 1  ? c.score.toFixed(2)
-                                :                  c.score.toFixed(3);
-                    // Winner in amber, runners-up in dim white
-                    visCtx.fillStyle = (i === 0) ? '#ffab00' : '#ffffff80';
-                    visCtx.fillText(label, px, h - 3);
-                }
+                visCtx.fillText('T=' + tempo.shsPeriod.toFixed(1)
+                    + ' div=' + tempo.shsDiv
+                    + ' per=' + tempo.shsPer, 4, h - 3);
             }
         }
     }
