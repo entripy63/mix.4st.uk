@@ -140,6 +140,39 @@ function startVisualiser() {
                     visCtx.stroke();
                 }
                 visCtx.setLineDash([]);
+
+                // Downward arrow marking the periodicity peak (per×T)
+                const bestPx = (tempo.shsPer || 4) * T * sliceWidth;
+                if (bestPx > 0 && bestPx < w) {
+                    visCtx.fillStyle = '#c7bf51';
+                    visCtx.beginPath();
+                    visCtx.moveTo(bestPx, 8);
+                    visCtx.lineTo(bestPx - 4, 0);
+                    visCtx.lineTo(bestPx + 4, 0);
+                    visCtx.closePath();
+                    visCtx.fill();
+                }
+            }
+
+            // Debug: prominence search range (T to 2T, midpoint at 3T/2)
+            if (tempo.promRange && tempo.maxLag > 0) {
+                const [pT, p3H, p2T] = tempo.promRange;
+                const pxT = pT * sliceWidth;
+                const px3H = p3H * sliceWidth;
+                const px2T = p2T * sliceWidth;
+                visCtx.strokeStyle = '#ff4081';
+                visCtx.lineWidth = 1;
+                visCtx.beginPath();
+                visCtx.moveTo(pxT, zeroY);
+                visCtx.lineTo(px2T, zeroY);
+                visCtx.stroke();
+                // Tick marks at T, 3T/2, and 2T
+                for (const px of [pxT, px3H, px2T]) {
+                    visCtx.beginPath();
+                    visCtx.moveTo(px, zeroY - 4);
+                    visCtx.lineTo(px, zeroY + 4);
+                    visCtx.stroke();
+                }
             }
 
             // Debug info bottom-left
@@ -149,7 +182,9 @@ function startVisualiser() {
                 visCtx.fillStyle = '#ff4081';
                 visCtx.fillText('T=' + tempo.shsPeriod.toFixed(1)
                     + ' div=' + tempo.shsDiv
-                    + ' per=' + tempo.shsPer, 4, h - 3);
+                    + ' per=' + tempo.shsPer
+                    + ' odd=' + tempo.promOdd.toFixed(1)
+                    + ' sr=' + (tempo.shsSR >= 0 ? tempo.shsSR.toFixed(1) : '-'), 4, h - 3);
             }
         }
     }

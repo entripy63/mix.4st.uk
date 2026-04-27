@@ -69,6 +69,9 @@ const tempo = {
     shsBpm: 0,
     shsDiv: 0,
     shsPer: 0,
+    promOdd: 0,
+    promRange: null,
+    shsSR: -1,
 
     // Compute spectral flux on main thread (needs analyserNode data)
     // Returns flux value to send to worker, or null on first frame
@@ -107,6 +110,9 @@ const tempo = {
         this.shsBpm = 0;
         this.shsDiv = 0;
         this.shsPer = 0;
+        this.promOdd = 0;
+        this.promRange = null;
+        this.shsSR = -1;
         this.sampleRate = 120;
     }
 };
@@ -145,6 +151,9 @@ function startTempo() {
             tempo.shsBpm = msg.shsBpm || 0;
             tempo.shsDiv = msg.shsDiv || 0;
             tempo.shsPer = msg.shsPer || 0;
+            tempo.promOdd = msg.promOdd || 0;
+            tempo.promRange = msg.promRange || null;
+            tempo.shsSR = msg.shsSR != null ? msg.shsSR : -1;
             if (msg.smoothCorrs) {
                 tempo.lastCorrs = msg.smoothCorrs;
             }

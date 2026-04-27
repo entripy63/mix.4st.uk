@@ -57,6 +57,9 @@ function postResult(lastCorrMax) {
         shsBpm: s.shsBpm || 0,
         shsDiv: s.shsDiv || 0,
         shsPer: s.shsPer || 0,
+        promOdd: s.promOdd || 0,
+        promRange: s.promRange || null,
+        shsSR: s.shsSR,
     };
     if (s.smoothCorrs) {
         msg.smoothCorrs = new Float32Array(s.smoothCorrs);
@@ -217,7 +220,7 @@ function processFlux(flux) {
             const right = idx + halfT;
             if (left < 0 || right >= sc.length) break;
             const prominence = sc[idx] - (sc[left] + sc[right]) / 2;
-            sum += prominence / h;
+            sum += prominence;
         }
         return sum;
     };
@@ -225,8 +228,11 @@ function processFlux(flux) {
     // Space ratio at a candidate period: peak width at zero
     // crossings vs gap width. See docs/SPACE-RATIO.md
     // Returns ratio or -1 if unmeasurable.
-    const spaceRatioAt = (t) => {
-        const tLag = Math.round(t);
+    const spaceRatioAt = (t, per = 4) => {
+        // Use the first stable peak at t*per/2 (peak 2 for per=4,
+        // peak 3 for per=6, peak 5 for per=10) rather than t*1
+        // which is an odd-numbered peak and may be poorly formed.
+        const tLag = Math.round(per / 2 * t);
         if (tLag < 2 || tLag >= sc.length - 1 || sc[tLag] <= 0) return -1;
         let left = tLag, right = tLag;
         while (left > 0 && sc[left] > 0) left--;
@@ -241,7 +247,7 @@ function processFlux(flux) {
     let bestT = 0;
     const minT = firstMin + 1;
     const maxT = Math.floor(maxLag / 2);
-    for (let t = minT; t <= maxT; t++) {
+    for (let t = minT; t <= maxT; t += 0.5) {
         const score = shsScore(t);
         if (score > bestShsScore) {
             bestShsScore = score;
@@ -249,61 +255,94 @@ function processFlux(flux) {
         }
     }
 
-    // Octave correction: cascading SHS division to find
-    // true fundamental period T from N*T.
-    // See docs/BPM-CORRECT.md for algorithm derivation.
-    const threshold = 0.2 * bestShsScore;
+    // Periodicity and division detection via prominence checks.
+    // The SHS loop above finds N=1 directly with prominence scoring,
+    // so we only need to determine periodicity (4/6/10) and detect
+    // missing odd peaks (div=2) or missing peaks 1-3 (div=4).
     let div = 1;
     let periodicity = 4;
     if (bestT > 0 && bestShsScore > 0) {
-        if (shsScore(bestT / 2) > threshold) {
-            // Before dividing further: if space ratio at bestT/2
-            // is ≤ 2, odd peaks are present and div=2 is correct.
-            const sr = spaceRatioAt(bestT / 2);
-            if (sr >= 0 && sr <= 2) {
-                div = 2;
-            } else if (shsScore(bestT / 4) > threshold) {
-                if (shsScore(bestT / 8) > threshold) {
-                    div = 8;
-                } else {
-                    div = 4;
-                }
-            } else if (shsScore(bestT / 6) > threshold) {
-                div = 6;
-                periodicity = 6;
-            } else if (shsScore(bestT / 10) > threshold) {
-                div = 10;
-                periodicity = 10;
-            } else {
-                div = 2;
+        const halfT = Math.round(bestT / 2);
+        const inBounds = (idx) => idx > halfT && idx + halfT < sc.length;
+        const prom = (idx) => sc[idx] - (sc[idx - halfT] + sc[idx + halfT]) / 2;
+        const isPeak = (idx) => idx > 0 && idx < sc.length - 1 && sc[idx] > sc[idx - 1] && sc[idx] > sc[idx + 1];
+        // Snap a candidate index to the nearest local maximum within ±2
+        const snapPeak = (idx) => {
+            let best = idx;
+            for (let i = Math.max(1, idx - 2); i <= Math.min(sc.length - 2, idx + 2); i++) {
+                if (sc[i] > sc[i - 1] && sc[i] > sc[i + 1] && sc[i] > sc[best]) best = i;
             }
-        } else if (shsScore(bestT / 3) > threshold) {
-            div = 3;
-            periodicity = 6;
-        } else if (shsScore(bestT / 5) > threshold) {
-            div = 5;
-            periodicity = 10;
-        } else {
-            // Fallback: if odd peaks fully formed, N=1;
-            // check if periodicity-6 fits better than 4
-            if (shsScore(3 * bestT) > shsScore(2 * bestT)) {
+            return best;
+        };
+        const idx4 = snapPeak(Math.round(4 * bestT));
+        const idx6 = snapPeak(Math.round(6 * bestT));
+        const idx10 = snapPeak(Math.round(10 * bestT));
+
+        // Periodicity: compare prominence at 6×T and 10×T vs 4×T
+        if (inBounds(idx4)) {
+            const prom4 = prom(idx4);
+            if (inBounds(idx6) && isPeak(idx6) && prom(idx6) > 2 * prom4) {
                 periodicity = 6;
+            } else if (inBounds(idx10) && isPeak(idx10) && prom(idx10) > 2 * prom4) {
+                periodicity = 10;
             }
         }
-        bestT /= div;
-    }
-    // Space ratio post-check: detect absent odd peaks that
-    // SHS can't see. Ratio > 2 means N=2.
-    if (bestT > 0 && div === 1) {
-        const sr = spaceRatioAt(bestT);
-        if (sr > 2) {
-            bestT /= 2;
-            div *= 2;
+
+        // Div detection: check for prominence at 3T/2 (odd peak present)
+        // Uses 3T/2 rather than T/2 to avoid lag=0 suppression artefacts.
+        // Find actual troughs between even peaks at T and 2T rather than
+        // using fixed offsets which may land on the skirts of broad peaks.
+        const idxT = Math.round(bestT);
+        let idx3Half = Math.round(3 * bestT / 2);
+        const idx2T = Math.round(2 * bestT);
+        s.promOdd = 0;
+        s.promRange = [idxT, idx3Half, idx2T];
+        if (idxT > 0 && idx2T < sc.length && periodicity === 4) {
+            // Snap idx3Half to the nearest local maximum within ±2
+            const snapLo = Math.max(idxT + 1, idx3Half - 2);
+            const snapHi = Math.min(idx2T - 1, idx3Half + 2);
+            for (let i = snapLo; i <= snapHi; i++) {
+                if (sc[i] > sc[i - 1] && sc[i] > sc[i + 1] && sc[i] > sc[idx3Half]) {
+                    idx3Half = i;
+                }
+            }
+            let minL = sc[idx3Half], minR = sc[idx3Half];
+            let minLIdx = idx3Half, minRIdx = idx3Half;
+            for (let i = idxT + 1; i < idx3Half; i++) {
+                if (sc[i] < minL) { minL = sc[i]; minLIdx = i; }
+            }
+            for (let i = idx3Half + 1; i < idx2T; i++) {
+                if (sc[i] < minR) { minR = sc[i]; minRIdx = i; }
+            }
+            s.promRange = [minLIdx, idx3Half, minRIdx];
+            s.promOdd = sc[idx3Half] - (minL + minR) / 2;
+            if (s.promOdd > 0 && sc[idx3Half] > sc[idx3Half - 1] && sc[idx3Half] > sc[idx3Half + 1]) {
+                // Odd peak exists — true fundamental is T/2
+                bestT /= 2;
+                div = 2;
+            }
+        }
+
+        // Space ratio fallback for absent odd peaks that lack
+        // even a hint of prominence at T/2.
+        // Ratio > 2 means N=2, ratio > 5 means N=4.
+        if (div === 1) {
+            const sr = spaceRatioAt(bestT, periodicity);
+            if (sr > 5) {
+                bestT /= 4;
+                div = 4;
+            } else if (sr > 2) {
+                bestT /= 2;
+                div = 2;
+            }
         }
     }
 
     s.shsDiv = div;
     s.shsPer = periodicity;
+
+    // Debug: odd peak prominence (raw) and space ratio
+    s.shsSR = spaceRatioAt(bestT * div, periodicity);
 
     // Refine T by finding the local maximum in sc[] nearest
     // to a known-strong harmonic, then dividing back.
@@ -312,7 +351,7 @@ function processFlux(flux) {
         // Try 2× periodicity first (better precision), fall back to 1×
         for (const mult of [periodicity * 2, periodicity]) {
             const target = Math.round(mult * bestT);
-            if (target < 2 || target >= sc.length - 1) continue;
+            if (target < 2 || target >= sc.length - 1 || target > maxLag - mult) continue;
             const window = mult + 2;
             const lo = Math.max(1, target - window);
             const hi = Math.min(sc.length - 2, target + window);
