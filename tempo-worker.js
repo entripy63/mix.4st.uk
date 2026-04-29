@@ -334,44 +334,19 @@ function processFlux(flux) {
             }
         }
 
-        // ── Periodicity detection ──
-        // Now runs on the corrected bestT after div adjustments.
-        const halfT = Math.round(bestT / 2);
-        const inBounds = (idx) => idx > halfT && idx + halfT < sc.length;
-        const prom = (idx) => sc[idx] - (sc[idx - halfT] + sc[idx + halfT]) / 2;
-        // Snap a candidate index to the nearest local maximum within ±win
-        const snapPeak = (idx, win = 2) => {
-            let best = idx;
-            for (let i = Math.max(1, idx - win); i <= Math.min(sc.length - 2, idx + win); i++) {
-                if (sc[i] > sc[i - 1] && sc[i] > sc[i + 1] && sc[i] > sc[best]) best = i;
-            }
-            return best;
-        };
-        // Wider snap windows for higher harmonics to account for
-        // cumulative T error: ±2 for 4×T, ±4 for 6×T, ±6 for 10×T
-        const idx4 = snapPeak(Math.round(4 * bestT), 2);
-        const idx6 = snapPeak(Math.round(6 * bestT), 4);
-        const idx10 = snapPeak(Math.round(10 * bestT), 6);
-
-        // Compare prominence at 6×T and 10×T vs 4×T.
-        // Hysteresis: switching away from 4 requires 2× prom4, but
-        // retaining 6 or 10 only requires matching prom4 (factor 1).
-        // Periodicity 10 must also beat 6 to prevent false 10 when
-        // the track is in 6 and prom4 is incidentally low.
-        if (inBounds(idx4)) {
-            const prom4 = prom(idx4);
-            const ib6 = inBounds(idx6), ib10 = inBounds(idx10);
-            const prom6Val = ib6 ? prom(idx6) : 0;
-            const prom10Val = ib10 ? prom(idx10) : 0;
-            const thresh6 = s.shsPrevPer === 6 ? 1 : 3;
-            const thresh10 = s.shsPrevPer === 10 ? 1 : 3;
-            s.perProms = [prom4, prom6Val, prom10Val, thresh6, thresh10, ib6, ib10];
-            if (prom6Val > thresh6 * prom4 && prom6Val >= prom10Val) {
-                periodicity = 6;
-            } else if (prom10Val > thresh10 * prom4 && prom10Val > prom6Val) {
-                periodicity = 10;
-            }
+        // ── Periodicity detection via SHS ──
+        // A significant SHS peak at 3T/2 discriminates periodicity 6
+        // from 4: periodicity 6 produces structure at 3T/2 (peak 1.5
+        // of the period-4 grid) while periodicity 4 does not.
+        // Hysteresis: acquire per=6 at ratio > 0.6, retain until < 0.3.
+        const threeHalfScore = shsPeak(bestT * 3 / 2);
+        const tScoreForPer = shsPeak(bestT);
+        const perRatio = tScoreForPer > 0 ? threeHalfScore / tScoreForPer : 0;
+        const wasPer6 = s.shsPrevPer === 6;
+        if (wasPer6 ? perRatio >= 0.3 : perRatio > 0.6) {
+            periodicity = 6;
         }
+        s.perProms = [tScoreForPer, threeHalfScore, perRatio, wasPer6 ? 0.3 : 0.6];
         s.shsPrevPer = periodicity;
     }
 

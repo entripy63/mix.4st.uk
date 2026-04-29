@@ -191,10 +191,7 @@ function startVisualiser() {
                 visCtx.fillText('T=' + tempo.shsPeriod.toFixed(1)
                     + ' div=' + tempo.shsDiv + (tempo.divSrc ? '(' + tempo.divSrc + ')' : '')
                     + ' per=' + tempo.shsPer
-                    + (pp ? ' p=' + pp[0].toFixed(0)
-                        + '/' + (pp[5] ? pp[1].toFixed(0) : '-')
-                        + '/' + (pp[6] ? pp[2].toFixed(0) : '-')
-                        + ' th=' + pp[3] + '/' + pp[4] : '')
+                    + (pp ? ' 3h=' + pp[2].toFixed(2) + '/' + pp[3].toFixed(1) : '')
                     + ' dr=' + tempo.divRatio.toFixed(2)
                     + ' sr=' + (tempo.shsSR >= 0 ? tempo.shsSR.toFixed(1) : '-'), 4, h - 3);
             }
