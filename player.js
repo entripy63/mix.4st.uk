@@ -102,6 +102,10 @@ function playStream(url, displayText, autoplay = false) {
   
   document.title = 'Live - Player';
 
+  // Clean up any prior mix visualiser/tempo state (e.g. paused mix worker)
+  stopVisualiser();
+  stopTempo();
+
   if (autoplay) {
     ensureAudioContext();
     streamPlay(url, displayText);
