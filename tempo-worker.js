@@ -195,25 +195,21 @@ function processFlux(flux) {
 
     const sc = s.smoothCorrs;
 
-    // Helper: refine a lag to sub-sample precision
+    // Helper: refine a lag to sub-sample precision using 5-point
+    // least-squares quadratic fit.  The vertex of the best-fit
+    // parabola through sc[lag-2..lag+2] is anchor-independent:
+    // passing either of two near-equal adjacent peak samples
+    // converges to the same true fractional peak.
     const refineLag = (lag) => {
-        if (lag <= 3 || lag >= sc.length - 1) return lag;
-        const prev = sc[lag - 1], peak = sc[lag], next = sc[lag + 1];
-        if (prev > 0 && peak > 0 && next > 0) {
-            const lnPrev = Math.log(prev);
-            const lnPeak = Math.log(peak);
-            const lnNext = Math.log(next);
-            const denom = 2 * (2 * lnPeak - lnPrev - lnNext);
-            if (denom > 0) {
-                const offset = (lnPrev - lnNext) / denom;
-                return lag + Math.max(-0.5, Math.min(0.5, offset));
-            }
-        } else {
-            const denom = 2 * (2 * peak - prev - next);
-            if (denom > 0) {
-                const offset = (prev - next) / denom;
-                return lag + Math.max(-0.5, Math.min(0.5, offset));
-            }
+        if (lag < 3 || lag >= sc.length - 2) return lag;
+        const y0 = sc[lag - 2], y1 = sc[lag - 1], y2 = sc[lag];
+        const y3 = sc[lag + 1], y4 = sc[lag + 2];
+        // Savitzky-Golay closed-form coefficients for 5-point quadratic
+        const a = (2 * y0 - y1 - 2 * y2 - y3 + 2 * y4) / 14;
+        const b = (-2 * y0 - y1 + y3 + 2 * y4) / 10;
+        if (a < 0) {
+            const offset = -b / (2 * a);
+            return lag + Math.max(-1, Math.min(1, offset));
         }
         return lag;
     };
