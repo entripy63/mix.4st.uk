@@ -126,6 +126,34 @@ function startVisualiser() {
             }
             visCtx.stroke();
 
+            // SHS score curve (cyan, secondary)
+            if (tempo.shsScores && tempo.shsScores.length > 0) {
+                const scores = tempo.shsScores;
+                const sMinT = tempo.shsScoresMinT;
+                const sStep = tempo.shsScoresStep;
+                let sMax = 0;
+                for (let i = 0; i < scores.length; i++) {
+                    const abs = Math.abs(scores[i]);
+                    if (abs > sMax) sMax = abs;
+                }
+                if (sMax > 0) {
+                    visCtx.strokeStyle = '#00e5ff99';
+                    visCtx.lineWidth = 1;
+                    visCtx.beginPath();
+                    let started = false;
+                    for (let i = 0; i < scores.length; i++) {
+                        const lag = sMinT + i * sStep;
+                        if (lag > n) break;
+                        const x = lag * sliceWidth;
+                        const val = scores[i] / sMax;
+                        const y = zeroY - val * zeroY * 0.7;
+                        if (!started) { visCtx.moveTo(x, y); started = true; }
+                        else visCtx.lineTo(x, y);
+                    }
+                    if (started) visCtx.stroke();
+                }
+            }
+
             // SHS fundamental period T: vertical lines at multiples of T
             if (tempo.shsPeriod > 0) {
                 visCtx.strokeStyle = '#c7bf51';
@@ -154,36 +182,20 @@ function startVisualiser() {
                 }
             }
 
-            // Debug: prominence search range (T to 2T, midpoint at 3T/2)
-            if (tempo.promRange && tempo.maxLag > 0) {
-                const [pT, p3H, p2T] = tempo.promRange;
-                const pxT = pT * sliceWidth;
-                const px3H = p3H * sliceWidth;
-                const px2T = p2T * sliceWidth;
-                visCtx.strokeStyle = '#ff4081';
-                visCtx.lineWidth = 1;
-                visCtx.beginPath();
-                visCtx.moveTo(pxT, zeroY);
-                visCtx.lineTo(px2T, zeroY);
-                visCtx.stroke();
-                // Tick marks at T, 3T/2, and 2T
-                for (const px of [pxT, px3H, px2T]) {
-                    visCtx.beginPath();
-                    visCtx.moveTo(px, zeroY - 4);
-                    visCtx.lineTo(px, zeroY + 4);
-                    visCtx.stroke();
-                }
-            }
-
             // Debug info bottom-left
             if (tempo.shsPeriod > 0) {
                 visCtx.font = '10px monospace';
                 visCtx.textAlign = 'left';
                 visCtx.fillStyle = '#ff4081';
+                const pp = tempo.perProms;
                 visCtx.fillText('T=' + tempo.shsPeriod.toFixed(1)
-                    + ' div=' + tempo.shsDiv
+                    + ' div=' + tempo.shsDiv + (tempo.divSrc ? '(' + tempo.divSrc + ')' : '')
                     + ' per=' + tempo.shsPer
-                    + ' odd=' + tempo.promOdd.toFixed(1)
+                    + (pp ? ' p=' + pp[0].toFixed(0)
+                        + '/' + (pp[5] ? pp[1].toFixed(0) : '-')
+                        + '/' + (pp[6] ? pp[2].toFixed(0) : '-')
+                        + ' th=' + pp[3] + '/' + pp[4] : '')
+                    + ' dr=' + tempo.divRatio.toFixed(2)
                     + ' sr=' + (tempo.shsSR >= 0 ? tempo.shsSR.toFixed(1) : '-'), 4, h - 3);
             }
         }

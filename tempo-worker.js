@@ -23,6 +23,8 @@ const s = {
     shsBpm: 0,
     shsDiv: 0,
     shsPer: 0,
+    shsBestT: 0,
+    shsPrevPer: 4,
 
     frameCount: 0,
     corrCount: 0,
@@ -40,6 +42,11 @@ function reset() {
     s.shsBpm = 0;
     s.shsDiv = 0;
     s.shsPer = 0;
+    s.shsScores = null;
+    s.shsScoresMinT = 0;
+    s.shsScoresStep = 0.5;
+    s.shsBestT = 0;
+    s.shsPrevPer = 4;
     s.frameCount = 0;
     s.corrCount = 0;
     s.lastCorrTime = 0;
@@ -57,12 +64,18 @@ function postResult(lastCorrMax) {
         shsBpm: s.shsBpm || 0,
         shsDiv: s.shsDiv || 0,
         shsPer: s.shsPer || 0,
-        promOdd: s.promOdd || 0,
-        promRange: s.promRange || null,
+        divRatio: s.divRatio || 0,
         shsSR: s.shsSR,
+        divSrc: s.divSrc || '',
+        perProms: s.perProms || null,
+        shsScoresMinT: s.shsScoresMinT || 0,
+        shsScoresStep: s.shsScoresStep || 0.5,
     };
     if (s.smoothCorrs) {
         msg.smoothCorrs = new Float32Array(s.smoothCorrs);
+    }
+    if (s.shsScores) {
+        msg.shsScores = new Float32Array(s.shsScores);
     }
     self.postMessage(msg);
 }
@@ -205,11 +218,11 @@ function processFlux(flux) {
         return lag;
     };
 
-    // SHS scoring helper: prominence-weighted score for a candidate
+    // SHS scoring helper: normalised-prominence score for a candidate
     // period. Each harmonic h*t is compared to the midpoints between
     // harmonics at (h±0.5)*t — a second derivative at the scale of t.
-    // Peaks score positive, troughs negative, regardless of sharpness
-    // or absolute amplitude.
+    // Prominence is divided by globalMax so that broad/tall peaks at
+    // high lags don't outscore sharper peaks at low lags.
     const shsScore = (t) => {
         let sum = 0;
         const halfT = Math.round(t / 2);
@@ -220,7 +233,7 @@ function processFlux(flux) {
             const right = idx + halfT;
             if (left < 0 || right >= sc.length) break;
             const prominence = sc[idx] - (sc[left] + sc[right]) / 2;
-            sum += prominence;
+            sum += prominence / globalMax;
         }
         return sum;
     };
@@ -245,130 +258,164 @@ function processFlux(flux) {
     // ── Subharmonic Summation: find fundamental period T ──
     let bestShsScore = -Infinity;
     let bestT = 0;
-    const minT = firstMin + 1;
+    const minT = 4; //firstMin + 1;
     const maxT = Math.floor(maxLag / 2);
-    for (let t = minT; t <= maxT; t += 0.5) {
-        const score = shsScore(t);
-        if (score > bestShsScore) {
-            bestShsScore = score;
-            bestT = t;
+    const shsLen = maxT >= minT ? Math.floor((maxT - minT) / 0.5) + 1 : 0;
+    const shsScores = new Float32Array(shsLen);
+    for (let i = 0; i < shsLen; i++) {
+        shsScores[i] = shsScore(minT + i * 0.5);
+        if (shsScores[i] > bestShsScore) bestShsScore = shsScores[i];
+    }
+    s.shsScores = shsScores;
+    s.shsScoresMinT = minT;
+    s.shsScoresStep = 0.5;
+
+    // Prefer the lowest-T significant peak in the SHS scores.
+    // Harmonics at 2T, 4T etc. produce similar-height peaks;
+    // scanning upward from minT picks the true fundamental.
+    // Hysteresis: the incumbent T is retained at a lower threshold
+    // (70%) than the acquisition threshold (85%) to prevent flicker
+    // when two candidates have similar scores.
+    if (bestShsScore > 0) {
+        // Look up the incumbent's current score
+        let incumbentScore = 0;
+        if (s.shsBestT > 0) {
+            const incIdx = Math.round((s.shsBestT - minT) / 0.5);
+            if (incIdx >= 0 && incIdx < shsLen) {
+                incumbentScore = shsScores[incIdx];
+            }
         }
+
+        // If incumbent is still strong, retain it
+        if (incumbentScore >= bestShsScore * 0.70) {
+            bestT = s.shsBestT;
+        } else {
+            // Acquire new: lowest-T peak above 85%
+            const threshold = bestShsScore * 0.85;
+            for (let i = 1; i < shsLen - 1; i++) {
+                if (shsScores[i] >= threshold
+                    && shsScores[i] >= shsScores[i - 1]
+                    && shsScores[i] >= shsScores[i + 1]) {
+                    bestT = minT + i * 0.5;
+                    break;
+                }
+            }
+        }
+        s.shsBestT = bestT;
     }
 
-    // Periodicity and division detection via prominence checks.
-    // The SHS loop above finds N=1 directly with prominence scoring,
-    // so we only need to determine periodicity (4/6/10) and detect
-    // missing odd peaks (div=2) or missing peaks 1-3 (div=4).
+    // Division and periodicity detection.
+    // Div detection runs first so that periodicity detection operates
+    // on the corrected T (not 2T or 4T from the SHS).
     let div = 1;
+    s.divSrc = '';
     let periodicity = 4;
     if (bestT > 0 && bestShsScore > 0) {
+        // ── Div detection via SHS scores ──
+        // If T/2 scores well relative to T, the true fundamental is T/2.
+        // Hysteresis: acquire div=2 at >60% and space ratio > 1.4, retain until <30%.
+        // Periodicity-agnostic — works for any beat structure.
+        // Look up peak SHS score near T and T/2, searching ±2 indices
+        // to handle narrow peaks that a single-index lookup can miss.
+        const shsPeak = (t) => {
+            const centre = Math.round((t - minT) / 0.5);
+            let best = 0;
+            for (let i = Math.max(0, centre - 2); i <= Math.min(shsLen - 1, centre + 2); i++) {
+                if (shsScores[i] > best) best = shsScores[i];
+            }
+            return best;
+        };
+        const tScore = shsPeak(bestT);
+        const halfScore = shsPeak(bestT / 2);
+        s.divRatio = tScore > 0 ? halfScore / tScore : 0;
+        if (tScore > 0) {
+            const ratio = halfScore / tScore;
+            const wasDiv2 = s.shsDiv === 2;
+            if (wasDiv2 ? ratio >= 0.3 : (ratio > 0.6 && s.shsSR > 1.4)) {
+                bestT /= 2;
+                div = 2;
+                s.divSrc = 'shs';
+            }
+        }
+
+        // ── Periodicity detection ──
+        // Now runs on the corrected bestT after div adjustments.
         const halfT = Math.round(bestT / 2);
         const inBounds = (idx) => idx > halfT && idx + halfT < sc.length;
         const prom = (idx) => sc[idx] - (sc[idx - halfT] + sc[idx + halfT]) / 2;
-        const isPeak = (idx) => idx > 0 && idx < sc.length - 1 && sc[idx] > sc[idx - 1] && sc[idx] > sc[idx + 1];
-        // Snap a candidate index to the nearest local maximum within ±2
-        const snapPeak = (idx) => {
+        // Snap a candidate index to the nearest local maximum within ±win
+        const snapPeak = (idx, win = 2) => {
             let best = idx;
-            for (let i = Math.max(1, idx - 2); i <= Math.min(sc.length - 2, idx + 2); i++) {
+            for (let i = Math.max(1, idx - win); i <= Math.min(sc.length - 2, idx + win); i++) {
                 if (sc[i] > sc[i - 1] && sc[i] > sc[i + 1] && sc[i] > sc[best]) best = i;
             }
             return best;
         };
-        const idx4 = snapPeak(Math.round(4 * bestT));
-        const idx6 = snapPeak(Math.round(6 * bestT));
-        const idx10 = snapPeak(Math.round(10 * bestT));
+        // Wider snap windows for higher harmonics to account for
+        // cumulative T error: ±2 for 4×T, ±4 for 6×T, ±6 for 10×T
+        const idx4 = snapPeak(Math.round(4 * bestT), 2);
+        const idx6 = snapPeak(Math.round(6 * bestT), 4);
+        const idx10 = snapPeak(Math.round(10 * bestT), 6);
 
-        // Periodicity: compare prominence at 6×T and 10×T vs 4×T
+        // Compare prominence at 6×T and 10×T vs 4×T.
+        // Hysteresis: switching away from 4 requires 2× prom4, but
+        // retaining 6 or 10 only requires matching prom4 (factor 1).
+        // Periodicity 10 must also beat 6 to prevent false 10 when
+        // the track is in 6 and prom4 is incidentally low.
         if (inBounds(idx4)) {
             const prom4 = prom(idx4);
-            if (inBounds(idx6) && isPeak(idx6) && prom(idx6) > 2 * prom4) {
+            const ib6 = inBounds(idx6), ib10 = inBounds(idx10);
+            const prom6Val = ib6 ? prom(idx6) : 0;
+            const prom10Val = ib10 ? prom(idx10) : 0;
+            const thresh6 = s.shsPrevPer === 6 ? 1 : 3;
+            const thresh10 = s.shsPrevPer === 10 ? 1 : 3;
+            s.perProms = [prom4, prom6Val, prom10Val, thresh6, thresh10, ib6, ib10];
+            if (prom6Val > thresh6 * prom4 && prom6Val >= prom10Val) {
                 periodicity = 6;
-            } else if (inBounds(idx10) && isPeak(idx10) && prom(idx10) > 2 * prom4) {
+            } else if (prom10Val > thresh10 * prom4 && prom10Val > prom6Val) {
                 periodicity = 10;
             }
         }
-
-        // Div detection: check for prominence at 3T/2 (odd peak present)
-        // Uses 3T/2 rather than T/2 to avoid lag=0 suppression artefacts.
-        // Find actual troughs between even peaks at T and 2T rather than
-        // using fixed offsets which may land on the skirts of broad peaks.
-        const idxT = Math.round(bestT);
-        let idx3Half = Math.round(3 * bestT / 2);
-        const idx2T = Math.round(2 * bestT);
-        s.promOdd = 0;
-        s.promRange = [idxT, idx3Half, idx2T];
-        if (idxT > 0 && idx2T < sc.length && periodicity === 4) {
-            // Snap idx3Half to the nearest local maximum within ±2
-            const snapLo = Math.max(idxT + 1, idx3Half - 2);
-            const snapHi = Math.min(idx2T - 1, idx3Half + 2);
-            for (let i = snapLo; i <= snapHi; i++) {
-                if (sc[i] > sc[i - 1] && sc[i] > sc[i + 1] && sc[i] > sc[idx3Half]) {
-                    idx3Half = i;
-                }
-            }
-            let minL = sc[idx3Half], minR = sc[idx3Half];
-            let minLIdx = idx3Half, minRIdx = idx3Half;
-            for (let i = idxT + 1; i < idx3Half; i++) {
-                if (sc[i] < minL) { minL = sc[i]; minLIdx = i; }
-            }
-            for (let i = idx3Half + 1; i < idx2T; i++) {
-                if (sc[i] < minR) { minR = sc[i]; minRIdx = i; }
-            }
-            s.promRange = [minLIdx, idx3Half, minRIdx];
-            s.promOdd = sc[idx3Half] - (minL + minR) / 2;
-            if (s.promOdd > 0 && sc[idx3Half] > sc[idx3Half - 1] && sc[idx3Half] > sc[idx3Half + 1]) {
-                // Odd peak exists — true fundamental is T/2
-                bestT /= 2;
-                div = 2;
-            }
-        }
-
-        // Space ratio fallback for absent odd peaks that lack
-        // even a hint of prominence at T/2.
-        // Ratio > 2 means N=2, ratio > 5 means N=4.
-        if (div === 1) {
-            const sr = spaceRatioAt(bestT, periodicity);
-            if (sr > 5) {
-                bestT /= 4;
-                div = 4;
-            } else if (sr > 2) {
-                bestT /= 2;
-                div = 2;
-            }
-        }
+        s.shsPrevPer = periodicity;
     }
 
     s.shsDiv = div;
     s.shsPer = periodicity;
 
-    // Debug: odd peak prominence (raw) and space ratio
+    // Debug: pace ratio
     s.shsSR = spaceRatioAt(bestT * div, periodicity);
 
     // Refine T by finding the local maximum in sc[] nearest
     // to a known-strong harmonic, then dividing back.
+    // Picks the peak closest to the target (not tallest) since the
+    // SHS already determined the best T — refinement just sharpens it.
     let refinedT = bestT;
     if (bestT > 0) {
-        // Try 2× periodicity first (better precision), fall back to 1×
-        for (const mult of [periodicity * 2, periodicity]) {
+        // Use the periodicity peak for refinement — it's the strongest
+        // and most reliable. Higher multiples risk malformed peaks.
+        for (const mult of [periodicity]) {
             const target = Math.round(mult * bestT);
             if (target < 2 || target >= sc.length - 1 || target > maxLag - mult) continue;
             const window = mult + 2;
             const lo = Math.max(1, target - window);
             const hi = Math.min(sc.length - 2, target + window);
-            let peakIdx = -1, peakVal = -Infinity;
+            let peakLag = -1, peakDist = Infinity;
             for (let i = lo; i <= hi; i++) {
-                if (sc[i] > sc[i - 1] && sc[i] > sc[i + 1] && sc[i] > peakVal) {
-                    peakVal = sc[i];
-                    peakIdx = i;
+                if (sc[i] > sc[i - 1] && sc[i] > sc[i + 1]) {
+                    const dist = Math.abs(i - target);
+                    if (dist < peakDist) {
+                        peakDist = dist;
+                        peakLag = i;
+                    }
                 }
             }
-            if (peakIdx > 0) {
-                refinedT = refineLag(peakIdx) / mult;
+            if (peakLag > 0) {
+                refinedT = refineLag(peakLag) / mult;
                 break;
             }
         }
+        
     }
-    s.shsPeriod = refinedT;
 
     // Correct T into valid BPM range by octave-shifting
     if (refinedT > 0) {
@@ -379,26 +426,8 @@ function processFlux(flux) {
     }
     s.shsPeriod = refinedT;
 
-    // Derive BPM from the actual peak nearest periodicity*T
-    s.shsBpm = 0;
-    if (refinedT > 0) {
-        const bpmLag = Math.round(periodicity * refinedT);
-        const win = Math.max(3, periodicity);
-        const lo = Math.max(1, bpmLag - win);
-        const hi = Math.min(sc.length - 2, bpmLag + win);
-        let peakIdx = -1, peakVal = -Infinity;
-        for (let i = lo; i <= hi; i++) {
-            if (sc[i] > sc[i - 1] && sc[i] > sc[i + 1] && sc[i] > peakVal) {
-                peakVal = sc[i];
-                peakIdx = i;
-            }
-        }
-        if (peakIdx > 0) {
-            s.shsBpm = s.sampleRate * 60 / refineLag(peakIdx);
-        } else {
-            s.shsBpm = s.sampleRate * 60 / (periodicity * refinedT);
-        }
-    }
+    // Derive BPM from the folded refinedT
+    s.shsBpm = s.sampleRate * 60 / (periodicity * refinedT);
 
     postResult(lastCorrMax);
 }
