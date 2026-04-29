@@ -1,10 +1,10 @@
 DirectoryIndex player.html index.html
 AddType application/json .streams .mixes
-# Tell the browser to download the following multimedia files
-AddType application/octet-stream .mp3
-AddType application/octet-stream .m4a
-AddType application/octet-stream .flac
-AddType application/octet-stream .wav
+# Correct MIME types for audio playback (downloads use HTML download attribute)
+AddType audio/mpeg .mp3
+AddType audio/mp4 .m4a
+AddType audio/flac .flac
+AddType audio/wav .wav
 
 # === Bot / crawler protection ===
 

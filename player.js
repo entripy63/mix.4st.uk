@@ -144,7 +144,12 @@ playPauseBtn?.addEventListener('click', async function(e) {
       resumeStream();
     } else {
       ensureAudioContext();
-      aud.play().catch(() => {});
+      if (audioCtx.state === 'suspended') await audioCtx.resume();
+      try {
+        await aud.play();
+      } catch (err) {
+        console.error('mix play failed', { err, readyState: aud.readyState, networkState: aud.networkState });
+      }
       declick.fadeIn();
       startVisualiser();
       resumeTempo();
