@@ -125,14 +125,14 @@ function drawWaveform(peaks, progress = 0) {
         waveformCtx.fillRect(x, y, Math.max(1, barWidth - 1), barHeight);
     });
 
-    // Draw cursor line
+    // Draw cursor line (shorter when BPM debug overlay is active)
     if (progress > 0) {
         const cursorX = w * progress;
         waveformCtx.strokeStyle = '#fff';
         waveformCtx.lineWidth = 2;
         waveformCtx.beginPath();
         waveformCtx.moveTo(cursorX, 0);
-        waveformCtx.lineTo(cursorX, h);
+        waveformCtx.lineTo(cursorX, isTempoDebugEnabled() ? h - 14 : h);
         waveformCtx.stroke();
     }
 }

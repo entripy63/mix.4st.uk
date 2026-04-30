@@ -156,15 +156,17 @@ function startVisualiser() {
 
             // SHS fundamental period T: vertical lines at multiples of T
             if (tempo.shsPeriod > 0) {
+                const bpmDbg = isTempoDebugEnabled();
                 visCtx.strokeStyle = '#c7bf51';
                 visCtx.lineWidth = 1;
                 visCtx.setLineDash([2, 3]);
                 const T = tempo.shsPeriod;
+                const lineBottom = bpmDbg ? h - 14 : h;
                 for (let m = 1; m * T < n; m++) {
                     const px = m * T * sliceWidth;
                     visCtx.beginPath();
                     visCtx.moveTo(px, 0);
-                    visCtx.lineTo(px, h - 14);
+                    visCtx.lineTo(px, lineBottom);
                     visCtx.stroke();
                 }
                 visCtx.setLineDash([]);
@@ -180,20 +182,19 @@ function startVisualiser() {
                     visCtx.closePath();
                     visCtx.fill();
                 }
-            }
 
-            // Debug info bottom-left
-            if (tempo.shsPeriod > 0) {
-                visCtx.font = '10px monospace';
-                visCtx.textAlign = 'left';
-                visCtx.fillStyle = '#ff4081';
-                const pp = tempo.perProms;
-                visCtx.fillText('T=' + tempo.shsPeriod.toFixed(1)
-                    + ' div=' + tempo.shsDiv + (tempo.divSrc ? '(' + tempo.divSrc + ')' : '')
-                    + ' per=' + tempo.shsPer
-                    + (pp ? ' 3h=' + pp[2].toFixed(2) + '/' + pp[3].toFixed(1) : '')
-                    + ' dr=' + tempo.divRatio.toFixed(2)
-                    + ' sr=' + (tempo.shsSR >= 0 ? tempo.shsSR.toFixed(1) : '-'), 4, h - 3);
+                if (bpmDbg) {
+                    visCtx.font = '10px monospace';
+                    visCtx.textAlign = 'left';
+                    visCtx.fillStyle = '#ff4081';
+                    const pp = tempo.perProms;
+                    visCtx.fillText('T=' + tempo.shsPeriod.toFixed(1)
+                        + ' div=' + tempo.shsDiv + (tempo.divSrc ? '(' + tempo.divSrc + ')' : '')
+                        + ' per=' + tempo.shsPer
+                        + (pp ? ' 3h=' + pp[2].toFixed(2) + '/' + pp[3].toFixed(1) : '')
+                        + ' dr=' + tempo.divRatio.toFixed(2)
+                        + ' sr=' + (tempo.shsSR >= 0 ? tempo.shsSR.toFixed(1) : '-'), 4, h - 3);
+                }
             }
         }
     }
