@@ -328,11 +328,13 @@ function processFlux(flux) {
             const ratio = halfScore / tScore;
             const wasDiv2 = s.shsDiv === 2;
             if (wasDiv2 ? ratio >= 0.3 : (ratio > 0.6 && s.shsSR > 1.4)) {
-                bestT /= 2;
                 div = 2;
                 s.divSrc = 'shs';
             }
         }
+
+        // correct bestT after div changes
+        bestT /= div;
 
         // ── Periodicity detection via SHS ──
         // A significant SHS peak at 3T/2 discriminates periodicity 6
