@@ -338,12 +338,14 @@ function processFlux(flux) {
         // A significant SHS peak at 3T/2 discriminates periodicity 6
         // from 4: periodicity 6 produces structure at 3T/2 (peak 1.5
         // of the period-4 grid) while periodicity 4 does not.
-        // Hysteresis: acquire per=6 at ratio > 0.6, retain until < 0.3.
+        // Hysteresis: acquire per=6 at ratio > 0.3, retain until < 0.15.
+        // It can be more sensitive than T/2 because its either present
+        // or completely absent.
         const threeHalfScore = shsPeak(bestT * 3 / 2);
         const tScoreForPer = shsPeak(bestT);
         const perRatio = tScoreForPer > 0 ? threeHalfScore / tScoreForPer : 0;
         const wasPer6 = s.shsPrevPer === 6;
-        if (wasPer6 ? perRatio >= 0.3 : perRatio > 0.6) {
+        if (wasPer6 ? perRatio >= 0.15 : perRatio > 0.3) {
             periodicity = 6;
         }
         s.perProms = [tScoreForPer, threeHalfScore, perRatio, wasPer6 ? 0.3 : 0.6];
