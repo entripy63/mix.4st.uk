@@ -323,17 +323,44 @@ function processFlux(flux) {
         };
         const tScore = shsPeak(bestT);
         const halfScore = shsPeak(bestT / 2);
+        const thirdScore = shsPeak(bestT / 3);
+        const twoThirdScore = shsPeak(bestT * 2 / 3);
         s.divRatio = tScore > 0 ? halfScore / tScore : 0;
         if (tScore > 0) {
-            const ratio = halfScore / tScore;
-            const wasDiv2 = s.shsDiv === 2;
-            if (wasDiv2 ? ratio >= 0.3 : (ratio > 0.6 && s.shsSR > 1.4)) {
+            const halfRatio = halfScore / tScore;
+            const thirdRatio = thirdScore / tScore;
+            const twoThirdRatio = twoThirdScore / tScore;
+            const prevDiv = s.shsDiv;
+
+            // T/2: SHS picked 2T, true fundamental is T.
+            // Acquire at >60% with space ratio > 1.4, retain until <30%.
+            const wasDiv2 = prevDiv === 2;
+            if (wasDiv2 ? halfRatio >= 0.3 : (halfRatio > 0.6 && s.shsSR > 1.4)) {
                 div = 2;
                 s.divSrc = 'shs';
             }
+
+            // T/3: SHS picked 3T (no organic T/2), true fundamental is T.
+            // Acquire at >60% with space ratio < 0.9, retain until <30%.
+            if (div === 1) {
+                const wasDiv3 = prevDiv === 3;
+                if (wasDiv3 ? thirdRatio >= 0.3 : (thirdRatio > 0.6 && s.shsSR >= 0 && s.shsSR < 0.9)) {
+                    div = 3;
+                    s.divSrc = 'shs';
+                }
+            }
+
+            // 2T/3: SHS picked 3T but organic T/2 halved it to 3T/2,
+            // true fundamental is T. Acquire/retain same as T/3.
+            if (div === 1) {
+                const wasDiv32 = prevDiv === 1.5;
+                if (wasDiv32 ? twoThirdRatio >= 0.3 : (twoThirdRatio > 0.6 && s.shsSR >= 0 && s.shsSR < 0.9)) {
+                    div = 1.5;
+                    s.divSrc = 'shs';
+                }
+            }
         }
 
-        // correct bestT after div changes
         bestT /= div;
 
         // ── Periodicity detection via SHS ──
