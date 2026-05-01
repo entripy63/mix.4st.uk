@@ -8,6 +8,8 @@ const visCtx = visCanvas.getContext("2d");
 
 let visualiserAnimId = null;
 let visualiserMode = storage.get('visualiserMode', 'spectrum');
+let visZoomed = storage.getBool('visZoomed', false);
+const visZoomBtn = document.getElementById('visZoomBtn');
 
 // Sync overlay canvas resolution to match the peaks canvas beneath it
 function resizeVisualiserCanvas() {
@@ -100,7 +102,8 @@ function startVisualiser() {
             visCtx.stroke();
         } else if (visualiserMode === 'autocorr' && tempo.lastCorrs && tempo.maxLag > 0) {
             const corrs = tempo.lastCorrs;
-            const n = tempo.maxLag + 1;
+            const fullN = tempo.maxLag + 1;
+            const n = visZoomed ? Math.ceil(fullN / 2) : fullN;
             const scale = tempo.lastCorrMax || 1;
             const sliceWidth = w / n;
 
@@ -171,6 +174,30 @@ function startVisualiser() {
                 }
                 visCtx.setLineDash([]);
 
+                // Subdivision lines in zoomed mode (centred on zero line)
+                if (visZoomed) {
+                    visCtx.strokeStyle = '#c7bf51a0';
+                    visCtx.lineWidth = 1;
+                    visCtx.setLineDash([1, 3]);
+                    const subdivs = [
+                        { frac: 1/2, lenFrac: 1/2 },
+                        { frac: 3/2, lenFrac: 1/2 },
+                        { frac: 1/3, lenFrac: 1/3 },
+                        { frac: 2/3, lenFrac: 1/3 },
+                    ];
+                    for (const { frac, lenFrac } of subdivs) {
+                        const lag = frac * T;
+                        if (lag >= n) continue;
+                        const px = lag * sliceWidth;
+                        const extent = zeroY * lenFrac;
+                        visCtx.beginPath();
+                        visCtx.moveTo(px, zeroY - extent);
+                        visCtx.lineTo(px, zeroY + extent);
+                        visCtx.stroke();
+                    }
+                    visCtx.setLineDash([]);
+                }
+
                 // Downward arrow marking the periodicity peak (per×T)
                 const bestPx = (tempo.shsPer || 4) * T * sliceWidth;
                 if (bestPx > 0 && bestPx < w) {
@@ -227,12 +254,23 @@ function setVisualiserMode(mode) {
         btn.classList.toggle('active', btn.dataset.vis === mode);
     });
 
+    // Show zoom button only in autocorrelation mode
+    visZoomBtn.hidden = mode !== 'autocorr';
+    visZoomBtn.classList.toggle('active', visZoomed);
+
     if (mode === 'off') {
         stopVisualiser();
     } else if (audioCtx && !aud.paused) {
         // Restart if audio is playing but visualiser was stopped (e.g. was 'off')
         if (!visualiserAnimId) startVisualiser();
     }
+}
+
+function toggleVisZoom() {
+    visZoomed = !visZoomed;
+    storage.set('visZoomed', visZoomed);
+    visZoomBtn.classList.toggle('active', visZoomed);
+    visZoomBtn.title = visZoomed ? 'Full Range' : 'Half Range';
 }
 
 // Update BPM-only button visibility and container visibility
@@ -251,12 +289,16 @@ function updateVisModeButtons() {
 }
 
 // Initialise mode buttons
-document.querySelectorAll('.vis-mode-btn').forEach(btn => {
+document.querySelectorAll('.vis-mode-btn[data-vis]').forEach(btn => {
     btn.addEventListener('click', () => setVisualiserMode(btn.dataset.vis));
 });
+visZoomBtn.addEventListener('click', toggleVisZoom);
 
 // Set initial button states from persisted mode
 document.querySelectorAll('.vis-mode-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.vis === visualiserMode);
 });
+visZoomBtn.hidden = visualiserMode !== 'autocorr';
+visZoomBtn.classList.toggle('active', visZoomed);
+visZoomBtn.title = visZoomed ? 'Full Range' : 'Half Range';
 updateVisModeButtons();
