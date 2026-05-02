@@ -1,4 +1,4 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 import fs from 'node:fs';
 
 const envChromiumExecutable = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE;
@@ -36,6 +36,19 @@ export default defineConfig({
       use: {
         browserName: 'firefox',
         launchOptions: firefoxExecutable ? { executablePath: firefoxExecutable } : {}
+      }
+    },
+    {
+      name: 'webkit',
+      use: {
+        browserName: 'webkit'
+      }
+    },
+    {
+      name: 'webkit-iphone-13',
+      use: {
+        ...devices['iPhone 13'],
+        browserName: 'webkit'
       }
     }
   ],

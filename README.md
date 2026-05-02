@@ -19,6 +19,13 @@ npm run verify:full
 npm run verify:sensitivity
 ```
 
+CI-only full matrix commands (Chromium + Firefox + WebKit + iPhone WebKit):
+
+```bash
+npm run verify:full:ci
+npm run verify:sensitivity:ci
+```
+
 What is covered:
 
 1. DJ mix playback starts and `currentTime` increases while playing.
@@ -31,7 +38,7 @@ Notes:
 1. Tests run against `player.html` via `tools/test-server.js`.
 2. Browser media and audio context are mocked in the tests for deterministic, low-flake checks.
 3. Local real-media endpoints are available at `/__test__/mix.wav` and `/__test__/stream.wav` for integration-level playback checks.
-4. Playwright projects run on both Chromium and Firefox.
+4. Playwright projects run on Chromium, Firefox, WebKit, and an iPhone-emulated WebKit profile.
 
 ## Recommended Workflow Gates
 
@@ -39,6 +46,6 @@ Notes:
 2. `pre-commit` hook runs `npm run verify:quick`.
 3. `pre-push` hook runs `npm run verify:full`.
 4. GitHub Actions workflow [`.github/workflows/verify.yml`](file:///home/st/git/mix.4st.uk/.github/workflows/verify.yml) runs `npm run verify:full` for pull requests and pushes to `main`.
-5. GitHub Actions also runs `npm run verify:sensitivity` to confirm test sensitivity.
+5. GitHub Actions runs `npm run verify:full:ci` and `npm run verify:sensitivity:ci` (full browser matrix including WebKit + iPhone WebKit).
 6. `./tools/deploy.sh` now enforces checks before deploy: test targets run quick checks, production runs full checks.
 7. Emergency bypass for deploy checks is available with `SKIP_DEPLOY_CHECKS=1 ./tools/deploy.sh <target>`.

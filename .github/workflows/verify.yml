@@ -24,10 +24,10 @@ jobs:
         run: npm ci
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium firefox
+        run: npx playwright install --with-deps chromium firefox webkit
 
       - name: Run Full Verification
-        run: npm run verify:full
+        run: npm run verify:full:ci
 
       - name: Run Sensitivity Checks
-        run: npm run verify:sensitivity
+        run: npm run verify:sensitivity:ci
