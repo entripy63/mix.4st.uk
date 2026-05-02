@@ -20,6 +20,22 @@ fi
 VALID_TARGETS=("test" "prod" "home-test" "all-test" "all-prod")
 TARGET="${1:-all-test}"
 
+# Safety gates (set SKIP_DEPLOY_CHECKS=1 to bypass in emergencies)
+if [ "${SKIP_DEPLOY_CHECKS:-0}" != "1" ]; then
+  cd "$PROJECT_ROOT"
+  echo ""
+  echo "🔎 Running pre-deploy checks..."
+  if [[ "$TARGET" == "prod" || "$TARGET" == "all-prod" ]]; then
+    echo "🧪 Target is production; running full verification (lint + e2e)..."
+    npm run verify:full
+  else
+    echo "🧪 Target is test/home-test; running quick verification (lint)..."
+    npm run verify:quick
+  fi
+else
+  echo "⚠️  SKIP_DEPLOY_CHECKS=1 set; skipping pre-deploy verification."
+fi
+
 # Validate target
 if [[ ! " ${VALID_TARGETS[@]} " =~ " ${TARGET} " ]]; then
   echo "❌ Invalid target: $TARGET"

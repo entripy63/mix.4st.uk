@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+echo "🧪 pre-push: running full checks (lint + e2e)..."
+npm run verify:full

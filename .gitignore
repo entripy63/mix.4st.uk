@@ -20,3 +20,4 @@ tools/tool-config.json
 **/search-index.json
 .codex
 vendor/*
+test-results/

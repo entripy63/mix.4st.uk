@@ -9,13 +9,22 @@
   },
   "scripts": {
     "lint": "eslint *.js",
-    "lint:fix": "eslint *.js --fix"
+    "lint:fix": "eslint *.js --fix",
+    "verify:quick": "npm run lint",
+    "verify:full": "npm run lint && npm run test:e2e",
+    "verify:sensitivity": "npm run test:e2e:sensitivity",
+    "hooks:install": "./tools/install-git-hooks.sh",
+    "test:e2e": "playwright test tests/player-basics.spec.js tests/player-real-media.spec.js",
+    "test:e2e:sensitivity": "playwright test tests/player-sensitivity.spec.js",
+    "test:e2e:headed": "playwright test --headed",
+    "test": "npm run test:e2e"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.59.1",
     "eslint": "^10.0.1"
   }
 }
