@@ -6,6 +6,9 @@ const systemChromiumExecutable = '/usr/bin/chromium';
 const chromiumExecutable = envChromiumExecutable
   || (fs.existsSync(systemChromiumExecutable) ? systemChromiumExecutable : null);
 
+const envFirefoxExecutable = process.env.PLAYWRIGHT_FIREFOX_EXECUTABLE;
+const firefoxExecutable = envFirefoxExecutable || null;
+
 export default defineConfig({
   testDir: './tests',
   timeout: 30_000,
@@ -18,9 +21,24 @@ export default defineConfig({
   use: {
     baseURL: 'http://127.0.0.1:4173',
     headless: true,
-    trace: 'on-first-retry',
-    launchOptions: chromiumExecutable ? { executablePath: chromiumExecutable } : {}
+    trace: 'on-first-retry'
   },
+  projects: [
+    {
+      name: 'chromium',
+      use: {
+        browserName: 'chromium',
+        launchOptions: chromiumExecutable ? { executablePath: chromiumExecutable } : {}
+      }
+    },
+    {
+      name: 'firefox',
+      use: {
+        browserName: 'firefox',
+        launchOptions: firefoxExecutable ? { executablePath: firefoxExecutable } : {}
+      }
+    }
+  ],
   webServer: {
     command: 'node tools/test-server.js --port 4173',
     url: 'http://127.0.0.1:4173/player.html',

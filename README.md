@@ -31,6 +31,7 @@ Notes:
 1. Tests run against `player.html` via `tools/test-server.js`.
 2. Browser media and audio context are mocked in the tests for deterministic, low-flake checks.
 3. Local real-media endpoints are available at `/__test__/mix.wav` and `/__test__/stream.wav` for integration-level playback checks.
+4. Playwright projects run on both Chromium and Firefox.
 
 ## Recommended Workflow Gates
 
