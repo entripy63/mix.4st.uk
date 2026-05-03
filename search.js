@@ -255,6 +255,7 @@ async function playSearchResult(index) {
 async function playSearchStream(index) {
   const item = window.currentSearchResults?.[index];
   if (item && item.type === 'stream') {
+    historyRecord();
     playStream(item.url, item.name, true);
   }
 }

@@ -884,6 +884,26 @@ td:last-child {
   color: var(--text-secondary);
 }
 
+#playHistory {
+  margin-top: 8px;
+}
+
+.history-header {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.history-position {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  margin-right: 4px;
+}
+
 #bpmDisplay {
   font-size: 13px;
   color: var(--text-secondary);

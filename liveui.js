@@ -139,12 +139,14 @@ function toggleStreamInfo(btn) {
 function playLiveStream(index) {
   const stream = liveStreams[index];
   if (!stream) return;
-  
+
   if (!stream.available) {
     showAlertDialog('Stream Unavailable', stream.reason || 'Unknown reason');
     return;
   }
-  
+
+  historyRecord();
+
   const name = stream.name || stream.m3u;
   const url = stream.url;
   
@@ -410,6 +412,8 @@ function displayPresetStreams(preset) {
 async function playPresetStream(index) {
   const preset = window._currentBrowsedPreset;
   if (!preset || !preset.streams[index]) return;
+
+  historyRecord();
 
   const stream = preset.streams[index];
   const name = stream.name || stream.m3u;

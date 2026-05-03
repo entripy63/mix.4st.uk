@@ -250,6 +250,7 @@ function getDJName(htmlPath) {
 }
 
 async function playMix(mix) {
+    historyRecord();
     document.title = `${mix.name} - Player`;
     state.currentMix = mix;
 
