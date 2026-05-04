@@ -6,7 +6,7 @@
 const playHistory = {
   _entries: storage.getJSON('playHistory', []),
   _maxEntries: 20,
-  _minEntries: 5,
+  _minEntries: 2,
   _expiryMs: 14 * 24 * 60 * 60 * 1000, // 2 weeks
   _skipNextRecord: false,
 
