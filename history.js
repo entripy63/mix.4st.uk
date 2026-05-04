@@ -136,18 +136,22 @@ const playHistory = {
       if (entry.type === 'stream') {
         return `<div class="mix-item">
           <div class="mix-item-row">
+            <button class="delete-btn" onclick="removeFromHistory(${i})" title="Remove from history">✕</button>
             <span class="mix-name"><span style="font-size: 0.85em;">📡</span> ${escapeHtml(entry.streamDisplayText)}</span>
             <button class="icon-btn" onclick="resumeFromHistory(${i})" title="Resume Now">▶</button>
           </div>
         </div>`;
       } else {
         const djName = entry.artist ? ` - ${escapeHtml(entry.artist)}` : '';
-        const duration = entry.duration ? `(${entry.duration})` : '';
-        const posText = entry.position > 0 ? `<span class="history-position">${formatTime(entry.position)}</span>` : '';
+        const pos = entry.position > 0 ? formatTime(entry.position) : '';
+        const dur = entry.duration || '';
+        const timeText = pos && dur ? `(<span class="history-position">${pos}</span> / ${dur})`
+          : pos ? `(<span class="history-position">${pos}</span>)`
+          : dur ? `(${dur})` : '';
         return `<div class="mix-item">
           <div class="mix-item-row">
-            <span class="mix-name">♪ ${escapeHtml(entry.name)}${djName} <span class="mix-duration">${duration}</span></span>
-            ${posText}
+            <button class="delete-btn" onclick="removeFromHistory(${i})" title="Remove from history">✕</button>
+            <span class="mix-name">♪ ${escapeHtml(entry.name)}${djName} <span class="mix-duration">${timeText}</span></span>
             <button class="icon-btn" onclick="resumeFromHistory(${i})" title="Resume Now">▶</button>
           </div>
         </div>`;
@@ -158,6 +162,12 @@ const playHistory = {
     updateRightTabs();
   }
 };
+
+function removeFromHistory(index) {
+  playHistory._entries.splice(index, 1);
+  playHistory._save();
+  playHistory.display();
+}
 
 async function resumeFromHistory(index) {
   const entry = playHistory._entries[index];
