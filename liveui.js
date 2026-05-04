@@ -70,7 +70,7 @@ function displayLiveStreams() {
     const disabled = stream.available ? '' : ' disabled';
     const deleteBtn = `<button class="delete-btn" onclick="handleRemoveStream(${index})" title="Remove stream">✕</button>`;
     const infoBtn = `<button class="icon-btn info-btn" data-action="toggle-stream-info" title="More info">ⓘ</button>`;
-    const playBtn = `<button class="icon-btn" onclick="playLiveStream(${index})"${disabled} title="${escapeHtml(tooltip)}">▶</button>`
+    const playBtn = `<button class="icon-btn" onclick="playLiveStream(${index})"${disabled} title="${escapeHtml(tooltip)}">▶</button>`;
     const infoPopout = `<div class="stream-extra-info" style="display:none">
       <div class="stream-info-field">
         <strong>Stream URL:</strong>
