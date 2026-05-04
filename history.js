@@ -108,6 +108,7 @@ const playHistory = {
 
     if (this._entries.length === 0) {
       container.innerHTML = '';
+      updateRightTabs();
       return;
     }
 
@@ -123,6 +124,7 @@ const playHistory = {
 
     if (visible.length === 0) {
       container.innerHTML = '';
+      updateRightTabs();
       return;
     }
 
@@ -153,6 +155,7 @@ const playHistory = {
     }).join('');
 
     container.innerHTML = header + rows;
+    updateRightTabs();
   }
 };
 
@@ -166,8 +169,10 @@ async function resumeFromHistory(index) {
   // Clear stale track list / cover art from previous item immediately
   const trackList = document.getElementById('trackList');
   const coverArt = document.getElementById('coverArt');
+  const actionBar = document.getElementById('actionBar');
   if (trackList) trackList.innerHTML = '';
   if (coverArt) coverArt.innerHTML = '';
+  if (actionBar) actionBar.innerHTML = '';
 
   if (entry.type === 'stream') {
     state.streamM3u = entry.streamM3u;
@@ -204,7 +209,7 @@ async function resumeFromHistory(index) {
       storage.set('currentMixPath', mixId);
       state.currentDownloadLinks = details.downloadLinks || [];
       state.currentCoverSrc = details.coverSrc;
-      displayTrackList(mix, details.trackListTable, details.downloadLinks, details.coverSrc);
+      displayTrackList(mix, details.trackListTable, details.coverSrc);
       loadPeaks(details.peaks);
       displayQueue();
 

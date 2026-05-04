@@ -42,6 +42,7 @@ document.getElementById('fileInput').addEventListener('change', async function (
       loadPeaks(null);
       document.getElementById('coverArt').innerHTML = '';
       document.getElementById('trackList').innerHTML = '';
+      document.getElementById('actionBar').innerHTML = '';
       // Restore middle column tab and browser mode BEFORE probing starts
       await buildDJDropdown();
       const savedMiddleTab = storage.get('middleTab', 'queue');
@@ -115,7 +116,7 @@ document.getElementById('fileInput').addEventListener('change', async function (
         state.currentMix = mix;
         state.currentDownloadLinks = details.downloadLinks || [];
         state.currentCoverSrc = details.coverSrc;
-        displayTrackList(mix, details.trackListTable, details.downloadLinks, details.coverSrc);
+        displayTrackList(mix, details.trackListTable, details.coverSrc);
         loadPeaks(details.peaks);
         requestAnimationFrame(resizeWaveformCanvas);
       }

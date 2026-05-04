@@ -263,7 +263,7 @@ async function playMix(mix) {
         state.currentDownloadLinks = [];
         state.currentCoverSrc = null;
         play(mix.audioSrc);
-        displayTrackList(mix, '', [], null);
+        displayTrackList(mix, '', null);
         loadPeaks(null);
     } else {
         // Store mix identifier for restore (works with both manifest and HTML-based mixes)
@@ -274,7 +274,7 @@ async function playMix(mix) {
             state.currentDownloadLinks = details.downloadLinks || [];
             state.currentCoverSrc = details.coverSrc;
             play(details.audioSrc);
-            displayTrackList(mix, details.trackListTable, details.downloadLinks, details.coverSrc);
+            displayTrackList(mix, details.trackListTable, details.coverSrc);
             loadPeaks(details.peaks);
         }
     }
@@ -292,7 +292,7 @@ async function playNow(mixId) {
     await playMix(mix || { name: mixId.split('/').pop(), htmlPath: mixId });
 }
 
-function displayTrackList(mix, table, downloadLinks, coverSrc) {
+function displayTrackList(mix, table, coverSrc) {
     const nowPlayingDiv = document.getElementById('nowPlaying');
     const trackListDiv = document.getElementById('trackList');
     const coverArtDiv = document.getElementById('coverArt');
@@ -302,58 +302,137 @@ function displayTrackList(mix, table, downloadLinks, coverSrc) {
     const djName = mix ? escapeHtml(mix.artist || getDJName(mix.htmlPath || mix.djPath)) : '';
     nowPlayingDiv.innerHTML = mixName ? `<h1>${mixName} by ${djName}</h1>` : '';
 
-    // Build action bar with download buttons (left) and flag buttons (right)
-    let actionBar = '';
-    const mixId = mix ? getMixId(mix) : null;
-    const hasDownloads = downloadLinks && downloadLinks.length > 0;
+    // Track list content only
+    trackListDiv.innerHTML = table || '';
+
+    // Cover art (available in its own tab now, independent of track list)
+    if (coverSrc) {
+        coverArtDiv.innerHTML = `<img src="${coverSrc}" alt="Cover art">`;
+    } else {
+        coverArtDiv.innerHTML = '';
+    }
+
+    // Action bar in separate div
+    displayActionBar();
+
+    // Update tabs - prefer tracks if available, then art
+    const prefer = table ? 'tracks' : coverSrc ? 'art' : null;
+    updateRightTabs(prefer);
+}
+
+function displayActionBar() {
+    const actionBarDiv = document.getElementById('actionBar');
+    if (!actionBarDiv) return;
+
+    const mix = state.currentMix;
+    if (!mix) {
+        actionBarDiv.innerHTML = '';
+        return;
+    }
+
+    const mixId = getMixId(mix);
+    const downloadLinks = state.currentDownloadLinks || [];
+    const hasDownloads = downloadLinks.length > 0;
     const canFlag = mixId && !mix.isLocal;
 
-    if (hasDownloads || canFlag) {
-        const downloadBtns = hasDownloads
-            ? downloadLinks.map(d => `<a class="action-btn download-btn" href="${d.href}" download><span class="action-icon">⬇</span>${d.label}</a>`).join('')
-            : '';
+    if (!hasDownloads && !canFlag) {
+        actionBarDiv.innerHTML = '';
+        return;
+    }
 
-        let flagBtns = '';
-        if (canFlag) {
-            const isFav = mixFlags.isFavourite(mixId);
-            const isHidden = mixFlags.isHidden(mixId);
-            const hideDisabled = isFav ? ' disabled' : '';
-            const hideTitle = isFav ? 'Cannot hide favourited mix' : (isHidden ? 'Unhide mix' : 'Hide mix');
-            flagBtns = `
+    const downloadBtns = hasDownloads
+        ? downloadLinks.map(d => `<a class="action-btn download-btn" href="${d.href}" download><span class="action-icon">⬇</span>${d.label}</a>`).join('')
+        : '';
+
+    let flagBtns = '';
+    if (canFlag) {
+        const isFav = mixFlags.isFavourite(mixId);
+        const isHidden = mixFlags.isHidden(mixId);
+        const hideDisabled = isFav ? ' disabled' : '';
+        const hideTitle = isFav ? 'Cannot hide favourited mix' : (isHidden ? 'Unhide mix' : 'Hide mix');
+        flagBtns = `
         <button class="action-btn fav-btn${isFav ? ' active' : ''}" onclick="toggleCurrentFavourite()" title="${isFav ? 'Remove from favourites' : 'Add to favourites'}">
           <span class="action-icon">${isFav ? '❤️' : '🤍'}</span>Fav
         </button>
         <button class="action-btn hide-btn${isHidden ? ' active' : ''}"${hideDisabled} onclick="toggleCurrentHidden()" title="${hideTitle}">
           <span class="action-icon">${isHidden ? '👁️' : '🚫'}</span>Hide
         </button>`;
-        }
+    }
 
-        actionBar = `<div class="action-bar">
+    actionBarDiv.innerHTML = `<div class="action-bar">
       <div class="action-left">${downloadBtns}</div>
       <div class="action-right">${flagBtns}</div>
     </div>`;
+}
+
+function switchRightTab(tab) {
+    const panes = {
+        history: document.getElementById('playHistory'),
+        tracks: document.getElementById('trackList'),
+        art: document.getElementById('coverArt')
+    };
+
+    for (const [id, el] of Object.entries(panes)) {
+        if (el) el.style.display = id === tab ? '' : 'none';
     }
 
-    const trackListSection = table || '';
-    trackListDiv.innerHTML = trackListSection + actionBar;
+    document.querySelectorAll('.right-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+    });
+}
 
-    // Show cover art only if there's no track list (track list takes precedence)
-    if (coverSrc && !table) {
-        coverArtDiv.innerHTML = `<img src="${coverSrc}" alt="Cover art">`;
-    } else {
-        coverArtDiv.innerHTML = '';
+function updateRightTabs(preferTab) {
+    const tabs = [
+        { id: 'history', el: document.getElementById('playHistory'), label: 'Recent' },
+        { id: 'tracks', el: document.getElementById('trackList'), label: 'Tracks' },
+        { id: 'art', el: document.getElementById('coverArt'), label: 'Art' }
+    ];
+
+    const available = tabs.filter(t => t.el && t.el.innerHTML.trim() !== '');
+    const tabBar = document.getElementById('rightTabBar');
+    if (!tabBar) return;
+
+    if (available.length <= 1) {
+        // Hide tab bar, show the one pane (or none)
+        tabBar.style.display = 'none';
+        tabs.forEach(t => {
+            if (t.el) t.el.style.display = available.includes(t) ? '' : 'none';
+        });
+        return;
     }
+
+    // Multiple tabs have content — show tab bar
+    tabBar.style.display = '';
+
+    // Determine which tab to activate
+    let active = preferTab && available.find(t => t.id === preferTab) ? preferTab : null;
+    if (!active) {
+        // Keep current active if still available
+        const currentBtn = tabBar.querySelector('.right-tab.active');
+        if (currentBtn && available.find(t => t.id === currentBtn.dataset.tab)) {
+            active = currentBtn.dataset.tab;
+        }
+    }
+    if (!active) active = available[0].id;
+
+    // Update tab button visibility and active state
+    tabBar.querySelectorAll('.right-tab').forEach(btn => {
+        const tab = tabs.find(t => t.id === btn.dataset.tab);
+        btn.style.display = available.includes(tab) ? '' : 'none';
+        btn.classList.toggle('active', btn.dataset.tab === active);
+    });
+
+    // Show/hide panes
+    tabs.forEach(t => {
+        if (t.el) t.el.style.display = t.id === active ? '' : 'none';
+    });
 }
 
 function toggleCurrentFavourite() {
     if (!state.currentMix) return;
     const mixId = getMixId(state.currentMix);
     mixFlags.toggleFavourite(mixId);
-    // Refresh action bar
-    const trackListDiv = document.getElementById('trackList');
-    const table = trackListDiv.querySelector('table');
-    displayTrackList(state.currentMix, table ? table.outerHTML : '', state.currentDownloadLinks || [], state.currentCoverSrc);
-    // Refresh browser list if visible
+    displayActionBar();
     refreshBrowserList();
 }
 
@@ -361,11 +440,7 @@ function toggleCurrentHidden() {
     if (!state.currentMix) return;
     const mixId = getMixId(state.currentMix);
     mixFlags.toggleHidden(mixId);
-    // Refresh action bar
-    const trackListDiv = document.getElementById('trackList');
-    const table = trackListDiv.querySelector('table');
-    displayTrackList(state.currentMix, table ? table.outerHTML : '', state.currentDownloadLinks || [], state.currentCoverSrc);
-    // Refresh browser list if visible
+    displayActionBar();
     refreshBrowserList();
 }
 
@@ -446,10 +521,13 @@ document.addEventListener('streamModeEntered', () => {
     loadPeaks(null);
     const coverArt = document.getElementById('coverArt');
     const trackList = document.getElementById('trackList');
+    const actionBar = document.getElementById('actionBar');
     const streamTitle = document.getElementById('streamTitle');
     if (coverArt) coverArt.innerHTML = '';
     if (trackList) trackList.innerHTML = '';
+    if (actionBar) actionBar.innerHTML = '';
     if (streamTitle) { streamTitle.textContent = ''; streamTitle.style.display = 'block'; }
+    updateRightTabs();
 });
 
 // Update stream title from ICY metadata

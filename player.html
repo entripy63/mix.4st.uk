@@ -275,9 +275,15 @@
       </div>
       <div id="nowPlaying"></div>
       <div id="streamTitle"></div>
-      <div id="playHistory"></div>
-      <div id="coverArt"></div>
-      <div id="trackList"></div>
+      <div id="rightTabBar" style="display: none;">
+        <button class="right-tab" data-tab="history" onclick="switchRightTab('history')">Recent</button>
+        <button class="right-tab" data-tab="tracks" onclick="switchRightTab('tracks')">Tracks</button>
+        <button class="right-tab" data-tab="art" onclick="switchRightTab('art')">Art</button>
+      </div>
+      <div id="playHistory" class="right-tab-pane"></div>
+      <div id="trackList" class="right-tab-pane" style="display: none;"></div>
+      <div id="coverArt" class="right-tab-pane" style="display: none;"></div>
+      <div id="actionBar"></div>
     </div>
   </div>
   <div id="presetsModal" class="modal" onclick="hidePresetsMenu()" style="display: none;">

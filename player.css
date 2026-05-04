@@ -56,7 +56,6 @@ html, body {
 
 #coverArt {
   flex-shrink: 0;
-  display: none;
 }
 
 #coverArt img {
@@ -304,10 +303,6 @@ html, body {
 
   .middle-column, .left-column {
     max-height: none;
-  }
-
-  #coverArt {
-    display: block;
   }
 }
 
@@ -886,6 +881,40 @@ td:last-child {
 
 #playHistory {
   margin-top: 8px;
+}
+
+#rightTabBar {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #3d3d5c;
+}
+
+.right-tab {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: #888;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.right-tab:hover {
+  background: rgba(92, 107, 192, 0.2);
+  color: #e0e0e0;
+  transform: none;
+}
+
+.right-tab.active {
+  background: #5c6bc0;
+  color: #fff;
+  border-color: #5c6bc0;
 }
 
 .history-header {
