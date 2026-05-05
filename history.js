@@ -6,8 +6,6 @@
 const playHistory = {
   _entries: storage.getJSON('playHistory', []),
   _maxEntries: 20,
-  _minEntries: 2,
-  _expiryMs: 14 * 24 * 60 * 60 * 1000, // 2 weeks
   _skipNextRecord: false,
 
   // Snapshot the currently playing item into history
@@ -87,12 +85,6 @@ const playHistory = {
 
   _prune() {
     this._entries.sort((a, b) => b.timestamp - a.timestamp);
-    const now = Date.now();
-    if (this._entries.length > this._minEntries) {
-      this._entries = this._entries.filter((entry, i) =>
-        i < this._minEntries || (now - entry.timestamp) < this._expiryMs
-      );
-    }
     if (this._entries.length > this._maxEntries) {
       this._entries = this._entries.slice(0, this._maxEntries);
     }
