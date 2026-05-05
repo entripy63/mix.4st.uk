@@ -261,6 +261,12 @@ html, body {
   background: #3d3d5c;
 }
 
+/* Single-column: hide browser/queue when settings enabled */
+@media (max-width: 1099px) {
+  body.hide-browser-col .left-column { display: none; }
+  body.hide-queue-col .middle-column { display: none; }
+}
+
 /* 2-column: middle-over-left | right */
 @media (min-width: 1100px) {
   html, body {
@@ -355,7 +361,7 @@ button:active {
 }
 
 .settings-btn {
-   margin-left: auto;
+   margin-left: 0;
 }
 
 .help-btn {
@@ -869,8 +875,22 @@ td:last-child {
   width: 150px;
 }
 
-#nowPlaying {
+#nowPlayingRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
   margin-top: 10px;
+}
+
+#nowPlayingText {
+  flex: 1;
+  min-width: 0;
+}
+
+#playerButtons {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
 #streamTitle {

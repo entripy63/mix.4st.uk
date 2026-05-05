@@ -549,6 +549,8 @@ function showSettings() {
    const setting = storage.get('afterPlayNow', 'stop');
    const radio = document.querySelector(`input[name="afterPlayNow"][value="${setting}"]`);
    if (radio) radio.checked = true;
+   document.getElementById('hideBrowserColumnCheckbox').checked = storage.getBool('hideBrowserColumn');
+   document.getElementById('hideQueueColumnCheckbox').checked = storage.getBool('hideQueueColumn');
    document.getElementById('showHiddenMixesCheckbox').checked = state.showHiddenMixes;
    document.getElementById('visualiserEnabledCheckbox').checked = storage.getBool('visualiserEnabled', true);
    document.getElementById('bpmEnabledCheckbox').checked = storage.getBool('bpmEnabled', true);
@@ -640,6 +642,12 @@ function updateTimedFadeSetting() {
    timedFades.updateStatus();
 }
 
+function updateHideColumn(which, hidden) {
+   const cls = which === 'browser' ? 'hide-browser-col' : 'hide-queue-col';
+   storage.set(which === 'browser' ? 'hideBrowserColumn' : 'hideQueueColumn', hidden);
+   document.body.classList.toggle(cls, hidden);
+}
+
 function updateSetting(key, value) {
    storage.set(key, value);
 }
@@ -664,6 +672,10 @@ function hideHelp() {
 document.getElementById('helpModal')?.addEventListener('click', function(e) {
   if (e.target === this) hideHelp();
 });
+
+// Apply column-hiding classes from saved settings
+if (storage.getBool('hideBrowserColumn')) document.body.classList.add('hide-browser-col');
+if (storage.getBool('hideQueueColumn')) document.body.classList.add('hide-queue-col');
 
 // Initialize favourites button state
 updateFavouritesButton();
