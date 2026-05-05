@@ -554,7 +554,6 @@ function dismissNewDot() {
 }
 
 function showSettings() {
-   dismissNewDot();
    document.getElementById('settingsModal').style.display = 'flex';
    const setting = storage.get('afterPlayNow', 'stop');
    const radio = document.querySelector(`input[name="afterPlayNow"][value="${setting}"]`);

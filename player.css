@@ -362,10 +362,14 @@ button:active {
 
 .settings-btn {
    margin-left: 0;
+}
+
+.help-btn {
+   margin-left: 4px;
    position: relative;
 }
 
-.settings-btn .new-dot {
+.help-btn .new-dot {
    position: absolute;
    top: -2px;
    right: -2px;
@@ -374,10 +378,6 @@ button:active {
    background: #e06070;
    border-radius: 50%;
    border: 1px solid #1a1a2e;
-}
-
-.help-btn {
-   margin-left: 4px;
 }
 
 .settings-btn:hover, .help-btn:hover {
