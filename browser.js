@@ -1,5 +1,8 @@
 // browser.js - Browser, Search, Live Streams, and Page Restoration
 
+// What's New version — bump this when adding new release notes
+const WHATS_NEW_VERSION = '2026-05';
+
 // Build DJ dropdown dynamically from search-index.json
 async function buildDJDropdown() {
   try {
@@ -544,7 +547,14 @@ document.addEventListener('keydown', function(e) {
 });
 
 // Settings modal
+function dismissNewDot() {
+   storage.set('whatsNewSeen', WHATS_NEW_VERSION);
+   const dot = document.getElementById('newDot');
+   if (dot) dot.hidden = true;
+}
+
 function showSettings() {
+   dismissNewDot();
    document.getElementById('settingsModal').style.display = 'flex';
    const setting = storage.get('afterPlayNow', 'stop');
    const radio = document.querySelector(`input[name="afterPlayNow"][value="${setting}"]`);
@@ -662,6 +672,7 @@ document.getElementById('settingsModal')?.addEventListener('click', function(e) 
 
 // Help modal
 function showHelp() {
+  dismissNewDot();
   document.getElementById('helpModal').style.display = 'flex';
 }
 
@@ -672,6 +683,12 @@ function hideHelp() {
 document.getElementById('helpModal')?.addEventListener('click', function(e) {
   if (e.target === this) hideHelp();
 });
+
+// Show "What's New" dot if user hasn't seen the current version
+if (storage.get('whatsNewSeen') !== WHATS_NEW_VERSION) {
+  const dot = document.getElementById('newDot');
+  if (dot) dot.hidden = false;
+}
 
 // Apply column-hiding classes from saved settings
 if (storage.getBool('hideBrowserColumn')) document.body.classList.add('hide-browser-col');

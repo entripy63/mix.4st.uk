@@ -362,6 +362,18 @@ button:active {
 
 .settings-btn {
    margin-left: 0;
+   position: relative;
+}
+
+.settings-btn .new-dot {
+   position: absolute;
+   top: -2px;
+   right: -2px;
+   width: 8px;
+   height: 8px;
+   background: #e06070;
+   border-radius: 50%;
+   border: 1px solid #1a1a2e;
 }
 
 .help-btn {
@@ -392,6 +404,24 @@ button:active {
 .shortcuts-table td:first-child {
    text-align: right;
    white-space: nowrap;
+}
+
+.whats-new h3 {
+   margin: 0 0 6px 0;
+   font-size: 13px;
+   color: #888;
+}
+
+.whats-new ul {
+   margin: 0 0 12px 0;
+   padding-left: 18px;
+}
+
+.whats-new li {
+   font-size: 13px;
+   line-height: 1.5;
+   color: #ccc;
+   margin-bottom: 4px;
 }
 
 .settings-group {
