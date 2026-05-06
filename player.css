@@ -392,8 +392,13 @@ button:active {
   flex: 1 !important;
 }
 
+.shortcuts-columns {
+  display: flex;
+  gap: 12px;
+}
+
 .shortcuts-table {
-  width: 100%;
+  flex: 1;
 }
 
 .shortcuts-table td {
