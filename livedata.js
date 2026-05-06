@@ -108,7 +108,7 @@ function probeStream(url, timeoutMs = 5000) {
       audio.load();
     };
     const timer = setTimeout(() => {
-      console.log(`Probe timeout (${timeoutMs}ms): ${decodeURIComponent(url)}`);
+      console.log(`Probe timeout (${timeoutMs}ms): ${safeDecodeURIComponent(url)}`);
       cleanup();
       resolve(false);
     }, timeoutMs);
@@ -123,7 +123,7 @@ function probeStream(url, timeoutMs = 5000) {
       clearTimeout(timer);
       const code = audio.error ? audio.error.code : 'unknown';
       const msg = audio.error ? audio.error.message : '';
-      console.log(`Probe error (code=${code}${msg ? ', ' + msg : ''}): ${decodeURIComponent(url)}`);
+      console.log(`Probe error (code=${code}${msg ? ', ' + msg : ''}): ${safeDecodeURIComponent(url)}`);
       resolve(false);
     }, { once: true });
 
@@ -405,8 +405,7 @@ async function restoreStreamPlayer() {
 
     if (savedUrl && savedText) {
       state.isRestoring = true;
-      state.streamUrl = savedUrl;
-      state.streamM3u = savedM3u;
+      setCurrentStream(savedUrl, savedText, savedM3u || null);
       const wasPlaying = storage.getBool('wasPlaying', false);
       playStream(savedUrl, savedText, wasPlaying);
       // Keep isRestoring true until after playStream's async setup

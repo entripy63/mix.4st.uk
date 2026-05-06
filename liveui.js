@@ -74,7 +74,7 @@ function displayLiveStreams() {
     const infoPopout = `<div class="stream-extra-info" style="display:none">
       <div class="stream-info-field">
         <strong>Stream URL:</strong>
-        <a href="${escapeHtml(stream.url || stream.m3u)}" target="_blank" rel="noopener">${escapeHtml(decodeURIComponent(stream.url || stream.m3u))}</a>
+        <a href="${escapeHtml(stream.url || stream.m3u)}" target="_blank" rel="noopener">${escapeHtml(safeDecodeURIComponent(stream.url || stream.m3u))}</a>
       </div>
       <div class="stream-info-field">
         <strong>Name:</strong>
@@ -150,13 +150,7 @@ function playLiveStream(index) {
   const name = stream.name || stream.m3u;
   const url = stream.url;
   
-  state.isStream = true;
-  state.streamUrl = url;
-  state.streamM3u = stream.m3u;
-  state.streamDisplayText = name;
-  storage.set('streamUrl', url);
-  storage.set('streamM3u', stream.m3u);
-  storage.set('streamDisplayText', name);
+  setCurrentStream(url, name, stream.m3u);
   
   playStream(url, name, true);
   displayLiveStreams();
@@ -429,7 +423,9 @@ async function playPresetStream(index) {
     entries = [{ url: stream.m3u, title: null }];
   } else {
     entries = await fetchPlaylist(stream.m3u);
-    if (entries.length === 0) {
+    // Null (fetch/parse failure) and empty playlists both fall back to
+    // probing the original URL as a direct stream.
+    if (!entries || entries.length === 0) {
       entries = [{ url: stream.m3u, title: null }];
     }
   }
@@ -452,13 +448,7 @@ async function playPresetStream(index) {
     return;
   }
 
-  state.isStream = true;
-  state.streamUrl = resolvedUrl;
-  state.streamM3u = stream.m3u;
-  state.streamDisplayText = name;
-  storage.set('streamUrl', resolvedUrl);
-  storage.set('streamM3u', stream.m3u);
-  storage.set('streamDisplayText', name);
+  setCurrentStream(resolvedUrl, name, stream.m3u);
 
   playStream(resolvedUrl, name, true);
 }
@@ -494,6 +484,15 @@ async function addAllPresetStreamsToUserStreams() {
 
 // ========== EVENT HANDLERS FOR DELEGATED ACTIONS ==========
 
+function updateStoredUserStreamByM3u(m3u, updates) {
+  const configs = getUserStreams();
+  const storageIndex = configs.findIndex(c => c.m3u === m3u);
+  if (storageIndex >= 0) {
+    Object.assign(configs[storageIndex], updates);
+    saveUserStreams(configs);
+  }
+}
+
 // Delegated event handler for user stream list
 const streamListElement = getStreamListTarget();
 if (streamListElement) {
@@ -525,12 +524,7 @@ if (streamListElement) {
           const nameSpan = streamRow?.querySelector('.mix-name');
           if (nameSpan) nameSpan.textContent = newName || m3u;
           // Save to storage using m3u as key to avoid index mismatches
-          const configs = getUserStreams();
-          const storageIndex = configs.findIndex(c => c.m3u === m3u);
-          if (storageIndex >= 0) {
-            configs[storageIndex].name = newName;
-            saveUserStreams(configs);
-          }
+          updateStoredUserStreamByM3u(m3u, { name: newName });
         }
       }
       
@@ -557,12 +551,7 @@ if (streamListElement) {
             }
           }
           // Save to storage using m3u as key to avoid index mismatches
-          const configs = getUserStreams();
-          const storageIndex = configs.findIndex(c => c.m3u === m3u);
-          if (storageIndex >= 0) {
-            configs[storageIndex].genre = newGenre;
-            saveUserStreams(configs);
-          }
+          updateStoredUserStreamByM3u(m3u, { genre: newGenre });
         }
       }
       
@@ -594,12 +583,7 @@ if (streamListElement) {
             }
           }
           // Save to storage using m3u as key to avoid index mismatches
-          const configs = getUserStreams();
-          const storageIndex = configs.findIndex(c => c.m3u === m3u);
-          if (storageIndex >= 0) {
-            configs[storageIndex].website = newWebsite || null;
-            saveUserStreams(configs);
-          }
+          updateStoredUserStreamByM3u(m3u, { website: newWebsite || null });
         }
       }
     });

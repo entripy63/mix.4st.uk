@@ -86,13 +86,9 @@ function resumeStream() {
 
 // Start playing a stream via MSE
 function playStream(url, displayText, autoplay = false) {
-  timeDisplay.title = decodeURIComponent(url);
-  state.isStream = true;
+  timeDisplay.title = safeDecodeURIComponent(url);
   state.userPausedStream = false;
-  state.streamUrl = url;
-  state.streamDisplayText = displayText;
-  storage.set('streamUrl', url);
-  storage.set('streamDisplayText', displayText);
+  setCurrentStream(url, displayText, state.streamM3u);
   
   // Update now playing display
   const nowPlaying = document.getElementById('nowPlaying');
@@ -127,11 +123,7 @@ function playStream(url, displayText, autoplay = false) {
 function stopStream() {
   if (state.isStream) {
     pauseStream();
-    state.isStream = false;
-    state.streamUrl = null;
-    state.streamDisplayText = null;
-    storage.remove('streamUrl');
-    storage.remove('streamDisplayText');
+    clearCurrentStream();
     updateTimeDisplay();
     updatePlayPauseBtn();
   }
@@ -311,14 +303,10 @@ async function load(url) {
   
   // Exit stream mode when loading regular content
   if (state.isStream) {
-    state.isStream = false;
-    state.streamUrl = null;
-    state.streamDisplayText = null;
-    storage.remove('streamUrl');
-    storage.remove('streamDisplayText');
+    clearCurrentStream();
     updateTimeDisplay();
   }
-  timeDisplay.title = decodeURIComponent(url);
+  timeDisplay.title = safeDecodeURIComponent(url);
   aud.src = url;
   aud.currentTime = 0;
 }

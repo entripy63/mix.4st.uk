@@ -177,8 +177,7 @@ async function resumeFromHistory(index) {
   if (actionBar) actionBar.innerHTML = '';
 
   if (entry.type === 'stream') {
-    state.streamM3u = entry.streamM3u;
-    if (entry.streamM3u) storage.set('streamM3u', entry.streamM3u);
+    setCurrentStream(entry.streamUrl, entry.streamDisplayText, entry.streamM3u || null);
     playStream(entry.streamUrl, entry.streamDisplayText, true);
   } else {
     const mix = {

@@ -40,6 +40,15 @@ function getMixId(mix) {
    return mix.htmlPath || `${mix.djPath}/${mix.file}`;
 }
 
+function safeDecodeURIComponent(value) {
+  if (typeof value !== 'string') return '';
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
 const storage = {
   get(key, defaultVal = null) {
     const val = localStorage.getItem(key);
@@ -191,8 +200,35 @@ const state = {
    showHiddenMixes: false,  // Ephemeral, not persisted
    isStream: false,         // Currently playing a stream (not a file)
    streamUrl: null,         // URL of current stream
+   streamM3u: storage.get('streamM3u'), // Source playlist URL of current stream
    streamDisplayText: null  // Display text for current stream
    };
+
+function setCurrentStream(url, displayText, streamM3u = null) {
+  state.isStream = true;
+  state.streamUrl = url;
+  state.streamDisplayText = displayText;
+  storage.set('streamUrl', url);
+  storage.set('streamDisplayText', displayText);
+
+  if (streamM3u) {
+    state.streamM3u = streamM3u;
+    storage.set('streamM3u', streamM3u);
+  } else {
+    state.streamM3u = null;
+    storage.remove('streamM3u');
+  }
+}
+
+function clearCurrentStream() {
+  state.isStream = false;
+  state.streamUrl = null;
+  state.streamM3u = null;
+  state.streamDisplayText = null;
+  storage.remove('streamUrl');
+  storage.remove('streamM3u');
+  storage.remove('streamDisplayText');
+}
 
    // Migrate old localStorage keys (liveStreamUrl → streamUrl, etc.)
    (function migrateStreamKeys() {
@@ -331,13 +367,6 @@ function showConfirmDialog(title, message) {
     
     titleEl.textContent = title;
     messageEl.textContent = message;
-    
-    // Capture triggering element position for positioning
-    const btn = event && event.target.closest('button');
-    let btnRect = null;
-    if (btn) {
-      btnRect = btn.getBoundingClientRect();
-    }
     
     const content = modal.querySelector('.confirm-content');
     

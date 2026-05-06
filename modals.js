@@ -60,7 +60,7 @@ async function getAvailableCategories() {
 // If filterCategory is provided, only show presets from that category
 async function showPresetsMenu(e, filterCategory = null) {
     // Capture button position before async call
-    const btn = e?.target?.closest('button') || event?.target?.closest('button');
+    const btn = e?.target?.closest('button');
     let btnRect = null;
     if (btn) {
         btnRect = btn.getBoundingClientRect();
@@ -269,7 +269,7 @@ function hidePresetsMenu() {
 // Show playlist guide modal (generic - used by both browser.js and liveui.js)
 function showPlaylistGuide(e) {
     const modal = document.getElementById('playlistGuideModal');
-    const btn = e?.target?.closest('button') || event?.target?.closest('button');
+    const btn = e?.target?.closest('button');
     
     modal.style.display = 'flex';
     
