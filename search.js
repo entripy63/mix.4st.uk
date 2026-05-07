@@ -135,16 +135,18 @@ function displayMixedSearchResults(results) {
 
   // Separate mixes and streams for proper handling
   const mixes = results.filter(item => !item.type || item.type === 'mix');
-  const streams = results.filter(item => item.type === 'stream');
   window.currentSearchMixes = mixes;
   window.currentSearchResults = results;
 
-  const html = results.map((item, i) => {
+  let mixIndex = 0;
+  let streamIndex = 0;
+
+  const html = results.map(item => {
     if (item.type === 'stream') {
       // Live stream result with 📡 badge
       const genre = item.genre ? ` · ${escapeHtml(item.genre)}` : '';
-      const streamIndex = streams.indexOf(item);
-      return `<div class="mix-item" data-search-index="${streamIndex}">
+      const currentStreamIndex = streamIndex++;
+      return `<div class="mix-item" data-search-index="${currentStreamIndex}">
    <div class="mix-item-row">
    <span class="mix-name"><span style="font-size: 0.85em;">📡</span> ${escapeHtml(item.name)}${genre}</span>
    <button class="icon-btn" data-action="search-play-stream" title="Play stream">▶</button>
@@ -163,9 +165,9 @@ function displayMixedSearchResults(results) {
       const extraBtn = hasExtra ? `<button class="icon-btn info-btn" data-action="toggle-info" title="More info">ⓘ</button>` : '';
       const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none"><div><strong>Notes:</strong> ${escapeHtml(item.comment)}</div></div>` : '';
       const djLabel = item.dj ? ` - ${escapeHtml(normalizeDJPath(item.dj))}` : '';
-      const mixIndex = mixes.indexOf(item);
+      const currentMixIndex = mixIndex++;
 
-      return `<div class="mix-item" data-search-index="${mixIndex}">
+      return `<div class="mix-item" data-search-index="${currentMixIndex}">
    <div class="mix-item-row">
    <span class="mix-name">♪ ${escapeHtml(item.name)}${djLabel} <span class="mix-duration">${duration}</span></span>
    ${favIcon}${hiddenIcon}${extraBtn}
