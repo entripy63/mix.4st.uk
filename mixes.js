@@ -1,5 +1,5 @@
 async function fetchDJMixes(djPath) {
-  const cleanPath = djPath.replace(/^mixes\//, '');
+  const cleanPath = normalizeDJPath(djPath);
   const response = await fetch(`mixes/${cleanPath}/manifest.json`);
   const manifest = await response.json();
   return manifest.mixes.map(mix => ({
@@ -15,7 +15,7 @@ async function fetchDJMixes(djPath) {
     downloads: mix.downloads,
     peaksFile: mix.peaksFile,
     coverFile: mix.coverFile,
-    djPath: djPath
+    djPath: cleanPath
   }));
 }
 
@@ -226,8 +226,8 @@ async function resolveMediaUrl(relativePath) {
 }
 
 async function fetchMixDetails(mix) {
-  const djPath = mix.djPath || mix.dj;
-  const localDir = `${djPath.startsWith('mixes/') ? '' : 'mixes/'}${djPath}/`;
+  const djPath = normalizeDJPath(mix.djPath || mix.dj);
+  const localDir = `mixes/${djPath}/`;
   
   // Load peaks if available (local)
   let peaks = null;
@@ -261,14 +261,13 @@ async function fetchMixDetails(mix) {
   const coverSrc = mix.coverFile ? localDir + encodeFilename(mix.coverFile) : null;
   
   // Resolve audio source from configured base URLs (tries each in order)
-  const cleanPath = djPath.replace(/^mixes\//, '');
-  const audioRelPath = cleanPath + '/' + encodeFilename(mix.audioFile);
+  const audioRelPath = djPath + '/' + encodeFilename(mix.audioFile);
   const audioSrc = await resolveMediaUrl(audioRelPath);
 
   // Build download links using the same base URL that worked for audio
   const workingBase = audioSrc.substring(0, audioSrc.length - audioRelPath.length);
   const downloadLinks = (mix.downloads || []).map(d => ({
-    href: workingBase + cleanPath + '/' + encodeFilename(d.file),
+    href: workingBase + djPath + '/' + encodeFilename(d.file),
     label: d.label
   }));
   
@@ -337,5 +336,4 @@ function parseTrackListCSV(txt) {
   
   return `<table class="border">${header}${rows.join('')}</table>`;
 }
-
 

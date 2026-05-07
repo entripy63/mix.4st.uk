@@ -36,8 +36,111 @@ function escapeHtml(str) {
    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+function normalizeDJPath(path) {
+  if (!path) return '';
+  let normalized = String(path).trim();
+  if (!normalized) return '';
+
+  const lower = normalized.toLowerCase();
+  const marker = '/mixes/';
+  const markerIndex = lower.lastIndexOf(marker);
+  if (markerIndex >= 0) {
+    normalized = normalized.slice(markerIndex + marker.length);
+  }
+
+  normalized = normalized.replace(/^[a-z][a-z0-9+.-]*:\/\/[^/]+/i, '');
+  normalized = normalized.replace(/^\/+/, '');
+  while (normalized.startsWith('mixes/')) {
+    normalized = normalized.slice(6);
+  }
+
+  return normalized.replace(/\/+$/, '');
+}
+
+function normalizeMixId(mixId) {
+  if (!mixId) return '';
+  const raw = normalizeDJPath(mixId);
+  if (!raw.includes('/')) return raw;
+  const parts = raw.split('/');
+  const file = parts.pop();
+  const djPath = normalizeDJPath(parts.join('/'));
+  return djPath && file ? `${djPath}/${file}` : raw;
+}
+
+function normalizeMixObject(mix) {
+  if (!mix || typeof mix !== 'object') return mix;
+  const normalized = { ...mix };
+
+  if (normalized.djPath) normalized.djPath = normalizeDJPath(normalized.djPath);
+  if (normalized.dj) normalized.dj = normalizeDJPath(normalized.dj);
+  if (normalized.htmlPath) normalized.htmlPath = normalizeMixId(normalized.htmlPath);
+  if (normalized.mixId) normalized.mixId = normalizeMixId(normalized.mixId);
+
+  if (!normalized.djPath && normalized.dj) normalized.djPath = normalized.dj;
+  if (!normalized.dj && normalized.djPath) normalized.dj = normalized.djPath;
+
+  const identity = normalized.mixId || normalized.htmlPath;
+  if (!normalized.file && identity && identity.includes('/')) {
+    normalized.file = identity.split('/').pop();
+  }
+
+  return normalized;
+}
+
+function normalizePlayHistoryEntry(entry) {
+  if (!entry || typeof entry !== 'object') return entry;
+  if (entry.type !== 'mix') return { ...entry };
+
+  const normalized = { ...entry };
+  const identity = normalizeMixId(normalized.mixId || `${normalized.djPath || ''}/${normalized.file || ''}`);
+
+  if (identity) {
+    normalized.mixId = identity;
+    const parts = identity.split('/');
+    normalized.file = parts.pop();
+    normalized.djPath = parts.join('/');
+  } else if (normalized.djPath) {
+    normalized.djPath = normalizeDJPath(normalized.djPath);
+  }
+
+  return normalized;
+}
+
+function normalizeStorageValue(key, value) {
+  if (value === null || value === undefined) return value;
+
+  if (key === 'currentDJ' || key === 'currentDJ_all') {
+    return typeof value === 'string' ? normalizeDJPath(value) : value;
+  }
+
+  if (key === 'currentMixPath') {
+    return typeof value === 'string' ? normalizeMixId(value) : value;
+  }
+
+  if (key === 'mixFavourites' || key === 'mixHidden') {
+    if (!Array.isArray(value)) return value;
+    return Array.from(new Set(value.map(v => normalizeMixId(v)).filter(Boolean)));
+  }
+
+  if (key === 'queue') {
+    if (!Array.isArray(value)) return value;
+    return value.map(normalizeMixObject);
+  }
+
+  if (key === 'playHistory') {
+    if (!Array.isArray(value)) return value;
+    return value.map(normalizePlayHistoryEntry);
+  }
+
+  return value;
+}
+
 function getMixId(mix) {
-   return mix.htmlPath || `${mix.djPath}/${mix.file}`;
+   if (!mix) return '';
+   if (mix.mixId) return normalizeMixId(mix.mixId);
+   if (mix.htmlPath) return normalizeMixId(mix.htmlPath);
+   const djPath = normalizeDJPath(mix.djPath || mix.dj || '');
+   return djPath && mix.file ? `${djPath}/${mix.file}` : '';
 }
 
 function safeDecodeURIComponent(value) {
@@ -52,7 +155,12 @@ function safeDecodeURIComponent(value) {
 const storage = {
   get(key, defaultVal = null) {
     const val = localStorage.getItem(key);
-    return val !== null ? val : defaultVal;
+    if (val === null) return defaultVal;
+    const normalized = normalizeStorageValue(key, val);
+    if (typeof normalized === 'string' && normalized !== val) {
+      localStorage.setItem(key, normalized);
+    }
+    return normalized;
   },
   getNum(key, defaultVal = 0) {
     const val = localStorage.getItem(key);
@@ -61,14 +169,21 @@ const storage = {
   getJSON(key, defaultVal = null) {
     try {
       const val = localStorage.getItem(key);
-      return val !== null ? JSON.parse(val) : defaultVal;
+      if (val === null) return defaultVal;
+      const parsed = JSON.parse(val);
+      const normalized = normalizeStorageValue(key, parsed);
+      if (JSON.stringify(normalized) !== JSON.stringify(parsed)) {
+        localStorage.setItem(key, JSON.stringify(normalized));
+      }
+      return normalized;
     } catch { return defaultVal; }
   },
   getBool(key, defaultVal = false) {
     return localStorage.getItem(key) === 'true' || (localStorage.getItem(key) === null && defaultVal);
   },
   set(key, val) {
-    localStorage.setItem(key, typeof val === 'object' ? JSON.stringify(val) : val);
+    const normalized = normalizeStorageValue(key, val);
+    localStorage.setItem(key, typeof normalized === 'object' ? JSON.stringify(normalized) : normalized);
   },
   remove(key) {
     localStorage.removeItem(key);
@@ -183,7 +298,7 @@ const state = {
    currentPeaks: null,
    isResizing: false,
    currentMixes: [],
-   currentDJ: '',
+   currentDJ: storage.get('currentDJ', ''),
    currentFilter: '',
    currentGroups: [],
    displayedMixes: [],
@@ -244,25 +359,6 @@ function clearCurrentStream() {
          localStorage.removeItem(oldKey);
        }
      }
-   })();
-
-   // Migrate old DJ paths in queue to new mixes/ paths
-   (function migrateQueuePaths() {
-   let needsSave = false;
-   state.queue.forEach(mix => {
-       if (mix.djPath && !mix.djPath.startsWith('mixes/')) {
-           if (mix.djPath.startsWith('moreDJs/')) {
-               mix.djPath = 'mixes/' + mix.djPath;
-           } else {
-               mix.djPath = 'mixes/' + mix.djPath;
-           }
-           needsSave = true;
-       }
-   });
-   if (needsSave) {
-       const persistableQueue = state.queue.filter(mix => !mix.isLocal);
-       storage.set('queue', persistableQueue);
-   }
    })();
 
    // Format time as M:SS or H:MM:SS

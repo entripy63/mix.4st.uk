@@ -26,6 +26,8 @@ const searchIndex = {
       this.mixData = await mixResponse.json();
       this.streamData = await streamResponse.json();
       
+      this.mixData = this.mixData.map(m => ({ ...m, dj: normalizeDJPath(m.dj) }));
+
       // Build Map for O(1) lookups: dj/file -> mixData
       this.byId = new Map(this.mixData.map(m => [`${m.dj}/${m.file}`, m]));
     } catch (e) {
@@ -91,8 +93,8 @@ async function displayFavourites() {
         peaksFile: match.peaksFile,
         coverFile: match.coverFile,
         downloads: match.downloads,
-        djPath: match.dj,
-        djLabel: match.dj
+        djPath: normalizeDJPath(match.dj),
+        djLabel: normalizeDJPath(match.dj)
       });
     }
   }
@@ -150,7 +152,7 @@ function displayMixedSearchResults(results) {
    </div>`;
     } else {
       // Mix result with ♪ badge
-      const mixId = `${item.dj}/${item.file}`;
+      const mixId = normalizeMixId(`${item.dj}/${item.file}`);
       const isFav = mixFlags.isFavourite(mixId);
       const isHidden = mixFlags.isHidden(mixId);
       const favIcon = isFav ? '<span class="fav-icon" title="Favourite">❤️</span>' : '';
@@ -160,7 +162,7 @@ function displayMixedSearchResults(results) {
       const hasExtra = item.comment;
       const extraBtn = hasExtra ? `<button class="icon-btn info-btn" data-action="toggle-info" title="More info">ⓘ</button>` : '';
       const extraInfo = hasExtra ? `<div class="mix-extra-info" style="display:none"><div><strong>Notes:</strong> ${escapeHtml(item.comment)}</div></div>` : '';
-      const djLabel = item.dj ? ` - ${escapeHtml(item.dj)}` : '';
+      const djLabel = item.dj ? ` - ${escapeHtml(normalizeDJPath(item.dj))}` : '';
       const mixIndex = mixes.indexOf(item);
 
       return `<div class="mix-item" data-search-index="${mixIndex}">
@@ -217,7 +219,7 @@ function displayMixListWithDJ(mixes) {
 function addSearchResultToQueue(index) {
   const item = window.currentSearchMixes[index];
   if (item) {
-    const mix = { ...item, djPath: item.dj || item.djPath };
+    const mix = normalizeMixObject({ ...item, djPath: item.dj || item.djPath });
     state.queue.push({ ...mix, queueId: generateQueueId() });
     saveQueue();
     displayQueue();
@@ -238,7 +240,7 @@ async function playSearchResult(index) {
   const item = window.currentSearchMixes[index];
   if (item) {
     // Normalize search result to have djPath
-    const mix = { ...item, djPath: item.dj || item.djPath };
+    const mix = normalizeMixObject({ ...item, djPath: item.dj || item.djPath });
 
     state.previousQueueIndex = state.currentQueueIndex;
     state.previousQueueTime = aud.currentTime;

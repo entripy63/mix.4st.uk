@@ -72,11 +72,12 @@ async function buildDJDropdown() {
 
 // State setters - keep state and UI in sync
 async function setCurrentDJ(djPath) {
-  state.currentDJ = djPath;
+  const normalizedDJPath = normalizeDJPath(djPath);
+  state.currentDJ = normalizedDJPath;
   // Store DJ separately for each mode: 'dj' uses currentDJ (backwards compatible), 'all' uses currentDJ_all
   const storageKey = browserModes.current === 'all' ? 'currentDJ_all' : 'currentDJ';
-  storage.set(storageKey, djPath);
-  state.currentMixes = await fetchDJMixes(djPath);
+  storage.set(storageKey, normalizedDJPath);
+  state.currentMixes = await fetchDJMixes(normalizedDJPath);
   state.currentFilter = '';
   storage.set('currentFilter', '');
   state.currentGroups = detectGroups(state.currentMixes);
@@ -130,7 +131,7 @@ async function loadDJ(djPath) {
 
 function updateDJButtons() {
   document.querySelectorAll('#djButtons button').forEach(btn => {
-    const buttonDJ = 'mixes/' + btn.textContent.replace('-', '').toLowerCase();
+    const buttonDJ = btn.textContent.replace('-', '').toLowerCase();
     btn.classList.toggle('active', buttonDJ === state.currentDJ);
   });
 }

@@ -4,7 +4,7 @@
 //               player-mix.js (playMix, getDJName)
 
 const playHistory = {
-  _entries: storage.getJSON('playHistory', []),
+  _entries: (storage.getJSON('playHistory', []) || []).map(normalizePlayHistoryEntry),
   _maxEntries: 20,
   _skipNextRecord: false,
 
@@ -67,7 +67,7 @@ const playHistory = {
       return {
         type: 'mix',
         mixId: getMixId(mix),
-        djPath: mix.djPath,
+        djPath: normalizeDJPath(mix.djPath),
         file: mix.file,
         name: mix.name,
         artist: mix.artist || getDJName(mix.htmlPath || mix.djPath),
@@ -184,7 +184,7 @@ async function resumeFromHistory(index) {
       name: entry.name,
       file: entry.file,
       audioFile: entry.audioFile,
-      djPath: entry.djPath,
+      djPath: normalizeDJPath(entry.djPath),
       artist: entry.artist,
       duration: entry.duration,
       peaksFile: entry.peaksFile,
@@ -206,7 +206,7 @@ async function resumeFromHistory(index) {
       state.currentMix = mix;
       const streamTitle = document.getElementById('streamTitle');
       if (streamTitle) { streamTitle.textContent = ''; streamTitle.style.display = 'none'; }
-      const mixId = mix.htmlPath || `${mix.djPath}/${mix.file}`;
+      const mixId = getMixId(mix);
       storage.set('currentMixPath', mixId);
       state.currentDownloadLinks = details.downloadLinks || [];
       state.currentCoverSrc = details.coverSrc;

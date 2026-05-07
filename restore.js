@@ -58,11 +58,8 @@ document.getElementById('fileInput').addEventListener('change', async function (
 
     let savedPath = storage.get('currentMixPath');
     if (savedPath) {
-      // Migrate old DJ paths (e.g., "aboo/mixname" -> "mixes/aboo/mixname")
-      if (!savedPath.startsWith('mixes/')) {
-        savedPath = 'mixes/' + savedPath;
-        storage.set('currentMixPath', savedPath);
-      }
+      savedPath = normalizeMixId(savedPath);
+      storage.set('currentMixPath', savedPath);
       const parts = savedPath.split('/');
       const file = parts.pop();
       const djPath = parts.join('/');

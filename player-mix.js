@@ -14,33 +14,8 @@ const waveformCanvas = document.getElementById("waveform");
 // ============================================
 
 const mixFlags = {
-    _favourites: new Set(storage.getJSON('mixFavourites', [])),
-    _hidden: new Set(storage.getJSON('mixHidden', [])),
-
-    // Migrate old DJ paths (aboo/DJAboo) to new paths (mixes/aboo/DJAboo)
-    _migrateOldPaths() {
-        const migrateSet = (set) => {
-            const migrated = new Set();
-            for (const id of set) {
-                // Check if path already has mixes/ prefix
-                if (id.startsWith('mixes/')) {
-                    migrated.add(id);
-                } else {
-                    // Check if it's a moreDJs path or a main DJ path
-                    if (id.startsWith('moreDJs/')) {
-                        migrated.add('mixes/' + id);
-                    } else {
-                        // Main DJ path: add mixes/ prefix
-                        migrated.add('mixes/' + id);
-                    }
-                }
-            }
-            return migrated;
-        };
-        this._favourites = migrateSet(this._favourites);
-        this._hidden = migrateSet(this._hidden);
-        this._save();
-    },
+    _favourites: new Set((storage.getJSON('mixFavourites', []) || []).map(normalizeMixId).filter(Boolean)),
+    _hidden: new Set((storage.getJSON('mixHidden', []) || []).map(normalizeMixId).filter(Boolean)),
 
     isFavourite(mixId) { return this._favourites.has(mixId); },
     isHidden(mixId) { return this._hidden.has(mixId); },
@@ -71,14 +46,11 @@ const mixFlags = {
     },
 
     _save() {
-         storage.set('mixFavourites', [...this._favourites]);
-         storage.set('mixHidden', [...this._hidden]);
+         storage.set('mixFavourites', [...this._favourites].map(normalizeMixId).filter(Boolean));
+         storage.set('mixHidden', [...this._hidden].map(normalizeMixId).filter(Boolean));
          updateFavouritesButton();
      }
     };
-    
-    // Run migration on load
-    mixFlags._migrateOldPaths();
     
     function updateFavouritesButton() {
     const btn = document.querySelector('.mode-btn[data-mode="favourites"]');
@@ -267,7 +239,7 @@ async function playMix(mix) {
         loadPeaks(null);
     } else {
         // Store mix identifier for restore (works with both manifest and HTML-based mixes)
-        const mixId = mix.htmlPath || `${mix.djPath}/${mix.file}`;
+        const mixId = getMixId(mix);
         storage.set('currentMixPath', mixId);
         const details = await fetchMixDetails(mix);
         if (details.audioSrc) {
@@ -289,7 +261,7 @@ async function playNow(mixId) {
 
     state.currentQueueIndex = -1;
     const mix = state.currentMixes.find(m => getMixId(m) === mixId);
-    await playMix(mix || { name: mixId.split('/').pop(), htmlPath: mixId });
+    await playMix(mix || { name: mixId.split('/').pop(), mixId: normalizeMixId(mixId) });
 }
 
 function displayTrackList(mix, table, coverSrc) {
@@ -538,5 +510,3 @@ document.addEventListener('streamMetadata', (e) => {
         streamTitle.textContent = title;
     }
 });
-
-
