@@ -341,3 +341,125 @@ test('search jungletrain stream uses proxy fallback and not direct http playback
   expect(playbackState.streamUrl).toContain(`url=${playbackState.encodedStream}`);
   expect(playbackState.streamUrl).not.toContain('http://123.45.67.89:8000/stream');
 });
+
+test('search estimulo mix playback falls back to remote mixes source', async ({ page }) => {
+  const headAttempts = [];
+
+  await page.route('**/mixes/mixes-config.json', route => {
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json; charset=utf-8',
+      body: JSON.stringify({
+        mixesBaseUrls: [
+          '/mixes/',
+          'https://stream-proxy.round-bar-e93e.workers.dev/?url=https://mixes.4st.uk/mixes/',
+          'https://m.4st.uk/'
+        ]
+      })
+    });
+  });
+
+  await page.route('**/mixes/search-index.json', route => {
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json; charset=utf-8',
+      body: JSON.stringify([
+        {
+          dj: 'moreDJs/estimulo',
+          file: '2011-10-20-estimulo',
+          name: '20 October 2011 estimulo',
+          artist: 'estimulo',
+          genre: 'Drum & Bass',
+          comment: '',
+          duration: '60:00',
+          audioFile: '2011-10-20-estimulo.mp3'
+        },
+        {
+          dj: 'moreDJs/estimulo',
+          file: '2011-10-13-estimulo',
+          name: '13 October 2011 estimulo',
+          artist: 'estimulo',
+          genre: 'Drum & Bass',
+          comment: '',
+          duration: '60:00',
+          audioFile: '2011-10-13-estimulo.mp3'
+        },
+        {
+          dj: 'moreDJs/estimulo',
+          file: '2011-10-06-estimulo',
+          name: '6 October 2011 estimulo',
+          artist: 'estimulo',
+          genre: 'Drum & Bass',
+          comment: '',
+          duration: '60:00',
+          audioFile: '2011-10-06-estimulo.mp3'
+        }
+      ])
+    });
+  });
+
+  await page.route('**/streams/search-index.json', route => {
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json; charset=utf-8',
+      body: '[]'
+    });
+  });
+
+  await page.route('**/mixes/moreDJs/estimulo/*.mp3', route => {
+    if (route.request().method() === 'HEAD') {
+      headAttempts.push(route.request().url());
+      route.fulfill({ status: 404 });
+      return;
+    }
+    route.continue();
+  });
+
+  await page.route('https://stream-proxy.round-bar-e93e.workers.dev/**', route => {
+    if (route.request().method() === 'HEAD') {
+      headAttempts.push(route.request().url());
+      route.fulfill({ status: 404 });
+      return;
+    }
+    route.continue();
+  });
+
+  await page.route('https://m.4st.uk/**', route => {
+    if (route.request().method() === 'HEAD') {
+      headAttempts.push(route.request().url());
+      route.fulfill({ status: 200 });
+      return;
+    }
+    route.continue();
+  });
+
+  await page.evaluate(async () => {
+    await loadMixesConfig();
+  });
+
+  await page.click('.mode-btn[data-mode="search"]');
+  await page.fill('#searchInput', '20 October 2011 estimulo');
+
+  await expect(page.locator('#searchInfo')).toContainText('3 results');
+
+  const targetRow = page.locator('#mixList .mix-item').filter({ hasText: '20 October 2011 estimulo' }).first();
+  await expect(targetRow).toBeVisible();
+  await targetRow.locator('[data-action="search-play-now"]').click();
+
+  await page.waitForFunction(() => state.currentMix?.name === '20 October 2011 estimulo' && !!aud.src);
+
+  const playbackState = await page.evaluate(() => ({
+    currentMixName: state.currentMix?.name,
+    audioSrc: aud.src
+  }));
+
+  expect(playbackState.currentMixName).toBe('20 October 2011 estimulo');
+  expect(playbackState.audioSrc).toContain('https://m.4st.uk/moreDJs/estimulo/2011-10-20-estimulo.mp3');
+  expect(playbackState.audioSrc).not.toContain('/mixes/moreDJs/estimulo/2011-10-20-estimulo.mp3');
+  expect(playbackState.audioSrc).not.toContain('stream-proxy.round-bar-e93e.workers.dev');
+
+  expect(headAttempts.length).toBeGreaterThanOrEqual(3);
+  expect(headAttempts[0]).toContain('/mixes/moreDJs/estimulo/2011-10-20-estimulo.mp3');
+  expect(headAttempts[1]).toContain('stream-proxy.round-bar-e93e.workers.dev');
+  expect(headAttempts[2]).toContain('https://m.4st.uk/moreDJs/estimulo/2011-10-20-estimulo.mp3');
+});
