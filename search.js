@@ -135,7 +135,9 @@ function displayMixedSearchResults(results) {
 
   // Separate mixes and streams for proper handling
   const mixes = results.filter(item => !item.type || item.type === 'mix');
+  const streams = results.filter(item => item.type === 'stream');
   window.currentSearchMixes = mixes;
+  window.currentSearchStreams = streams;
   window.currentSearchResults = results;
 
   let mixIndex = 0;
@@ -257,9 +259,15 @@ async function playSearchResult(index) {
 }
 
 async function playSearchStream(index) {
-  const item = window.currentSearchResults?.[index];
-  if (item && item.type === 'stream') {
+  const item = window.currentSearchStreams?.[index];
+  if (item) {
     historyRecord();
-    playStream(item.url, item.name, true);
+
+    const streamSource = item.m3u || item.url;
+    const resolvedUrl = await resolveStreamPlaybackUrl(streamSource);
+    if (!resolvedUrl) return;
+
+    setCurrentStream(resolvedUrl, item.name, streamSource);
+    playStream(resolvedUrl, item.name, true);
   }
 }

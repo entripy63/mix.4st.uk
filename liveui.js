@@ -415,33 +415,7 @@ async function playPresetStream(index) {
   showToast('Connecting to stream...');
 
   // Resolve stream URL (probe without persisting to user streams)
-  const audioExtensions = ['.mp3', '.aac', '.flac', '.wav', '.ogg', '.opus', '.m4a'];
-  const isDirectAudio = audioExtensions.some(ext => stream.m3u.toLowerCase().endsWith(ext));
-
-  let entries;
-  if (isDirectAudio) {
-    entries = [{ url: stream.m3u, title: null }];
-  } else {
-    entries = await fetchPlaylist(stream.m3u);
-    // Null (fetch/parse failure) and empty playlists both fall back to
-    // probing the original URL as a direct stream.
-    if (!entries || entries.length === 0) {
-      entries = [{ url: stream.m3u, title: null }];
-    }
-  }
-
-  let resolvedUrl = null;
-  for (const entry of entries) {
-    // Route to appropriate proxy, with fallback to proxyAll
-    const proxyUrls = getProxyUrls(entry.url);
-    for (const proxyUrl of proxyUrls) {
-      if (await probeStream(proxyUrl)) {
-        resolvedUrl = proxyUrl;
-        break;
-      }
-    }
-    if (resolvedUrl) break;
-  }
+  const resolvedUrl = await resolveStreamPlaybackUrl(stream.m3u);
 
   if (!resolvedUrl) {
     showToast('Stream unavailable');

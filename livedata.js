@@ -220,6 +220,38 @@ async function fetchPlaylist(playlistUrl) {
   return null;
 }
 
+async function resolveStreamPlaybackUrl(streamM3u) {
+  await loadProxyConfig();
+
+  // Check if it's a direct audio file URL, not a playlist
+  const audioExtensions = ['.mp3', '.aac', '.flac', '.wav', '.ogg', '.opus', '.m4a'];
+  const isDirectAudio = audioExtensions.some(ext => streamM3u.toLowerCase().endsWith(ext));
+
+  let entries;
+  if (isDirectAudio) {
+    entries = [{ url: streamM3u, title: null }];
+  } else {
+    entries = await fetchPlaylist(streamM3u);
+    // Null (fetch/parse failure) and empty playlists both fall back to
+    // probing the original URL as a direct stream.
+    if (!entries || entries.length === 0) {
+      entries = [{ url: streamM3u, title: null }];
+    }
+  }
+
+  for (const entry of entries) {
+    // Route to appropriate proxy, with fallback to proxyAll
+    const proxyUrls = getProxyUrls(entry.url);
+    for (const proxyUrl of proxyUrls) {
+      if (await probeStream(proxyUrl)) {
+        return proxyUrl;
+      }
+    }
+  }
+
+  return null;
+}
+
 // ========== STREAM PROBING & ADDITION ==========
 
 async function probeAndAddStream(config, initConfig = {}) {
