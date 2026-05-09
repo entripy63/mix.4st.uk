@@ -193,6 +193,10 @@ def process_directory_split(source_directory, output_directory):
         peaks_file = output_directory / f"{base_name}.peaks.json"
         has_peaks = peaks_file.exists()
         
+        # Check for tracklist file in output directory
+        tracks_file = output_directory / f"{base_name}.tracks.txt"
+        has_tracklist = tracks_file.exists()
+        
         # Check for cover art file in output directory
         cover_file = None
         for ext in ['.jpg', '.png', '.gif']:
@@ -226,8 +230,8 @@ def process_directory_split(source_directory, output_directory):
             mix_entry['date'] = meta['date']
         if meta.get('comment'):
             mix_entry['comment'] = meta['comment']
-        if has_peaks:
-            mix_entry['peaksFile'] = f"{base_name}.peaks.json"
+        if has_tracklist:
+            mix_entry['hasTracklist'] = True
         if cover_file:
             mix_entry['coverFile'] = cover_file
         

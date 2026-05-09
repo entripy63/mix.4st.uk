@@ -13,7 +13,7 @@ async function fetchDJMixes(djPath) {
     date: mix.date,
     comment: mix.comment,
     downloads: mix.downloads,
-    peaksFile: mix.peaksFile,
+    hasTracklist: mix.hasTracklist || false,
     coverFile: mix.coverFile,
     djPath: cleanPath
   }));
@@ -229,32 +229,31 @@ async function fetchMixDetails(mix) {
   const djPath = normalizeDJPath(mix.djPath || mix.dj);
   const localDir = `mixes/${djPath}/`;
   
-  // Load peaks if available (local)
+  // Load peaks (derived from mix filename)
   let peaks = null;
-  if (mix.peaksFile) {
-    try {
-      const peaksResponse = await fetch(localDir + encodeFilename(mix.peaksFile));
-      if (peaksResponse.ok) {
-        const peaksData = await peaksResponse.json();
-        peaks = peaksData.peaks;
-      }
-    } catch (e) {
-      // Peaks file doesn't exist, that's fine
+  try {
+    const peaksResponse = await fetch(localDir + encodeFilename(mix.file + '.peaks.json'));
+    if (peaksResponse.ok) {
+      const peaksData = await peaksResponse.json();
+      peaks = peaksData.peaks;
     }
+  } catch (e) {
+    // Peaks file doesn't exist, that's fine
   }
   
   // Try to load track list from .tracks.txt (CSV) (local)
   let trackListTable = '';
-  const txtPath = `${localDir}${encodeFilename(mix.file)}.tracks.txt`;
-  
-  try {
-    const txtResponse = await fetch(txtPath);
-    if (txtResponse.ok) {
-      const txt = await txtResponse.text();
-      trackListTable = parseTrackListCSV(txt);
+  if (mix.hasTracklist) {
+    const txtPath = `${localDir}${encodeFilename(mix.file)}.tracks.txt`;
+    try {
+      const txtResponse = await fetch(txtPath);
+      if (txtResponse.ok) {
+        const txt = await txtResponse.text();
+        trackListTable = parseTrackListCSV(txt);
+      }
+    } catch (e) {
+      // No track list file, that's fine
     }
-  } catch (e) {
-    // No track list file, that's fine
   }
   
   // Cover art URL (local)

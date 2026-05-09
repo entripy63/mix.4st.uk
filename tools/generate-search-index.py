@@ -26,7 +26,7 @@ def process_manifest(manifest_path, dj_path, all_mixes):
     
     for mix in manifest.get('mixes', []):
         # Extract only searchable fields
-        all_mixes.append({
+        entry = {
             'dj': dj_path,
             'file': mix.get('file', ''),
             'name': mix.get('name', ''),
@@ -35,10 +35,12 @@ def process_manifest(manifest_path, dj_path, all_mixes):
             'comment': mix.get('comment', ''),
             'duration': mix.get('durationFormatted', ''),
             'audioFile': mix.get('audioFile', ''),
-            'peaksFile': mix.get('peaksFile', ''),
             'coverFile': mix.get('coverFile', ''),
             'downloads': mix.get('downloads', [])
-        })
+        }
+        if mix.get('hasTracklist'):
+            entry['hasTracklist'] = True
+        all_mixes.append(entry)
     
     print(f"  Added {len(manifest.get('mixes', []))} mixes")
 

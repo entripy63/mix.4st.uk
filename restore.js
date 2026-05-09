@@ -71,7 +71,7 @@ document.getElementById('fileInput').addEventListener('change', async function (
         // Manifest not available, build minimal object
       }
       if (!mix) {
-        mix = { djPath, file, audioFile: `${file}.mp3`, peaksFile: `${file}.peaks.json`, name: file };
+        mix = { djPath, file, audioFile: `${file}.mp3`, name: file };
       }
       const details = await fetchMixDetails(mix);
       if (details.audioSrc) {

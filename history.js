@@ -73,7 +73,7 @@ const playHistory = {
         artist: mix.artist || getDJName(mix.htmlPath || mix.djPath),
         duration: mix.duration || null,
         audioFile: mix.audioFile,
-        peaksFile: mix.peaksFile || null,
+        hasTracklist: mix.hasTracklist || false,
         coverFile: mix.coverFile || null,
         downloads: mix.downloads || null,
         position: aud.currentTime || 0,
@@ -188,7 +188,7 @@ async function resumeFromHistory(index) {
       djPath: normalizeDJPath(entry.djPath),
       artist: entry.artist,
       duration: entry.duration,
-      peaksFile: entry.peaksFile,
+      hasTracklist: entry.hasTracklist || false,
       coverFile: entry.coverFile,
       downloads: entry.downloads
     };

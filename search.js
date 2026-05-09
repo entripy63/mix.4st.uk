@@ -90,7 +90,7 @@ async function displayFavourites() {
         artist: match.artist,
         genre: match.genre,
         comment: match.comment,
-        peaksFile: match.peaksFile,
+        hasTracklist: match.hasTracklist || false,
         coverFile: match.coverFile,
         downloads: match.downloads,
         djPath: normalizeDJPath(match.dj),
