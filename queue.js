@@ -178,6 +178,7 @@ function removeFromQueue(index) {
 function addToQueue(mixId) {
   const mix = state.currentMixes.find(m => getMixId(m) === mixId);
   if (mix) {
+    beacon('queue-add', mixId);
     state.queue.push({ ...mix, queueId: generateQueueId() });
     saveQueue();
     displayQueue();

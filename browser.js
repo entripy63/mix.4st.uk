@@ -501,6 +501,7 @@ document.getElementById('searchInput').addEventListener('input', function() {
      const results = searchIndex.search(query);
      displaySearchResults(results, query);
    }, 150);
+   if (query.trim()) beaconSearch(query.trim());
 });
 
 
@@ -564,6 +565,7 @@ function showSettings() {
    document.getElementById('showHiddenMixesCheckbox').checked = state.showHiddenMixes;
    document.getElementById('visualiserEnabledCheckbox').checked = storage.getBool('visualiserEnabled', true);
    document.getElementById('bpmEnabledCheckbox').checked = storage.getBool('bpmEnabled', true);
+   document.getElementById('nicknameInput').value = beaconNick();
    // Timed Fades settings
    const tfEnabled = storage.getBool('timedFadesEnabled');
    document.getElementById('timedFadesCheckbox').checked = tfEnabled;

@@ -226,6 +226,16 @@
         </label>
       </div>
       <div class="settings-group">
+        <label class="setting-label">Nickname:</label>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <input type="text" id="nicknameInput" maxlength="100"
+            style="flex: 1; padding: 6px 10px; background: #1a1a2e; border: 1px solid #3d3d5c; border-radius: 4px; color: #e0e0e0; font-size: 14px;"
+            onchange="setBeaconNick(this.value.trim() || beaconNick())">
+          <button onclick="document.getElementById('nicknameInput').value = generateBeaconNick(); setBeaconNick(document.getElementById('nicknameInput').value);"
+            style="padding: 6px 10px; background: #3d3d5c; border: none; border-radius: 4px; color: #e0e0e0; cursor: pointer; font-size: 13px;">⟳</button>
+        </div>
+      </div>
+      <div class="settings-group">
         <label class="checkbox-label">
           <input type="checkbox" id="timedFadesCheckbox" onchange="updateTimedFadesEnabled(this.checked)">
           Timed Fades
@@ -343,6 +353,7 @@
   </div>
 
   <script src="core.js?v=2"></script>
+  <script src="ping.js?v=2"></script>
   <script src="mixes.js?v=2"></script>
   <script src="queue.js?v=2"></script>
   <script src="queuestore.js?v=2"></script>

@@ -151,7 +151,7 @@ function playLiveStream(index) {
   const url = stream.url;
   
   setCurrentStream(url, name, stream.m3u);
-  
+  beacon('stream-play', name);
   playStream(url, name, true);
   displayLiveStreams();
 }
@@ -172,6 +172,7 @@ async function handleAddStream() {
      }
 
      // Add stream with no name, let playlist title be parsed from m3u
+     beacon('stream-add', m3u);
      await addUserStream(null, m3u, null);
      if (shouldRedisplayStreams()) {
        displayLiveStreams();

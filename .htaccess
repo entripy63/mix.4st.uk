@@ -1,5 +1,10 @@
 DirectoryIndex player.html index.html
 AddType application/json .streams .mixes
+
+# Protect beacon log from direct web access
+<Files "beacon.log">
+    Require all denied
+</Files>
 # Correct MIME types for audio playback (downloads use HTML download attribute)
 AddType audio/mpeg .mp3
 AddType audio/mp4 .m4a

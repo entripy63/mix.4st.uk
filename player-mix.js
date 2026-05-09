@@ -223,6 +223,7 @@ function getDJName(htmlPath) {
 
 async function playMix(mix) {
     historyRecord();
+    beacon('mix-play', getMixId(mix) || mix.name);
     document.title = `${mix.name} - Player`;
     state.currentMix = mix;
 

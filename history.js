@@ -177,6 +177,7 @@ async function resumeFromHistory(index) {
   if (actionBar) actionBar.innerHTML = '';
 
   if (entry.type === 'stream') {
+    beacon('stream-play', entry.streamDisplayText);
     setCurrentStream(entry.streamUrl, entry.streamDisplayText, entry.streamM3u || null);
     playStream(entry.streamUrl, entry.streamDisplayText, true);
   } else {
@@ -200,6 +201,7 @@ async function resumeFromHistory(index) {
     if (details.audioSrc) {
       // Skip the historyRecord() call inside playMix — we already recorded above
       playHistory._skipNextRecord = true;
+      beacon('mix-play', getMixId(mix) || mix.name);
 
       // Set up mix state and UI (mirrors playMix without calling play())
       document.title = `${mix.name} - Player`;

@@ -19,8 +19,8 @@ declare -A REMOTE_DIRS=(
 # Audio files are excluded to prevent --delete from removing server-only
 # media not present locally. Peaks, manifests, and images ARE deployed
 # as they are generated locally.
-MIRROR_EXCLUDES="-x .git/ -x .github/ -x .gitignore -x AGENTS.md -x docs/ -x tools/ -x node_modules/ -x lib/ -X package* -X eslint.*"
-MEDIA_EXCLUDES="-x '\.mp3$' -x '\.m4a$' -x '\.flac$' -x '\.wav$' -x '\.opus$' -x '\.mediaartlocal$'"
+MIRROR_EXCLUDES="-x .git/ -x .github/ -x .githooks/ -x .gitignore -x .codex -x AGENTS.md -x docs/ -x tools/ -x tests/ -x test-results/ -x node_modules/ -x lib/ -X package* -X eslint.* -X playwright.*"
+MEDIA_EXCLUDES="-x '\.mp3$' -x '\.m4a$' -x '\.flac$' -x '\.wav$' -x '\.opus$' -x '\.mediaartlocal$' -x beacon.log"
 
 declare -A MIRROR_COMMANDS=(
   [prod]="mirror -R --delete $MIRROR_EXCLUDES $MEDIA_EXCLUDES"

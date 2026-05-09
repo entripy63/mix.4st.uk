@@ -21,3 +21,4 @@ tools/tool-config.json
 .codex
 vendor/*
 test-results/
+beacon.log
