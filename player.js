@@ -594,6 +594,15 @@ const timedFades = {
   }
 };
 
+// Daily active-play beacon — catches resumes and all play sources
+aud.addEventListener('play', () => {
+  if (state.isStream) {
+    beaconDaily('daily-stream', state.streamDisplayText || '');
+  } else if (state.currentMix) {
+    beaconDaily('daily-mix', getMixId(state.currentMix) || state.currentMix.name);
+  }
+});
+
 // Keyboard shortcuts
 document.addEventListener('keydown', function(e) {
   if (e.target.tagName === 'INPUT') return;

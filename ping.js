@@ -31,6 +31,14 @@ function beacon(event, detail) {
   } catch { /* silent */ }
 }
 
+function beaconDaily(event, detail) {
+  const today = new Date().toISOString().slice(0, 10);
+  const key = 'beaconDay_' + event;
+  if (storage.get(key) === today) return;
+  storage.set(key, today);
+  beacon(event, detail);
+}
+
 let beaconSearchTimer = null;
 
 function beaconSearch(query) {
