@@ -255,6 +255,18 @@ aud.addEventListener("ended", async function () {
    }
    stopVisualiser();
    stopTempo();
+   // Reset history position so Resume Now replays from the start
+   if (state.currentMix) {
+     const mixId = getMixId(state.currentMix);
+     if (mixId) {
+       const entry = playHistory._entries.find(e => e.type === 'mix' && e.mixId === mixId);
+       if (entry) {
+         entry.position = 0;
+         playHistory._save();
+         playHistory.display();
+       }
+     }
+   }
    // Handle Play Now mix end based on setting
    if (state.playingFromPlayNow) {
      const setting = storage.get('afterPlayNow', 'stop');
