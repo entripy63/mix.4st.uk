@@ -164,7 +164,7 @@ function renderTable($data, $col1, $col2, $limit = 20) {
   <?php endif; ?>
 </div>
 <div>
-    <h2>Daily Activity</h2>
+  <h2>Daily Activity</h2>
   <?php renderTable($days, 'Date', 'Events', 60); ?>
 </div>
 </div>
