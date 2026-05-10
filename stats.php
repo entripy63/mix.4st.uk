@@ -102,10 +102,12 @@ function renderTable($data, $col1, $col2, $limit = 20) {
   table { border-collapse: collapse; width: 100%; max-width: 600px; margin: 8px 0 16px; }
   th { text-align: left; color: #888; font-size: 12px; text-transform: uppercase; padding: 6px 12px; border-bottom: 1px solid #3d3d5c; }
   td { padding: 6px 12px; border-bottom: 1px solid #2a2a4a; }
-  td:last-child { text-align: right; color: #7c7cff; }
+  th:last-child, td:last-child { text-align: right; }
+  td:last-child { color: #7c7cff; }
   .muted { color: #666; }
   .meta { color: #666; font-size: 13px; margin: 4px 0; }
   .columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+  .columns > div:first-child table, .columns > div:last-child table { max-width: 360px; }
 </style>
 </head>
 <body>
