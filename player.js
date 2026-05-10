@@ -279,12 +279,12 @@ aud.addEventListener("ended", async function () {
      } else if (setting === 'continue') {
        // Restore previous queue position
        if (state.previousQueueIndex >= 0 && state.previousQueueIndex < state.queue.length) {
-         state.currentQueueIndex = state.previousQueueIndex;
-         state.playingFromPlayNow = false;
-         saveQueue();
-         await playFromQueue(state.currentQueueIndex);
-         // Try to restore position in the mix
-         aud.currentTime = state.previousQueueTime;
+           state.currentQueueIndex = state.previousQueueIndex;
+           state.playingFromPlayNow = false;
+           saveQueue();
+           await playFromQueue(state.currentQueueIndex, 'auto');
+           // Try to restore position in the mix
+           aud.currentTime = state.previousQueueTime;
        }
        return;
      }
@@ -296,11 +296,11 @@ aud.addEventListener("ended", async function () {
    if (state.currentQueueIndex >= 0 && state.currentQueueIndex < state.queue.length - 1) {
      state.currentQueueIndex++;
      saveQueue();
-     await playFromQueue(state.currentQueueIndex);
+     await playFromQueue(state.currentQueueIndex, 'auto');
    } else if (state.loopQueue && state.queue.length > 0) {
      state.currentQueueIndex = 0;
      saveQueue();
-     await playFromQueue(state.currentQueueIndex);
+     await playFromQueue(state.currentQueueIndex, 'auto');
    }
 });
 
@@ -444,7 +444,7 @@ const timedFades = {
     if (useStream) {
       const streams = getUserStreams();
       if (streams.length > 0 && liveStreams.length > 0 && liveStreams[0].available) {
-        playLiveStream(0);
+        playLiveStream(0, 'timer');
         isStreamPlayback = true;
       }
     }

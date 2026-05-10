@@ -29,6 +29,7 @@ $events = [];
 $streams = [];
 $mixes = [];
 $searches = [];
+$sources = [];
 $days = [];
 
 foreach ($entries as $e) {
@@ -49,6 +50,9 @@ foreach ($entries as $e) {
     if (($event === 'mix-play' || $event === 'daily-mix') && $detail) {
         $mixes[$detail] = ($mixes[$detail] ?? 0) + 1;
     }
+    $source = $e['source'] ?? '';
+    if ($source) $sources[$source] = ($sources[$source] ?? 0) + 1;
+
     if ($event === 'search' && $detail) {
         $searches[] = ['query' => $detail, 'nick' => $nick, 'ts' => $e['server_ts'] ?? $e['ts'] ?? ''];
     }
@@ -59,6 +63,7 @@ arsort($nicks);
 arsort($events);
 arsort($streams);
 arsort($mixes);
+arsort($sources);
 ksort($days);
 $searches = array_slice(array_reverse($searches), 0, 30);
 
@@ -131,6 +136,9 @@ function renderTable($data, $col1, $col2, $limit = 20) {
 
   <h2>IPs</h2>
   <?php renderTable($ips, 'IP', 'Events'); ?>
+
+  <h2>Sources</h2>
+  <?php renderTable($sources, 'Source', 'Events'); ?>
 </div>
 <div>
   <h2>Top Streams</h2>

@@ -29,6 +29,7 @@ if (!is_array($input)) {
 $event  = trim($input['event'] ?? '');
 $nick   = trim($input['nick'] ?? '');
 $detail = trim($input['detail'] ?? '');
+$source = trim($input['source'] ?? '');
 $ts     = trim($input['ts'] ?? '');
 
 if ($event === '' || strlen($event) > 100 ||
@@ -40,14 +41,17 @@ if ($event === '' || strlen($event) > 100 ||
 
 $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'];
 
-$record = json_encode([
+$fields = [
     'event'     => $event,
     'nick'      => $nick,
     'detail'    => $detail,
     'ts'        => $ts,
     'server_ts' => date('c'),
     'ip'        => $ip,
-], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
+];
+if ($source !== '') $fields['source'] = $source;
+
+$record = json_encode($fields, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
 
 file_put_contents(__DIR__ . '/beacon.log', $record, FILE_APPEND | LOCK_EX);
 

@@ -177,7 +177,7 @@ async function resumeFromHistory(index) {
   if (actionBar) actionBar.innerHTML = '';
 
   if (entry.type === 'stream') {
-    beacon('stream-play', entry.streamDisplayText);
+    beacon('stream-play', entry.streamDisplayText, 'history');
     setCurrentStream(entry.streamUrl, entry.streamDisplayText, entry.streamM3u || null);
     playStream(entry.streamUrl, entry.streamDisplayText, true);
   } else {
@@ -207,7 +207,7 @@ async function resumeFromHistory(index) {
       // when the mix ends, regardless of the afterPlayNow setting.
       state.playingFromPlayNow = false;
       state.currentQueueIndex = -1;
-      beacon('mix-play', getMixId(mix) || mix.name);
+      beacon('mix-play', getMixId(mix) || mix.name, 'history');
 
       // Set up mix state and UI (mirrors playMix without calling play())
       document.title = `${mix.name} - Player`;

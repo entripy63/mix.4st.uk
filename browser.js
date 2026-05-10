@@ -265,7 +265,7 @@ document.getElementById('mixList').addEventListener('click', (e) => {
           if (mixId) addToQueue(mixId);
           break;
        case 'play-now':
-          if (mixId) playNow(mixId);
+          if (mixId) playNow(mixId, 'browser');
           break;
        case 'search-queue-add':
           if (searchIndex !== undefined) addSearchResultToQueue(parseInt(searchIndex));

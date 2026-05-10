@@ -23,10 +23,10 @@ function setBeaconNick(name) {
   storage.set('beaconNick', name);
 }
 
-function beacon(event, detail) {
+function beacon(event, detail, source) {
   try {
     if (!window.location.hostname.endsWith('.4st.uk')) return;
-    const body = JSON.stringify({ event, nick: beaconNick(), detail, ts: new Date().toISOString() });
+    const body = JSON.stringify({ event, nick: beaconNick(), detail, source: source || undefined, ts: new Date().toISOString() });
     navigator.sendBeacon('/ping.php', new Blob([body], { type: 'text/plain' }));
   } catch { /* silent */ }
 }

@@ -9,6 +9,8 @@
 - No build system - static HTML/CSS website
 - DON'T USE `python3 -m http.server 8000` to test locally, too flakey
 - **ESLint**: `npm run lint` — syntax checking, `npm run lint:fix` — auto-fix formatting
+- **Playwright tests (local)**: `npx playwright test --project=chromium --project=firefox` — only Chromium and Firefox work locally; WebKit/iPhone projects require libraries only available on GitHub CI
+- **Playwright tests (CI)**: All projects (Chromium, Firefox, WebKit, iPhone) run on GitHub Actions
 - ./tools/deploy.sh [target]
 - Targets: test, prod, test-backup, prod-backup, all-test, all-prod
 

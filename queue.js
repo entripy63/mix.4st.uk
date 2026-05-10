@@ -154,10 +154,10 @@ function skipPrev() {
   displayQueue();
 }
 
-async function playFromQueue(index) {
+async function playFromQueue(index, source) {
   state.currentQueueIndex = index;
   saveQueue();
-  await playMix(state.queue[index]);
+  await playMix(state.queue[index], source || 'queue');
 }
 
 function removeFromQueue(index) {

@@ -221,9 +221,9 @@ function getDJName(htmlPath) {
     return djNames[dir] || dir;
 }
 
-async function playMix(mix) {
+async function playMix(mix, source) {
     historyRecord();
-    beacon('mix-play', getMixId(mix) || mix.name);
+    beacon('mix-play', getMixId(mix) || mix.name, source);
     document.title = `${mix.name} - Player`;
     state.currentMix = mix;
 
@@ -254,7 +254,7 @@ async function playMix(mix) {
     displayQueue();
 }
 
-async function playNow(mixId) {
+async function playNow(mixId, source) {
     // Save current queue position before Play Now overwrites it
     state.previousQueueIndex = state.currentQueueIndex;
     state.previousQueueTime = aud.currentTime;
@@ -262,7 +262,7 @@ async function playNow(mixId) {
 
     state.currentQueueIndex = -1;
     const mix = state.currentMixes.find(m => getMixId(m) === mixId);
-    await playMix(mix || { name: mixId.split('/').pop(), mixId: normalizeMixId(mixId) });
+    await playMix(mix || { name: mixId.split('/').pop(), mixId: normalizeMixId(mixId) }, source);
 }
 
 function displayTrackList(mix, table, coverSrc) {

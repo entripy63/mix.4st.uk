@@ -37,7 +37,7 @@ document.getElementById('fileInput').addEventListener('change', async function (
   // Log session start with whatever is currently loaded
   const restoredStream = storage.get('streamDisplayText');
   const restoredMix = storage.get('currentMixPath');
-  beacon('session-start', restoredStream || restoredMix || '');
+  beacon('session-start', restoredStream || restoredMix || '', 'restore');
 
   try {
     // Try restoring live stream first (handles both mix and live restoration)

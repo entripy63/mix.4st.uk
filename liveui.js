@@ -136,7 +136,7 @@ function toggleStreamInfo(btn) {
 
 // ========== STREAM PLAYBACK ==========
 
-function playLiveStream(index) {
+function playLiveStream(index, source) {
   const stream = liveStreams[index];
   if (!stream) return;
 
@@ -151,7 +151,7 @@ function playLiveStream(index) {
   const url = stream.url;
   
   setCurrentStream(url, name, stream.m3u);
-  beacon('stream-play', name);
+  beacon('stream-play', name, source || 'streams');
   playStream(url, name, true);
   displayLiveStreams();
 }
@@ -424,6 +424,7 @@ async function playPresetStream(index) {
   }
 
   setCurrentStream(resolvedUrl, name, stream.m3u);
+  beacon('stream-play', name, 'browser');
 
   playStream(resolvedUrl, name, true);
 }

@@ -254,7 +254,7 @@ async function playSearchResult(index) {
     state.currentQueueIndex = state.queue.length - 1;
     saveQueue();
     displayQueue();
-    await playMix(mix);
+    await playMix(mix, 'search');
   }
 }
 
@@ -268,6 +268,7 @@ async function playSearchStream(index) {
     if (!resolvedUrl) return;
 
     setCurrentStream(resolvedUrl, item.name, streamSource);
+    beacon('stream-play', item.name, 'search');
     playStream(resolvedUrl, item.name, true);
   }
 }
