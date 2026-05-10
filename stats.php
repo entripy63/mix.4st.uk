@@ -146,27 +146,28 @@ function renderTable($data, $col1, $col2, $limit = 20) {
 
   <h2>Top Mixes</h2>
   <?php renderTable($mixes, 'Mix', 'Plays'); ?>
+
+  <h2>Daily Activity</h2>
+  <?php renderTable($days, 'Date', 'Events', 60); ?>
+
+  <h2>Recent Searches</h2>
+  <?php if (empty($searches)): ?>
+    <p class="muted">No searches</p>
+  <?php else: ?>
+    <table>
+      <tr><th>Query</th><th>Nick</th><th>Time</th></tr>
+      <?php foreach ($searches as $s): ?>
+        <tr>
+          <td><?= h($s['query']) ?></td>
+          <td><?= h($s['nick']) ?></td>
+          <td><?= h(substr($s['ts'], 0, 16)) ?></td>
+        </tr>
+      <?php endforeach; ?>
+    </table>
+  <?php endif; ?>
 </div>
 </div>
 
-<h2>Daily Activity</h2>
-<?php renderTable($days, 'Date', 'Events', 60); ?>
-
-<h2>Recent Searches</h2>
-<?php if (empty($searches)): ?>
-  <p class="muted">No searches</p>
-<?php else: ?>
-  <table>
-    <tr><th>Query</th><th>Nick</th><th>Time</th></tr>
-    <?php foreach ($searches as $s): ?>
-      <tr>
-        <td><?= h($s['query']) ?></td>
-        <td><?= h($s['nick']) ?></td>
-        <td><?= h(substr($s['ts'], 0, 16)) ?></td>
-      </tr>
-    <?php endforeach; ?>
-  </table>
-<?php endif; ?>
 
 </body>
 </html>
