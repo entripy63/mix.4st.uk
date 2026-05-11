@@ -6,10 +6,11 @@ Scans audio files for embedded cover art and extracts them to separate image fil
 with the same basename as the audio file.
 
 Usage:
-    python generate-covers.py [root_dir]
-    python generate-covers.py --source /path/to/audio [output_dir]
-    
-If root_dir is not specified, uses the current directory.
+    ./tools/generate-covers.py [root_dir] [dj_name ...]
+    ./tools/generate-covers.py --source /path/to/audio [output_dir]
+
+If root_dir is not specified, defaults to 'mixes/' when audio-source-config.json
+is present, otherwise current directory.
 If --source is specified, reads audio from source and writes covers to output directory.
 """
 
@@ -166,8 +167,7 @@ def main():
             print(f"Error: source directory {source_dir} does not exist")
             sys.exit(1)
     else:
-        root_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path.cwd()
-        output_dir = root_dir
+        root_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else None
         # Any additional arguments are specific DJ folder names
         if len(sys.argv) > 2:
             specific_djs = sys.argv[2:]
@@ -178,6 +178,14 @@ def main():
             if not source_dir.exists():
                 print(f"Error: source directory in config {source_dir} does not exist")
                 sys.exit(1)
+            # Default output to mixes/ when using config-based source
+            if root_dir is None:
+                root_dir = Path('mixes')
+                print(f"No output directory specified, defaulting to: {root_dir}")
+        
+        if root_dir is None:
+            root_dir = Path.cwd()
+        output_dir = root_dir
     
     if not output_dir.exists():
         print(f"Error: {output_dir} does not exist")

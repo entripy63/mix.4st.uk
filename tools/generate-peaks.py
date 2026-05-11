@@ -4,11 +4,12 @@ Generate waveform peaks JSON files from audio files.
 Requires: ffmpeg
 
 Usage: 
-    python3 generate-peaks.py [directory]
-    python3 generate-peaks.py --source /path/to/audio [output_directory]
-    python3 generate-peaks.py --force [directory] [dj_name ...]
+    ./tools/generate-peaks.py [directory] [dj_name ...]
+    ./tools/generate-peaks.py --source /path/to/audio [output_directory]
+    ./tools/generate-peaks.py --force [directory] [dj_name ...]
 
-Default directory is current directory.
+Default directory is 'mixes/' when audio-source-config.json is present,
+otherwise current directory.
 Processes all .mp3 and .flac files, creates .peaks.json files.
 
 If --source is specified, reads audio from source and writes peaks to output directory.
@@ -173,8 +174,7 @@ if __name__ == '__main__':
             print(f"Error: source directory {source_dir} does not exist")
             sys.exit(1)
     else:
-        directory = args[0] if args else '.'
-        output_dir = directory
+        directory = args[0] if args else None
         # Any additional arguments are specific DJ folder names
         if len(args) > 1:
             specific_djs = args[1:]
@@ -185,6 +185,14 @@ if __name__ == '__main__':
             if not os.path.exists(source_dir):
                 print(f"Error: source directory in config {source_dir} does not exist")
                 sys.exit(1)
+            # Default output to mixes/ when using config-based source
+            if directory is None:
+                directory = 'mixes'
+                print(f"No output directory specified, defaulting to: {directory}")
+        
+        if directory is None:
+            directory = '.'
+        output_dir = directory
     
     if force:
         print("Force mode: regenerating all peaks files")

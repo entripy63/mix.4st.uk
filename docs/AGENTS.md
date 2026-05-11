@@ -23,12 +23,17 @@
 - **Stylesheets**: `common.css`, `player.css`
 - **JavaScript modules** (no bundler, simple script loading):
   - `core.js` - Shared utilities, global state, DOM references
+  - `ping.js` - Lightweight usage tracking (sendBeacon to ping.php)
   - `mixes.js` - Loads mix data from `manifest.json` files
   - `queue.js` - Queue management, drag-drop, queue operations
-  - `player.js` - Playback controls, waveform rendering, audio handling
+  - `queuestore.js` - Queue collection persistence (save/load to .mixes files)
   - `stream-player.js` - IcecastMetadataPlayer wrapper for stream playback (MSE)
+  - `player.js` - Playback controls, waveform rendering, audio handling
+  - `tempo.js` - BPM detection via spectral flux autocorrelation (main thread)
+  - `tempo-worker.js` - Web Worker for BPM autocorrelation and subharmonic summation
   - `visualiser.js` - Audio visualisation overlay (spectrum/waveform/flux/autocorrelation)
   - `player-mix.js` - Mix-specific playback logic
+  - `history.js` - Play history tracking, resume from history, periodic position saving
   - `livedata.js` - Live stream data management, probing, persistence
   - `modals.js` - Modal dialogs, settings, help, playlists
   - `livestore.js` - Stream collection persistence (save/load/clear)

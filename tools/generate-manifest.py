@@ -4,10 +4,11 @@ Generate manifest.json files from audio file metadata.
 Requires: ffprobe (part of ffmpeg)
 
 Usage: 
-    python3 generate-manifest.py [directory]
-    python3 generate-manifest.py --source /path/to/audio [output_directory]
+    ./tools/generate-manifest.py [directory] [dj_name ...]
+    ./tools/generate-manifest.py --source /path/to/audio [output_directory]
 
-Default directory is current directory.
+Default directory is 'mixes/' when audio-source-config.json is present,
+otherwise current directory.
 Scans DJ subdirectories, reads metadata from audio files, writes manifest.json.
 
 If --source is specified, reads audio files from source directory and writes
@@ -305,8 +306,7 @@ def main():
             print(f"Error: source directory {source_dir} does not exist")
             sys.exit(1)
     else:
-        # Check if CLI arg 1 looks like a DJ folder name (specific_djs will be set if so)
-        output_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path('.')
+        output_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else None
         # Any additional arguments are specific DJ folder names
         if len(sys.argv) > 2:
             specific_djs = sys.argv[2:]
@@ -317,6 +317,13 @@ def main():
             if not source_dir.exists():
                 print(f"Error: source directory in config {source_dir} does not exist")
                 sys.exit(1)
+            # Default output to mixes/ when using config-based source
+            if output_dir is None:
+                output_dir = Path('mixes')
+                print(f"No output directory specified, defaulting to: {output_dir}")
+        
+        if output_dir is None:
+            output_dir = Path('.')
     
     # If source_dir is set, use simple logic: main DJs in root, others in moreDJs
     if source_dir:
