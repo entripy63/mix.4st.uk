@@ -16,6 +16,7 @@ manifest.json
 **/.mediaartlocal
 **/.directory
 node_modules/
+__pycache__/
 tools/tool-config.json
 **/search-index.json
 .codex
