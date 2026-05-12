@@ -732,3 +732,67 @@
 #presetsButtonsContainer button:hover {
   background: var(--border-color);
 }
+
+/* ========== TIP POPOVERS ========== */
+
+.tip-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0 2px;
+  margin-left: 6px;
+  opacity: 0.45;
+  transition: opacity 0.2s;
+  vertical-align: middle;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.tip-btn:hover {
+  opacity: 1;
+}
+
+.tip-btn-bar {
+  margin-left: auto;
+  padding: 2px 6px;
+  font-size: 11px;
+}
+
+#queueTabActions .tip-btn-bar,
+#streamTabActions .tip-btn-bar,
+#playerButtons .tip-btn-bar,
+.vis-right-group .tip-btn-bar {
+  margin-left: 0;
+  margin-right: 2px;
+}
+
+.tip-popover {
+  position: fixed;
+  z-index: 10001;
+  max-width: 320px;
+  min-width: 200px;
+}
+
+.tip-popover-content {
+  background: var(--bg-card);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 14px 18px;
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 1.5;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.tip-popover-content p {
+  margin: 0 0 8px 0;
+}
+
+.tip-popover-content p:last-child {
+  margin-bottom: 0;
+}
+
+.tip-popover-content strong {
+  color: #00d9ff;
+}

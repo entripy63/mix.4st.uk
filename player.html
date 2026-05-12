@@ -36,7 +36,7 @@
             <span class="mode-icon">❤️</span>
             <span class="mode-label">Favourites</span>
           </button>
-
+          <button class="tip-btn tip-btn-bar" data-tip="browserModes" onclick="showTip('browserModes', this)" title="Tip">💡</button>
         </div>
         <div id="djButtons">
           <button onclick="loadDJ('mixes/trip')">trip-</button>
@@ -76,6 +76,7 @@
         <button class="middle-tab active" data-tab="queue" onclick="switchMiddleTab('queue')">Mix Queue</button>
         <button class="middle-tab" data-tab="userStreams" onclick="switchMiddleTab('userStreams')">User Streams</button>
         <div id="queueTabActions" class="tab-actions">
+          <button class="tip-btn tip-btn-bar" data-tip="mixQueue" onclick="showTip('mixQueue', this)" title="Tip">💡</button>
           <button onclick="skipPrev()" class="tab-action-btn" title="Previous in queue">▲</button>
           <button onclick="skipNext()" class="tab-action-btn" title="Next in queue">▼</button>
           <button onclick="shuffleQueue()" class="tab-action-btn" title="Shuffle queue">⇄</button>
@@ -85,6 +86,7 @@
           <button onclick="clearQueue()" class="tab-action-btn" title="Clear queue">✕</button>
         </div>
         <div id="streamTabActions" class="tab-actions" style="display: none;">
+          <button class="tip-btn tip-btn-bar" data-tip="userStreams" onclick="showTip('userStreams', this)" title="Tip">💡</button>
           <button onclick="reloadLiveStreams()" class="tab-action-btn" title="Reload all streams">⟳</button>
           <button onclick="loadCollectionFromFile()" class="tab-action-btn" title="Load streams from file">↥</button>
           <button onclick="saveCollectionToFile()" class="tab-action-btn" title="Save streams to file">↧</button>
@@ -116,7 +118,10 @@
         <button class="vis-mode-btn bpm-only" data-vis="flux" title="Spectral flux">⚡</button>
         <button class="vis-mode-btn bpm-only" data-vis="autocorr" title="Autocorrelation">∞</button>
         <button class="vis-mode-btn" data-vis="off" title="Visualiser off">✕</button>
-        <button id="visZoomBtn" class="vis-mode-btn" hidden>◐</button>
+        <span class="vis-right-group">
+          <button class="tip-btn tip-btn-bar" data-tip="visualiserModes" onclick="showTip('visualiserModes', this)" title="Tip">💡</button>
+          <button id="visZoomBtn" class="vis-mode-btn" hidden>◐</button>
+        </span>
       </div>
       <audio id="audioPlayer" crossorigin="anonymous" preload="auto"></audio>
       <div id="audioControls">
@@ -134,6 +139,7 @@
           <div id="streamTitle"></div>
         </div>
         <div id="playerButtons">
+          <button class="tip-btn tip-btn-bar" data-tip="playHistory" onclick="showTip('playHistory', this)" title="Tip">💡</button>
           <button class="settings-btn" onclick="showSettings()" title="Settings">⚙️</button>
           <button class="help-btn" onclick="showHelp()" title="Help">?<span class="new-dot" id="newDot" hidden></span></button>
         </div>
@@ -176,6 +182,12 @@
       <button class="modal-close" onclick="hideSettings()">×</button>
       <h2>Settings</h2>
       <div class="settings-group">
+        <label class="checkbox-label">
+          <input type="checkbox" id="showTipsCheckbox" onchange="updateShowTips(this.checked)">
+          Show Tips
+        </label>
+      </div>
+      <div class="settings-group" data-tip="afterPlayNow">
         <label class="setting-label">After Play Now:</label>
         <div class="setting-options">
           <label class="radio-label">
@@ -195,7 +207,7 @@
           </label>
         </div>
       </div>
-      <div class="settings-group">
+      <div class="settings-group" data-tip="hideColumns">
         <label class="checkbox-label">
           <input type="checkbox" id="hideBrowserColumnCheckbox" onchange="updateHideColumn('browser', this.checked)">
           Hide Browser (single-column only)
@@ -207,25 +219,25 @@
           Hide Queue (single-column only)
         </label>
       </div>
-      <div class="settings-group">
+      <div class="settings-group" data-tip="showHiddenMixes">
         <label class="checkbox-label">
           <input type="checkbox" id="showHiddenMixesCheckbox" onchange="updateShowHiddenMixes(this.checked)">
           Show Hidden Mixes
         </label>
       </div>
-      <div class="settings-group">
+      <div class="settings-group" data-tip="visualiser">
         <label class="checkbox-label">
           <input type="checkbox" id="visualiserEnabledCheckbox" onchange="updateVisualiserEnabled(this.checked)">
           Audio Visualiser
         </label>
       </div>
-      <div class="settings-group">
+      <div class="settings-group" data-tip="bpm">
         <label class="checkbox-label">
           <input type="checkbox" id="bpmEnabledCheckbox" onchange="updateBpmEnabled(this.checked)">
           BPM Detection
         </label>
       </div>
-      <div class="settings-group">
+      <div class="settings-group" data-tip="nickname">
         <label class="setting-label">Nickname:</label>
         <div style="display: flex; gap: 8px; align-items: center;">
           <input type="text" id="nicknameInput" maxlength="100"
@@ -235,7 +247,7 @@
             style="padding: 6px 10px; background: #3d3d5c; border: none; border-radius: 4px; color: #e0e0e0; cursor: pointer; font-size: 13px;">⟳</button>
         </div>
       </div>
-      <div class="settings-group">
+      <div class="settings-group" data-tip="timedFades">
         <label class="checkbox-label">
           <input type="checkbox" id="timedFadesCheckbox" onchange="updateTimedFadesEnabled(this.checked)">
           Timed Fades
@@ -369,6 +381,8 @@
   <script src="livestore.js?v=2"></script>
   <script src="liveui.js?v=2"></script>
   <script src="search.js?v=2"></script>
+  <script src="tips.js?v=2"></script>
+  <script src="settings.js?v=2"></script>
   <script src="browser.js?v=2"></script>
   <script src="restore.js?v=3"></script>
   <script>
