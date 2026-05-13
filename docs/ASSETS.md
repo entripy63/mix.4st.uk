@@ -112,6 +112,18 @@
 - **Used by**: player.html
 - **Features**: Search index querying, result rendering, sorting
 
+#### tips.js
+- **Purpose**: Data-driven tip popover system
+- **Dependencies**: core.js (storage)
+- **Used by**: player.html
+- **Features**: Tip registry mapping IDs to HTML content, shared popover element, auto-injection of 💡 buttons via `data-tip` attributes, show/hide respects `showTips` setting
+
+#### settings.js
+- **Purpose**: Settings and Help modal UI
+- **Dependencies**: core.js (storage, state), ping.js, visualiser.js, tempo.js, player.js, tips.js
+- **Used by**: player.html
+- **Features**: Settings modal (tips, BPM, visualiser, timed fades, column hiding, nickname, hidden mixes), Help modal, What's New version dot, timed fade scheduling UI
+
 #### restore.js
 - **Purpose**: Page state restoration on page load
 - **Dependencies**: core.js, browser.js
@@ -161,7 +173,7 @@
 - **Purpose**: Modal dialogs and confirmation UI
 - **Dependencies**: core.js
 - **Used by**: player.html
-- **Features**: Settings, help, confirmation dialogs, playlist guide, presets menu
+- **Features**: Confirmation dialogs, playlist guide, presets menu
 
 ---
 
@@ -320,6 +332,8 @@ modals.js         (modal dialogs)
 livestore.js      (collection persistence)
 liveui.js         (stream UI, rendering)
 search.js         (search index, results)
+tips.js           (data-driven tip popovers)
+settings.js       (settings & help modals, timed fades)
 browser.js        (DJ/All/Favorites modes, filtering)
 restore.js        (restore state on page load)
 player.html       (3-column SPA layout)
@@ -349,7 +363,7 @@ livestore.js ←─ (collection persistence)
     ↓
 liveui.js ←─ (stream rendering, guards)
     ↓
-player.html adds: mixes.js → queue.js → queuestore.js → browser.js → search.js → restore.js
+player.html adds: mixes.js → queue.js → queuestore.js → search.js → tips.js → settings.js → browser.js → restore.js
 ```
 
 ---
@@ -377,7 +391,9 @@ player.html adds: mixes.js → queue.js → queuestore.js → browser.js → sea
 │   ├── livedata.js         # Stream probing, parsing, persistence
 │   ├── livestore.js        # Collection persistence (save/load/clear)
 │   ├── liveui.js           # Stream rendering, drag-drop, guards
-│   └── modals.js           # Modal dialogs, confirmations, help
+│   ├── modals.js           # Modal dialogs, confirmations, help
+│   ├── tips.js             # Data-driven tip popovers
+│   └── settings.js         # Settings & help modals, timed fades
 │
 ├── player.html-Specific Modules
 │   ├── mixes.js            # Load DJ manifests
@@ -468,11 +484,13 @@ player.html adds: mixes.js → queue.js → queuestore.js → browser.js → sea
 | **livestore.js** | ~5KB | Collection persistence |
 | **liveui.js** | ~10KB | Stream rendering, UI |
 | **modals.js** | ~8KB | Modal dialogs |
+| **tips.js** | ~9KB | Tip popovers |
+| **settings.js** | ~6KB | Settings & help modals |
 | **eslint.config.js** | <1KB | Linter config |
 | **package.json** | <1KB | npm config |
-| **Total JS (player.html)** | **~155KB** | Uncompressed |
+| **Total JS (player.html)** | **~170KB** | Uncompressed |
 | **Total CSS** | **~95KB** | Uncompressed |
-| **Total (player.html)** | **~255KB** | JS + CSS + HTML |
+| **Total (player.html)** | **~270KB** | JS + CSS + HTML |
 
 ---
 
@@ -480,7 +498,7 @@ player.html adds: mixes.js → queue.js → queuestore.js → browser.js → sea
 
 ### mixes.4st.uk (DJ Mixes SPA)
 - **Entry Point**: player.html
-- **JavaScript Modules**: core, ping, mixes, queue, queuestore, stream-player, player, tempo, visualiser, player-mix, history, livedata, modals, livestore, liveui, search, browser, restore
+- **JavaScript Modules**: core, ping, mixes, queue, queuestore, stream-player, player, tempo, visualiser, player-mix, history, livedata, modals, livestore, liveui, search, tips, settings, browser, restore
 - **Stylesheets**: common.css, player.css
 - **Data**: DJ folders with manifests, track lists, cover art, waveform data
 - **Size**: ~200MB+ (includes all DJ music archives)
@@ -498,6 +516,8 @@ player.html adds: mixes.js → queue.js → queuestore.js → browser.js → sea
 - **history.js**: Play history tracking and resume from history
 - **ping.js**: Lightweight usage tracking
 - **queuestore.js**: Queue collection file I/O
+- **tips.js**: Tip popover system (data-driven, auto-injected icons)
+- **settings.js**: Settings and Help modal UI, timed fade scheduling
 - **player-mix.js, mixes.js, queue.js, browser.js, search.js, restore.js**: Player-specific modules
 
 ### Guard Callbacks

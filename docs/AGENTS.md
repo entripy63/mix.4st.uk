@@ -38,8 +38,10 @@
   - `modals.js` - Modal dialogs, settings, help, playlists
   - `livestore.js` - Stream collection persistence (save/load/clear)
   - `liveui.js` - Live stream UI rendering, preset browser, middle column tab switching
-  - `browser.js` - DJ/All/Live/Favorites browser modes, mode switching, keyboard shortcuts
   - `search.js` - Search functionality and results display
+  - `tips.js` - Data-driven tip popover system with auto-injected 💡 icons
+  - `settings.js` - Settings and Help modal UI, timed fades, What's New
+  - `browser.js` - DJ/All/Live/Favorites browser modes, mode switching, keyboard shortcuts
   - `restore.js` - Page state restoration on load
 
 ### Stylesheets
