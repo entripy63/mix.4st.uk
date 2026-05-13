@@ -195,4 +195,15 @@ function addAllToQueue() {
   if (typeof switchMiddleTab === 'function') switchMiddleTab('queue');
 }
 
+// Keyboard shortcuts for queue navigation (Ctrl+Arrow works even in inputs)
+document.addEventListener('keydown', function(e) {
+  if (e.code === 'ArrowDown' && e.ctrlKey) {
+    e.preventDefault();
+    skipNext();
+  } else if (e.code === 'ArrowUp' && e.ctrlKey) {
+    e.preventDefault();
+    skipPrev();
+  }
+});
+
 displayQueue();

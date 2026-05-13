@@ -154,6 +154,14 @@ document.getElementById('helpModal')?.addEventListener('click', function(e) {
   if (e.target === this) hideHelp();
 });
 
+// Keyboard shortcut to dismiss modals
+document.addEventListener('keydown', function(e) {
+  if (e.code === 'Escape') {
+    hideSettings();
+    hideHelp();
+  }
+});
+
 // ========== INIT ==========
 
 // Show "What's New" dot if user hasn't seen the current version

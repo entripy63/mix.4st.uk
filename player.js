@@ -129,6 +129,16 @@ function stopStream() {
   }
 }
 
+// Space bar toggles play/pause globally (except when typing in inputs)
+window.addEventListener('keydown', function(e) {
+  if (e.code === 'Space' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) && !e.target.isContentEditable) {
+    e.preventDefault();
+    e.stopPropagation();
+    playPauseBtn.click();
+    return false;
+  }
+}, true);
+
 // Play/Pause button click — unified for both streams and mixes
 playPauseBtn?.addEventListener('click', async function(e) {
   if (isPlaybackPaused()) {
