@@ -323,13 +323,27 @@ async function load(url) {
   aud.currentTime = 0;
 }
 
-async function play(url) {
+async function playAt(url, position = 0) {
   await load(url);
+
+  if (position > 0) {
+    if (aud.readyState < 1) {
+      await new Promise(resolve => {
+        aud.addEventListener('loadedmetadata', resolve, { once: true });
+      });
+    }
+    aud.currentTime = position;
+  }
+
   ensureAudioContext();
-  aud.play();
+  aud.play().catch(() => {});
   declick.fadeIn();
   startVisualiser();
   startTempo();
+}
+
+async function play(url) {
+  return playAt(url, 0);
 }
 
 // Timed Fades — two independent timers: fadeout (pause) and fadein (play)

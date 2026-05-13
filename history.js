@@ -1,6 +1,6 @@
 // history.js - Play History
 // Dependencies: core.js (state, storage, formatTime, escapeHtml, getMixId, aud)
-//               player.js (playStream)
+//               player.js (playStream, playAt)
 //               player-mix.js (playMix, getDJName)
 
 const playHistory = {
@@ -195,8 +195,6 @@ async function resumeFromHistory(index) {
 
     const savedPosition = entry.position || 0;
 
-    // Use load-then-seek-then-play pattern (like restore.js) because
-    // play() resets currentTime to 0 after the async declick fade.
     const details = await fetchMixDetails(mix);
     if (details.audioSrc) {
       // Skip the historyRecord() call inside playMix — we already recorded above
@@ -222,23 +220,7 @@ async function resumeFromHistory(index) {
       loadPeaks(details.peaks);
       displayQueue();
 
-      // Load audio without playing, seek, then play
-      await load(details.audioSrc);
-
-      const startPlayback = () => {
-        aud.currentTime = savedPosition;
-        ensureAudioContext();
-        aud.play().catch(() => {});
-        declick.fadeIn();
-        startVisualiser();
-        startTempo();
-      };
-
-      if (aud.readyState >= 1) {
-        startPlayback();
-      } else {
-        aud.addEventListener('loadedmetadata', startPlayback, { once: true });
-      }
+      await playAt(details.audioSrc, savedPosition);
     }
   }
 

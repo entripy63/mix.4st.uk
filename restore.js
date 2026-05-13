@@ -80,40 +80,24 @@ document.getElementById('fileInput').addEventListener('change', async function (
       }
       const details = await fetchMixDetails(mix);
       if (details.audioSrc) {
-        state.isRestoring = true;
-        load(details.audioSrc);
         const savedTime = storage.getNum('playerTime', 0);
         const wasPlaying = storage.getBool('wasPlaying', false);
 
-        // Set currentTime after metadata is loaded
-        const handleMetadataLoaded = () => {
-          aud.currentTime = savedTime;
-          aud.removeEventListener('loadedmetadata', handleMetadataLoaded);
-          state.isRestoring = false;
-
-          if (wasPlaying) {
-            ensureAudioContext();
-            aud.play().catch(() => { });
-            declick.fadeIn();
-            startVisualiser();
-            startTempo();
-          }
-        };
-        aud.addEventListener('loadedmetadata', handleMetadataLoaded, { once: true });
-
-        // Fallback in case loadedmetadata never fires
-        setTimeout(() => {
-          if (state.isRestoring) {
-            state.isRestoring = false;
-            if (wasPlaying && aud.paused) {
-              ensureAudioContext();
-              aud.play().catch(() => { });
-              declick.fadeIn();
-              startVisualiser();
-              startTempo();
+        state.isRestoring = true;
+        if (wasPlaying) {
+          await playAt(details.audioSrc, savedTime);
+        } else {
+          await load(details.audioSrc);
+          if (savedTime > 0) {
+            if (aud.readyState < 1) {
+              await new Promise(resolve => {
+                aud.addEventListener('loadedmetadata', resolve, { once: true });
+              });
             }
+            aud.currentTime = savedTime;
           }
-        }, 2000);
+        }
+        state.isRestoring = false;
 
         state.currentMix = mix;
         state.currentDownloadLinks = details.downloadLinks || [];
