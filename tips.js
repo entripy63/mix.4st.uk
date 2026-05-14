@@ -96,7 +96,9 @@ function showTip(tipId, btn) {
   const inner = tipPopover.querySelector('.tip-popover-content');
   inner.innerHTML = content;
   tipPopover.style.display = '';
+  if (activeTipBtn) activeTipBtn.title = 'Tip';
   activeTipBtn = btn;
+  btn.title = '';
 
   // Position near the button
   requestAnimationFrame(() => {
@@ -125,6 +127,7 @@ function hideTip() {
   if (tipPopover) {
     tipPopover.style.display = 'none';
   }
+  if (activeTipBtn) activeTipBtn.title = 'Tip';
   activeTipBtn = null;
 }
 
