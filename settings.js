@@ -27,6 +27,7 @@ function showSettings() {
    document.getElementById('showHiddenMixesCheckbox').checked = state.showHiddenMixes;
    document.getElementById('visualiserEnabledCheckbox').checked = storage.getBool('visualiserEnabled', true);
    document.getElementById('bpmEnabledCheckbox').checked = storage.getBool('bpmEnabled', true);
+   document.getElementById('meterEnabledCheckbox').checked = storage.getBool('meterEnabled');
    document.getElementById('nicknameInput').value = beaconNick();
    // Timed Fades settings
    const tfEnabled = storage.getBool('timedFadesEnabled');

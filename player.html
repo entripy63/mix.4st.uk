@@ -112,6 +112,7 @@
         <canvas id="visualiserCanvas"></canvas>
       </div>
       <div id="waveformResizeHandle"></div>
+      <canvas id="meterCanvas"></canvas>
       <div id="visualiserModes">
         <button class="vis-mode-btn active" data-vis="spectrum" title="Spectrum">▮▮▮</button>
         <button class="vis-mode-btn" data-vis="waveform" title="Waveform">∿</button>
@@ -235,6 +236,12 @@
         <label class="checkbox-label">
           <input type="checkbox" id="bpmEnabledCheckbox" onchange="updateBpmEnabled(this.checked)">
           BPM Detection
+        </label>
+      </div>
+      <div class="settings-group">
+        <label class="checkbox-label">
+          <input type="checkbox" id="meterEnabledCheckbox" onchange="setMeterEnabled(this.checked)">
+          Output Level Meter (EBU R128)
         </label>
       </div>
       <div class="settings-group" data-tip="nickname">
@@ -374,6 +381,7 @@
   <script src="player.js?v=2"></script>
   <script src="tempo.js?v=2"></script>
   <script src="visualiser.js?v=2"></script>
+  <script src="meter.js?v=2"></script>
   <script src="player-mix.js?v=2"></script>
   <script src="history.js?v=2"></script>
   <script src="livedata.js?v=2"></script>

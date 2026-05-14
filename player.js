@@ -56,6 +56,7 @@ async function pauseStream() {
   await declick.fadeOut();
   streamStop();
   stopVisualiser();
+  stopMeter();
   stopTempo();
   updatePlayPauseBtn();
   updateTimeDisplay();
@@ -72,6 +73,7 @@ function resumeStream() {
     streamPlay(state.streamUrl, state.streamDisplayText);
     declick.fadeIn();
     startVisualiser();
+    startMeter();
     startTempo();
     updatePlayPauseBtn();
     updateTimeDisplay();
@@ -100,6 +102,7 @@ function playStream(url, displayText, autoplay = false) {
 
   // Clean up any prior mix visualiser/tempo state (e.g. paused mix worker)
   stopVisualiser();
+  stopMeter();
   stopTempo();
 
   if (autoplay) {
@@ -107,6 +110,7 @@ function playStream(url, displayText, autoplay = false) {
     streamPlay(url, displayText);
     declick.fadeIn();
     startVisualiser();
+    startMeter();
     startTempo();
   }
   
@@ -154,6 +158,7 @@ playPauseBtn?.addEventListener('click', async function(e) {
       }
       declick.fadeIn();
       startVisualiser();
+      startMeter();
       resumeTempo();
     }
   } else {
@@ -163,6 +168,7 @@ playPauseBtn?.addEventListener('click', async function(e) {
       await declick.fadeOut();
       aud.pause();
       pauseVisualiser();
+      pauseMeter();
       pauseTempo();
     }
   }
@@ -264,6 +270,7 @@ aud.addEventListener("ended", async function () {
      });
    }
    stopVisualiser();
+   stopMeter();
    stopTempo();
    // Reset history position so Resume Now replays from the start
    if (state.currentMix) {
@@ -321,6 +328,7 @@ async function load(url) {
   await streamStop();
   aud.pause();
   stopVisualiser();
+  stopMeter();
   stopTempo();
   
   // Exit stream mode when loading regular content
@@ -349,6 +357,7 @@ async function playAt(url, position = 0) {
   aud.play().catch(() => {});
   declick.fadeIn();
   startVisualiser();
+  startMeter();
   startTempo();
 }
 
@@ -482,6 +491,7 @@ const timedFades = {
         aud.play().catch(() => {});
         declick.fadeIn();
         startVisualiser();
+        startMeter();
         resumeTempo();
       } else {
         // Nothing to play — restore and bail
@@ -526,6 +536,7 @@ const timedFades = {
         declick.fadeOut().then(() => {
           aud.pause();
           stopVisualiser();
+          stopMeter();
           pauseTempo();
         });
       }
