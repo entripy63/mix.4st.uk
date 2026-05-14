@@ -447,14 +447,44 @@ button:active {
    margin-bottom: 4px;
 }
 
+.settings-modal-content {
+   max-width: 640px;
+   max-height: 90vh;
+   overflow-y: auto;
+}
+
+.settings-columns {
+   display: flex;
+   gap: 24px;
+}
+
+.settings-col {
+   flex: 1;
+   min-width: 0;
+}
+
+.settings-separator {
+   border: none;
+   border-top: 1px solid #3d3d5c;
+   margin: 12px 0;
+}
+
 .settings-group {
    margin-bottom: 16px;
 }
 
-.settings-group:not(:first-child) {
+.settings-col > .settings-group:not(:first-child) {
    margin-top: 16px;
-   padding-top: 16px;
-   border-top: 1px solid #3d3d5c;
+}
+
+@media (max-width: 520px) {
+   .settings-modal-content {
+      max-width: 400px;
+   }
+   .settings-columns {
+      flex-direction: column;
+      gap: 0;
+   }
 }
 
 .setting-label {

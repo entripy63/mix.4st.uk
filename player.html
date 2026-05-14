@@ -179,135 +179,145 @@
   </div>
 
   <div id="settingsModal" class="modal" style="display: none;">
-    <div class="modal-content">
+    <div class="modal-content settings-modal-content">
       <button class="modal-close" onclick="hideSettings()">×</button>
       <h2>Settings</h2>
-      <div class="settings-group">
-        <label class="checkbox-label">
-          <input type="checkbox" id="showTipsCheckbox" onchange="updateShowTips(this.checked)">
-          Show Tips
-        </label>
-      </div>
-      <div class="settings-group" data-tip="afterPlayNow">
-        <label class="setting-label">After Play Now:</label>
-        <div class="setting-options">
-          <label class="radio-label">
-            <input type="radio" name="afterPlayNow" value="stop"
-              onchange="updateSetting('afterPlayNow', this.value)">
-            Stop
-          </label>
-          <label class="radio-label">
-            <input type="radio" name="afterPlayNow" value="loop"
-              onchange="updateSetting('afterPlayNow', this.value)">
-            Loop
-          </label>
-          <label class="radio-label">
-            <input type="radio" name="afterPlayNow" value="continue"
-              onchange="updateSetting('afterPlayNow', this.value)">
-            Continue with Queue
-          </label>
+      <div class="settings-columns">
+        <div class="settings-col">
+          <div class="settings-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="meterEnabledCheckbox" onchange="setMeterEnabled(this.checked)">
+              Output Level Meter (EBU R128)
+            </label>
+          </div>
+          <div class="settings-group" data-tip="bpm">
+            <label class="checkbox-label">
+              <input type="checkbox" id="bpmEnabledCheckbox" onchange="updateBpmEnabled(this.checked)">
+              BPM Detection
+            </label>
+          </div>
+          <div class="settings-group" data-tip="visualiser">
+            <label class="checkbox-label">
+              <input type="checkbox" id="visualiserEnabledCheckbox" onchange="updateVisualiserEnabled(this.checked)">
+              Audio Visualiser
+            </label>
+          </div>
+          <hr class="settings-separator">
+          <div class="settings-group" data-tip="hideColumns">
+            <label class="checkbox-label">
+              <input type="checkbox" id="hideBrowserColumnCheckbox" onchange="updateHideColumn('browser', this.checked)">
+              Hide Browser (single-column only)
+            </label>
+          </div>
+          <div class="settings-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="hideQueueColumnCheckbox" onchange="updateHideColumn('queue', this.checked)">
+              Hide Queue (single-column only)
+            </label>
+          </div>
+          <hr class="settings-separator">
+          <div class="settings-group" data-tip="showHiddenMixes">
+            <label class="checkbox-label">
+              <input type="checkbox" id="showHiddenMixesCheckbox" onchange="updateShowHiddenMixes(this.checked)">
+              Show Hidden Mixes
+            </label>
+          </div>
+          <hr class="settings-separator">
+          <div class="settings-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="showTipsCheckbox" onchange="updateShowTips(this.checked)">
+              Show Tips
+            </label>
+          </div>
         </div>
-      </div>
-      <div class="settings-group" data-tip="hideColumns">
-        <label class="checkbox-label">
-          <input type="checkbox" id="hideBrowserColumnCheckbox" onchange="updateHideColumn('browser', this.checked)">
-          Hide Browser (single-column only)
-        </label>
-      </div>
-      <div class="settings-group">
-        <label class="checkbox-label">
-          <input type="checkbox" id="hideQueueColumnCheckbox" onchange="updateHideColumn('queue', this.checked)">
-          Hide Queue (single-column only)
-        </label>
-      </div>
-      <div class="settings-group" data-tip="showHiddenMixes">
-        <label class="checkbox-label">
-          <input type="checkbox" id="showHiddenMixesCheckbox" onchange="updateShowHiddenMixes(this.checked)">
-          Show Hidden Mixes
-        </label>
-      </div>
-      <div class="settings-group" data-tip="visualiser">
-        <label class="checkbox-label">
-          <input type="checkbox" id="visualiserEnabledCheckbox" onchange="updateVisualiserEnabled(this.checked)">
-          Audio Visualiser
-        </label>
-      </div>
-      <div class="settings-group" data-tip="bpm">
-        <label class="checkbox-label">
-          <input type="checkbox" id="bpmEnabledCheckbox" onchange="updateBpmEnabled(this.checked)">
-          BPM Detection
-        </label>
-      </div>
-      <div class="settings-group">
-        <label class="checkbox-label">
-          <input type="checkbox" id="meterEnabledCheckbox" onchange="setMeterEnabled(this.checked)">
-          Output Level Meter (EBU R128)
-        </label>
-      </div>
-      <div class="settings-group" data-tip="nickname">
-        <label class="setting-label">Nickname:</label>
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <input type="text" id="nicknameInput" maxlength="100"
-            style="flex: 1; padding: 6px 10px; background: #1a1a2e; border: 1px solid #3d3d5c; border-radius: 4px; color: #e0e0e0; font-size: 14px;"
-            onchange="setBeaconNick(this.value.trim() || beaconNick())">
-          <button onclick="document.getElementById('nicknameInput').value = generateBeaconNick(); setBeaconNick(document.getElementById('nicknameInput').value);"
-            style="padding: 6px 10px; background: #3d3d5c; border: none; border-radius: 4px; color: #e0e0e0; cursor: pointer; font-size: 13px;">⟳</button>
-        </div>
-      </div>
-      <div class="settings-group" data-tip="timedFades">
-        <label class="checkbox-label">
-          <input type="checkbox" id="timedFadesCheckbox" onchange="updateTimedFadesEnabled(this.checked)">
-          Timed Fades
-        </label>
-        <div id="timedFadesOptions" class="fadeout-options" style="display:none">
-          <div class="fadeout-row">
-            <label>
-              <select id="tfType" onchange="switchTimedFadeType(this.value)">
-                <option value="fadeout">Fadeout then Pause</option>
-                <option value="fadein">Play then Fade In</option>
-              </select>
-            </label>
-            <label class="checkbox-label tf-active-label">
-              <input type="checkbox" id="tfActive" onchange="updateTimedFadeSetting()"> Active
-            </label>
+        <div class="settings-col">
+          <div class="settings-group" data-tip="afterPlayNow">
+            <label class="setting-label">After Play Now:</label>
+            <div class="setting-options">
+              <label class="radio-label">
+                <input type="radio" name="afterPlayNow" value="stop"
+                  onchange="updateSetting('afterPlayNow', this.value)">
+                Stop
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="afterPlayNow" value="loop"
+                  onchange="updateSetting('afterPlayNow', this.value)">
+                Loop
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="afterPlayNow" value="continue"
+                  onchange="updateSetting('afterPlayNow', this.value)">
+                Continue with Queue
+              </label>
+            </div>
           </div>
-          <div class="fadeout-row">
-            <label>Fade:
-              <select id="tfDuration" onchange="updateTimedFadeSetting()">
-                <option value="1">1s</option>
-                <option value="2">2s</option>
-                <option value="3">3s</option>
-                <option value="5">5s</option>
-                <option value="10">10s</option>
-                <option value="20">20s</option>
-                <option value="30">30s</option>
-                <option value="60">60s</option>
-              </select>
+          <div class="settings-group" data-tip="timedFades">
+            <label class="checkbox-label">
+              <input type="checkbox" id="timedFadesCheckbox" onchange="updateTimedFadesEnabled(this.checked)">
+              Timed Fades
             </label>
-            <label>
-              <select id="tfMode" onchange="updateTimedFadeSetting()">
-                <option value="at">At</option>
-                <option value="after">After</option>
-              </select>
-            </label>
-            <input type="time" id="tfTime" value="23:00" onchange="updateTimedFadeSetting()">
+            <div id="timedFadesOptions" class="fadeout-options" style="display:none">
+              <div class="fadeout-row">
+                <label>
+                  <select id="tfType" onchange="switchTimedFadeType(this.value)">
+                    <option value="fadeout">Fadeout then Pause</option>
+                    <option value="fadein">Play then Fade In</option>
+                  </select>
+                </label>
+                <label class="checkbox-label tf-active-label">
+                  <input type="checkbox" id="tfActive" onchange="updateTimedFadeSetting()"> Active
+                </label>
+              </div>
+              <div class="fadeout-row">
+                <label>Fade:
+                  <select id="tfDuration" onchange="updateTimedFadeSetting()">
+                    <option value="1">1s</option>
+                    <option value="2">2s</option>
+                    <option value="3">3s</option>
+                    <option value="5">5s</option>
+                    <option value="10">10s</option>
+                    <option value="20">20s</option>
+                    <option value="30">30s</option>
+                    <option value="60">60s</option>
+                  </select>
+                </label>
+                <label>
+                  <select id="tfMode" onchange="updateTimedFadeSetting()">
+                    <option value="at">At</option>
+                    <option value="after">After</option>
+                  </select>
+                </label>
+                <input type="time" id="tfTime" value="23:00" onchange="updateTimedFadeSetting()">
+              </div>
+              <div class="fadeout-row" id="tfRepeatRow">
+                <label>Repeat:
+                  <select id="tfRepeat" onchange="updateTimedFadeSetting()">
+                    <option value="none">None</option>
+                    <option value="weekdays">Week Days</option>
+                    <option value="all">All Days</option>
+                  </select>
+                </label>
+              </div>
+              <div class="fadeout-row" id="tfStreamRow" style="display:none">
+                <label class="checkbox-label tf-active-label">
+                  <input type="checkbox" id="tfPlayStream" onchange="updateTimedFadeSetting()">
+                  Play First User Stream
+                </label>
+              </div>
+              <div id="tfStatus" class="fadeout-status"></div>
+            </div>
           </div>
-          <div class="fadeout-row" id="tfRepeatRow">
-            <label>Repeat:
-              <select id="tfRepeat" onchange="updateTimedFadeSetting()">
-                <option value="none">None</option>
-                <option value="weekdays">Week Days</option>
-                <option value="all">All Days</option>
-              </select>
-            </label>
+          <hr class="settings-separator">
+          <div class="settings-group" data-tip="nickname">
+            <label class="setting-label">Nickname:</label>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="text" id="nicknameInput" maxlength="100"
+                style="flex: 1; padding: 6px 10px; background: #1a1a2e; border: 1px solid #3d3d5c; border-radius: 4px; color: #e0e0e0; font-size: 14px;"
+                onchange="setBeaconNick(this.value.trim() || beaconNick())">
+              <button onclick="document.getElementById('nicknameInput').value = generateBeaconNick(); setBeaconNick(document.getElementById('nicknameInput').value);"
+                style="padding: 6px 10px; background: #3d3d5c; border: none; border-radius: 4px; color: #e0e0e0; cursor: pointer; font-size: 13px;">⟳</button>
+            </div>
           </div>
-          <div class="fadeout-row" id="tfStreamRow" style="display:none">
-            <label class="checkbox-label tf-active-label">
-              <input type="checkbox" id="tfPlayStream" onchange="updateTimedFadeSetting()">
-              Play First User Stream
-            </label>
-          </div>
-          <div id="tfStatus" class="fadeout-status"></div>
         </div>
       </div>
     </div>
