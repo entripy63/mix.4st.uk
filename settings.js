@@ -5,7 +5,7 @@
 //               tips.js (initTips)
 
 // What's New version — bump this when adding new release notes
-const WHATS_NEW_VERSION = '2026-05';
+const WHATS_NEW_VERSION = '2026-05-14';
 
 function dismissNewDot() {
    storage.set('whatsNewSeen', WHATS_NEW_VERSION);
