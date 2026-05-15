@@ -591,7 +591,13 @@ const timedFades = {
       const activeEl = document.getElementById('tfActive');
       if (activeEl) activeEl.checked = storage.getBool(`tf.${type}.active`);
     }
+    // Sync new modal active checkbox
+    const prefix = type === 'fadeout' ? 'tfFadeout' : 'tfFadein';
+    const newActiveEl = document.getElementById(`${prefix}Active`);
+    if (newActiveEl) newActiveEl.checked = storage.getBool(`tf.${type}.active`);
     this.updateStatus();
+    if (typeof updateTimedFadesBtn === 'function') updateTimedFadesBtn();
+    if (typeof updateTFStatuses === 'function') updateTFStatuses();
   },
 
   _cancelTimer(type) {

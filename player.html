@@ -127,6 +127,7 @@
       <audio id="audioPlayer" crossorigin="anonymous" preload="auto"></audio>
       <div id="audioControls">
         <button id="playPauseBtn" class="control-btn" title="Play/Pause (Space)">▶</button>
+        <button id="timedFadesBtn" class="control-btn tf-btn" onclick="showTimedFadesModal()" title="Timed Fades">🕐</button>
         <span id="timeDisplay">0:00 / 0:00</span>
         <span id="bpmDisplay" style="display:none"></span>
         <div id="volumeControl">
@@ -251,61 +252,8 @@
               </label>
             </div>
           </div>
-          <div class="settings-group" data-tip="timedFades">
-            <label class="checkbox-label">
-              <input type="checkbox" id="timedFadesCheckbox" onchange="updateTimedFadesEnabled(this.checked)">
-              Timed Fades
-            </label>
-            <div id="timedFadesOptions" class="fadeout-options" style="display:none">
-              <div class="fadeout-row">
-                <label>
-                  <select id="tfType" onchange="switchTimedFadeType(this.value)">
-                    <option value="fadeout">Fadeout then Pause</option>
-                    <option value="fadein">Play then Fade In</option>
-                  </select>
-                </label>
-                <label class="checkbox-label tf-active-label">
-                  <input type="checkbox" id="tfActive" onchange="updateTimedFadeSetting()"> Active
-                </label>
-              </div>
-              <div class="fadeout-row">
-                <label>Fade:
-                  <select id="tfDuration" onchange="updateTimedFadeSetting()">
-                    <option value="1">1s</option>
-                    <option value="2">2s</option>
-                    <option value="3">3s</option>
-                    <option value="5">5s</option>
-                    <option value="10">10s</option>
-                    <option value="20">20s</option>
-                    <option value="30">30s</option>
-                    <option value="60">60s</option>
-                  </select>
-                </label>
-                <label>
-                  <select id="tfMode" onchange="updateTimedFadeSetting()">
-                    <option value="at">At</option>
-                    <option value="after">After</option>
-                  </select>
-                </label>
-                <input type="time" id="tfTime" value="23:00" onchange="updateTimedFadeSetting()">
-              </div>
-              <div class="fadeout-row" id="tfRepeatRow">
-                <label>Repeat:
-                  <select id="tfRepeat" onchange="updateTimedFadeSetting()">
-                    <option value="none">None</option>
-                    <option value="weekdays">Week Days</option>
-                    <option value="all">All Days</option>
-                  </select>
-                </label>
-              </div>
-              <div class="fadeout-row" id="tfStreamRow" style="display:none">
-                <label class="checkbox-label tf-active-label">
-                  <input type="checkbox" id="tfPlayStream" onchange="updateTimedFadeSetting()">
-                  Play First User Stream
-                </label>
-              </div>
-              <div id="tfStatus" class="fadeout-status"></div>
-            </div>
+          <div class="settings-group">
+            <button class="tf-settings-link" onclick="hideSettings(); showTimedFadesModal();">🕐 Timed Fades...</button>
           </div>
           <hr class="settings-separator">
           <div class="settings-group" data-tip="nickname">
@@ -318,6 +266,105 @@
                 style="padding: 6px 10px; background: #3d3d5c; border: none; border-radius: 4px; color: #e0e0e0; cursor: pointer; font-size: 13px;">⟳</button>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="timedFadesModal" class="modal" style="display: none;">
+    <div class="modal-content tf-modal-content">
+      <button class="modal-close" onclick="hideTimedFadesModal()">×</button>
+      <h2>Timed Fades</h2>
+      <div class="tf-master">
+        <label class="checkbox-label">
+          <input type="checkbox" id="tfMasterCheckbox" onchange="updateTimedFadesEnabled(this.checked)">
+          Enable Timed Fades
+        </label>
+      </div>
+      <div class="tf-columns">
+        <div class="tf-col">
+          <h3 class="tf-col-heading">⏸ Fadeout then Pause</h3>
+          <div class="tf-field">
+            <label class="checkbox-label tf-active-label">
+              <input type="checkbox" id="tfFadeoutActive" onchange="updateTFField('fadeout')"> Active
+            </label>
+          </div>
+          <div class="tf-field">
+            <label>Fade:
+              <select id="tfFadeoutDuration" onchange="updateTFField('fadeout')">
+                <option value="1">1s</option>
+                <option value="2">2s</option>
+                <option value="3">3s</option>
+                <option value="5">5s</option>
+                <option value="10">10s</option>
+                <option value="20">20s</option>
+                <option value="30">30s</option>
+                <option value="60">60s</option>
+              </select>
+            </label>
+            <label>
+              <select id="tfFadeoutMode" onchange="updateTFField('fadeout')">
+                <option value="at">At</option>
+                <option value="after">After</option>
+              </select>
+            </label>
+            <input type="time" id="tfFadeoutTime" value="23:00" onchange="updateTFField('fadeout')">
+          </div>
+          <div class="tf-field" id="tfFadeoutRepeatRow">
+            <label>Repeat:
+              <select id="tfFadeoutRepeat" onchange="updateTFField('fadeout')">
+                <option value="none">None</option>
+                <option value="weekdays">Week Days</option>
+                <option value="all">All Days</option>
+              </select>
+            </label>
+          </div>
+          <div id="tfFadeoutStatus" class="fadeout-status"></div>
+        </div>
+        <div class="tf-col">
+          <h3 class="tf-col-heading">▶ Play then Fade In</h3>
+          <div class="tf-field">
+            <label class="checkbox-label tf-active-label">
+              <input type="checkbox" id="tfFadeinActive" onchange="updateTFField('fadein')"> Active
+            </label>
+          </div>
+          <div class="tf-field">
+            <label>Fade:
+              <select id="tfFadeinDuration" onchange="updateTFField('fadein')">
+                <option value="1">1s</option>
+                <option value="2">2s</option>
+                <option value="3">3s</option>
+                <option value="5">5s</option>
+                <option value="10">10s</option>
+                <option value="20">20s</option>
+                <option value="30">30s</option>
+                <option value="60">60s</option>
+              </select>
+            </label>
+            <label>
+              <select id="tfFadeinMode" onchange="updateTFField('fadein')">
+                <option value="at">At</option>
+                <option value="after">After</option>
+              </select>
+            </label>
+            <input type="time" id="tfFadeinTime" value="07:00" onchange="updateTFField('fadein')">
+          </div>
+          <div class="tf-field" id="tfFadeinRepeatRow">
+            <label>Repeat:
+              <select id="tfFadeinRepeat" onchange="updateTFField('fadein')">
+                <option value="none">None</option>
+                <option value="weekdays">Week Days</option>
+                <option value="all">All Days</option>
+              </select>
+            </label>
+          </div>
+          <div class="tf-field" id="tfFadeinStreamRow">
+            <label class="checkbox-label tf-active-label">
+              <input type="checkbox" id="tfFadeinPlayStream" onchange="updateTFField('fadein')">
+              Play First User Stream
+            </label>
+          </div>
+          <div id="tfFadeinStatus" class="fadeout-status"></div>
         </div>
       </div>
     </div>
@@ -373,6 +420,7 @@
       <div class="whats-new">
         <h3>May 2026</h3>
         <ul>
+          <li><strong>Timed Fades</strong> — 🕐 button on the player controls opens a dedicated Timed Fades panel, showing fadeout and fade-in settings side by side.</li>
           <li><strong>Output Level Meter</strong> can be enabled in ⚙️ Settings.</li>
           <li><strong>Play History</strong> appears underneath Player controls.</li>
           <li><strong>Hide Browser / Queue on mobile</strong> — New settings to hide the Browser and Queue columns in single-column (mobile) layout, for a cleaner listening experience using Play History. Find them in ⚙️ Settings.</li>
