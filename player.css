@@ -1126,6 +1126,10 @@ td:last-child {
   margin-bottom: 4px;
 }
 
+#rightTabBar:not([style*="none"]) ~ #playHistory .history-header {
+  display: none;
+}
+
 .history-position {
   color: var(--text-muted);
   font-size: 12px;
