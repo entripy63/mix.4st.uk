@@ -214,61 +214,15 @@ test('keyboard ctrl shortcuts switch mode and queue position', async ({ page }) 
   await expect(page.locator('.mode-btn.active[data-mode="dj"]')).toBeVisible();
 });
 
-test('play now end behavior: stop leaves play now session idle', async ({ page }) => {
+test('after mix ends: stop after current prevents queue advancement', async ({ page }) => {
   const result = await page.evaluate(async () => {
-    storage.set('afterPlayNow', 'stop');
-    state.isStream = false;
-    state.playingFromPlayNow = true;
-    state.currentQueueIndex = -1;
-    aud.currentTime = 42;
-
-    aud.dispatchEvent(new Event('ended'));
-    await new Promise(resolve => setTimeout(resolve, 20));
-
-    return {
-      currentQueueIndex: state.currentQueueIndex,
-      playingFromPlayNow: state.playingFromPlayNow,
-      currentTime: aud.currentTime
-    };
-  });
-
-  expect(result.currentQueueIndex).toBe(-1);
-  expect(result.playingFromPlayNow).toBe(true);
-  expect(result.currentTime).toBe(42);
-});
-
-test('play now end behavior: loop restarts playback from zero', async ({ page }) => {
-  const result = await page.evaluate(async () => {
-    storage.set('afterPlayNow', 'loop');
-    state.isStream = false;
-    state.playingFromPlayNow = true;
-    aud.currentTime = 130;
-
-    aud.dispatchEvent(new Event('ended'));
-    await new Promise(resolve => setTimeout(resolve, 20));
-
-    return {
-      currentTime: aud.currentTime,
-      paused: aud.paused
-    };
-  });
-
-  expect(result.currentTime).toBe(0);
-  expect(result.paused).toBe(false);
-});
-
-test('play now end behavior: continue restores previous queue and time', async ({ page }) => {
-  const result = await page.evaluate(async () => {
-    storage.set('afterPlayNow', 'continue');
+    storage.set('afterMixEnds', 'stop');
     state.isStream = false;
     state.queue = [
       { name: 'Queue A', isLocal: true, queueId: 11 },
       { name: 'Queue B', isLocal: true, queueId: 12 }
     ];
-    state.currentQueueIndex = -1;
-    state.playingFromPlayNow = true;
-    state.previousQueueIndex = 1;
-    state.previousQueueTime = 73;
+    state.currentQueueIndex = 0;
 
     window.__playFromQueueCalls = [];
     const originalPlayFromQueue = window.playFromQueue;
@@ -276,14 +230,44 @@ test('play now end behavior: continue restores previous queue and time', async (
       window.__playFromQueueCalls.push(index);
     };
 
-    aud.currentTime = 150;
     aud.dispatchEvent(new Event('ended'));
     await new Promise(resolve => setTimeout(resolve, 20));
 
     const outcome = {
       currentQueueIndex: state.currentQueueIndex,
-      playingFromPlayNow: state.playingFromPlayNow,
-      currentTime: aud.currentTime,
+      calls: [...window.__playFromQueueCalls]
+    };
+
+    window.playFromQueue = originalPlayFromQueue;
+    delete window.__playFromQueueCalls;
+    return outcome;
+  });
+
+  expect(result.currentQueueIndex).toBe(0);
+  expect(result.calls).toEqual([]);
+});
+
+test('after mix ends: continue advances queue (default)', async ({ page }) => {
+  const result = await page.evaluate(async () => {
+    storage.remove('afterMixEnds');
+    state.isStream = false;
+    state.queue = [
+      { name: 'Queue A', isLocal: true, queueId: 11 },
+      { name: 'Queue B', isLocal: true, queueId: 12 }
+    ];
+    state.currentQueueIndex = 0;
+
+    window.__playFromQueueCalls = [];
+    const originalPlayFromQueue = window.playFromQueue;
+    window.playFromQueue = async (index) => {
+      window.__playFromQueueCalls.push(index);
+    };
+
+    aud.dispatchEvent(new Event('ended'));
+    await new Promise(resolve => setTimeout(resolve, 20));
+
+    const outcome = {
+      currentQueueIndex: state.currentQueueIndex,
       calls: [...window.__playFromQueueCalls]
     };
 
@@ -293,7 +277,54 @@ test('play now end behavior: continue restores previous queue and time', async (
   });
 
   expect(result.currentQueueIndex).toBe(1);
-  expect(result.playingFromPlayNow).toBe(false);
-  expect(result.currentTime).toBe(73);
   expect(result.calls).toEqual([1]);
+});
+
+test('after mix ends: continue starts queue when not in queue', async ({ page }) => {
+  const result = await page.evaluate(async () => {
+    storage.remove('afterMixEnds');
+    state.isStream = false;
+    state.queue = [
+      { name: 'Queue A', isLocal: true, queueId: 11 },
+      { name: 'Queue B', isLocal: true, queueId: 12 }
+    ];
+    state.currentQueueIndex = -1;
+
+    window.__playFromQueueCalls = [];
+    const originalPlayFromQueue = window.playFromQueue;
+    window.playFromQueue = async (index) => {
+      window.__playFromQueueCalls.push(index);
+    };
+
+    aud.dispatchEvent(new Event('ended'));
+    await new Promise(resolve => setTimeout(resolve, 20));
+
+    const outcome = {
+      currentQueueIndex: state.currentQueueIndex,
+      calls: [...window.__playFromQueueCalls]
+    };
+
+    window.playFromQueue = originalPlayFromQueue;
+    delete window.__playFromQueueCalls;
+    return outcome;
+  });
+
+  expect(result.currentQueueIndex).toBe(0);
+  expect(result.calls).toEqual([0]);
+});
+
+test('stop after current button toggles state', async ({ page }) => {
+  const result = await page.evaluate(() => {
+    storage.remove('afterMixEnds');
+    toggleStopAfter();
+    const afterFirst = storage.get('afterMixEnds');
+    const btnActive = document.getElementById('stopAfterBtn').classList.contains('active');
+    toggleStopAfter();
+    const afterSecond = storage.get('afterMixEnds');
+    return { afterFirst, btnActive, afterSecond };
+  });
+
+  expect(result.afterFirst).toBe('stop');
+  expect(result.btnActive).toBe(true);
+  expect(result.afterSecond).toBe('continue');
 });

@@ -9,12 +9,7 @@ const TIPS = {
     <p><strong>Play then Fade In</strong> starts playback at zero volume and slowly raises it — a gentle way to wake up. Enable "Play First User Stream" to auto-start a different stream to that which you fell sleep to.</p>
     <p>Use <strong>At</strong> to trigger at a clock time (e.g. 23:00), or <strong>After</strong> to trigger after a delay from now. Set <strong>Repeat</strong> to run it every day or on weekdays only.</p>
   `,
-  afterPlayNow: `
-    <p>Controls what happens after a mix you played directly (via "Play Now") finishes.</p>
-    <p><strong>Stop</strong> — Playback stops after the mix ends.</p>
-    <p><strong>Loop</strong> — The same mix repeats.</p>
-    <p><strong>Continue with Queue</strong> — Playback moves to the next item in your Mix Queue, so you can audition a mix and still have your queue lined up afterwards.</p>
-  `,
+
   hideColumns: `
     <p>On mobile or narrow windows the player switches to a single-column layout. These options let you hide the Browser and/or Queue/Streams so that only the player controls and play history are visible.</p>
     <p>Useful when you often only play a few streams and just want a clean listening view.</p>

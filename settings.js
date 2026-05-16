@@ -19,9 +19,6 @@ function showSettings() {
    document.getElementById('settingsModal').style.display = 'flex';
    document.getElementById('showTipsCheckbox').checked = storage.getBool('showTips', true);
    initTips();
-   const setting = storage.get('afterPlayNow', 'stop');
-   const radio = document.querySelector(`input[name="afterPlayNow"][value="${setting}"]`);
-   if (radio) radio.checked = true;
    document.getElementById('hideBrowserColumnCheckbox').checked = storage.getBool('hideBrowserColumn');
    document.getElementById('hideQueueColumnCheckbox').checked = storage.getBool('hideQueueColumn');
    document.getElementById('showHiddenMixesCheckbox').checked = state.showHiddenMixes;

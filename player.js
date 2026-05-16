@@ -284,40 +284,25 @@ aud.addEventListener("ended", async function () {
        }
      }
    }
-   // Handle Play Now mix end based on setting
-   if (state.playingFromPlayNow) {
-     const setting = storage.get('afterPlayNow', 'stop');
-     
-     if (setting === 'loop') {
-       aud.currentTime = 0;
-       aud.play();
-       declick.fadeIn();
-       return;
-     } else if (setting === 'continue') {
-       // Restore previous queue position
-       if (state.previousQueueIndex >= 0 && state.previousQueueIndex < state.queue.length) {
-           state.currentQueueIndex = state.previousQueueIndex;
-           state.playingFromPlayNow = false;
-           saveQueue();
-           await playFromQueue(state.currentQueueIndex, 'auto');
-           // Try to restore position in the mix
-           aud.currentTime = state.previousQueueTime;
-       }
-       return;
+   // After Mix Ends: continue or stop
+   if (storage.get('afterMixEnds', 'continue') !== 'continue') return;
+
+   if (state.currentQueueIndex >= 0) {
+     // Playing from queue — advance or loop
+     if (state.currentQueueIndex < state.queue.length - 1) {
+       state.currentQueueIndex++;
+       saveQueue();
+       await playFromQueue(state.currentQueueIndex, 'auto');
+     } else if (state.loopQueue && state.queue.length > 0) {
+       state.currentQueueIndex = 0;
+       saveQueue();
+       await playFromQueue(state.currentQueueIndex, 'auto');
      }
-     // else setting === 'stop' - do nothing
-     return;
-   }
-   
-   // Normal queue handling
-   if (state.currentQueueIndex >= 0 && state.currentQueueIndex < state.queue.length - 1) {
-     state.currentQueueIndex++;
-     saveQueue();
-     await playFromQueue(state.currentQueueIndex, 'auto');
-   } else if (state.loopQueue && state.queue.length > 0) {
+   } else if (state.queue.length > 0) {
+     // Not in queue — start from the beginning
      state.currentQueueIndex = 0;
      saveQueue();
-     await playFromQueue(state.currentQueueIndex, 'auto');
+     await playFromQueue(0, 'auto');
    }
 });
 

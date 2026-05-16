@@ -309,9 +309,7 @@ const state = {
    loopQueue: storage.getBool('loopQueue'),
    queueIdCounter: storage.getNum('queueIdCounter', 0),
    currentMix: null,
-   playingFromPlayNow: false,
-   previousQueueIndex: -1,
-   previousQueueTime: 0,
+
    showHiddenMixes: false,  // Ephemeral, not persisted
    isStream: false,         // Currently playing a stream (not a file)
    streamUrl: null,         // URL of current stream

@@ -33,6 +33,8 @@ function displayQueue() {
   // Sync loop button state in tab bar
   const loopTabBtn = document.getElementById('loopTabBtn');
   if (loopTabBtn) loopTabBtn.classList.toggle('active', state.loopQueue);
+  const stopAfterBtn = document.getElementById('stopAfterBtn');
+  if (stopAfterBtn) stopAfterBtn.classList.toggle('active', storage.get('afterMixEnds') === 'stop');
 
   queueDiv.innerHTML = queueInfo + state.queue.map((mix, i) => {
     const djName = mix.artist || getDJName(mix.htmlPath || mix.djPath);
@@ -121,6 +123,12 @@ function shuffleQueue() {
 function toggleLoop() {
   state.loopQueue = !state.loopQueue;
   storage.set('loopQueue', state.loopQueue);
+  displayQueue();
+}
+
+function toggleStopAfter() {
+  const current = storage.get('afterMixEnds', 'continue');
+  storage.set('afterMixEnds', current === 'stop' ? 'continue' : 'stop');
   displayQueue();
 }
 

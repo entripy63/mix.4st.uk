@@ -200,10 +200,6 @@ async function resumeFromHistory(index) {
       // Skip the historyRecord() call inside playMix — we already recorded above
       playHistory._skipNextRecord = true;
       // Detach from queue so the ended handler doesn't advance to the next
-      // queue item.  Don't use the Play Now mechanism (playingFromPlayNow)
-      // because history resume is a one-shot play — it should simply stop
-      // when the mix ends, regardless of the afterPlayNow setting.
-      state.playingFromPlayNow = false;
       state.currentQueueIndex = -1;
       beacon('mix-play', getMixId(mix) || mix.name, 'history');
 

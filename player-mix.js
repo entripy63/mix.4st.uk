@@ -255,11 +255,6 @@ async function playMix(mix, source) {
 }
 
 async function playNow(mixId, source) {
-    // Save current queue position before Play Now overwrites it
-    state.previousQueueIndex = state.currentQueueIndex;
-    state.previousQueueTime = aud.currentTime;
-    state.playingFromPlayNow = true;
-
     state.currentQueueIndex = -1;
     const mix = state.currentMixes.find(m => getMixId(m) === mixId);
     await playMix(mix || { name: mixId.split('/').pop(), mixId: normalizeMixId(mixId) }, source);

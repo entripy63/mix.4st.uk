@@ -81,6 +81,7 @@
           <button onclick="skipNext()" class="tab-action-btn" title="Next in queue">▼</button>
           <button onclick="shuffleQueue()" class="tab-action-btn" title="Shuffle queue">⇄</button>
           <button id="loopTabBtn" onclick="toggleLoop()" class="tab-action-btn" title="Loop queue">⟳</button>
+          <button id="stopAfterBtn" onclick="toggleStopAfter()" class="tab-action-btn" title="Stop after current mix">■</button>
           <button onclick="loadQueueFromFile()" class="tab-action-btn" title="Load queue from file">↥</button>
           <button onclick="saveQueueToFile()" class="tab-action-btn" title="Save queue to file">↧</button>
           <button onclick="clearQueue()" class="tab-action-btn" title="Clear queue">✕</button>
@@ -232,26 +233,7 @@
           </div>
         </div>
         <div class="settings-col">
-          <div class="settings-group" data-tip="afterPlayNow">
-            <label class="setting-label">After Play Now:</label>
-            <div class="setting-options">
-              <label class="radio-label">
-                <input type="radio" name="afterPlayNow" value="stop"
-                  onchange="updateSetting('afterPlayNow', this.value)">
-                Stop
-              </label>
-              <label class="radio-label">
-                <input type="radio" name="afterPlayNow" value="loop"
-                  onchange="updateSetting('afterPlayNow', this.value)">
-                Loop
-              </label>
-              <label class="radio-label">
-                <input type="radio" name="afterPlayNow" value="continue"
-                  onchange="updateSetting('afterPlayNow', this.value)">
-                Continue with Queue
-              </label>
-            </div>
-          </div>
+
           <div class="settings-group">
             <button class="tf-settings-link" onclick="hideSettings(); showTimedFadesModal();">🕐 Timed Fades...</button>
           </div>

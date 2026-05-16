@@ -246,10 +246,6 @@ async function playSearchResult(index) {
     // Normalize search result to have djPath
     const mix = normalizeMixObject({ ...item, djPath: item.dj || item.djPath });
 
-    state.previousQueueIndex = state.currentQueueIndex;
-    state.previousQueueTime = aud.currentTime;
-    state.playingFromPlayNow = true;
-
     state.queue.push({ ...mix, queueId: generateQueueId() });
     state.currentQueueIndex = state.queue.length - 1;
     saveQueue();
