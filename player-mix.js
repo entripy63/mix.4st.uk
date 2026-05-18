@@ -362,7 +362,7 @@ function updateRightTabs(preferTab) {
 
     if (available.length <= 1) {
         // Hide tab bar, show the one pane (or none)
-        tabBar.style.display = 'none';
+        tabBar.hidden = true;
         tabs.forEach(t => {
             if (t.el) t.el.style.display = available.includes(t) ? '' : 'none';
         });
@@ -370,7 +370,7 @@ function updateRightTabs(preferTab) {
     }
 
     // Multiple tabs have content — show tab bar
-    tabBar.style.display = '';
+    tabBar.hidden = false;
 
     // Determine which tab to activate
     let active = preferTab && available.find(t => t.id === preferTab) ? preferTab : null;

@@ -359,6 +359,16 @@ function clearCurrentStream() {
      }
    })();
 
+   // Migrate legacy After Play Now setting to the new After Mix Ends setting.
+   // stop -> stop, loop/continue -> continue (sound continues either way).
+   (function migrateAfterPlayNowSetting() {
+     if (localStorage.getItem('afterMixEnds') !== null) return;
+     const legacy = localStorage.getItem('afterPlayNow');
+     if (legacy === null) return;
+     localStorage.setItem('afterMixEnds', legacy === 'stop' ? 'stop' : 'continue');
+     localStorage.removeItem('afterPlayNow');
+   })();
+
    // Format time as M:SS or H:MM:SS
 function formatTime(seconds) {
   if (!isFinite(seconds) || seconds < 0) return '0:00';

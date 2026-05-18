@@ -1093,6 +1093,10 @@ td:last-child {
   border-bottom: 1px solid #3d3d5c;
 }
 
+#rightTabBar[hidden] {
+  display: none !important;
+}
+
 .right-tab {
   display: flex;
   align-items: center;
@@ -1126,7 +1130,7 @@ td:last-child {
   margin-bottom: 4px;
 }
 
-#rightTabBar:not([style*="none"]) ~ #playHistory .history-header {
+#rightTabBar:not([hidden]) ~ #playHistory .history-header {
   display: none;
 }
 

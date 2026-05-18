@@ -97,8 +97,13 @@ function updateTFStatuses() {
      const dueSecs = Math.round(remainMs / 1000);
      const h = Math.floor(dueSecs / 3600);
      const m = Math.floor((dueSecs % 3600) / 60);
+     const s = dueSecs % 60;
      const verb = type === 'fadeout' ? 'pause' : 'play';
-     const timeStr = h > 0 ? `${h}h ${m}m` : `${m}m`;
+     const timeStr = h > 0
+       ? `${h}h ${m}m ${s}s`
+       : m > 0
+         ? `${m}m ${s}s`
+         : `${s}s`;
      el.textContent = `Will ${verb} in ${timeStr}`;
    }
    // Also update the old status element if visible (in settings modal)
@@ -128,13 +133,26 @@ function updateTimedFadesBtn() {
      const dueSecs = Math.round(remainMs / 1000);
      const h = Math.floor(dueSecs / 3600);
      const m = Math.floor((dueSecs % 3600) / 60);
+     const s = dueSecs % 60;
      const verb = type === 'fadeout' ? 'Pause' : 'Play';
-     const timeStr = h > 0 ? `${h}h ${m}m` : `${m}m`;
+     const timeStr = h > 0
+       ? `${h}h ${m}m ${s}s`
+       : m > 0
+         ? `${m}m ${s}s`
+         : `${s}s`;
      parts.push(`${verb} in ${timeStr}`);
    }
    btn.title = parts.length > 0
      ? `Timed Fades: ${parts.join(', ')}`
      : 'Timed Fades (active, nothing scheduled)';
+}
+
+// Keep modal countdown text fresh while it is open.
+function refreshTimedFadesModalStatuses() {
+  const modal = document.getElementById('timedFadesModal');
+  if (modal && modal.style.display !== 'none') {
+    updateTFStatuses();
+  }
 }
 
 function updateSetting(key, value) {
@@ -240,4 +258,10 @@ if (storage.getBool('timedFadesEnabled')) {
   timedFades.schedule('fadein');
 }
 updateTimedFadesBtn();
-setInterval(updateTimedFadesBtn, 60000);
+setInterval(updateTimedFadesBtn, 15000);
+setInterval(refreshTimedFadesModalStatuses, 15000);
+
+// Refresh countdown text immediately before native tooltip display.
+const timedFadesBtn = document.getElementById('timedFadesBtn');
+timedFadesBtn?.addEventListener('mouseenter', updateTimedFadesBtn);
+timedFadesBtn?.addEventListener('focus', updateTimedFadesBtn);
