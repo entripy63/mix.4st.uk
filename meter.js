@@ -9,6 +9,11 @@ let meterNode = null;        // AudioWorkletNode
 let meterAnimId = null;
 let meterEnabled = storage.getBool('meterEnabled', false);
 
+// The worklet must run when either the visual meter or loudness protection is active
+function meterAnalysisNeeded() {
+  return meterEnabled || (typeof loudnessProtection !== 'undefined' && loudnessProtection.enabled);
+}
+
 // Latest readings from the worklet
 let meterMomentary = -Infinity;   // LUFS
 let meterShortTerm = -Infinity;   // LUFS
@@ -57,6 +62,9 @@ async function initMeterNode() {
       meterMomentary = e.data.momentary;
       meterShortTerm = e.data.shortTerm;
       meterPeakDB = e.data.peakDB;
+      if (typeof loudnessProtection !== 'undefined') {
+        loudnessProtection.onMeterUpdate(meterShortTerm);
+      }
     };
   } catch (err) {
     console.warn('Meter worklet init failed:', err);
@@ -145,12 +153,18 @@ function drawMeter() {
   meterCtx.fillText(readout + ' LUFS', w - 2, h / 2);
 }
 
+// Ensure the worklet is running for analysis (even if the visual meter is hidden)
+function ensureMeterAnalysis() {
+  if (!meterAnalysisNeeded()) return;
+  if (!audioCtx || !gainNode) return;
+  initMeterNode();
+}
+
 function startMeter() {
-  if (!meterEnabled) return;
-  if (meterAnimId) return;
+  if (!meterAnalysisNeeded()) return;
   if (!audioCtx || !gainNode) return;
 
-  resizeMeterCanvas();
+  if (meterEnabled) resizeMeterCanvas();
   initMeterNode().then(() => {
     if (!meterAnimId && meterEnabled) drawMeter();
   });
@@ -166,7 +180,9 @@ function stopMeter() {
   meterPeakDB = -Infinity;
   meterDispMom = METER_MIN;
   meterDispST = METER_MIN;
-  meterCtx.clearRect(0, 0, meterCanvas.width, meterCanvas.height);
+  if (meterCanvas.width > 0) {
+    meterCtx.clearRect(0, 0, meterCanvas.width, meterCanvas.height);
+  }
 }
 
 function pauseMeter() {
@@ -185,7 +201,16 @@ function setMeterEnabled(enabled) {
   if (enabled && audioCtx && !isPlaybackPaused()) {
     startMeter();
   } else if (!enabled) {
-    stopMeter();
+    // Stop the visual animation, but keep worklet alive if protection needs it
+    if (meterAnimId) {
+      cancelAnimationFrame(meterAnimId);
+      meterAnimId = null;
+    }
+    meterDispMom = METER_MIN;
+    meterDispST = METER_MIN;
+    if (meterCanvas.width > 0) {
+      meterCtx.clearRect(0, 0, meterCanvas.width, meterCanvas.height);
+    }
   }
 }
 

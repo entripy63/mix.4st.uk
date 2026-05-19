@@ -185,6 +185,7 @@ volumeSlider.addEventListener('input', function() {
   volume.set(this.value / 100);
   volumeSlider.value = volume.get() * 100;
   updateMuteBtn();
+  if (typeof loudnessProtection !== 'undefined') loudnessProtection.notifyUserAdjust();
 });
 
 // Audio element events (just for UI, not for state tracking)

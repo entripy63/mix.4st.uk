@@ -370,6 +370,14 @@
   background: var(--accent-hover);
 }
 
+#volumeSlider.ceiling-active::-webkit-slider-thumb {
+  background: #d4a03c;
+}
+
+#volumeSlider.ceiling-active::-webkit-slider-thumb:hover {
+  background: #e0b050;
+}
+
 #volumeSlider::-moz-range-thumb {
   width: 14px;
   height: 14px;
@@ -381,6 +389,14 @@
 
 #volumeSlider::-moz-range-thumb:hover {
   background: var(--accent-hover);
+}
+
+#volumeSlider.ceiling-active::-moz-range-thumb {
+  background: #d4a03c;
+}
+
+#volumeSlider.ceiling-active::-moz-range-thumb:hover {
+  background: #e0b050;
 }
 
 #volumeSlider::-moz-range-track {

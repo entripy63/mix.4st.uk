@@ -233,7 +233,18 @@
           </div>
         </div>
         <div class="settings-col">
-
+          <div class="settings-group" data-tip="volumeCeiling">
+            <label class="checkbox-label">
+              <input type="checkbox" id="loudnessProtectCheckbox" onchange="updateLoudnessProtection(this.checked)">
+              Volume Ceiling
+            </label>
+            <div id="loudnessThresholdRow" style="margin-left: 24px; margin-top: 4px; display: none;">
+              <div style="display: flex; gap: 8px; align-items: center; font-size: 13px;">
+                <button onclick="setLoudnessFromCurrent()" style="padding: 4px 10px; background: #3d3d5c; border: none; border-radius: 4px; color: #e0e0e0; cursor: pointer; font-size: 13px;" title="Set the threshold from your current listening level">Set from current level</button>
+                <span id="loudnessThresholdDisplay" style="color: #aaa;"></span>
+              </div>
+            </div>
+          </div>
           <div class="settings-group">
             <button class="tf-settings-link" onclick="hideSettings(); showTimedFadesModal();">🕐 Timed Fades...</button>
           </div>
@@ -402,6 +413,7 @@
       <div class="whats-new">
         <h3>May 2026</h3>
         <ul>
+          <li><strong>Volume Ceiling</strong> — Automatically reduces volume when loudness exceeds your chosen level. Set it from your current listening level in ⚙️ Settings.</li>
           <li><strong>Timed Fades</strong> — 🕐 button on the player controls opens a dedicated Timed Fades panel, showing fadeout and fade-in settings side by side.</li>
           <li><strong>Output Level Meter</strong> can be enabled in ⚙️ Settings.</li>
           <li><strong>Play History</strong> appears underneath Player controls.</li>
@@ -423,6 +435,7 @@
   <script src="tempo.js?v=2"></script>
   <script src="visualiser.js?v=2"></script>
   <script src="meter.js?v=2"></script>
+  <script src="loudness-protection.js?v=2"></script>
   <script src="player-mix.js?v=2"></script>
   <script src="history.js?v=2"></script>
   <script src="livedata.js?v=2"></script>

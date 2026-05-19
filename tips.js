@@ -54,6 +54,12 @@ const TIPS = {
     <p>Play History shows your recently played mixes and streams. Click any entry to play it again.</p>
     <p>Use the <strong>Recent</strong>, <strong>Tracks</strong>, and <strong>Art</strong> tabs to switch between play history, track listings, and cover art views when available.</p>
   `,
+  volumeCeiling: `
+    <p>Volume Ceiling automatically turns down the volume when loudness exceeds a threshold you set — like having someone reach for the volume knob when things get too loud.</p>
+    <p>This is <strong>not a protective limiter</strong>. It reduces volume a few seconds after the loudness is detected, not instantly. It will not protect against sudden loud transients.</p>
+    <p>To use: play audio at your normal listening level and enable Volume Ceiling — the threshold is set automatically. Use <strong>Set from current level</strong> to adjust it later, for example to set a quieter ceiling in the evening. If a louder track plays, the volume slider will move down automatically. To restore volume, just drag the slider back up — if you raise it above where it was when the ceiling was set, the ceiling disables itself to avoid fighting you.</p>
+    <p>When active the volume slider knob turns <strong style="color: #d4a03c;">amber</strong> and its tooltip shows the current ceiling threshold.</p>
+  `,
   visualiserModes: `
     <p>Choose how the audio is visualised:</p>
     <p><strong>▮▮▮ Spectrum</strong> — Frequency spectrum bars showing bass to treble.</p>

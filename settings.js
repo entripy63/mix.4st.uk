@@ -5,7 +5,7 @@
 //               tips.js (initTips)
 
 // What's New version — bump this when adding new release notes
-const WHATS_NEW_VERSION = '2026-05-15';
+const WHATS_NEW_VERSION = '2026-05-19';
 
 function dismissNewDot() {
    storage.set('whatsNewSeen', WHATS_NEW_VERSION);
@@ -25,6 +25,10 @@ function showSettings() {
    document.getElementById('visualiserEnabledCheckbox').checked = storage.getBool('visualiserEnabled', true);
    document.getElementById('bpmEnabledCheckbox').checked = storage.getBool('bpmEnabled', true);
    document.getElementById('meterEnabledCheckbox').checked = storage.getBool('meterEnabled');
+   document.getElementById('loudnessProtectCheckbox').checked = storage.getBool('loudnessProtectEnabled');
+   const lpEnabled = storage.getBool('loudnessProtectEnabled');
+   document.getElementById('loudnessThresholdRow').style.display = lpEnabled ? '' : 'none';
+   updateLoudnessThresholdDisplay();
    document.getElementById('nicknameInput').value = beaconNick();
 }
 
@@ -172,6 +176,31 @@ function updateBpmEnabled(enabled) {
    } else if (audioCtx && !aud.paused) {
      startTempo();
    }
+}
+
+function updateLoudnessProtection(enabled) {
+   loudnessProtection.setEnabled(enabled);
+   document.getElementById('loudnessThresholdRow').style.display = enabled ? '' : 'none';
+   updateLoudnessThresholdDisplay();
+}
+
+function setLoudnessFromCurrent() {
+   // Use the current short-term LUFS as the threshold, with a small margin
+   if (!isFinite(meterShortTerm) || meterShortTerm <= -60) {
+     showToast('Play some audio first so the level can be measured');
+     return;
+   }
+   const threshold = Math.round(meterShortTerm);
+   loudnessProtection.setThreshold(threshold);
+   updateLoudnessThresholdDisplay();
+   showToast(`Threshold set to ${threshold} LUFS`);
+}
+
+function updateLoudnessThresholdDisplay() {
+   const el = document.getElementById('loudnessThresholdDisplay');
+   if (!el) return;
+   const threshold = loudnessProtection.thresholdLufs;
+   el.textContent = `${threshold} LUFS`;
 }
 
 function updateVisualiserEnabled(enabled) {
