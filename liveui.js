@@ -119,7 +119,7 @@ function displayLiveStreams() {
     <div class="add-stream-form">
       <div class="add-stream-fields">
         <input type="text" id="newStreamM3U" placeholder="Playlist URL (M3U or PLS)" />
-        <button class="tab-action-btn add-stream-plus" onclick="handleAddStream()" title="Add stream">＋</button>
+        <button class="tab-action-btn add-stream-plus" onclick="handleAddStream()" title="Add stream">+</button>
       </div>
     </div>
   `;
