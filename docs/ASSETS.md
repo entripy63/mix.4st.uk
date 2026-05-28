@@ -76,6 +76,24 @@
 - **Used by**: tempo.js (via `new Worker()`)
 - **Features**: Autocorrelation with EMA smoothing, subharmonic summation (SHS), division detection (halving/thirding), periodicity detection (4-beat vs 6-beat), sub-sample peak refinement, adaptive sample rate
 
+#### meter.js
+- **Purpose**: EBU R128 output level meter (post volume control)
+- **Dependencies**: core.js (audioCtx, gainNode, storage)
+- **Used by**: player.html
+- **Features**: AudioWorklet-based K-weighted LUFS metering (momentary 400ms, short-term 3s), true-peak tracking, horizontal loudness bar on canvas, worklet lifecycle decoupled from visual display for loudness-protection.js
+
+#### meter-processor.js
+- **Purpose**: AudioWorklet processor for ITU-R BS.1770-5 loudness metering
+- **Dependencies**: None (standalone AudioWorklet)
+- **Used by**: meter.js (via `audioWorklet.addModule()`)
+- **Features**: K-frequency weighting (high-shelf + high-pass biquads), 100ms hop mean-square ring buffer, momentary and short-term LUFS computation, sample-domain peak tracking
+
+#### loudness-protection.js
+- **Purpose**: Volume Ceiling — auto-reduce volume when loudness exceeds threshold
+- **Dependencies**: core.js (volume, storage), meter.js (meterShortTerm), player.js (volumeSlider, updateMuteBtn, timedFades)
+- **Used by**: player.html
+- **Features**: Automates volume slider downward using existing volume control (not a separate gain node), user-settable LUFS threshold via "Set from current level", auto-disables if user raises volume above level at set time, cooldown after user slider adjustment, stands down during timed fades, amber slider thumb indicator when active
+
 #### player-mix.js (300 lines)
 - **Purpose**: Mix-specific playback logic extracted from player.js
 - **Dependencies**: core.js, player.js, visualiser.js
@@ -325,6 +343,8 @@ stream-player.js  (IcecastMetadataPlayer wrapper for streams)
 player.js         (audio playback engine)
 tempo.js          (BPM detection, spawns tempo-worker.js Web Worker)
 visualiser.js     (audio visualisation overlay)
+meter.js          (EBU R128 output level meter)
+loudness-protection.js (Volume Ceiling — auto-reduce volume)
 player-mix.js     (mix-specific playback)
 history.js        (play history tracking and resume)
 livedata.js       (stream data, probing, parsing)
@@ -387,6 +407,9 @@ player.html adds: mixes.js → queue.js → queuestore.js → search.js → tips
 │   ├── tempo.js            # BPM detection (main thread)
 │   ├── tempo-worker.js     # BPM detection (Web Worker)
 │   ├── visualiser.js       # Audio visualisation overlay
+│   ├── meter.js            # EBU R128 output level meter
+│   ├── meter-processor.js  # AudioWorklet for LUFS metering
+│   ├── loudness-protection.js # Volume Ceiling (auto-reduce volume)
 │   ├── history.js          # Play history tracking and resume
 │   ├── livedata.js         # Stream probing, parsing, persistence
 │   ├── livestore.js        # Collection persistence (save/load/clear)
@@ -484,6 +507,9 @@ player.html adds: mixes.js → queue.js → queuestore.js → search.js → tips
 | **livestore.js** | ~5KB | Collection persistence |
 | **liveui.js** | ~10KB | Stream rendering, UI |
 | **modals.js** | ~8KB | Modal dialogs |
+| **meter.js** | ~7KB | EBU R128 output level meter |
+| **meter-processor.js** | ~7KB | AudioWorklet for LUFS metering |
+| **loudness-protection.js** | ~5KB | Volume Ceiling (auto-reduce volume) |
 | **tips.js** | ~9KB | Tip popovers |
 | **settings.js** | ~6KB | Settings & help modals |
 | **eslint.config.js** | <1KB | Linter config |
@@ -498,7 +524,7 @@ player.html adds: mixes.js → queue.js → queuestore.js → search.js → tips
 
 ### mixes.4st.uk (DJ Mixes SPA)
 - **Entry Point**: player.html
-- **JavaScript Modules**: core, ping, mixes, queue, queuestore, stream-player, player, tempo, visualiser, player-mix, history, livedata, modals, livestore, liveui, search, tips, settings, browser, restore
+- **JavaScript Modules**: core, ping, mixes, queue, queuestore, stream-player, player, tempo, visualiser, meter, meter-processor, loudness-protection, player-mix, history, livedata, modals, livestore, liveui, search, tips, settings, browser, restore
 - **Stylesheets**: common.css, player.css
 - **Data**: DJ folders with manifests, track lists, cover art, waveform data
 - **Size**: ~200MB+ (includes all DJ music archives)
@@ -513,6 +539,8 @@ player.html adds: mixes.js → queue.js → queuestore.js → search.js → tips
 - **livedata.js, livestore.js & liveui.js**: Live streaming modules, designed to work independently of browser modes
 - **modals.js**: Generic confirmation/dialog logic
 - **tempo.js & tempo-worker.js**: BPM detection (main thread + Web Worker)
+- **meter.js & meter-processor.js**: EBU R128 loudness metering (AudioWorklet)
+- **loudness-protection.js**: Volume Ceiling, driven by meter readings
 - **history.js**: Play history tracking and resume from history
 - **ping.js**: Lightweight usage tracking
 - **queuestore.js**: Queue collection file I/O

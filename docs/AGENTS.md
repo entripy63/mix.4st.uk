@@ -32,6 +32,9 @@
   - `tempo.js` - BPM detection via spectral flux autocorrelation (main thread)
   - `tempo-worker.js` - Web Worker for BPM autocorrelation and subharmonic summation
   - `visualiser.js` - Audio visualisation overlay (spectrum/waveform/flux/autocorrelation)
+  - `meter.js` - EBU R128 output level meter (post volume control)
+  - `meter-processor.js` - AudioWorklet for K-weighted LUFS metering
+  - `loudness-protection.js` - Volume Ceiling: auto-reduce volume when loudness exceeds threshold
   - `player-mix.js` - Mix-specific playback logic
   - `history.js` - Play history tracking, resume from history, periodic position saving
   - `livedata.js` - Live stream data management, probing, persistence
