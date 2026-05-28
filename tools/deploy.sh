@@ -91,12 +91,19 @@ for t in "${TARGETS[@]}"; do
   fi
   
   echo "📡 Command: lftp -e \"$LFTP_CMD\""
+  # Disable set -e for this one call so the explicit failure banner below
+  # always runs; lftp's own exit code is then checked.
+  set +e
   lftp -e "$LFTP_CMD"
-  
-  if [ $? -eq 0 ]; then
+  LFTP_EXIT=$?
+  set -e
+
+  if [ "$LFTP_EXIT" -eq 0 ]; then
     echo "✅ Deploy to $t successful"
   else
-    echo "❌ Deploy to $t failed"
+    echo ""
+    echo "❌❌❌ Deploy to $t FAILED (lftp exit $LFTP_EXIT) ❌❌❌"
+    echo "    Aborting before any further targets are touched."
     exit 1
   fi
 done
