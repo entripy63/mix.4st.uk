@@ -43,6 +43,16 @@ if [[ ! " ${VALID_TARGETS[@]} " =~ " ${TARGET} " ]]; then
   exit 1
 fi
 
+# Cache-bust: rewrite ?v=... in player.html to content hashes of each asset.
+# Backup + EXIT trap so the working tree is restored even on failure.
+cd "$PROJECT_ROOT"
+CACHE_BUST_BACKUP="$(mktemp -t player.html.bak.XXXXXX)"
+cp player.html "$CACHE_BUST_BACKUP"
+trap 'cp "$CACHE_BUST_BACKUP" "$PROJECT_ROOT/player.html" && rm -f "$CACHE_BUST_BACKUP"' EXIT
+echo ""
+echo "🔧 Cache-busting player.html..."
+node "$SCRIPT_DIR/cache-bust.js" --write player.html
+
 # Determine which targets to deploy to
 if [[ "$TARGET" == "all-test" ]]; then
   TARGETS=("test" "home-test")
