@@ -1,3 +1,64 @@
+// ── Abuse-protection config (tune here) ──────────────────────────────────
+// Allowed page origin: 4st.uk and any subdomain (covers test + production).
+const ALLOWED_ORIGIN_SUFFIX = '4st.uk';
+// Final-response Content-Types that are never a stream but are high-value for
+// abuse (SSRF / using the proxy as a generic web scraper). Blocked outright.
+const BLOCKED_CONTENT_TYPES = [
+  'text/html', 'application/xhtml+xml', 'application/json',
+  'application/xml', 'text/xml', 'application/rss+xml',
+  'application/atom+xml', 'text/csv'
+];
+// NOTE: Cloudflare Workers are stateless across isolates, so per-IP rate /
+// concurrency limiting is unreliable in-code. Configure a Cloudflare
+// Rate Limiting rule (dashboard / WAF) on this Worker's route instead.
+// ─────────────────────────────────────────────────────────────────────────
+
+function originAllowed(raw) {
+  if (!raw) return false;
+  let host;
+  try { host = new URL(raw).hostname.toLowerCase(); } catch (_) { return false; }
+  return host === ALLOWED_ORIGIN_SUFFIX || host.endsWith('.' + ALLOWED_ORIGIN_SUFFIX);
+}
+
+function isBlockedContentType(ct) {
+  if (!ct) return false;
+  return BLOCKED_CONTENT_TYPES.includes(ct.split(';')[0].trim().toLowerCase());
+}
+
+// Reject loopback / private / link-local / CGNAT / metadata / multicast IPs.
+function isBlockedIP(ip) {
+  const v4 = ip.replace(/^::ffff:/i, '');
+  if (/^\d+\.\d+\.\d+\.\d+$/.test(v4)) {
+    const o = v4.split('.').map(Number);
+    if (o[0] === 0 || o[0] === 127) return true;
+    if (o[0] === 10) return true;
+    if (o[0] === 172 && o[1] >= 16 && o[1] <= 31) return true;
+    if (o[0] === 192 && o[1] === 168) return true;
+    if (o[0] === 169 && o[1] === 254) return true;
+    if (o[0] === 100 && o[1] >= 64 && o[1] <= 127) return true;
+    if (o[0] >= 224) return true;
+    return false;
+  }
+  const lc = ip.toLowerCase();
+  if (lc === '::' || lc === '::1') return true;
+  if (lc.startsWith('fe80')) return true;
+  if (lc.startsWith('fc') || lc.startsWith('fd')) return true;
+  if (lc.startsWith('ff')) return true;
+  return false;
+}
+
+// Cloudflare fetch() cannot reach raw IPs and the platform blocks internal
+// addresses, but reject literal private-IP destinations defensively too.
+function blockedLiteralIP(hostname) {
+  const h = hostname.replace(/^\[|\]$/g, ''); // strip IPv6 brackets
+  const looksLikeIP = /^\d{1,3}(\.\d{1,3}){3}$/.test(h) || h.includes(':');
+  return looksLikeIP && isBlockedIP(h);
+}
+
+function logRequest(ip, host, ct, status) {
+  console.log(`[proxy] ip=${ip} host=${host} ct=${ct || '-'} status=${status}`);
+}
+
 export default {
   async fetch(request) {
     // CORS preflight
@@ -14,10 +75,17 @@ export default {
       });
     }
 
+    // Stateless abuse checks. Legitimate traffic is always HTTPS; reject plain
+    // http when the platform reports the original scheme.
+    const proto = request.headers.get('x-forwarded-proto');
+    if (proto && proto !== 'https') {
+      return new Response('Forbidden', { status: 403, headers: { 'Access-Control-Allow-Origin': '*' } });
+    }
+
     // Origin validation
     const origin = request.headers.get('Origin') || request.headers.get('Referer') || '';
-    if (!origin.includes('4st.uk') && !origin.includes('steveqv225')) {
-      return new Response('Forbidden', { status: 403 });
+    if (!originAllowed(origin)) {
+      return new Response('Forbidden', { status: 403, headers: { 'Access-Control-Allow-Origin': '*' } });
     }
 
     const url = new URL(request.url);
@@ -62,6 +130,19 @@ export default {
       fetchHeaders['Range'] = rangeHeader;
     }
 
+    const clientIp = request.headers.get('CF-Connecting-IP') || 'unknown';
+
+    // Block literal private/reserved IP destinations (defensive).
+    let targetHost;
+    try { targetHost = new URL(streamUrl).hostname; } catch (_) { targetHost = ''; }
+    if (targetHost && blockedLiteralIP(targetHost)) {
+      logRequest(clientIp, targetHost, '-', 403);
+      return new Response('Forbidden destination', {
+        status: 403,
+        headers: { 'Access-Control-Allow-Origin': '*' }
+      });
+    }
+
     try {
       // Cloudflare fetch() follows redirects automatically (up to 20)
       const response = await fetch(streamUrl, {
@@ -69,9 +150,19 @@ export default {
         redirect: 'follow'
       });
 
+      // Final response only: reject high-abuse, never-a-stream content types.
+      const upstreamCT = response.headers.get('Content-Type');
+      if (isBlockedContentType(upstreamCT)) {
+        logRequest(clientIp, targetHost, upstreamCT, 415);
+        return new Response('Unsupported content type', {
+          status: 415,
+          headers: { 'Access-Control-Allow-Origin': '*' }
+        });
+      }
+
       // Build response headers
       const responseHeaders = {
-        'Content-Type': inferContentType(response.headers.get('Content-Type'), streamUrl),
+        'Content-Type': inferContentType(upstreamCT, streamUrl),
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Expose-Headers': 'Content-Length, Content-Range, Accept-Ranges, Content-Type'
       };
@@ -82,6 +173,7 @@ export default {
         if (value) responseHeaders[header] = value;
       }
 
+      logRequest(clientIp, targetHost, upstreamCT, response.status);
       return new Response(response.body, {
         status: response.status,
         headers: responseHeaders

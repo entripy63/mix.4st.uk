@@ -1,8 +1,86 @@
 // Stream proxy for Deno Deploy
 // Handles CORS, redirects, Range headers, and ICY/Shoutcast raw TCP fallback
 
-const ALLOWED_ORIGINS = ["4st.uk", "steveqv225"];
 const CORS_EXPOSE = "Icy-MetaInt, Icy-Br, Icy-Name, Icy-Genre, Icy-Url, Icy-Description, Ice-Audio-Info, Content-Length, Content-Range, Accept-Ranges, Content-Type";
+
+// ── Abuse-protection config (tune here) ──────────────────────────────────
+// Allowed page origin: 4st.uk and any subdomain (covers test + production).
+const ALLOWED_ORIGIN_SUFFIX = "4st.uk";
+// Final-response Content-Types that are never a stream but are high-value for
+// abuse (SSRF / using the proxy as a generic web scraper). Blocked outright.
+// NOTE: only applied to the FINAL response, never to redirect hops.
+const BLOCKED_CONTENT_TYPES = [
+  "text/html", "application/xhtml+xml", "application/json",
+  "application/xml", "text/xml", "application/rss+xml",
+  "application/atom+xml", "text/csv",
+];
+// All abuse protection here is STATELESS (origin + proto + content-type + SSRF
+// IP block) so it works identically across Deno Deploy's ephemeral, multi-
+// isolate environment. Volumetric rate limiting is delegated to the platform.
+// ─────────────────────────────────────────────────────────────────────────
+
+class BlockedAddressError extends Error {}
+
+function originAllowed(raw: string): boolean {
+  if (!raw) return false;
+  let host: string;
+  try { host = new URL(raw).hostname.toLowerCase(); } catch { return false; }
+  return host === ALLOWED_ORIGIN_SUFFIX || host.endsWith("." + ALLOWED_ORIGIN_SUFFIX);
+}
+
+function clientIP(req: Request): string {
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0].trim();
+  return "unknown";
+}
+
+function isBlockedContentType(ct: string | null): boolean {
+  if (!ct) return false;
+  return BLOCKED_CONTENT_TYPES.includes(ct.split(";")[0].trim().toLowerCase());
+}
+
+// Reject loopback / private / link-local / CGNAT / metadata / multicast IPs.
+function isBlockedIP(ip: string): boolean {
+  const v4 = ip.replace(/^::ffff:/i, "");
+  if (/^\d+\.\d+\.\d+\.\d+$/.test(v4)) {
+    const o = v4.split(".").map(Number);
+    if (o[0] === 0 || o[0] === 127) return true;                // this-host / loopback
+    if (o[0] === 10) return true;                               // 10/8
+    if (o[0] === 172 && o[1] >= 16 && o[1] <= 31) return true;  // 172.16/12
+    if (o[0] === 192 && o[1] === 168) return true;              // 192.168/16
+    if (o[0] === 169 && o[1] === 254) return true;              // link-local + cloud metadata
+    if (o[0] === 100 && o[1] >= 64 && o[1] <= 127) return true; // CGNAT 100.64/10
+    if (o[0] >= 224) return true;                               // multicast / reserved
+    return false;
+  }
+  const lc = ip.toLowerCase();
+  if (lc === "::" || lc === "::1") return true;                 // unspecified / loopback
+  if (lc.startsWith("fe80")) return true;                       // link-local
+  if (lc.startsWith("fc") || lc.startsWith("fd")) return true;  // unique local fc00::/7
+  if (lc.startsWith("ff")) return true;                         // multicast
+  return false;
+}
+
+// Reject private/reserved destinations (literal IPs and resolved names).
+// Throws BlockedAddressError if blocked.
+async function assertAllowedHost(hostname: string): Promise<void> {
+  const h = hostname.replace(/^\[|\]$/g, ""); // strip IPv6 brackets
+  const looksLikeIP = /^\d{1,3}(\.\d{1,3}){3}$/.test(h) || h.includes(":");
+  if (looksLikeIP) {
+    if (isBlockedIP(h)) throw new BlockedAddressError("Blocked destination: " + h);
+    return;
+  }
+  const addrs: string[] = [];
+  try { addrs.push(...await Deno.resolveDns(h, "A")); } catch { /* ignore */ }
+  try { addrs.push(...await Deno.resolveDns(h, "AAAA")); } catch { /* ignore */ }
+  for (const a of addrs) {
+    if (isBlockedIP(a)) throw new BlockedAddressError("Blocked destination: " + a);
+  }
+}
+
+function logRequest(ip: string, host: string, ct: string | null, status: number): void {
+  console.log(`[proxy] ip=${ip} host=${host} ct=${ct || "-"} status=${status}`);
+}
 
 // Infer Content-Type from URL extension when upstream returns a generic type
 function inferContentType(upstreamCT: string | null, targetUrl: string): string {
@@ -43,9 +121,19 @@ Deno.serve(async (req: Request): Promise<Response> => {
     });
   }
 
+  // Stateless abuse checks. Legitimate traffic is always HTTPS; reject plain
+  // http when the platform reports the original scheme.
+  const proto = req.headers.get("x-forwarded-proto");
+  if (proto && proto !== "https") {
+    return new Response("Forbidden", {
+      status: 403,
+      headers: { "Access-Control-Allow-Origin": "*" },
+    });
+  }
+
   // Origin validation
   const origin = req.headers.get("Origin") || req.headers.get("Referer") || "";
-  if (!ALLOWED_ORIGINS.some((o) => origin.includes(o))) {
+  if (!originAllowed(origin)) {
     return new Response("Forbidden", {
       status: 403,
       headers: { "Access-Control-Allow-Origin": "*" },
@@ -60,6 +148,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
     });
   }
 
+  const ip = clientIP(req);
   const icyMeta = url.searchParams.get("icy") === "1" ? "1" : "0";
 
   const fetchHeaders: Record<string, string> = {
@@ -73,8 +162,15 @@ Deno.serve(async (req: Request): Promise<Response> => {
   }
 
   try {
-    return await doFetchRequest(streamUrl, fetchHeaders, icyMeta, 0, streamUrl);
-  } catch (_e) {
+    return await doFetchRequest(streamUrl, fetchHeaders, icyMeta, 0, streamUrl, ip);
+  } catch (e) {
+    if (e instanceof BlockedAddressError) {
+      logRequest(ip, "-", null, 403);
+      return new Response("Forbidden destination", {
+        status: 403,
+        headers: { "Access-Control-Allow-Origin": "*" },
+      });
+    }
     return new Response("Upstream error", {
       status: 502,
       headers: { "Access-Control-Allow-Origin": "*" },
@@ -88,6 +184,7 @@ async function doFetchRequest(
   icyMeta: string,
   redirectCount: number,
   originalUrl: string,
+  ip: string,
 ): Promise<Response> {
   if (redirectCount > 5) {
     return new Response("Too many redirects", {
@@ -97,6 +194,9 @@ async function doFetchRequest(
   }
 
   const target = new URL(targetUrl);
+
+  // Block private/reserved destinations (checked at every redirect hop).
+  await assertAllowedHost(target.hostname);
 
   // For http:// URLs, try raw TCP first if it's likely an ICY server
   // (Deno's fetch() will also fail on ICY responses)
@@ -109,14 +209,15 @@ async function doFetchRequest(
         const location = response.headers.get("Location");
         if (location) {
           response.body?.cancel();
-          return doFetchRequest(location, headers, icyMeta, redirectCount + 1, originalUrl);
+          return doFetchRequest(location, headers, icyMeta, redirectCount + 1, originalUrl, ip);
         }
       }
 
-      return buildProxyResponse(response, originalUrl);
-    } catch (_e) {
+      return buildProxyResponse(response, originalUrl, ip);
+    } catch (e) {
+      if (e instanceof BlockedAddressError) throw e;
       // fetch() failed — likely an ICY/Shoutcast server, try raw TCP
-      return doRawRequest(target, icyMeta);
+      return doRawRequest(target, icyMeta, ip);
     }
   }
 
@@ -127,16 +228,27 @@ async function doFetchRequest(
     const location = response.headers.get("Location");
     if (location) {
       response.body?.cancel();
-      return doFetchRequest(location, headers, icyMeta, redirectCount + 1, originalUrl);
+      return doFetchRequest(location, headers, icyMeta, redirectCount + 1, originalUrl, ip);
     }
   }
 
-  return buildProxyResponse(response, originalUrl);
+  return buildProxyResponse(response, originalUrl, ip);
 }
 
-function buildProxyResponse(upstream: Response, originalUrl: string): Response {
+function buildProxyResponse(upstream: Response, originalUrl: string, ip: string): Response {
+  // Final response only: reject high-abuse, never-a-stream content types.
+  const upstreamCT = upstream.headers.get("Content-Type");
+  if (isBlockedContentType(upstreamCT)) {
+    upstream.body?.cancel();
+    logRequest(ip, new URL(originalUrl).hostname, upstreamCT, 415);
+    return new Response("Unsupported content type", {
+      status: 415,
+      headers: { "Access-Control-Allow-Origin": "*" },
+    });
+  }
+
   const responseHeaders: Record<string, string> = {
-    "Content-Type": inferContentType(upstream.headers.get("Content-Type"), originalUrl),
+    "Content-Type": inferContentType(upstreamCT, originalUrl),
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Expose-Headers": CORS_EXPOSE,
   };
@@ -154,6 +266,7 @@ function buildProxyResponse(upstream: Response, originalUrl: string): Response {
     }
   });
 
+  logRequest(ip, new URL(originalUrl).hostname, upstreamCT, upstream.status);
   return new Response(upstream.body, {
     status: upstream.status,
     headers: responseHeaders,
@@ -161,7 +274,8 @@ function buildProxyResponse(upstream: Response, originalUrl: string): Response {
 }
 
 // Raw TCP fallback for ICY/Shoutcast servers that don't speak valid HTTP
-async function doRawRequest(target: URL, icyMeta: string): Promise<Response> {
+async function doRawRequest(target: URL, icyMeta: string, ip: string): Promise<Response> {
+  await assertAllowedHost(target.hostname);
   const port = parseInt(target.port) || 80;
   const path = target.pathname + target.search;
 
@@ -201,6 +315,17 @@ async function doRawRequest(target: URL, icyMeta: string): Promise<Response> {
         const icyMatch = line.match(/^(icy-[^:]+|ice-[^:]+):\s*(.+)/i);
         if (icyMatch) icyHeaders[icyMatch[1].toLowerCase()] = icyMatch[2].trim();
       }
+
+      // Final response only: reject high-abuse, never-a-stream content types.
+      if (isBlockedContentType(contentType)) {
+        try { conn.close(); } catch { /* ignore */ }
+        logRequest(ip, target.hostname, contentType, 415);
+        return new Response("Unsupported content type", {
+          status: 415,
+          headers: { "Access-Control-Allow-Origin": "*" },
+        });
+      }
+      logRequest(ip, target.hostname, contentType, 200);
 
       // Stream the response using a ReadableStream
       const responseHeaders: Record<string, string> = {

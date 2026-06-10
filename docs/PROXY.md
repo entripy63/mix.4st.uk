@@ -19,6 +19,43 @@ We use **multiple proxies** to split load and provide redundancy:
 - **Deno Deploy** and **Cloud Run** both support raw TCP sockets, handling raw IPs and ICY protocol.
 - Having multiple proxies provides **fallback redundancy** — if the first proxy fails for a stream, the app automatically tries the next one in the list.
 
+## Abuse protection
+
+All proxies share the same abuse-protection semantics (the three source files —
+`cloudflare-worker.js`, `cloudrun-proxy/index.js`, `deno-proxy/main.ts` — keep
+these in sync). Tunable constants live in a clearly-marked block at the top of
+each file.
+
+**Design rule: the controls are stateless.** Cloud Run suspends/replaces
+instances on its hourly timeout (without running `close` handlers) and routinely
+scales to multiple instances, so any in-app per-IP counter either leaks upward
+(false-positive blocking of legit listeners) or splits across instances. We
+therefore do **not** keep stateful rate/concurrency counters in app code; every
+check below decides on the current request alone. Volumetric rate limiting is
+delegated to the infrastructure layer (Cloud Armor / Cloudflare Rate Limiting /
+host nftables), which sees all traffic and survives instance churn.
+
+| Control | Behaviour | CF Worker | Cloud Run / NUC (Node) | Deno |
+|---------|-----------|-----------|------------------------|------|
+| **HTTPS-only** | If the platform supplies `X-Forwarded-Proto` and it is not `https`, reject → `403`. All legitimate use is on 443; observed abuse was on port 80. Stateless. | ✅ | ✅ | ✅ |
+| **Origin check** | Parsed-hostname match (`endsWith`, not substring): allow only `4st.uk` and `*.4st.uk`. Stops one site hotlinking the proxy in a victim's browser. *Not* a hard auth boundary — a scripted client can send any header. | ✅ | ✅ | ✅ |
+| **Content-Type denylist** | On the **final** response only (never redirect hops), reject high-abuse, never-a-stream types (`text/html`, `application/json`, `application/xml`, RSS/Atom, CSV) → `415`. Missing CT is allowed (ICY servers omit it); `text/plain` is allowed (some playlists use it — metadata endpoints are covered by the IP block). | ✅ | ✅ | ✅ |
+| **SSRF / private-IP block** | Reject destinations resolving to loopback/private/link-local/CGNAT/metadata/multicast ranges → `403`. Kills internal-service and cloud-metadata (`169.254.169.254`) SSRF regardless of Content-Type. | literal IPs only (platform blocks the rest) | resolve + validate, **connection pinned to the validated IP** (closes DNS-rebinding) | literal IPs + resolved names |
+| **CORS on errors** | Every response, **including error responses**, carries `Access-Control-Allow-Origin: *`. Without this the browser reports a generic "CORS header missing" instead of the real status code, which is what masked an earlier Cloud Run regression. | ✅ | ✅ | ✅ |
+| **Volumetric rate limiting** | Per client IP, at the infrastructure layer (not app code, see design rule above). | dashboard Rate Limiting rule | Cloud Armor (Cloud Run) / nftables (NUC) | platform-level |
+| **Request logging** | One line per request: `[proxy] ip=… host=… ct=… status=…` for monitoring real Content-Types. | `wrangler tail` | `journalctl -u stream-proxy` | Deploy logs |
+
+**Why a denylist, not an `audio/*` allowlist?** Real streams send wildly
+inconsistent Content-Types (Shoutcast oddities, `application/octet-stream`,
+missing headers), so allowlisting `audio/*` would break legitimate streams.
+Blocking only the high-value abuse types keeps every real stream working while
+removing the proxy's usefulness as a generic web scraper. The request logging
+exists so the denylist can be tuned from real evidence.
+
+**Residual risk:** the origin check is bypassable by reflecting a `*.4st.uk`
+value (browser clients can't hold a secret), so it is treated as a speed-bump.
+The SSRF block + Content-Type denylist are the substantive controls.
+
 ## Proxy Configuration
 
 The app loads proxy routing from `/streams/proxy-config.json` at startup:
@@ -78,10 +115,15 @@ Edit `streams/proxy-config.json` and deploy. No code changes needed. Reorder ent
 ### Features
 
 - CORS preflight (OPTIONS) handling
-- Origin validation (4st.uk, steveqv225)
+- Origin validation (4st.uk + any subdomain; see [Abuse protection](#abuse-protection))
+- Content-Type denylist on the final response (blocks SSRF / web-scraping abuse)
+- Literal private/reserved IP destinations rejected (defensive)
+- HTTPS-only enforcement via `X-Forwarded-Proto`
 - Range header forwarding (for seeking on non-live streams)
 - Automatic redirect following (Cloudflare's built-in, up to 20 hops)
 - Status endpoint at `/status`
+- CORS headers on all responses, including errors
+- Volumetric rate limiting via a Cloudflare dashboard Rate Limiting rule (Workers are stateless across isolates, so no in-code counters)
 
 ### Limitations
 
@@ -128,17 +170,30 @@ compatibility_date = "2024-01-01"
 ### Features
 
 - Full CORS handling (preflight, expose headers)
-- Origin validation (4st.uk, steveqv225)
+- Origin validation (4st.uk + any subdomain; see [Abuse protection](#abuse-protection))
+- Content-Type denylist on the final response (blocks SSRF / web-scraping abuse)
+- SSRF protection: private/reserved destinations rejected, connections pinned to the validated IP
+- HTTPS-only enforcement via `X-Forwarded-Proto`
 - HTTP/HTTPS redirect following (up to 5 hops)
 - Range header forwarding
 - ICY/Shoutcast raw TCP fallback (for servers using HTTP/0.9)
 - ICY metadata header proxying
 - Memory-efficient streaming (no buffering)
-- Status endpoint at `/status` (shows active connections, memory usage)
+- CORS headers on all responses, including errors
+- Status endpoint at `/status` (memory usage, plus a best-effort live-response count derived from a self-healing set — see note below)
+
+> **No in-app rate/concurrency limiting.** The hourly timeout suspends the
+> instance without running `close` handlers, so a decrement-on-close counter
+> leaks and would eventually block legitimate listeners (this is exactly what
+> caused the earlier `active:10` false-positive and the browser "CORS header
+> missing" reports). `/status` therefore reports `active` from a set that prunes
+> entries whose underlying socket is no longer writable, so it self-heals
+> without relying on graceful close. Volumetric protection is delegated to
+> Cloud Armor.
 
 ### Limitations
 
-- **60-minute timeout**: Long-running streams will disconnect after 1 hour. The app's auto-reconnect (`player.js`) handles this transparently.
+- **60-minute timeout**: Long-running streams will disconnect after 1 hour. The app's auto-reconnect (`player.js`) handles this transparently. Because instances are suspended/replaced abruptly (and Cloud Run often runs 2+ instances), the proxy keeps **no cross-request state** — all abuse controls are stateless.
 
 ### Project details
 
@@ -214,11 +269,19 @@ CMD ["node", "--max-old-space-size=64", "index.js"]
 ### Features
 
 - Full CORS handling (preflight, expose headers)
-- Origin validation (4st.uk, steveqv225)
+- Origin validation (4st.uk + any subdomain; see [Abuse protection](#abuse-protection))
+- Content-Type denylist on the final response (blocks SSRF / web-scraping abuse)
+- SSRF protection: private/reserved destinations rejected (literal IPs + resolved names)
+- HTTPS-only enforcement via `X-Forwarded-Proto`
 - HTTP/HTTPS redirect following (up to 5 hops)
 - Range header forwarding
 - ICY/Shoutcast raw TCP fallback via `Deno.connect()`
+- CORS headers on all responses, including errors
 - Status endpoint at `/status`
+
+> No in-app rate limiting: Deno Deploy spreads requests across ephemeral
+> isolates, so per-isolate counters are unreliable. Volumetric protection is
+> delegated to the platform.
 
 ### Limitations
 
@@ -257,22 +320,43 @@ Create at the Deno Deploy dashboard under account settings → Access Tokens.
 ### Features
 
 - Full CORS handling (preflight, expose headers)
-- Origin validation (4st.uk, steveqv225)
+- Origin validation (4st.uk + any subdomain; see [Abuse protection](#abuse-protection))
+- Content-Type denylist on the final response (blocks SSRF / web-scraping abuse)
+- SSRF protection: private/reserved destinations rejected, connections pinned to the validated IP
+- HTTPS-only enforcement via `X-Forwarded-Proto`
 - HTTP/HTTPS redirect following (up to 5 hops)
 - Range header forwarding
 - ICY/Shoutcast raw TCP fallback (for servers using HTTP/0.9)
 - ICY metadata header proxying
 - Memory-efficient streaming (no buffering)
-- Status endpoint at `/status` (shows active connections, memory usage)
+- CORS headers on all responses, including errors
+- Status endpoint at `/status` (memory usage + self-healing live-response count)
+- Volumetric protection via host nftables (SYN/connection rate limits; the host firewall also blocks anything not on port 443 — see SYN-flood note below)
 - **No timeout** — streams run indefinitely
-- **No request limits** — self-hosted, no free-tier quotas
+- **No free-tier request quotas** — self-hosted
 
 ### Limitations
 
 - **Depends on home internet uplink** (10 Mbit/s upload) — sufficient for personal use but not high-traffic scenarios
-robots.txt, fail2ban and Apache2 rewrite rules to harden it from abuse.
-
+- **Exposed to internet scanning** — hardened with robots.txt, fail2ban, Apache2 rewrite rules, and host nftables (see SYN-flood note below)
 - **Availability** — depends on home power and internet staying up
+
+### Host-level SYN-flood / port-80 mitigation
+
+The NUC sits behind a pfSense router (interface `OPT9`). A "30 kb/s download"
+that looked like file leeching turned out to be a **SYN flood on port 80** (the
+proxy itself only serves legitimate traffic on 443). Mitigation is at the host,
+not in the proxy:
+
+- `nftables` SYN-rate limiting, loaded from `/home/st/syn-flood-mitigation.nft`
+  and persisted via `include "/home/st/syn-flood-mitigation.nft"` in
+  `/etc/nftables.conf`
+- `net.ipv4.tcp_synack_retries = 2` in `/etc/sysctl.d/99-synflood.conf`
+- the firewall additionally **drops anything not on port 443**, which flattened
+  the pfSense `OPT9` traffic graph to zero (legitimate streaming is 443-only)
+
+After applying, `ss -tn state syn-recv` dropped from ~259 to 0 and egress from
+~42 kbit/s to 0; `sudo nft -c -f /etc/nftables.conf` reports `boot config OK`.
 
 ### Project details
 
@@ -304,7 +388,7 @@ Unit files are in `/etc/systemd/system/` on the NUC.
 Upload the updated proxy file to the NUC — the path unit handles the restart automatically:
 
 ```bash
-scp tools/cloudrun-proxy/index.js nuc:/opt/stream-proxy/index.js
+scp tools/cloudrun-proxy/index.js st@player.opt9:/opt/stream-proxy/index.js
 ```
 
 Or via SFTP. The `stream-proxy-watcher.path` unit detects the file change and restarts `stream-proxy.service`.
@@ -323,6 +407,39 @@ Configured at `/etc/apache2/sites-available/h.proxy.4st.uk.conf` with SSL manage
 ```
 
 Requires Apache modules: `proxy`, `proxy_http`, `headers`.
+
+#### CORS and the Apache layer
+
+The NUC's Apache also hosts the **test app** at `m.4st.uk`, so CORS handling is
+split between the two vhosts on this box:
+
+- **Proxy vhost (`h.proxy.4st.uk`)** — adds **no** CORS headers. The Node proxy
+  emits its own (`Access-Control-Allow-Origin: *` plus a full `Icy-*` /
+  `Content-*` expose list), so Apache must not override them. A global
+  `Header set Access-Control-Allow-Origin` in `apache2.conf` previously clobbered
+  these on 2xx responses — locking the proxy to `mixes.4st.uk` only and dropping
+  the `Icy-*` metadata headers — so that global block was removed.
+- **Test-app vhost (`m.4st.uk`)** — needs CORS because `mixes.4st.uk` falls back
+  to fetching missing mixes from `m.4st.uk` (which has more storage; every site
+  holds the full metadata but only a subset of the actual mix files). Instead of
+  a single hard-coded origin, it **reflects any `4st.uk` origin** so current and
+  future servers (and changed subdomains) all work:
+
+  ```apache
+  <IfModule mod_headers.c>
+      SetEnvIf Origin "^(https://([a-zA-Z0-9-]+\.)*4st\.uk)$" CORS_ORIGIN=$1
+      Header set Access-Control-Allow-Origin "%{CORS_ORIGIN}e" env=CORS_ORIGIN
+      Header set Access-Control-Allow-Methods "GET, HEAD, OPTIONS"
+      Header set Access-Control-Allow-Headers "Range"
+      Header set Access-Control-Expose-Headers "Content-Length, Content-Range, Accept-Ranges"
+      Header merge Vary Origin
+  </IfModule>
+  ```
+
+  The regex is anchored (`^…$`) so look-alikes (`evil-4st.uk`,
+  `x.4st.uk.evil.com`) are rejected; non-`4st.uk` origins get no `ACAO` at all,
+  and `Vary: Origin` stops caches cross-serving. Requires `mod_setenvif`
+  (`a2enmod headers setenvif`).
 
 ---
 
