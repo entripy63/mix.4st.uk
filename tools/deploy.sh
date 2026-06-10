@@ -1,7 +1,7 @@
 #!/bin/bash
 # Deployment script for mix.4st.uk
 # Usage: ./tools/deploy.sh [target]
-# Targets: test, prod, test-backup, prod-backup, all-test, all-prod
+# Targets: prod, home-test, all-test, all-prod
 
 set -e
 
@@ -17,7 +17,7 @@ if [ ! -f "$CONFIG" ]; then
 fi
 
 # Valid targets
-VALID_TARGETS=("test" "prod" "home-test" "all-test" "all-prod")
+VALID_TARGETS=("prod" "home-test" "all-test" "all-prod")
 TARGET="${1:-all-test}"
 
 # Safety gates (set SKIP_DEPLOY_CHECKS=1 to bypass in emergencies)

@@ -4,14 +4,14 @@
 # LFTP bookmarks and paths
 declare -A SERVERS=(
   [prod]="axc"
-  [test]="axc-test"
+#  [test]="axc-test"
   [home-test]="home-test"
 )
 
 # Remote directories (change these based on your server structure)
 declare -A REMOTE_DIRS=(
   [prod]=""
-  [test]=""
+#  [test]=""
   [home-test]=""
 )
 
@@ -24,7 +24,7 @@ MEDIA_EXCLUDES="-x '\.mp3$' -x '\.m4a$' -x '\.flac$' -x '\.wav$' -x '\.opus$' -x
 
 declare -A MIRROR_COMMANDS=(
   [prod]="mirror -R --delete $MIRROR_EXCLUDES $MEDIA_EXCLUDES"
-  [test]="mirror -R --delete $MIRROR_EXCLUDES $MEDIA_EXCLUDES"
+#  [test]="mirror -R --delete $MIRROR_EXCLUDES $MEDIA_EXCLUDES"
   [home-test]="mirror -R --delete $MIRROR_EXCLUDES $MEDIA_EXCLUDES"
 )
 
