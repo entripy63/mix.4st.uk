@@ -311,16 +311,18 @@ Free-tier quotas (watch the Deno dashboard billing graphs):
   stream is ~56 MB/h, so 100 GB ≈ ~1,800 h/month.
 - **350 GB-h memory/month** — **this is the duration-based quota to watch.**
   Unlike CPU it bills memory held × wall-clock hours connected (the same shape
-  as the wall-clock billing that made Cloud Run expensive), but the proxy's
-  footprint is small (~64–128 MB), so ~300 h/month ≈ ~40 GB-h — roughly 9×
-  under the cap.
+  as the wall-clock billing that made Cloud Run expensive). The V8 isolate's
+  measured footprint is **~333 MiB (~0.33 GB)**, so ~300 h/month ≈ ~100 GB-h —
+  roughly 3× under the cap. The closest thing to a real ceiling, so keep an eye
+  on this graph.
 
 > **Why Deno is safe where Cloud Run wasn't:** Deno bills *actual CPU time*,
 > whereas Cloud Run billed *wall-clock request duration* — so a 1-hour stream
 > cost Cloud Run ~3,600 vCPU-seconds whether the CPU was busy or idle, but costs
 > Deno only the ~60s it actually computed. The one Deno dimension with
-> Cloud-Run-like wall-clock shape is memory-hours, which has a generous cap and
-> a tiny footprint here.
+> Cloud-Run-like wall-clock shape is memory-hours; at the measured ~333 MiB
+> isolate footprint heavy use still sits ~3× under the cap, but it's the metric
+> to watch.
 
 ### Project details
 
