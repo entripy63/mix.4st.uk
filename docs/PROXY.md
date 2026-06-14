@@ -300,12 +300,31 @@ CMD ["node", "--max-old-space-size=64", "index.js"]
 
 ### Limitations
 
-- **50ms CPU time per request** (free tier) — streaming is I/O-bound so this is generally fine
-- **1M requests/month** (free tier)
+Free-tier quotas (watch the Deno dashboard billing graphs):
+
+- **50ms CPU time per request** — streaming is I/O-bound (mostly awaiting
+  network bytes), so a long-lived connection accrues CPU slowly. Measured
+  **< 1 min of CPU per hour played** (~1.7% utilisation).
+- **1M requests/month** — a stream plus its reconnects is a handful of requests;
+  nowhere near.
+- **100 GB egress/month** — proxied audio counts toward this. At ~128 kbps a
+  stream is ~56 MB/h, so 100 GB ≈ ~1,800 h/month.
+- **350 GB-h memory/month** — **this is the duration-based quota to watch.**
+  Unlike CPU it bills memory held × wall-clock hours connected (the same shape
+  as the wall-clock billing that made Cloud Run expensive), but the proxy's
+  footprint is small (~64–128 MB), so ~300 h/month ≈ ~40 GB-h — roughly 9×
+  under the cap.
+
+> **Why Deno is safe where Cloud Run wasn't:** Deno bills *actual CPU time*,
+> whereas Cloud Run billed *wall-clock request duration* — so a 1-hour stream
+> cost Cloud Run ~3,600 vCPU-seconds whether the CPU was busy or idle, but costs
+> Deno only the ~60s it actually computed. The one Deno dimension with
+> Cloud-Run-like wall-clock shape is memory-hours, which has a generous cap and
+> a tiny footprint here.
 
 ### Project details
 
-- **URL**: `https://deno-proxy.4st.uk`
+- **URL**: `https://d.proxy.4st.uk`
 - **Custom domain**: Configured in Deno Deploy dashboard
 
 ### Deployment
