@@ -10,13 +10,22 @@ We use **multiple proxies** to split load and provide redundancy:
 |-------|----------|---------|---------|-------|
 | Deno Deploy | Deno | All streams | TBD | Free tier, raw TCP via `Deno.connect()`, ICY/Shoutcast support |
 | Cloudflare Worker | Cloudflare | Named URLs only | None (streaming) | Free tier, very reliable, but `fetch()` cannot connect to raw IPs |
-| Cloud Run | Google Cloud | All streams | 60 min | Handles raw IPs via raw TCP fallback, ICY/Shoutcast protocol |
 | Home NUC | Self-hosted | All streams | None | No limitations, depends on home internet uplink |
+
+> **Google Cloud Run (retired).** Previously handled all streams via raw TCP
+> fallback with a 60-min timeout. Removed in June 2026 because long-lived music
+> streaming (10h/day) blew through the free vCPU-second and egress quotas and
+> started incurring charges; this project earns no revenue so any recurring cost
+> is unacceptable. Its replacement load is carried by Deno Deploy and the Home
+> NUC (both handle raw IPs/ICY). The Node.js source it ran still lives on as the
+> Home NUC proxy (`tools/cloudrun-proxy/index.js`). See
+> [Google Cloud Run (retired)](#google-cloud-run-retired) for the historical
+> record and redeploy steps.
 
 ### Why multiple proxies?
 
 - **Cloudflare Workers** use `fetch()` which resolves DNS — cannot connect to raw IP addresses (e.g., `http://185.33.21.112:8000/stream`) or handle ICY/Shoutcast servers that respond with non-standard HTTP.
-- **Deno Deploy** and **Cloud Run** both support raw TCP sockets, handling raw IPs and ICY protocol.
+- **Deno Deploy** and the **Home NUC** both support raw TCP sockets, handling raw IPs and ICY protocol. (Google Cloud Run did too, until it was retired — see above.)
 - Having multiple proxies provides **fallback redundancy** — if the first proxy fails for a stream, the app automatically tries the next one in the list.
 
 ## Abuse protection
@@ -26,23 +35,24 @@ All proxies share the same abuse-protection semantics (the three source files �
 these in sync). Tunable constants live in a clearly-marked block at the top of
 each file.
 
-**Design rule: the controls are stateless.** Cloud Run suspends/replaces
-instances on its hourly timeout (without running `close` handlers) and routinely
-scales to multiple instances, so any in-app per-IP counter either leaks upward
+**Design rule: the controls are stateless.** Hosts spread requests across
+multiple instances/isolates and replace them without running `close` handlers
+(Deno Deploy across ephemeral isolates; the retired Cloud Run service did the
+same on its hourly timeout), so any in-app per-IP counter either leaks upward
 (false-positive blocking of legit listeners) or splits across instances. We
 therefore do **not** keep stateful rate/concurrency counters in app code; every
 check below decides on the current request alone. Volumetric rate limiting is
-delegated to the infrastructure layer (Cloud Armor / Cloudflare Rate Limiting /
-host nftables), which sees all traffic and survives instance churn.
+delegated to the infrastructure layer (Cloudflare Rate Limiting / host
+nftables), which sees all traffic and survives instance churn.
 
-| Control | Behaviour | CF Worker | Cloud Run / NUC (Node) | Deno |
-|---------|-----------|-----------|------------------------|------|
+| Control | Behaviour | CF Worker | NUC (Node) | Deno |
+|---------|-----------|-----------|------------|------|
 | **HTTPS-only** | If the platform supplies `X-Forwarded-Proto` and it is not `https`, reject → `403`. All legitimate use is on 443; observed abuse was on port 80. Stateless. | ✅ | ✅ | ✅ |
 | **Origin check** | Parsed-hostname match (`endsWith`, not substring): allow only `4st.uk` and `*.4st.uk`. Stops one site hotlinking the proxy in a victim's browser. *Not* a hard auth boundary — a scripted client can send any header. | ✅ | ✅ | ✅ |
 | **Content-Type denylist** | On the **final** response only (never redirect hops), reject high-abuse, never-a-stream types (`text/html`, `application/json`, `application/xml`, RSS/Atom, CSV) → `415`. Missing CT is allowed (ICY servers omit it); `text/plain` is allowed (some playlists use it — metadata endpoints are covered by the IP block). | ✅ | ✅ | ✅ |
 | **SSRF / private-IP block** | Reject destinations resolving to loopback/private/link-local/CGNAT/metadata/multicast ranges → `403`. Kills internal-service and cloud-metadata (`169.254.169.254`) SSRF regardless of Content-Type. | literal IPs only (platform blocks the rest) | resolve + validate, **connection pinned to the validated IP** (closes DNS-rebinding) | literal IPs + resolved names |
 | **CORS on errors** | Every response, **including error responses**, carries `Access-Control-Allow-Origin: *`. Without this the browser reports a generic "CORS header missing" instead of the real status code, which is what masked an earlier Cloud Run regression. | ✅ | ✅ | ✅ |
-| **Volumetric rate limiting** | Per client IP, at the infrastructure layer (not app code, see design rule above). | dashboard Rate Limiting rule | Cloud Armor (Cloud Run) / nftables (NUC) | platform-level |
+| **Volumetric rate limiting** | Per client IP, at the infrastructure layer (not app code, see design rule above). | dashboard Rate Limiting rule | host nftables (NUC) | platform-level |
 | **Request logging** | One line per request: `[proxy] ip=… host=… ct=… status=…` for monitoring real Content-Types. | `wrangler tail` | `journalctl -u stream-proxy` | Deploy logs |
 
 **Why a denylist, not an `audio/*` allowlist?** Real streams send wildly
@@ -63,19 +73,14 @@ The app loads proxy routing from `/streams/proxy-config.json` at startup:
 ```json
 [
   {
-    "url": "https://deno-proxy.4st.uk",
-    "streams": "all",
-    "note": "Deno Deploy — handles raw IPs and ICY/Shoutcast via raw TCP"
-  },
-  {
     "url": "https://stream-proxy.round-bar-e93e.workers.dev",
     "streams": "named",
     "note": "Cloudflare Worker — reliable, no timeout, but cannot proxy raw IP addresses"
   },
   {
-    "url": "https://stream-proxy-375114048778.europe-west2.run.app/stream",
+    "url": "https://d.proxy.4st.uk",
     "streams": "all",
-    "note": "Google Cloud Run — handles raw IPs and ICY/Shoutcast, 60-min timeout"
+    "note": "Deno Deploy — handles raw IPs and ICY/Shoutcast via raw TCP, unstable on cold start"
   },
   {
     "url": "https://h.proxy.4st.uk",
@@ -161,11 +166,21 @@ compatibility_date = "2024-01-01"
 
 ---
 
-## Google Cloud Run
+## Google Cloud Run (retired)
+
+> **Retired June 2026 — not a live proxy.** This service was deleted (along with
+> its `cloud-run-source-deploy` Artifact Registry repo) to eliminate recurring
+> charges: long-lived music streaming (~10h/day) far exceeded the free
+> 180k vCPU-second and 1 GB egress quotas. It has been removed from
+> `proxy-config.json`; raw-IP/ICY load now goes to Deno Deploy and the Home NUC.
+> The section below is kept as a historical record and as redeploy instructions
+> should a cloud fallback ever be needed again. **Redeploying will start
+> incurring charges again** under the same usage.
 
 ### Source code
 
-`tools/cloudrun-proxy/index.js` — Node.js HTTP server deployed as a Cloud Run service.
+`tools/cloudrun-proxy/index.js` — Node.js HTTP server. Still the active source
+for the Home NUC proxy; was previously also deployed as a Cloud Run service.
 
 ### Features
 
@@ -465,4 +480,5 @@ Streams will fail to probe. Deploy a replacement to any provider and add it to `
 - **Multi-proxy split**: Cloudflare Worker for named URLs (no timeout), Cloud Run for raw IPs (60-min timeout)
 - **Deno Deploy**: Added as third proxy — free tier, raw TCP support via `Deno.connect()`, handles raw IPs and ICY/Shoutcast
 - **Home NUC**: Self-hosted Node.js proxy on Intel NUC — no timeouts, no request limits, no IP restrictions
-- **Current**: Four proxies (Cloudflare Worker, Cloud Run, Deno Deploy, Home NUC) with ordered fallback chains
+- **Cloud Run retired (June 2026)**: Deleted the service and its Artifact Registry repo after long-lived streaming (~10h/day) pushed past the free vCPU-second/egress quotas and began incurring charges; this project earns no revenue. Raw-IP/ICY load moved to Deno Deploy + Home NUC.
+- **Current**: Three proxies (Cloudflare Worker, Deno Deploy, Home NUC) with ordered fallback chains

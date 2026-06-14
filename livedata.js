@@ -26,6 +26,15 @@
 let proxiesForRawIP = [];
 let proxiesForNamed = [];
 
+// Normalise a proxy URL or bare hostname to just its hostname for comparison.
+function proxyHostname(s) {
+  try {
+    return new URL(/:\/\//.test(s) ? s : `https://${s}`).hostname;
+  } catch {
+    return s;
+  }
+}
+
 async function loadProxyConfig() {
   if (proxiesForRawIP.length || proxiesForNamed.length) return; // Already loaded
   try {
@@ -37,6 +46,23 @@ async function loadProxyConfig() {
       }
       // Both "all" and "named" proxies can handle named URLs
       proxiesForNamed.push(p.url);
+    }
+
+    // Per-browser proxy preference (opt-in, NOT shared with other users).
+    // Set it once in this browser's console:
+    //   localStorage.preferProxy = 'h.proxy.4st.uk'
+    // The matching "all" proxy is then moved to the FRONT of proxiesForRawIP so
+    // this browser prefers it first — e.g. a split-DNS LAN proxy that resolves
+    // locally. Matched by hostname, so the value may be a bare host or full URL.
+    // Revert at any time with:  delete localStorage.preferProxy
+    // Only affects raw-IP routing; named-URL routing is left unchanged.
+    const preferProxy = storage.get('preferProxy');
+    if (preferProxy) {
+      const wanted = proxyHostname(preferProxy);
+      const idx = proxiesForRawIP.findIndex(url => proxyHostname(url) === wanted);
+      if (idx > 0) {
+        proxiesForRawIP.unshift(proxiesForRawIP.splice(idx, 1)[0]);
+      }
     }
   } catch (e) {
     console.error('Failed to load proxy-config.json:', e);
