@@ -293,10 +293,35 @@ CMD ["node", "--max-old-space-size=64", "index.js"]
 - ICY/Shoutcast raw TCP fallback via `Deno.connect()`
 - CORS headers on all responses, including errors
 - Status endpoint at `/status`
+- Client-disconnect teardown via `req.signal` (see note below)
 
 > No in-app rate limiting: Deno Deploy spreads requests across ephemeral
 > isolates, so per-isolate counters are unreliable. Volumetric protection is
 > delegated to the platform.
+
+> **Client-disconnect teardown (why `req.signal` matters).** A live ICY/Icecast
+> server pushes audio continuously whether or not anyone is listening. If the
+> client goes away but the *upstream* connection is left open, the runtime can
+> keep draining that infinite stream — bytes in, nothing out — holding memory
+> (and **GB-hour** quota) for hours. Observed in production: after stopping,
+> memory stayed high for ~4.5 h with ~960 MiB pulled from upstream vs ~290 MiB
+> delivered. Relying on the response `ReadableStream` being cancelled is not
+> enough: it works in local `deno run` but **not reliably on Deno Deploy's edge
+> layer**. The fix threads `req.signal` end-to-end — passed to every `fetch()`
+> (so a disconnect aborts the upstream fetch) and wired to `conn.close()` in the
+> raw-TCP path — so teardown no longer depends on stream cancellation. After the
+> fix, CPU/memory drop to zero within ~60 s of stopping.
+>
+> **App-side assumption:** the SPA never *pauses* a live stream — it always
+> **stops** (tears the connection down) and reconnects on resume, so it never
+> replays stale buffered audio. That means every "pause" is a real disconnect,
+> so `req.signal` fires for all live-stream stops; there is no
+> paused-but-connected case to handle.
+>
+> A small residual in-greater-than-out gap is normal and **not** a leak: the
+> proxy reads slightly ahead of what it forwards, so each stop discards a little
+> upstream read-ahead. It is bounded per stop (not per second) and stops rising
+> once playback stops.
 
 ### Limitations
 

@@ -162,7 +162,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
   }
 
   try {
-    return await doFetchRequest(streamUrl, fetchHeaders, icyMeta, 0, streamUrl, ip);
+    return await doFetchRequest(streamUrl, fetchHeaders, icyMeta, 0, streamUrl, ip, req.signal);
   } catch (e) {
     if (e instanceof BlockedAddressError) {
       logRequest(ip, "-", null, 403);
@@ -185,6 +185,7 @@ async function doFetchRequest(
   redirectCount: number,
   originalUrl: string,
   ip: string,
+  signal: AbortSignal,
 ): Promise<Response> {
   if (redirectCount > 5) {
     return new Response("Too many redirects", {
@@ -202,33 +203,37 @@ async function doFetchRequest(
   // (Deno's fetch() will also fail on ICY responses)
   if (target.protocol === "http:") {
     try {
-      const response = await fetch(targetUrl, { headers, redirect: "manual" });
+      // Pass the client's abort signal so a disconnect tears down the upstream
+      // fetch (otherwise the runtime can keep draining an infinite live stream).
+      const response = await fetch(targetUrl, { headers, redirect: "manual", signal });
 
       // Handle redirects manually
       if ([301, 302, 307, 308].includes(response.status)) {
         const location = response.headers.get("Location");
         if (location) {
           response.body?.cancel();
-          return doFetchRequest(location, headers, icyMeta, redirectCount + 1, originalUrl, ip);
+          return doFetchRequest(location, headers, icyMeta, redirectCount + 1, originalUrl, ip, signal);
         }
       }
 
       return buildProxyResponse(response, originalUrl, ip);
     } catch (e) {
       if (e instanceof BlockedAddressError) throw e;
+      // Client went away mid-fetch — don't open a fresh raw connection.
+      if (signal.aborted || (e instanceof Error && e.name === "AbortError")) throw e;
       // fetch() failed — likely an ICY/Shoutcast server, try raw TCP
-      return doRawRequest(target, icyMeta, ip);
+      return doRawRequest(target, icyMeta, ip, signal);
     }
   }
 
   // HTTPS — use fetch() directly
-  const response = await fetch(targetUrl, { headers, redirect: "manual" });
+  const response = await fetch(targetUrl, { headers, redirect: "manual", signal });
 
   if ([301, 302, 307, 308].includes(response.status)) {
     const location = response.headers.get("Location");
     if (location) {
       response.body?.cancel();
-      return doFetchRequest(location, headers, icyMeta, redirectCount + 1, originalUrl, ip);
+      return doFetchRequest(location, headers, icyMeta, redirectCount + 1, originalUrl, ip, signal);
     }
   }
 
@@ -274,12 +279,28 @@ function buildProxyResponse(upstream: Response, originalUrl: string, ip: string)
 }
 
 // Raw TCP fallback for ICY/Shoutcast servers that don't speak valid HTTP
-async function doRawRequest(target: URL, icyMeta: string, ip: string): Promise<Response> {
+async function doRawRequest(target: URL, icyMeta: string, ip: string, signal: AbortSignal): Promise<Response> {
   await assertAllowedHost(target.hostname);
   const port = parseInt(target.port) || 80;
   const path = target.pathname + target.search;
 
   const conn = await Deno.connect({ hostname: target.hostname, port });
+
+  // Close the upstream socket the moment the client disconnects. Without this
+  // the socket (and the live server pushing into it) lingers, draining data the
+  // client will never receive — the in≫out leak that held memory for hours.
+  let connClosed = false;
+  const closeConn = () => {
+    if (connClosed) return;
+    connClosed = true;
+    signal.removeEventListener("abort", closeConn);
+    try { conn.close(); } catch { /* ignore */ }
+  };
+  if (signal.aborted) {
+    closeConn();
+    return new Response("Client gone", { status: 499, headers: { "Access-Control-Allow-Origin": "*" } });
+  }
+  signal.addEventListener("abort", closeConn);
 
   const request = `GET ${path} HTTP/1.0\r\nHost: ${target.host}\r\nUser-Agent: AudioPlayer/1.0\r\nIcy-MetaData: ${icyMeta}\r\nConnection: close\r\n\r\n`;
   await conn.write(new TextEncoder().encode(request));
@@ -318,7 +339,7 @@ async function doRawRequest(target: URL, icyMeta: string, ip: string): Promise<R
 
       // Final response only: reject high-abuse, never-a-stream content types.
       if (isBlockedContentType(contentType)) {
-        try { conn.close(); } catch { /* ignore */ }
+        closeConn();
         logRequest(ip, target.hostname, contentType, 415);
         return new Response("Unsupported content type", {
           status: 415,
@@ -346,18 +367,20 @@ async function doRawRequest(target: URL, icyMeta: string, ip: string): Promise<R
           try {
             const n = await conn.read(readBuf);
             if (n === null) {
-              conn.close();
+              closeConn();
               controller.close();
               return;
             }
             controller.enqueue(readBuf.slice(0, n));
           } catch {
-            try { conn.close(); } catch { /* ignore */ }
+            closeConn();
+            // If the client aborted, this is expected teardown, not an error.
+            if (signal.aborted) { try { controller.close(); } catch { /* ignore */ } return; }
             controller.error(new Error("network error"));
           }
         },
         cancel() {
-          try { conn.close(); } catch { /* ignore */ }
+          closeConn();
         },
       });
 
@@ -368,7 +391,7 @@ async function doRawRequest(target: URL, icyMeta: string, ip: string): Promise<R
     if (totalRead > 16384) break;
   }
 
-  conn.close();
+  closeConn();
   return new Response("Failed to parse upstream response", {
     status: 502,
     headers: { "Access-Control-Allow-Origin": "*" },
