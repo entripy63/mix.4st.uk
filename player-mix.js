@@ -333,6 +333,17 @@ function displayActionBar() {
     </div>`;
 }
 
+// Guard: is the Recent (history) pane currently displayable? When a DJ mix with
+// a tracklist or cover art is loaded, Recent becomes just one of several
+// right-column tabs (Recent/Tracks/Art). Stale-proxy re-probing is async, so the
+// user may have switched to another tab while a probe was running; redisplaying
+// the hidden Recent pane would corrupt the right-column layout. Mirrors
+// liveui.js shouldRedisplayStreams().
+function shouldRedisplayHistory() {
+    const el = document.getElementById('playHistory');
+    return !!el && el.style.display !== 'none';
+}
+
 function switchRightTab(tab) {
     const panes = {
         history: document.getElementById('playHistory'),

@@ -58,6 +58,9 @@ document.getElementById('fileInput').addEventListener('change', async function (
       await loadDefaultStreamsOnFirstRun();
       const config = { shouldRedisplayAfterProbe: shouldRedisplayStreams };
       initLiveStreams(config).catch(e => console.error('Failed to initialize live streams:', e));
+      // Repair Play History entries that reference a removed proxy (fire-and-forget)
+      playHistory.refreshStaleProxies({ shouldRedisplayAfterProbe: shouldRedisplayHistory })
+        .catch(e => console.error('Failed to refresh history proxies:', e));
       return;
     }
 
@@ -131,4 +134,7 @@ document.getElementById('fileInput').addEventListener('change', async function (
     shouldRedisplayAfterProbe: shouldRedisplayStreams
   };
   initLiveStreams(config).catch(e => console.error('Failed to initialize live streams:', e));
+  // Repair Play History entries that reference a removed proxy (fire-and-forget)
+  playHistory.refreshStaleProxies({ shouldRedisplayAfterProbe: shouldRedisplayHistory })
+    .catch(e => console.error('Failed to refresh history proxies:', e));
 })();

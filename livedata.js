@@ -74,6 +74,56 @@ function getProxyUrls(streamUrl) {
   return list.map(proxy => `${proxy}?url=${encodeURIComponent(streamUrl)}`);
 }
 
+// ========== STALE PROXY DETECTION & REPAIR ==========
+//
+// Player current-stream and Play History persist fully-proxied URLs
+// (https://<proxy-host>/?url=<encoded-endpoint>) to localStorage. If a proxy is
+// later removed from proxy-config.json, those stored URLs reference a dead host
+// and fail silently on restore. These helpers detect that and re-derive a
+// working proxied URL. Cost is zero in the normal case (a string check); a
+// re-probe happens only when a proxy was actually removed.
+
+// True if the proxy host embedded in a stored proxied URL is still configured.
+// Returns true (assume valid) when the config hasn't loaded yet, so we never
+// re-probe on the basis of an empty list.
+function isProxyCurrent(proxiedUrl) {
+  if (!proxiedUrl || !proxiesForNamed.length) return true;
+  // Only proxy-wrapped URLs (…?url=<endpoint>) can reference a removed proxy.
+  // Anything else (e.g. a direct stream URL) has no inner endpoint to recover,
+  // so leave it untouched and assume it is current.
+  if (!unwrapProxiedUrl(proxiedUrl)) return true;
+  const host = proxyHostname(proxiedUrl);
+  return proxiesForNamed.some(p => proxyHostname(p) === host);
+}
+
+// Extract the original (unproxied) stream endpoint from a stored proxied URL.
+function unwrapProxiedUrl(proxiedUrl) {
+  try {
+    return new URL(proxiedUrl).searchParams.get('url');
+  } catch {
+    return null;
+  }
+}
+
+// Re-derive a working proxied URL when the stored one references a removed proxy.
+// Cheapest path: re-probe the known-good inner endpoint across current proxies
+// (getProxyUrls is built from the current lists, so the dead host is never tried).
+// Fallback: re-resolve from the raw playlist URL (streamM3u) if the inner
+// endpoint can't be recovered. Returns a fresh proxied URL, or null if none work.
+async function refreshProxiedUrl(proxiedUrl, streamM3u = null) {
+  await loadProxyConfig();
+  const inner = unwrapProxiedUrl(proxiedUrl);
+  if (inner) {
+    for (const candidate of getProxyUrls(inner)) {
+      if (await probeStream(candidate)) return candidate;
+    }
+  }
+  if (streamM3u) {
+    return await resolveStreamPlaybackUrl(streamM3u);
+  }
+  return null;
+}
+
 // Data storage
 let liveStreams = [];
 let liveProbeReady = false;
@@ -462,10 +512,20 @@ async function restoreStreamPlayer() {
     const savedText = storage.get('streamDisplayText');
 
     if (savedUrl && savedText) {
+      let urlToPlay = savedUrl;
+      // Repair a stored URL whose proxy has been removed from the config.
+      if (!isProxyCurrent(savedUrl)) {
+        const fresh = await refreshProxiedUrl(savedUrl, savedM3u || null);
+        if (!fresh) {
+          showToast('Saved stream is no longer reachable');
+          return false;
+        }
+        urlToPlay = fresh;
+      }
       state.isRestoring = true;
-      setCurrentStream(savedUrl, savedText, savedM3u || null);
+      setCurrentStream(urlToPlay, savedText, savedM3u || null);
       const wasPlaying = storage.getBool('wasPlaying', false);
-      playStream(savedUrl, savedText, wasPlaying);
+      playStream(urlToPlay, savedText, wasPlaying);
       // Keep isRestoring true until after playStream's async setup
       setTimeout(() => {
         state.isRestoring = false;

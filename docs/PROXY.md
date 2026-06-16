@@ -109,6 +109,17 @@ The app loads proxy routing from `/streams/proxy-config.json` at startup:
 
 Edit `streams/proxy-config.json` and deploy. No code changes needed. Reorder entries to change priority. Add new proxies to extend fallback chains.
 
+### Removing a proxy & stale persisted URLs
+
+The app persists **fully-proxied** stream URLs (`https://<proxy-host>/?url=<endpoint>`) to `localStorage` for the Player current stream (`streamUrl`) and Play History (`playHistory[].streamUrl`). User Streams persist only the raw `m3u` and are re-probed on every load, so they self-heal automatically.
+
+When a proxy is **removed** from `proxy-config.json`, the persisted Player/History URLs reference a now-dead host and would otherwise fail silently on restore. The app handles this in `livedata.js`:
+
+- **`isProxyCurrent(url)`** — O(1) check that the proxy host embedded in a stored URL is still in the config. Non-proxy-wrapped URLs are left untouched.
+- **`refreshProxiedUrl(url, m3u)`** — re-derives a working URL by re-probing the known-good inner endpoint across the *current* proxies (the dead host is never tried); falls back to re-resolving the raw playlist (`streamM3u`).
+
+These run **proactively on load** (Player restore in `restoreStreamPlayer`, and a Play History sweep `playHistory.refreshStaleProxies()` kicked off from `restore.js`) and **on play** (`resumeFromHistory`). The cost is zero in the normal case (just a string check); a re-probe happens only when a proxy was actually removed. Unrecoverable entries are left untouched (they may work again if the proxy/stream returns) and an on-play failure surfaces a toast instead of failing silently.
+
 ---
 
 ## Cloudflare Worker

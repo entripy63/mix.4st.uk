@@ -94,6 +94,34 @@ const playHistory = {
     storage.set('playHistory', this._entries);
   },
 
+  // Proactively repair stream entries whose proxy has been removed from the
+  // config, so the Recent list works on load without waiting for a play attempt.
+  // Unrecoverable entries are left untouched (they may work again if the proxy
+  // or stream returns). Silent on failure to avoid toast noise during load.
+  //
+  // config.shouldRedisplayAfterProbe: guard callback checked AFTER each (async)
+  // probe completes, just before redisplaying. The user may have switched the
+  // right column to the Tracks/Art tab while the probe ran, so we always persist
+  // the repaired URL but only redisplay when the Recent pane is still visible.
+  async refreshStaleProxies(config = {}) {
+    await loadProxyConfig();
+    for (const entry of this._entries) {
+      if (entry.type !== 'stream' || !entry.streamUrl) continue;
+      if (isProxyCurrent(entry.streamUrl)) continue;
+      // Skip the currently-playing stream: re-probing it can trip
+      // single-connection-per-IP servers and drop live playback.
+      if (state.streamM3u && entry.streamM3u === state.streamM3u) continue;
+      const fresh = await refreshProxiedUrl(entry.streamUrl, entry.streamM3u || null);
+      if (fresh) {
+        entry.streamUrl = fresh;
+        this._save();
+        if (!config.shouldRedisplayAfterProbe || config.shouldRedisplayAfterProbe()) {
+          this.display();
+        }
+      }
+    }
+  },
+
   display() {
     const container = document.getElementById('playHistory');
     if (!container) return;
@@ -177,9 +205,21 @@ async function resumeFromHistory(index) {
   if (actionBar) actionBar.innerHTML = '';
 
   if (entry.type === 'stream') {
+    let url = entry.streamUrl;
+    // Repair a stored URL whose proxy has been removed from the config.
+    if (!isProxyCurrent(url)) {
+      const fresh = await refreshProxiedUrl(url, entry.streamM3u || null);
+      if (!fresh) {
+        showToast('Stream is no longer reachable');
+        return;
+      }
+      url = fresh;
+      entry.streamUrl = url;
+      playHistory._save();
+    }
     beacon('stream-play', entry.streamDisplayText, 'history');
-    setCurrentStream(entry.streamUrl, entry.streamDisplayText, entry.streamM3u || null);
-    playStream(entry.streamUrl, entry.streamDisplayText, true);
+    setCurrentStream(url, entry.streamDisplayText, entry.streamM3u || null);
+    playStream(url, entry.streamDisplayText, true);
   } else {
     const mix = {
       name: entry.name,
