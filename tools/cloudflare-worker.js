@@ -144,10 +144,14 @@ export default {
     }
 
     try {
-      // Cloudflare fetch() follows redirects automatically (up to 20)
+      // Cloudflare fetch() follows redirects automatically (up to 20).
+      // Pass the client's abort signal so a disconnect tears down the upstream
+      // fetch explicitly, rather than relying on the runtime to cancel the
+      // piped response body (the assumption that failed on Deno Deploy).
       const response = await fetch(streamUrl, {
         headers: fetchHeaders,
-        redirect: 'follow'
+        redirect: 'follow',
+        signal: request.signal
       });
 
       // Final response only: reject high-abuse, never-a-stream content types.
