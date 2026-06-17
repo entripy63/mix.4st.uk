@@ -9,22 +9,16 @@
       "website": "http://deepvibes.co.uk/site/index.php"
     },
     {
-      "name": "Deep House Radio - Bucharest - Romania",
-      "m3u": "https://streaming-01.xtservers.com:7000/encoder.mp3",
-      "genre": "Deep House",
-      "website": "https://www.dancemusic.ro/"
-    },
-    {
-      "name": "1.FM - Deep House (www.1.fm)",
-      "m3u": "https://strm112.1.fm/deephouse_mobile_mp3?aw_0_req.gdpr=true",
-      "genre": "Deep House",
-      "website": "https://radio.1cloud.fm/station/deephouse"
-    },
-    {
       "name": "Deep House Network",
       "m3u": "http://158.69.247.54:9000/dhn",
       "genre": "Deep House",
       "website": "https://www.deephousenetwork.media/"
+    },
+    {
+      "name": "Deep House Radio - Bucharest - Romania",
+      "m3u": "https://live.dancemusic.ro:7000/encoder.mp3",
+      "genre": "Deep House",
+      "website": "https://www.dancemusic.ro/"
     },
     {
       "name": "Extreme Deep House Radio",
