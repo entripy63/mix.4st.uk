@@ -28,9 +28,13 @@ function originAllowed(raw: string): boolean {
   return host === ALLOWED_ORIGIN_SUFFIX || host.endsWith("." + ALLOWED_ORIGIN_SUFFIX);
 }
 
-function clientIP(req: Request): string {
+function clientIP(req: Request, info?: Deno.ServeHandlerInfo): string {
   const xff = req.headers.get("x-forwarded-for");
   if (xff) return xff.split(",")[0].trim();
+  const realIp = req.headers.get("x-real-ip");
+  if (realIp) return realIp.trim();
+  const addr = info?.remoteAddr;
+  if (addr && addr.transport === "tcp") return addr.hostname.replace(/^::ffff:/i, "");
   return "unknown";
 }
 
@@ -97,7 +101,7 @@ function inferContentType(upstreamCT: string | null, targetUrl: string): string 
   } catch (_) { return upstreamCT || "application/octet-stream"; }
 }
 
-Deno.serve(async (req: Request): Promise<Response> => {
+Deno.serve(async (req: Request, info: Deno.ServeHandlerInfo): Promise<Response> => {
   const url = new URL(req.url);
 
   // Status endpoint
@@ -148,7 +152,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
     });
   }
 
-  const ip = clientIP(req);
+  const ip = clientIP(req, info);
   const icyMeta = url.searchParams.get("icy") === "1" ? "1" : "0";
 
   const fetchHeaders: Record<string, string> = {
