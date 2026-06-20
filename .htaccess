@@ -5,6 +5,13 @@ AddType application/json .streams .mixes
 <Files "beacon.log">
     Require all denied
 </Files>
+# Protect issue-report logs, archives and per-IP rate-limit files
+<FilesMatch "^reports(\.log|-.*\.bak)$">
+    Require all denied
+</FilesMatch>
+<FilesMatch "^report_rate_">
+    Require all denied
+</FilesMatch>
 # Correct MIME types for audio playback (downloads use HTML download attribute)
 AddType audio/mpeg .mp3
 AddType audio/mp4 .m4a

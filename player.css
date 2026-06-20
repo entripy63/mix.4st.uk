@@ -544,6 +544,86 @@ button:active {
    margin-bottom: 4px;
 }
 
+.credits p {
+   font-size: 13px;
+   line-height: 1.5;
+   color: #ccc;
+   margin: 0 0 8px 0;
+}
+
+.credits a {
+   color: #00d9ff;
+   text-decoration: none;
+}
+
+.credits a:hover {
+   text-decoration: underline;
+}
+
+.help-buttons {
+   display: flex;
+   gap: 8px;
+   margin: 16px 0 4px 0;
+}
+
+.report-form p {
+   font-size: 13px;
+   line-height: 1.5;
+   color: #ccc;
+   margin: 0 0 8px 0;
+}
+
+.report-form textarea,
+.report-form input[type="text"] {
+   width: 100%;
+   box-sizing: border-box;
+   padding: 8px;
+   margin-bottom: 8px;
+   border: 1px solid var(--border-color);
+   border-radius: 4px;
+   background: var(--bg-input);
+   color: var(--text-primary);
+   font-size: 13px;
+   font-family: inherit;
+   resize: vertical;
+}
+
+.report-form textarea:focus,
+.report-form input[type="text"]:focus {
+   outline: none;
+   border-color: var(--accent);
+   background: var(--bg-input-focus);
+}
+
+/* Honeypot — hidden from real users, visible to naive bots */
+.report-hp {
+   position: absolute;
+   left: -9999px;
+   width: 1px;
+   height: 1px;
+   opacity: 0;
+   pointer-events: none;
+}
+
+.report-actions {
+   display: flex;
+   align-items: center;
+   gap: 12px;
+}
+
+.report-status {
+   font-size: 12px;
+   color: var(--text-muted);
+}
+
+.report-status.ok {
+   color: #4caf50;
+}
+
+.report-status.error {
+   color: #ff7070;
+}
+
 .settings-modal-content {
    max-width: 640px;
    max-height: 90vh;

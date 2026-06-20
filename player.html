@@ -421,6 +421,40 @@
           <li><strong>Settings &amp; Help moved</strong> — The ⚙️ and ? buttons now live in the player area, so they're always accessible regardless of layout.</li>
         </ul>
       </div>
+
+      <div class="help-buttons">
+        <button type="button" onclick="hideHelp(); showReport();">🐞 Report an Issue</button>
+        <button type="button" onclick="hideHelp(); showCredits();">✨ Credits</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="reportModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <button class="modal-close" onclick="hideReport()">×</button>
+      <h2>Report an Issue</h2>
+      <div class="report-form">
+        <p>Found a bug or have a suggestion? Let me know below.</p>
+        <textarea id="reportMessage" rows="5" maxlength="2000" placeholder="Describe the issue or suggestion…"></textarea>
+        <input type="text" id="reportContact" maxlength="200" placeholder="How to reach you (optional)">
+        <input type="text" id="reportWebsite" class="report-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="report-actions">
+          <button type="button" id="reportSend" onclick="sendReport()">Send report</button>
+          <span id="reportStatus" class="report-status"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="creditsModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <button class="modal-close" onclick="hideCredits()">×</button>
+      <h2>Credits</h2>
+      <div class="credits">
+        <p>Concept and direction by ST.</p>
+        <p>Code written by Anthropic's Claude Opus (via Amp), with contributions from OpenAI's GPT (also via Amp). Valuable advice was also provided by Anthropic's Claude Sonnet (via <a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a>).</p>
+        <p>Thanks also to the friends who tested early versions.</p>
+      </div>
     </div>
   </div>
 
@@ -445,6 +479,7 @@
   <script src="search.js?v=2"></script>
   <script src="tips.js?v=2"></script>
   <script src="settings.js?v=2"></script>
+  <script src="report.js?v=2"></script>
   <script src="browser.js?v=2"></script>
   <script src="restore.js?v=3"></script>
   <script>

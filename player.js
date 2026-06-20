@@ -644,7 +644,7 @@ aud.addEventListener('play', () => {
 
 // Keyboard shortcuts
 document.addEventListener('keydown', function(e) {
-  if (e.target.tagName === 'INPUT') return;
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) || e.target.isContentEditable) return;
   if (e.code === 'Space') {
     e.preventDefault();
     playPauseBtn.click();

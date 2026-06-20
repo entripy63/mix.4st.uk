@@ -256,6 +256,18 @@ document.getElementById('helpModal')?.addEventListener('click', function(e) {
   if (e.target === this) hideHelp();
 });
 
+function showCredits() {
+  document.getElementById('creditsModal').style.display = 'flex';
+}
+
+function hideCredits() {
+  document.getElementById('creditsModal').style.display = 'none';
+}
+
+document.getElementById('creditsModal')?.addEventListener('click', function(e) {
+  if (e.target === this) hideCredits();
+});
+
 document.getElementById('timedFadesModal')?.addEventListener('click', function(e) {
   if (e.target === this) hideTimedFadesModal();
 });
@@ -265,7 +277,9 @@ document.addEventListener('keydown', function(e) {
   if (e.code === 'Escape') {
     hideSettings();
     hideHelp();
+    hideCredits();
     hideTimedFadesModal();
+    if (typeof hideReport === 'function') hideReport();
   }
 });
 
