@@ -177,6 +177,7 @@ function isRawIPURL(url) {
 function probeStream(url, timeoutMs = 5000) {
   return new Promise(resolve => {
     const audio = new Audio();
+    audio.crossOrigin = 'anonymous';
     const cleanup = () => {
       audio.pause();
       audio.src = '';
