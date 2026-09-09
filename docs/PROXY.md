@@ -400,12 +400,24 @@ Create at the Deno Deploy dashboard under account settings → Access Tokens.
 - Range header forwarding
 - ICY/Shoutcast raw TCP fallback (for servers using HTTP/0.9)
 - ICY metadata header proxying
-- Memory-efficient streaming (no buffering)
+- Memory-efficient streaming with backpressure on both paths (see note below)
 - CORS headers on all responses, including errors
 - Status endpoint at `/status` (memory usage + self-healing live-response count)
 - Volumetric protection via host nftables (SYN/connection rate limits; the host firewall also blocks anything not on port 443 — see SYN-flood note below)
 - **No timeout** — streams run indefinitely
 - **No free-tier request quotas** — self-hosted
+
+> **Backpressure on the raw-TCP/ICY path.** Both paths pause the upstream when
+> the client stops draining. The HTTP path relies on `proxyRes.pipe(res)`
+> (backpressure built in); the raw-TCP/ICY path pauses the upstream socket when
+> `res.write()` returns false and resumes on `res`'s `drain`. Without this, a
+> stalled-but-not-closed client — e.g. Apache holding the `localhost:8080`
+> backend connection open after the browser drops — let a live ICY server buffer
+> unbounded into `res`, so **incoming climbed while outgoing stayed flat and
+> memory grew without limit** (the observed "incoming ~2× outgoing"). Reproduced
+> with a fake ICY upstream + a stalled client: proxy RSS grew ~1 GB → ~11.6 GB in
+> 6 s before the fix, and stayed flat (~69 MB) after. Since the same
+> `tools/cloudrun-proxy/index.js` also ran on Cloud Run, the fix applies there too.
 
 ### Limitations
 
