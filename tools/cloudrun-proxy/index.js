@@ -266,7 +266,11 @@ function doRawRequest(target, res, icyMeta, ip) {
 
   socket.on('data', (chunk) => {
     if (headersParsed) {
-      res.write(chunk);
+      // Backpressure: if the downstream (Apache/browser) stops draining, pause
+      // the upstream socket instead of buffering unbounded into res. Without
+      // this, a stalled/dead-but-not-closed client makes a live ICY server pile
+      // bytes into res's buffer — incoming climbs while outgoing stays flat.
+      if (!res.write(chunk)) socket.pause();
       return;
     }
 
@@ -303,8 +307,11 @@ function doRawRequest(target, res, icyMeta, ip) {
     });
     logRequest(ip, target.hostname, contentType, 200);
 
-    if (body.length) res.write(body);
+    if (body.length && !res.write(body)) socket.pause();
   });
+
+  // Resume reading upstream once the downstream buffer has drained.
+  res.on('drain', () => socket.resume());
 
   socket.on('error', () => {
     deny(res, 502, 'Upstream error');
