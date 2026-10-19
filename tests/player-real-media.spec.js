@@ -79,32 +79,10 @@ test('mix playback with real media increases current time', async ({ page }) => 
   });
 
   await page.waitForFunction(() => aud.currentTime > 0.1, null, { timeout: 10_000 });
-  const samplePlayback = () => page.evaluate(() => {
-    const data = new Float32Array(analyserNode.fftSize);
-    analyserNode.getFloatTimeDomainData(data);
-    return {
-      sampleTimeMs: performance.now(),
-      currentTime: aud.currentTime,
-      duration: aud.duration,
-      paused: aud.paused,
-      ended: aud.ended,
-      readyState: aud.readyState,
-      networkState: aud.networkState,
-      bufferedEnd: aud.buffered.length ? aud.buffered.end(aud.buffered.length - 1) : null,
-      contextState: audioCtx?.state,
-      contextTime: audioCtx?.currentTime,
-      inputRms: Math.sqrt(data.reduce((sum, value) => sum + value * value, 0) / data.length),
-      error: aud.error?.message || null
-    };
-  });
-  const start = await samplePlayback();
-  await expect(async () => {
-    const end = await samplePlayback();
-    expect(end.currentTime, JSON.stringify({ start, end }, null, 2)).toBeGreaterThan(start.currentTime + 0.3);
-  }).toPass({ timeout: 5000 });
+  const start = await page.evaluate(() => aud.currentTime);
+  // Audio-device startup in CI can exceed a fixed sampling delay.
+  await expect.poll(() => page.evaluate(() => aud.currentTime)).toBeGreaterThan(start + 0.3);
 
-  const end = await samplePlayback();
-  console.log(`::notice title=Real-media playback timing::${JSON.stringify({ start, end })}`);
   await expect(page.locator('#timeDisplay')).toContainText('/');
   await expect(page.locator('#playPauseBtn')).toHaveClass(/playing/);
 });

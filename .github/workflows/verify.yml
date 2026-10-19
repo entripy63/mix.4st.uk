@@ -36,48 +36,7 @@ jobs:
           pactl list short sinks
 
       - name: Run Full Verification
-        id: verification
         run: npm run verify:full:ci
-
-      - name: Diagnose WebKit audio after a verification failure
-        if: failure() && steps.verification.outcome == 'failure'
-        env:
-          DEBUG: pw:browser
-          GST_DEBUG_NO_COLOR: '1'
-          GST_DEBUG: '*:2,webkitmediaplayer:6,webkitaudioprovider:7,webkitwebsrc:5,wavparse:5,queue:5,pulsesink:5,audiobasesink:5'
-        run: |
-          log="$RUNNER_TEMP/webkit-audio.log"
-          export GST_DEBUG_DUMP_DOT_DIR="$RUNNER_TEMP/webkit-audio-graphs"
-          mkdir -p "$GST_DEBUG_DUMP_DOT_DIR"
-          set +e
-          npx playwright test tests/player-audio-diagnostic.spec.js tests/player-real-media.spec.js --project=webkit --grep 'finite WAV with WebAudio attachment:|mix playback with real media increases current time$' > "$log" 2>&1
-          result=$?
-          set -e
-          cat "$log"
-          node --input-type=module <<'JS'
-          import fs from 'node:fs';
-          import { stripVTControlCharacters } from 'node:util';
-
-          function annotate(title, text) {
-            // GitHub truncates individual annotations at 4096 characters.
-            const trace = stripVTControlCharacters(text);
-            const excerpt = trace.length > 60000
-              ? trace.slice(0, 30000) + '\n[Middle omitted]\n' + trace.slice(-30000)
-              : trace;
-            for (let offset = 0; offset < excerpt.length; offset += 3500) {
-              const message = excerpt.slice(offset, offset + 3500)
-                .replaceAll('%', '%25').replaceAll('\r', '%0D').replaceAll('\n', '%0A');
-              console.log(`::notice title=${title} part ${offset / 3500 + 1}::${message}`);
-            }
-          }
-          annotate('WebKit native audio trace', fs.readFileSync(`${process.env.RUNNER_TEMP}/webkit-audio.log`, 'utf8'));
-          const directory = process.env.GST_DEBUG_DUMP_DOT_DIR;
-          const graphs = fs.readdirSync(directory).filter(name => name.endsWith('.dot')).sort()
-            .map(name => fs.readFileSync(`${directory}/${name}`, 'utf8'));
-          const graph = graphs.findLast(text => text.includes('webkit-audio-source-provider') && text.includes('deinterleave'));
-          if (graph) annotate('WebKit media pipeline graph', graph);
-          JS
-          exit "$result"
 
       - name: Run Sensitivity Checks
         run: npm run verify:sensitivity:ci
