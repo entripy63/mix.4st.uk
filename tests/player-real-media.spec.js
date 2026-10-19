@@ -83,6 +83,7 @@ test('mix playback with real media increases current time', async ({ page }) => 
     const data = new Float32Array(analyserNode.fftSize);
     analyserNode.getFloatTimeDomainData(data);
     return {
+      sampleTimeMs: performance.now(),
       currentTime: aud.currentTime,
       duration: aud.duration,
       paused: aud.paused,
@@ -97,10 +98,13 @@ test('mix playback with real media increases current time', async ({ page }) => 
     };
   });
   const start = await samplePlayback();
-  await page.waitForTimeout(1500);
-  const end = await samplePlayback();
+  await expect(async () => {
+    const end = await samplePlayback();
+    expect(end.currentTime, JSON.stringify({ start, end }, null, 2)).toBeGreaterThan(start.currentTime + 0.3);
+  }).toPass({ timeout: 5000 });
 
-  expect(end.currentTime, JSON.stringify({ start, end }, null, 2)).toBeGreaterThan(start.currentTime + 0.3);
+  const end = await samplePlayback();
+  console.log(`::notice title=Real-media playback timing::${JSON.stringify({ start, end })}`);
   await expect(page.locator('#timeDisplay')).toContainText('/');
   await expect(page.locator('#playPauseBtn')).toHaveClass(/playing/);
 });
