@@ -182,6 +182,17 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
+    if (pathname === '/__test__/mime-response') {
+      const body = Buffer.from([0, 127, 128, 255]);
+      res.writeHead(200, {
+        'Content-Type': url.searchParams.get('type') || 'application/octet-stream',
+        'Content-Length': body.length,
+        'Cache-Control': 'no-store'
+      });
+      res.end(body);
+      return;
+    }
+
     const resolvedPath = safeResolvePath(pathname);
     if (!resolvedPath) {
       res.writeHead(403);

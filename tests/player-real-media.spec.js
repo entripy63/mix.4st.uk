@@ -66,11 +66,10 @@ test.beforeEach(async ({ page }) => {
   });
 
   await page.addInitScript(installRealMediaTestSetup);
-  await page.goto('/player.html');
-  await expect(page.locator('#playPauseBtn')).toBeVisible();
 });
 
 test('mix playback with real media increases current time', async ({ page }) => {
+  await page.goto('/player.html');
   await page.evaluate(async () => {
     await playMix({
       name: 'Real Media Mix',
@@ -90,6 +89,7 @@ test('mix playback with real media increases current time', async ({ page }) => 
 });
 
 test('stream playback with real media shows live state and advances', async ({ page }) => {
+  await page.goto('/player.html');
   await page.evaluate(() => {
     playStream('/__test__/stream.wav', 'Test Real Stream', true);
   });
@@ -127,12 +127,16 @@ test('decoded MediaStream audio follows volume, mute, pause and source changes',
       return result;
     };
   });
-  await page.reload();
+  await page.goto('/player.html');
   await page.mouse.click(1, 1);
-  await page.evaluate(async () => {
+  await test.step('Start ordinary media playback', () => page.evaluate(async () => {
     await playMix({ name: 'Routing test', isLocal: true, audioSrc: '/__test__/mix.wav' });
+  }));
+  await test.step('Resume the test decoder AudioContext', () => page.evaluate(async () => {
     window.decoderContext = new AudioContext();
     await decoderContext.resume();
+  }));
+  await test.step('Play the decoded MediaStream', () => page.evaluate(async () => {
     window.replaceDecodedStream = async () => {
       const source = decoderContext.createOscillator();
       const level = decoderContext.createGain();
@@ -144,7 +148,7 @@ test('decoded MediaStream audio follows volume, mute, pause and source changes',
       await aud.play();
     };
     await replaceDecodedStream();
-  });
+  }));
   const output = () => page.evaluate(() => readOutputRms());
   await page.locator('#volumeSlider').fill('100');
   await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2), 3);
@@ -176,7 +180,7 @@ for (const format of ['pls', 'm3u']) {
       contentType: 'application/json',
       body: JSON.stringify([{ url: '/__test__/playlist-proxy', streams: 'all' }])
     }));
-    await page.reload();
+    await page.goto('/player.html');
     const resolved = await page.evaluate(format =>
       resolveStreamPlaybackUrl(`https://station.example/live.${format}`), format);
     expect(resolved).toBe('/__test__/playlist-proxy?url=https%3A%2F%2Fstation.example%2Faudio');
@@ -196,10 +200,8 @@ test('audio MIME normalization preserves codecs, other parameters and response b
     ['audio/x-mpegurl; charset=UTF-8', 'audio/x-mpegurl; charset=UTF-8'],
     ['text/plain; charset=UTF-8', 'text/plain; charset=UTF-8']
   ];
-  await page.route('**/__test__/mime-response?*', route => route.fulfill({
-    contentType: new URL(route.request().url()).searchParams.get('type'),
-    body: Buffer.from([0, 127, 128, 255])
-  }));
+  // Use real HTTP headers: WebKit's route.fulfill strips MIME parameters.
+  await page.goto('/player.html');
   const results = await page.evaluate(async cases => {
     const results = [];
     for (const [type] of cases) {
