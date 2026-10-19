@@ -161,6 +161,27 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
+    if (pathname === '/__test__/playlist-proxy') {
+      const target = url.searchParams.get('url');
+      if (target === 'https://station.example/live.pls' || target === 'https://station.example/live.m3u') {
+        const pls = target.endsWith('.pls');
+        res.writeHead(200, {
+          'Content-Type': pls ? 'audio/x-scpls' : 'audio/x-mpegurl',
+          'Cache-Control': 'no-store'
+        });
+        // Deliberately omit Content-Length, as the streaming proxies do.
+        res.write(pls ? '[playlist]\nNumberOfEntries=1\nFile1=https://station.example/audio\n'
+          : '#EXTM3U\nhttps://station.example/audio\n');
+        res.end();
+      } else if (target === 'https://station.example/audio') {
+        sendTestWav(res, testMixWav, req.method || 'GET');
+      } else {
+        res.writeHead(404);
+        res.end();
+      }
+      return;
+    }
+
     const resolvedPath = safeResolvePath(pathname);
     if (!resolvedPath) {
       res.writeHead(403);

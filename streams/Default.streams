@@ -13,6 +13,11 @@
       "name": "Jungletrain.net",
       "m3u": "https://jungletrain.net/static/256kbps.m3u",
       "genre": "Jungle/Drum & Bass"
+    },
+    {
+      "name": "Monkey Radio",
+      "m3u": "https://streaming.live365.com/a52904",
+      "genre": "Chillout"
     }
   ]
 }

@@ -108,3 +108,108 @@ test('stream playback with real media shows live state and advances', async ({ p
   await page.click('#playPauseBtn');
   await expect(page.locator('#timeDisplay')).toContainText('LIVE');
 });
+
+test('decoded MediaStream audio follows volume, mute, pause and source changes', async ({ page }) => {
+  // Tap audio sent to Web Audio's output, rather than just checking gain values.
+  await page.addInitScript(() => {
+    const connect = AudioNode.prototype.connect;
+    AudioNode.prototype.connect = function(destination, ...args) {
+      const result = connect.call(this, destination, ...args);
+      if (destination === this.context.destination) {
+        const analyser = this.context.createAnalyser();
+        connect.call(this, analyser);
+        window.readOutputRms = () => {
+          const samples = new Float32Array(analyser.fftSize);
+          analyser.getFloatTimeDomainData(samples);
+          return Math.sqrt(samples.reduce((sum, sample) => sum + sample * sample, 0) / samples.length);
+        };
+      }
+      return result;
+    };
+  });
+  await page.reload();
+  await page.mouse.click(1, 1);
+  await page.evaluate(async () => {
+    await playMix({ name: 'Routing test', isLocal: true, audioSrc: '/__test__/mix.wav' });
+    window.decoderContext = new AudioContext();
+    await decoderContext.resume();
+    window.replaceDecodedStream = async () => {
+      const source = decoderContext.createOscillator();
+      const level = decoderContext.createGain();
+      level.gain.value = 0.04;
+      const destination = decoderContext.createMediaStreamDestination();
+      source.connect(level).connect(destination);
+      source.start();
+      aud.srcObject = destination.stream;
+      await aud.play();
+    };
+    await replaceDecodedStream();
+  });
+  const output = () => page.evaluate(() => readOutputRms());
+  await page.locator('#volumeSlider').fill('100');
+  await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2), 3);
+  await page.locator('#volumeSlider').fill('20');
+  await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2) * 0.14, 4);
+  await page.click('#muteBtn');
+  await expect.poll(output).toBeLessThan(0.00001);
+  await page.click('#muteBtn');
+  await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2) * 0.14, 4);
+  await page.click('#playPauseBtn');
+  await expect.poll(output).toBeLessThan(0.00001);
+  await page.click('#playPauseBtn');
+  await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2) * 0.14, 4);
+  await page.evaluate(() => replaceDecodedStream());
+  await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2) * 0.14, 4);
+  await page.evaluate(async () => {
+    aud.srcObject = null;
+    await playMix({ name: 'Ordinary media again', isLocal: true, audioSrc: '/__test__/mix.wav' });
+    await decoderContext.close();
+  });
+  await expect.poll(output).toBeGreaterThan(0.02);
+  await page.click('#muteBtn');
+  await expect.poll(output).toBeLessThan(0.00001);
+});
+
+for (const format of ['pls', 'm3u']) {
+  test(`resolves a finite ${format} audio-MIME playlist without Content-Length`, async ({ page }) => {
+    await page.route('**/streams/proxy-config.json', route => route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify([{ url: '/__test__/playlist-proxy', streams: 'all' }])
+    }));
+    await page.reload();
+    const resolved = await page.evaluate(format =>
+      resolveStreamPlaybackUrl(`https://station.example/live.${format}`), format);
+    expect(resolved).toBe('/__test__/playlist-proxy?url=https%3A%2F%2Fstation.example%2Faudio');
+  });
+}
+
+test('audio MIME normalization preserves codecs, other parameters and response bytes', async ({ page }) => {
+  const cases = [
+    ['audio/mpeg; charset=UTF-8', 'audio/mpeg'],
+    ['audio/ogg; codecs=opus', 'audio/ogg; codecs="opus"'],
+    ['audio/ogg; codecs="opus"; charset="UTF-8"', 'audio/ogg; codecs="opus"'],
+    ['audio/ogg; codecs=opus,vorbis', 'audio/ogg; codecs="opus,vorbis"'],
+    ['audio/ogg; CODECS = "opus"; Charset = UTF-8', 'audio/ogg; codecs="opus"'],
+    ['audio/mp4; codecs="mp4a.40.2"; profile="a;charset=UTF-8"; CHARSET="UTF-8"',
+      'audio/mp4; codecs="mp4a.40.2"; profile="a;charset=UTF-8"'],
+    ['audio/x-scpls; charset=UTF-8', 'audio/x-scpls; charset=UTF-8'],
+    ['audio/x-mpegurl; charset=UTF-8', 'audio/x-mpegurl; charset=UTF-8'],
+    ['text/plain; charset=UTF-8', 'text/plain; charset=UTF-8']
+  ];
+  await page.route('**/__test__/mime-response?*', route => route.fulfill({
+    contentType: new URL(route.request().url()).searchParams.get('type'),
+    body: Buffer.from([0, 127, 128, 255])
+  }));
+  const results = await page.evaluate(async cases => {
+    const results = [];
+    for (const [type] of cases) {
+      const response = await fetch(`/__test__/mime-response?type=${encodeURIComponent(type)}`);
+      results.push({
+        type: response.headers.get('content-type'),
+        bytes: [...new Uint8Array(await response.arrayBuffer())]
+      });
+    }
+    return results;
+  }, cases);
+  expect(results).toEqual(cases.map(([, type]) => ({ type, bytes: [0, 127, 128, 255] })));
+});

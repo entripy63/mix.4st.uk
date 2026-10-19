@@ -3,11 +3,6 @@
   "category": "genre",
   "streams": [
     {
-      "name": "Soultrain Radio",
-      "m3u": "https://stream4.themediasite.co.uk:8154/stream",
-      "genre": "Soul"
-    },
-    {
       "name": "SOUL RADIO Only Classic Soul",
       "m3u": "https://listen.soulradio.uk/uk",
       "genre": "Soul"
@@ -34,17 +29,12 @@
     },
     {
       "name": "Soul City Radio",
-      "m3u": "https://stream.soulcityradiouk.com:8000/radio.mp3",
+      "m3u": "https://sirius.nucast.co.uk/listen/soul_city_radio/radio.mp3",
       "genre": "Soul"
     },
     {
       "name": "Soul Legends Radio",
       "m3u": "https://streamer.radio.co/s60f3e59d1/listen",
-      "genre": "Soul"
-    },
-    {
-      "name": "Ministry of Soul",
-      "m3u": "https://stream.laut.fm/soul",
       "genre": "Soul"
     },
     {

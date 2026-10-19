@@ -7,15 +7,36 @@
 const _originalFetch = window.fetch;
 window.fetch = async function(...args) {
   const response = await _originalFetch.apply(this, args);
-  const ct = response.headers.get('Content-Type') || '';
-  if (!response.headers.get('Content-Length') && ct.startsWith('audio/') && response.body) {
-    const body = response.body.pipeThrough(new TransformStream({
-      flush() { throw new Error('network error'); },
-    }));
+  const contentType = response.headers.get('Content-Type') || '';
+  const ct = contentType.split(';')[0].trim().toLowerCase();
+  // PLS/M3U playlists also use audio/* types, but their normal EOF must remain
+  // readable by fetchPlaylist(), not become a synthetic stream failure.
+  const isPlaylist = ct.includes('scpls') || ct.includes('mpegurl');
+  let headers = response.headers;
+  let body = response.body;
+  if (ct.startsWith('audio/') && !isPlaylist) {
+    // Preserve quoted parameter values (including semicolons). Only charset is
+    // irrelevant to binary audio; the player requires quoted codec values.
+    const normalized = contentType.match(/(?:[^;"]|"(?:\\.|[^"\\])*")+/g)
+      .filter(part => !/^\s*charset\s*=/i.test(part))
+      .map(part => part.replace(/^\s*codecs\s*=\s*(.+?)\s*$/i,
+        (_, value) => ` codecs=${value.startsWith('"') ? value : `"${value}"`}`))
+      .join(';');
+    if (normalized !== contentType) {
+      headers = new Headers(response.headers);
+      headers.set('Content-Type', normalized);
+    }
+    if (!response.headers.get('Content-Length') && body) {
+      body = body.pipeThrough(new TransformStream({
+        flush() { throw new Error('network error'); },
+      }));
+    }
+  }
+  if (headers !== response.headers || body !== response.body) {
     return new Response(body, {
       status: response.status,
       statusText: response.statusText,
-      headers: response.headers,
+      headers,
     });
   }
   return response;

@@ -4,28 +4,27 @@
 # LFTP bookmarks and paths
 declare -A SERVERS=(
   [prod]="axc"
-#  [test]="axc-test"
   [home-test]="home-test"
 )
 
 # Remote directories (change these based on your server structure)
 declare -A REMOTE_DIRS=(
   [prod]=""
-#  [test]=""
-  [home-test]=""
+  [home-test]="html"
 )
 
 # Mirror commands for each target
 # Audio files are excluded to prevent --delete from removing server-only
 # media not present locally. Peaks, manifests, and images ARE deployed
 # as they are generated locally.
-MIRROR_EXCLUDES="-x .git/ -x .github/ -x .githooks/ -x .gitignore -x .codex -x AGENTS.md -x docs/ -x tools/ -x tests/ -x test-results/ -x node_modules/ -x lib/ -X package* -X eslint.* -X playwright.*"
-MEDIA_EXCLUDES="-x '\.mp3$' -x '\.m4a$' -x '\.flac$' -x '\.wav$' -x '\.opus$' -x '\.mediaartlocal$' -x beacon.log -x reports.log -x 'reports-.*\.bak$' -x report_rate_"
+MIRROR_EXCLUDES="-x .git/ -x .github/ -x .githooks/ -x .gitignore -x .codex -x .amp/ -x AGENTS.md -x docs/ -x tools/ -x tests/ -x test-results/ -x node_modules/ -x lib/ -X package* -X eslint.* -X playwright.*"
+MEDIA_EXCLUDES="-x '\.mp3$' -x '\.m4a$' -x '\.flac$' -x '\.wav$' -x '\.opus$' -x '\.mediaartlocal$' -x beacon.log -x reports.log -x 'reports-.*\.bak$' -x report_rate_ -x secret-config.php"
 
+# Keep the test server's candidate-first routing separate from production.
+# lftp exclusions protect this remote file from both replacement and deletion.
 declare -A MIRROR_COMMANDS=(
   [prod]="mirror -R --delete $MIRROR_EXCLUDES $MEDIA_EXCLUDES"
-#  [test]="mirror -R --delete $MIRROR_EXCLUDES $MEDIA_EXCLUDES"
-  [home-test]="mirror -R --delete $MIRROR_EXCLUDES $MEDIA_EXCLUDES"
+  [home-test]="mirror -R --delete $MIRROR_EXCLUDES $MEDIA_EXCLUDES -x '^streams/proxy-config\.json$'"
 )
 
 # Export for use in other scripts

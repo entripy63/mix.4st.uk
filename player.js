@@ -218,10 +218,12 @@ aud.addEventListener('durationchange', () => {
 });
 aud.addEventListener('loadstart', () => { _lastKnownDuration = 0; });
 
-// Keep HTML element at full volume — all gain control via Web Audio gainNode
+// Gain control is in Web Audio. MediaStream playback uses a separate source
+// node, so its direct HTML-element output must stay muted to avoid a bypass.
 aud.addEventListener("volumechange", function () {
   if (aud.volume < 1) aud.volume = 1;
-  if (aud.muted) aud.muted = false;
+  const directOutputMuted = mediaStreamSourceNode !== null;
+  if (aud.muted !== directOutputMuted) aud.muted = directOutputMuted;
 });
 
 // Initialize UI state

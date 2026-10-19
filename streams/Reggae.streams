@@ -4,32 +4,32 @@
   "streams": [
     {
       "name": "1.FM - ReggaeTrade (www.1.fm)",
-      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=1728296",
+      "m3u": "https://strm112.1.fm/reggae_mobile_mp3",
       "genre": "Reggae"
     },
     {
       "name": " Joint Radio Reggae",
-      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99600831",
+      "m3u": "https://betelgeuse.nucast.co.uk:9998/stream",
       "genre": "Reggae"
     },
     {
       "name": "Party Vibe Radio",
-      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=939852",
+      "m3u": "http://94.130.242.5:8000/stream",
       "genre": "Reggae"
     },
     {
       "name": "SileX.live",
-      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99613560",
+      "m3u": "http://95.217.238.174:8000/reggae",
       "genre": "Reggae"
     },
     {
       "name": "Rize Radio",
-      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99562626",
+      "m3u": "https://usa10.fastcast4u.com:5970/",
       "genre": "Reggae"
     },
     {
       "name": "baddajam",
-      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99613707",
+      "m3u": "https://dc2.serverse.com:8026/baddajam",
       "genre": "Reggae"
     },
     {

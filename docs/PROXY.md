@@ -28,6 +28,90 @@ We use **multiple proxies** to split load and provide redundancy:
 - **Deno Deploy** and the **Home NUC** both support raw TCP sockets, handling raw IPs and ICY protocol. (Google Cloud Run did too, until it was retired — see above.)
 - Having multiple proxies provides **fallback redundancy** — if the first proxy fails for a stream, the app automatically tries the next one in the list.
 
+### Experimental Cloudflare TCP candidate (October 2026)
+
+The limitations above describe the **production fetch-only Worker**, not all
+Cloudflare Workers APIs. An isolated candidate using `cloudflare:sockets` has
+connected to raw IPs and legacy ICY streams on ports 8000, 8096 and 8218 without
+DNS aliases. It is deployed separately as `stream-proxy-candidate` and enabled
+only in the proxy list on **m.4st.uk**, retaining the existing fallbacks.
+Production routing is unchanged. Free-tier CPU suitability and long-duration
+reliability are still open questions; short successful playback is not approval
+to replace Deno. See the [candidate notes, tests and rollback instructions](../tools/cloudflare-candidate/README.md).
+
+Deploy application and preset changes for testing with `./tools/deploy.sh home-test`.
+It runs lint, regenerates the stream manifest/search index without rewriting the
+mixes index, cache-busts player.html, and mirrors changed site files to the home
+bookmark's `html/` directory. Local `.amp/` artifacts are excluded. The home
+target preserves its separately managed, candidate-first
+`streams/proxy-config.json`; production continues to use the repository list.
+After the owner's testing passes, commit the intended changes, then deploy with
+`./tools/deploy.sh prod` (full lint/playback checks). Do not promote to production
+just because the home deployment's automated checks pass.
+
+### Listening-test issue register
+
+Updated 19 October 2026. This register tracks the candidate trial on m.4st.uk;
+it is not an exhaustive compatibility matrix. “Not checked” is not a failure.
+Keep app errors separate from upstream/proxy-path failures. Do not remove a
+stream solely because a probe fails, and avoid extra connections to the four
+daily-use stations while they are being listened to.
+
+| Station / endpoint | Candidate result | Other paths | Issue / next step |
+| --- | --- | --- | --- |
+| **Deepvibes Radio** (daily use) | Owner reports roughly ten hours of playback; two reconnections, with seamless recovery reported for the first. | No controlled comparison for the later interruption. | Separate interruption around 01:14 BST on 19 Oct: stopped/stuttered after reconnect. Old request ended with client-abort and no Worker exception; cause unresolved. Correlate browser warnings and proxy logs if repeated. |
+| **Jungletrain** (daily use) | Verified playback, metadata and raw-TCP/ICY handling on port 8000; short controlled tests passed. | Production Cloudflare returned 520 in the initial comparison. | No outstanding candidate fault established; continue normal listening. |
+| **Sleepbot** (daily use) | Verified playback and metadata, including raw-IP endpoints on ports 8096/8218; owner also reports a short listening session. | Existing fallback paths previously worked. | No outstanding candidate fault established; continue normal listening. |
+| **Monkey Radio** — `https://streaming.live365.com/a52904` (daily use) | Upstream 401 after redirect to `das-edge15-live365-dal02.cdnstream.com`; native fetch path. Isolated Worker fetch-to-redirect then raw TLS to the CDN also returns empty 401, Server DAS. | Production Cloudflare: 401. Home: empty 401 on 19 Oct. Deno control seconds later: 200, `audio/mpeg`, “Monkey Radio Archive”, audio bytes received. An earlier direct request also returned 401. | **Currently depends on Deno among tested routes.** TLS alone does not solve this one. Live365 supports country/IP restrictions, but their application to this station is unverified; no signed query or token appeared in the observed redirect. Home is not yet a verified post-Deno fallback. |
+| **Soul City** — `https://sirius.nucast.co.uk/listen/soul_city_radio/radio.mp3` | Native fetch receives empty upstream 401 with `text/html`; content-type guard exposes this as 415. | Home decodes successfully. Experimental Worker TLS-by-hostname also returned decodable audio, but is not a deployed fallback. | Confirmed transport/path difference; underlying cause unresolved. Retain home fallback and existing destination safeguards. |
+| **Abacus FM Smooth Jazz** — `https://s20.reliastream.com/stream/8174/stream` | Owner corrected the station URL to 8174 and reports clean candidate playback. The previous 8100 endpoint returned `audio/mpeg; charset=UTF-8` and identified an airport ATC stream. | Earlier home checks also reached that wrong station. | **Resolved in owner's testing.** Corrected Jazz preset and regenerated search index first deployed to m.4st.uk on 19 Oct. Audio charset normalization remains useful for other incorrectly labelled streams. |
+| **SileX.live** — `https://stream.silex.live/opus/2.ogg?type=http&nocache=1792332865828` | Native fetch receives nginx HTML 403, Server cloudflare; guard translates to 415. Isolated Worker raw TLS by hostname receives 200, `audio/ogg; codecs=opus`, stream bytes. | Home receives Ogg/Opus audio. App MIME fix quotes the existing codec parameter; deployed playback verified through home in Firefox and Chromium, using WebAudio after a user gesture. Owner then reported volume/mute bypass. | **App playback and volume issues resolved; native-fetch access failure remains.** Owner confirmed live SileX volume control after the MIME and MediaStream routing fixes on m.4st.uk. The nonfatal MSE capability warning remains because the library selects its software Opus decoder. TCP/TLS difference resembles Soul City, but provider-side reason is unknown. No proxy changes deployed. |
+| **Radio Paradise** (all streams tested by owner) | Owner reports successful playback. | No new controlled comparison. | No outstanding issue reported. |
+| **SomaFM** (PLS presets) | Baseline decoded all 18 preset entries. Owner's code 4 failures probe the playlist itself. Full app reproduced the playlist-read failure in Firefox and Chromium; fixed version resolves and plays Groove Salad through candidate in both browsers. | Candidate, Deno and home deliver the PLS intact. Earlier resolver-only checks omitted the app's global fetch wrapper and therefore missed the cause. | **Confirmed app bug, fixed and first deployed to m.4st.uk on 19 Oct.** Global fetch wrapper incorrectly treated finite `audio/x-scpls` playlists without Content-Length as live audio and threw on normal EOF. PLS/M3U types now excluded from synthetic EOF errors. Both-format regression tests pass in both browsers; genuine audio EOF still errors for reconnection. Deployed Firefox playback verified; production and test proxy configuration unchanged. |
+
+The candidate is not yet a universal replacement for the existing proxies.
+Update this table as reports arrive, recording the station, approximate time
+(including timezone), exact error, path and whether the finding was reproduced
+or only observed by the listener. The initial NoScript block was resolved by
+the owner and is not an outstanding proxy issue.
+
+The owner completed all presets on 19 October: all played through candidate
+except Abacus, SileX, Monkey Radio and Soul City. SomaFM was also confirmed
+working in the owner's browser after the playlist EOF fix. MIME normalization
+was first demonstrated with browser-only header substitutions, then implemented
+in stream-player.js and verified by substituting that local script in test
+browser sessions. It removes audio charset parameters, quotes codec values and
+preserves other parameters, playlist types and payload bytes. Subsequently
+deployed with `./tools/deploy.sh home-test` on 19 October, together with the
+owner's preset edits and refreshed indexes (20 presets, 108 entries). All 47
+runtime JavaScript/preset/index files matched local copies over HTTPS; the
+cache-busted page matched and test proxy configuration was unchanged. Actual
+deployed playback of Abacus, SileX and Groove Salad passed in both browsers.
+Initial SileX automated playback attempts lacked the user gesture required by
+the library's WebAudio context; repeated tests with a real click played normally.
+
+The owner's subsequent SileX volume/mute failure was reproduced with synthetic
+MediaStream audio, without opening another station connection. Output captured
+through an isolated local audio sink showed Firefox playing both a direct and a
+gain-controlled copy, while Chromium played only the direct copy. App mute left
+the direct copy audible in both. core.js now routes MediaStream sources explicitly
+through the existing analyser/declick/gain chain, silences the element's direct
+output, disconnects on pause, and restores element-source routing for ordinary
+media. The player volumechange handler preserves this routing mute.
+
+Deployed to m.4st.uk on 19 Oct after all 48 Firefox/Chromium playback checks
+passed. Separate actual-output checks covered volume, mute/unmute, pause/resume,
+stream replacement, starting muted and returning to ordinary media. A paced,
+synthetic Ogg/Opus stream through the real IcecastMetadataPlayer WebAudio decoder
+also passed on the deployed site in both browsers: RMS output about 0.03544 at
+100%, 0.00494 at 20% (the app's 0.14 gain), and effectively zero muted. No live
+SileX connection was made for these checks. Deployed source/preset/index bytes
+matched local files and candidate-first routing was unchanged. The owner then
+confirmed live SileX volume control and approved committing and deploying the
+app/preset fixes to production on 19 Oct. This promotion does not include the
+candidate Worker: it remains enabled only on m.4st.uk, while production retains
+its existing Cloudflare, Deno and home proxy list.
+
 ## Abuse protection
 
 All proxies share the same abuse-protection semantics (the three source files —
@@ -73,12 +157,14 @@ The app loads proxy routing from `/streams/proxy-config.json` at startup:
 ```json
 [
   {
-    "url": "https://stream-proxy.round-bar-e93e.workers.dev",
+    "url": "https://c.proxy.4st.uk",
+    "backupUrl": "https://stream-proxy.round-bar-e93e.workers.dev",
     "streams": "named",
     "note": "Cloudflare Worker — reliable, no timeout, but cannot proxy raw IP addresses"
   },
   {
     "url": "https://d.proxy.4st.uk",
+    "backupUrl": "https://stream-proxy.entripy63.deno.net",
     "streams": "all",
     "note": "Deno Deploy — handles raw IPs and ICY/Shoutcast via raw TCP, unstable on cold start"
   },
@@ -93,9 +179,16 @@ The app loads proxy routing from `/streams/proxy-config.json` at startup:
 ### Configuration format
 
 - **`url`**: The proxy endpoint URL
+- **`backupUrl`**: Optional provider-native endpoint retained for emergency
+  manual replacement of `url`; ignored by the application
 - **`streams`**: Capability — `"named"` (domain URLs only) or `"all"` (including raw IPs)
 - **`note`**: Human-readable description (ignored by the app)
 - **Order matters**: Proxies are tried in array order; put preferred proxies first
+
+`backupUrl` deliberately does not join the runtime fallback list. If custom
+domains are unavailable, copy the required value into `url` and deploy the
+configuration. This preserves a quick provider-native escape route without
+making normal requests try duplicate routes to the same proxy service.
 
 ### How routing works
 
@@ -154,10 +247,6 @@ npx wrangler deploy
 ```
 
 Requires `CLOUDFLARE_API_TOKEN` environment variable or interactive login via `npx wrangler login`.
-
-### Automatic deployment (GitHub Actions)
-
-The workflow `.github/workflows/deploy-worker.yml` auto-deploys on push to `main` when `tools/cloudflare-worker.js` or `tools/wrangler.toml` change.
 
 **Setup (one-time):**
 

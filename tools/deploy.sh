@@ -1,7 +1,7 @@
 #!/bin/bash
 # Deployment script for mix.4st.uk
 # Usage: ./tools/deploy.sh [target]
-# Targets: prod, home-test, all-test, all-prod
+# Targets: prod, home-test, all-prod
 
 set -e
 
@@ -17,8 +17,8 @@ if [ ! -f "$CONFIG" ]; then
 fi
 
 # Valid targets
-VALID_TARGETS=("prod" "home-test" "all-test" "all-prod")
-TARGET="${1:-all-test}"
+VALID_TARGETS=("prod" "home-test" "all-prod")
+TARGET="${1:-home-test}"
 
 # Safety gates (set SKIP_DEPLOY_CHECKS=1 to bypass in emergencies)
 if [ "${SKIP_DEPLOY_CHECKS:-0}" != "1" ]; then
@@ -29,7 +29,7 @@ if [ "${SKIP_DEPLOY_CHECKS:-0}" != "1" ]; then
     echo "🧪 Target is production; running full verification (lint + e2e)..."
     npm run verify:full
   else
-    echo "🧪 Target is test/home-test; running quick verification (lint)..."
+    echo "🧪 Target is home-test; running quick verification (lint)..."
     npm run verify:quick
   fi
 else
@@ -46,6 +46,11 @@ fi
 # Cache-bust: rewrite ?v=... in player.html to content hashes of each asset.
 # Backup + EXIT trap so the working tree is restored even on failure.
 cd "$PROJECT_ROOT"
+echo ""
+echo "🔧 Refreshing stream preset manifest and search index..."
+python3 "$SCRIPT_DIR/generate-streams-manifest.py"
+python3 "$SCRIPT_DIR/generate-search-index.py" --streams-only
+
 CACHE_BUST_BACKUP="$(mktemp -t player.html.bak.XXXXXX)"
 cp player.html "$CACHE_BUST_BACKUP"
 trap 'cp "$CACHE_BUST_BACKUP" "$PROJECT_ROOT/player.html" && rm -f "$CACHE_BUST_BACKUP"' EXIT
@@ -54,9 +59,7 @@ echo "🔧 Cache-busting player.html..."
 node "$SCRIPT_DIR/cache-bust.js" --write player.html
 
 # Determine which targets to deploy to
-if [[ "$TARGET" == "all-test" ]]; then
-  TARGETS=("test" "home-test")
-elif [[ "$TARGET" == "all-prod" ]]; then
+if [[ "$TARGET" == "all-prod" ]]; then
   TARGETS=("prod")
 else
   TARGETS=("$TARGET")

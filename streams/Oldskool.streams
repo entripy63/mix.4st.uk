@@ -4,7 +4,7 @@
   "streams": [
     {
       "name": "Oldskool UK",
-      "m3u": "https://usa10.fastcast4u.com/knr0",
+      "m3u": "https://usa10.fastcast4u.com:8880/;",
       "genre": "Oldskool, Hardcore"
     },
     {

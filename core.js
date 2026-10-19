@@ -199,6 +199,7 @@ let analyserNode = null;
 let declickNode = null;
 let gainNode = null;
 let audioSourceNode = null;
+let mediaStreamSourceNode = null;
 
 function ensureAudioContext() {
     if (audioCtx) return;
@@ -222,7 +223,33 @@ function ensureAudioContext() {
     // Apply persisted volume
     const saved = storage.getNum('playerVolume', 0.5);
     volume.set(saved);
+    updateAudioSource();
 }
+
+function updateAudioSource() {
+    if (!audioCtx) return;
+    if (aud.srcObject) {
+        audioSourceNode.disconnect();
+        if (mediaStreamSourceNode) mediaStreamSourceNode.disconnect();
+        // The decoder's MediaStream can play directly despite the element's
+        // MediaElementAudioSourceNode. Route it explicitly and mute that bypass.
+        if (!mediaStreamSourceNode || mediaStreamSourceNode.mediaStream !== aud.srcObject) {
+            mediaStreamSourceNode = audioCtx.createMediaStreamSource(aud.srcObject);
+        }
+        // A MediaStream source does not follow the element's pause state.
+        if (!aud.paused) mediaStreamSourceNode.connect(analyserNode);
+        aud.muted = true;
+    } else if (mediaStreamSourceNode) {
+        mediaStreamSourceNode.disconnect();
+        mediaStreamSourceNode = null;
+        audioSourceNode.connect(analyserNode);
+        aud.muted = false;
+    }
+}
+
+['loadstart', 'loadedmetadata', 'play', 'pause', 'emptied'].forEach(event => {
+    aud.addEventListener(event, updateAudioSource);
+});
 
 // Volume control via gainNode — smooth, zipper-free, perceptual curve
 const volume = {

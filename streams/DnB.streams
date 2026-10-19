@@ -4,27 +4,27 @@
   "streams": [
     {
       "name": "DnBRadio.com",
-      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=1862204",
+      "m3u": "http://144.76.61.16:8000/dnbradio_main.mp3",
       "genre": "Drum & Bass"
     },
     {
       "name": "Energy1058",
-      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99573705",
+      "m3u": "http://176.9.104.253:8590/stream",
       "genre": "Jungle/Drum & Bass"
     },
     {
       "name": "Party Vibe Radio",
-      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=830388",
+      "m3u": "http://94.130.242.5:8004/stream",
       "genre": "Drum & Bass"
     },
     {
       "name": "Radio-Tube",
-      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=1623283",
+      "m3u": "http://91.232.4.33:7022/Radio-Tube%20Drum%20and%20Bass",
       "genre": "Drum & Bass"
     },
     {
       "name": "Party Vibe Radio",
-      "m3u": "http://yp.shoutcast.com/sbin/tunein-station.pls?id=795537",
+      "m3u": "http://94.130.242.5:8004/stream2",
       "genre": "Jungle"
     },
     {

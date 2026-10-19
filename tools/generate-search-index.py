@@ -3,7 +3,7 @@
 Generate search-index.json files for mixes and streams.
 
 Usage: 
-    python3 generate-search-index.py [base_directory]
+    python3 generate-search-index.py [base_directory] [--streams-only]
 
 Default base directory is current directory.
 Reads manifest.json from each DJ subdirectory in mixes/, outputs mixes/search-index.json.
@@ -14,8 +14,8 @@ and writes search-index.json files there. It doesn't need source/output separati
 manifests are generated artifacts, not audio files.
 """
 
+import argparse
 import json
-import sys
 from pathlib import Path
 
 def process_manifest(manifest_path, dj_path, all_mixes):
@@ -87,7 +87,11 @@ def process_streams(streams_directory, all_streams):
     print(f"  Added {stream_count} streams from {preset_count} presets")
 
 def main():
-    base_directory = Path(sys.argv[1]) if len(sys.argv) > 1 else Path('.')
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('base_directory', nargs='?', type=Path, default=Path('.'))
+    parser.add_argument('--streams-only', action='store_true', help='Leave the mixes index unchanged')
+    args = parser.parse_args()
+    base_directory = args.base_directory
     
     # Process mixes
     print("=" * 60)
@@ -97,7 +101,7 @@ def main():
     mixes_directory = base_directory / 'mixes'
     all_mixes = []
     
-    if mixes_directory.exists():
+    if not args.streams_only and mixes_directory.exists():
         # Find all directories with manifest.json, including moreDJs/
         for entry in sorted(mixes_directory.iterdir()):
             if entry.is_dir() and not entry.name.startswith('.'):
@@ -121,7 +125,7 @@ def main():
         
         size_kb = mixes_index_path.stat().st_size / 1024
         print(f"\nWrote mixes/search-index.json: {len(all_mixes)} mixes, {size_kb:.1f} KB")
-    else:
+    elif not args.streams_only:
         print(f"Warning: {mixes_directory} not found, skipping mixes")
     
     # Process streams
