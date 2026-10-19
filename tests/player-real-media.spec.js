@@ -79,11 +79,23 @@ test('mix playback with real media increases current time', async ({ page }) => 
   });
 
   await page.waitForFunction(() => aud.currentTime > 0.1, null, { timeout: 10_000 });
-  const start = await page.evaluate(() => aud.currentTime);
+  const samplePlayback = () => page.evaluate(() => ({
+    currentTime: aud.currentTime,
+    duration: aud.duration,
+    paused: aud.paused,
+    ended: aud.ended,
+    readyState: aud.readyState,
+    networkState: aud.networkState,
+    bufferedEnd: aud.buffered.length ? aud.buffered.end(aud.buffered.length - 1) : null,
+    contextState: audioCtx?.state,
+    contextTime: audioCtx?.currentTime,
+    error: aud.error?.message || null
+  }));
+  const start = await samplePlayback();
   await page.waitForTimeout(1500);
-  const end = await page.evaluate(() => aud.currentTime);
+  const end = await samplePlayback();
 
-  expect(end).toBeGreaterThan(start + 0.3);
+  expect(end.currentTime, JSON.stringify({ start, end }, null, 2)).toBeGreaterThan(start.currentTime + 0.3);
   await expect(page.locator('#timeDisplay')).toContainText('/');
   await expect(page.locator('#playPauseBtn')).toHaveClass(/playing/);
 });
