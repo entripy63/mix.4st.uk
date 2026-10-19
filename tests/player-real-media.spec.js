@@ -128,13 +128,18 @@ test('decoded MediaStream audio follows volume, mute, pause and source changes',
     };
   });
   await page.goto('/player.html');
-  await page.mouse.click(1, 1);
+  await test.step('Resume the test decoder AudioContext from a user gesture', async () => {
+    await page.evaluate(() => {
+      document.addEventListener('click', () => {
+        window.decoderContext = new AudioContext();
+        window.decoderReady = decoderContext.resume();
+      }, { once: true });
+    });
+    await page.mouse.click(1, 1);
+    await page.evaluate(() => decoderReady);
+  });
   await test.step('Start ordinary media playback', () => page.evaluate(async () => {
     await playMix({ name: 'Routing test', isLocal: true, audioSrc: '/__test__/mix.wav' });
-  }));
-  await test.step('Resume the test decoder AudioContext', () => page.evaluate(async () => {
-    window.decoderContext = new AudioContext();
-    await decoderContext.resume();
   }));
   await test.step('Play the decoded MediaStream', () => page.evaluate(async () => {
     window.replaceDecodedStream = async () => {
