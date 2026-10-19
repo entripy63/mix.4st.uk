@@ -26,6 +26,15 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium firefox webkit
 
+      - name: Start virtual audio output
+        run: |
+          sudo apt-get install -y pulseaudio pulseaudio-utils
+          pulseaudio --start --exit-idle-time=-1
+          pactl load-module module-null-sink sink_name=ci_audio rate=48000 channels=2
+          pactl set-default-sink ci_audio
+          pactl info
+          pactl list short sinks
+
       - name: Run Full Verification
         run: npm run verify:full:ci
 
