@@ -36,7 +36,38 @@ jobs:
           pactl list short sinks
 
       - name: Run Full Verification
+        id: verification
         run: npm run verify:full:ci
+
+      - name: Diagnose WebKit audio after a verification failure
+        if: failure() && steps.verification.outcome == 'failure'
+        env:
+          DEBUG: pw:browser
+          GST_DEBUG_NO_COLOR: '1'
+          GST_DEBUG: '*:2,webkitmediaplayer:6,webkitaudioprovider:6,webkitwebsrc:6,wavparse:5,queue:6,pulsesink:5'
+        run: |
+          log="$RUNNER_TEMP/webkit-audio.log"
+          set +e
+          npx playwright test tests/player-real-media.spec.js --project=webkit --grep 'mix playback with real media increases current time$' > "$log" 2>&1
+          result=$?
+          set -e
+          cat "$log"
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import { stripVTControlCharacters } from 'node:util';
+
+          const trace = stripVTControlCharacters(fs.readFileSync(`${process.env.RUNNER_TEMP}/webkit-audio.log`, 'utf8'));
+          // Keep API-readable annotations bounded; the full trace remains in the job log.
+          const excerpt = trace.length > 120000
+            ? trace.slice(0, 60000) + '\n[Middle of trace omitted]\n' + trace.slice(-60000)
+            : trace;
+          for (let offset = 0; offset < excerpt.length; offset += 15000) {
+            const message = excerpt.slice(offset, offset + 15000)
+              .replaceAll('%', '%25').replaceAll('\r', '%0D').replaceAll('\n', '%0A');
+            console.log(`::notice title=WebKit native audio trace part ${offset / 15000 + 1}::${message}`);
+          }
+          JS
+          exit "$result"
 
       - name: Run Sensitivity Checks
         run: npm run verify:sensitivity:ci

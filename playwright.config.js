@@ -17,7 +17,7 @@ export default defineConfig({
   },
   fullyParallel: false,
   workers: 1,
-  reporter: 'list',
+  reporter: process.env.GITHUB_ACTIONS ? [['list'], ['github']] : 'list',
   use: {
     baseURL: 'http://127.0.0.1:4173',
     headless: true,
