@@ -79,18 +79,23 @@ test('mix playback with real media increases current time', async ({ page }) => 
   });
 
   await page.waitForFunction(() => aud.currentTime > 0.1, null, { timeout: 10_000 });
-  const samplePlayback = () => page.evaluate(() => ({
-    currentTime: aud.currentTime,
-    duration: aud.duration,
-    paused: aud.paused,
-    ended: aud.ended,
-    readyState: aud.readyState,
-    networkState: aud.networkState,
-    bufferedEnd: aud.buffered.length ? aud.buffered.end(aud.buffered.length - 1) : null,
-    contextState: audioCtx?.state,
-    contextTime: audioCtx?.currentTime,
-    error: aud.error?.message || null
-  }));
+  const samplePlayback = () => page.evaluate(() => {
+    const data = new Float32Array(analyserNode.fftSize);
+    analyserNode.getFloatTimeDomainData(data);
+    return {
+      currentTime: aud.currentTime,
+      duration: aud.duration,
+      paused: aud.paused,
+      ended: aud.ended,
+      readyState: aud.readyState,
+      networkState: aud.networkState,
+      bufferedEnd: aud.buffered.length ? aud.buffered.end(aud.buffered.length - 1) : null,
+      contextState: audioCtx?.state,
+      contextTime: audioCtx?.currentTime,
+      inputRms: Math.sqrt(data.reduce((sum, value) => sum + value * value, 0) / data.length),
+      error: aud.error?.message || null
+    };
+  });
   const start = await samplePlayback();
   await page.waitForTimeout(1500);
   const end = await samplePlayback();
