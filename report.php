@@ -86,8 +86,12 @@ $record = json_encode([
 
 file_put_contents(__DIR__ . '/reports.log', $record, FILE_APPEND | LOCK_EX);
 
-// Email notification (plain text; user input only ever in the body, never headers)
-$subject = 'mixes.4st.uk issue report';
+// The request hostname is an informational label, not a trusted installation ID.
+$reportHost = strtolower($_SERVER['HTTP_HOST'] ?? '');
+if (strlen($reportHost) > 253 || !filter_var($reportHost, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+    $reportHost = 'Website';
+}
+$subject = '[' . $reportHost . '] Issue report';
 $mailBody = $message . "\n\n"
     . '---' . "\n"
     . 'Contact: ' . ($contact !== '' ? $contact : '(none)') . "\n"
