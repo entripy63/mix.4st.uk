@@ -6,6 +6,7 @@
 declare -A SERVERS=(
   [prod]="axc"
   [home-test]="home-test"
+  [home-test-t]="home-test"
   [namecrane]="sftp://tootorgu78:@uk-shared02.dapanel.net:53667"
 )
 
@@ -13,6 +14,7 @@ declare -A SERVERS=(
 declare -A REMOTE_DIRS=(
   [prod]=""
   [home-test]="html"
+  [home-test-t]="test-t"
   [namecrane]="domains/toot.org.uk/public_html"
 )
 
@@ -29,6 +31,7 @@ MEDIA_EXCLUDES="-x '\.mp3$' -x '\.m4a$' -x '\.flac$' -x '\.wav$' -x '\.opus$' -x
 declare -A MIRROR_COMMANDS=(
   [prod]="mirror -R --delete $MIRROR_EXCLUDES $MEDIA_EXCLUDES"
   [home-test]="mirror -R --delete $MIRROR_EXCLUDES $MEDIA_EXCLUDES -x '^streams/proxy-config\.json$'"
+  [home-test-t]="mirror -R --delete $MIRROR_EXCLUDES $MEDIA_EXCLUDES -x '^\.well-known/' -x '^streams/proxy-config\.json$'"
   [namecrane]="mirror -R --delete $MIRROR_EXCLUDES $MEDIA_EXCLUDES -x '^\.well-known/' -x '^streams/proxy-config\.json$'"
 )
 

@@ -12,9 +12,10 @@
 - **Playwright tests (local)**: `npx playwright test --project=chromium --project=firefox` — only Chromium and Firefox work locally; WebKit/iPhone projects require libraries only available on GitHub CI
 - **Playwright tests (CI)**: All projects (Chromium, Firefox, WebKit, iPhone) run on GitHub Actions
 - ./tools/deploy.sh [target]
-- Targets: `prod` (AXC production), `home-test` (home server, remote `html/`; default target), `namecrane` (player.4st.uk backup candidate, SFTP/53667, remote `domains/toot.org.uk/public_html`).
+- Targets: `prod` (AXC production), `home-test` (m.4st.uk, remote `html/`; default target), `home-test-t` (isolated t.4st.uk on the same home server, remote `test-t/`), `namecrane` (player.4st.uk backup candidate, SFTP/53667, remote `domains/toot.org.uk/public_html`).
 - `all-prod` is also accepted, but currently deploys only to `prod`; it is not a separate destination.
 - Deployment destinations and paths are defined in `tools/deploy-config.sh`; accepted target names are defined in `tools/deploy.sh`.
+- `home-test-t` preserves its remote proxy list, ACME directory, media, logs and secrets. It never selects `home-test` implicitly. See README.md for the one-time server setup and initial deployment boundary; do not use a whole dirty-checkout mirror for initial setup.
 - NameCrane uses the existing SSH key and preserves its separately managed remote proxy list and `.well-known/` for ACME alongside the shared media/log/secret exclusions. Preparation is not deployment approval; see README.md and tools/cloudflare-candidate/README.md for routing and deployment prerequisites.
 
 ## Architecture

@@ -178,3 +178,54 @@ the report-mail setup before exercising reports: deployment never provisions
 credentials or sends a test report. Verify the live proxies accept the new
 origin, then test playback after an approved deployment. No automatic failover
 or synchronisation with production is provided.
+
+## Isolated home test site: t.4st.uk
+
+`home-test-t` targets `https://t.4st.uk`, using the existing `home-test` lftp/SFTP
+connection but remote `test-t/` rather than `html/`. Its independent document root
+is `/var/www/test-t` on player.opt9, not a symlink/alias to m.4st.uk. The default
+target remains `home-test` (m.4st.uk); `all-prod` remains production only.
+
+One-time server preparation is `tools/setup-home-test-t.sh`, copied to player.opt9
+and run there with interactive sudo. It refuses existing new-site paths, uses the
+existing protected Certbot DNS-01 configuration for a separate t.4st.uk certificate,
+adds only `/etc/apache2/sites-available/t.4st.uk.conf` and a certificate-scoped
+renewal hook, configtests and gracefully reloads Apache. It does not restart
+Apache/Node, edit existing vhosts, change firewall/DNS routing, or change sudo
+policy. This privileged step requires Steve's terminal authentication; SSH key
+access alone does not authorise sudo. Completion must be verified, not inferred
+from the uploaded script. Port 80 is deliberately not opened; the new HTTP
+redirect only applies where port 80 is already reachable.
+
+The new site's separately managed `streams/proxy-config.json` uses
+`https://c2.proxy.4st.uk` → `https://us.proxy.4st.uk` → `https://h.proxy.4st.uk`.
+These accept the t origin without changing any proxy. Do not copy m's live list:
+its two candidate Workers only accept m.4st.uk. The t target excludes its proxy
+list and `.well-known/` from replacement/deletion, alongside the shared
+media/log/secret exclusions. Other remote-only files can be deleted by a mirror.
+Future explicit deployment is `./tools/deploy.sh home-test-t`; review the working
+tree first because this script mirrors working files, not just a commit.
+
+Initial setup must use a reviewed isolated payload, not mirror a dirty shared
+checkout wholesale: export the intended committed app, add its required ignored
+vendor/data/metadata assets (without audio/logs/secrets), cache-bust that copy,
+and upload only into `test-t/`. Provision the t proxy list separately. Do not
+copy another site's `secret-config.php`; the protected statistics/report viewers
+remain unavailable until a separate per-site configuration is provisioned.
+No test reports/mail are part of setup. Existing browser sessions, site routing
+files and the home Node proxy must be left alone.
+
+Deployed baseline: 2 November 2026, committed app `539846f` plus the required
+local vendor/data/metadata assets, cache-busted in an isolated copy. All 1,502
+payload files passed remote SHA-256 verification. The t proxy list was uploaded
+separately, without deleting remote files. HTTPS, PHP/access controls and a fresh
+Chromium DOM/data check passed directly against the NUC; an external HTTPS fetch
+also served the app. No playback/endurance or report-mail test was performed.
+The documented startup proxy-list duplication race remains unchanged.
+
+Public DNS for t and m both points to `95.172.226.14`; both also have LAN DNS
+overrides to `192.168.9.73`. Tantour's normal t resolution and HTTPS access were
+verified after Steve added the override, with HTTP 200 and successful certificate
+validation. Preserve the local override: the public-IP path from Tantour reached
+pfSense rather than the NUC. Do not work around routing problems by disabling
+TLS validation or changing existing sites.
