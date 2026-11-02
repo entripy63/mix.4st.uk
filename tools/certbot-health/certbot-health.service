@@ -1,0 +1,9 @@
+[Unit]
+Description=Report persistent Certbot faults to syslog
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/certbot-health check
+StateDirectory=certbot-health
+StateDirectoryMode=0700
+UMask=0077

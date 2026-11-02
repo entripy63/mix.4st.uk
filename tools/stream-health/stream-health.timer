@@ -1,0 +1,11 @@
+[Unit]
+Description=Run a small stream preset scan overnight
+
+[Timer]
+OnCalendar=*-*-* 03:30:00
+RandomizedDelaySec=20m
+AccuracySec=1m
+Persistent=false
+
+[Install]
+WantedBy=timers.target

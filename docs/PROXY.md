@@ -303,6 +303,88 @@ app/preset fixes to production on 19 Oct. This promotion does not include the
 candidate Worker: it remains enabled only on m.4st.uk, while production retains
 its existing Cloudflare, Deno and home proxy list.
 
+### Controlled outbound-path comparison (19 October, 18:21–18:24 BST)
+
+A temporary, random-path endpoint on m.4st.uk returns a finite, deterministic
+one-second WAV and logs the actual Apache connection peer, TLS and selected
+HTTP headers. It makes no outbound requests. Installation, log locations and
+disabling instructions are in [the diagnostic README](../tools/stream-path-diagnostic/README.md).
+
+Candidate, production Cloudflare and Deno each returned HTTP 200 and the exact
+same 16,044 audio bytes; all three samples decoded in Chromium. An isolated
+Cloudflare remote preview compared native fetch with a TLS socket to the same
+hostname, in both request orders. All four samples matched the same SHA-256.
+
+| Observed at Apache | Isolated Cloudflare fetch | Isolated Cloudflare TLS socket |
+| --- | --- | --- |
+| First connection peer | `172.70.162.52` | `104.28.161.6` |
+| HTTP / TLS / cipher | HTTP/1.1 / TLSv1.3 / TLS_AES_128_GCM_SHA256 | Same |
+| SNI / Host | m.4st.uk | Same |
+| User-Agent / Icy-MetaData | AudioPlayer/1.0 / 1 | Same |
+| Added headers | CF-Ray, CF-Worker, forwarding and CDN-Loop headers | None of these |
+| Server header returned to the caller | cloudflare | Apache/2.4.69 (Debian) |
+
+The successful fetch also returned CF-Cache-Status: DYNAMIC although the PHP
+endpoint does not generate Cloudflare headers. Thus a Cloudflare-labelled
+response alone does not locate the source of a rejection: fetch can relay an
+origin's response with Cloudflare labelling. Distinct connection peers and
+headers are established; whether either causes the station failures is not.
+Both paths used the correct hostname and SNI here, not a numeric-IP TLS bypass.
+
+The deployed home-proxy control returned its own Forbidden destination (403):
+on player.opt9, split DNS resolves m.4st.uk to 192.168.9.73, correctly blocked by
+the proxy's SSRF protection. That protection and DNS were left unchanged. No
+radio station was contacted, and no deployed proxy or preset was modified.
+The temporary remote preview is not a persistent Worker deployment. Captured
+headers, audio, hashes and connection logs are retained in local review artifacts.
+
+#### Station header replay (18:31–18:37 BST)
+
+An isolated remote preview sent short, sequential requests through fetch and
+hostname-verified TLS. The complete replay included the forwarding, CF-Worker,
+CF-Ray, CDN-Loop, CF-Visitor, Accept-Encoding and Connection headers observed at
+our endpoint. A preliminary request to that endpoint verified their receipt.
+
+For Soul City, native fetch returned 401. On TLS, the complete replay and the
+forwarding pair returned 401; the other header groups individually returned
+decodable MP3. Separating the forwarding pair isolated X-Forwarded-For with
+Cloudflare's shared Worker address. X-Forwarded-Proto alone succeeded, and the
+whole replay minus X-Forwarded-For succeeded. Repeated bare/X-Forwarded-For/bare
+controls alternated between 200/401/200. Both Icy-MetaData settings can succeed
+without the offending header, so metadata negotiation is not the explanation.
+
+To eliminate differing Cloudflare egress addresses as a confounder, direct
+HTTPS requests **from player.opt9, not the workstation**, toggled just that
+X-Forwarded-For header. They repeated 200 with audio / empty 401 / 200 with
+audio / empty 401 to the same upstream IPv4 address. This establishes an
+upstream header/value trigger, not why its authentication/IP policy rejects it.
+Do not label it a deliberate ban, geography restriction or listener-limit issue
+without upstream evidence.
+
+There are also exceptions to the working TLS baseline: the first two bare
+socket controls returned 401. In two further tests, removing the header on the
+same keep-alive connection after a 401 did not restore playback. Do not assume
+a generic TLS retry is universally reliable or hide these contrary results.
+
+Trying an explicitly empty X-Forwarded-For in fetch did not remove it: our
+endpoint received `,2a06:98c0:3600::103`. This malformed workaround was not tried
+on the stations. Cloudflare documents the shared address and header additions
+in its [HTTP header reference](https://developers.cloudflare.com/fundamentals/reference/http-request-headers/).
+The existing proxy already constructs fresh headers without X-Forwarded-For;
+simply deleting it from those headers is therefore not a verified fix.
+
+For SileX, the clean URL returned 403 through fetch before and after successful
+TLS controls. Replaying the entire header set still produced decodable Opus.
+Separate player.opt9 curl controls negotiated HTTP/1.1 and HTTP/2 and both
+received audio from 95.217.238.174. This rules out a general failure of that
+server to stream over HTTP/2, not every Cloudflare-specific HTTP/2/TLS policy.
+
+Successful captured socket samples were decoded in Chromium, removing ICY
+metadata first where advertised. The two-second curl controls intentionally
+ended with timeout exit 28 after receiving audio. Evidence, including failed
+controls, is retained under `.amp/in/artifacts/header-replay/`. No DNS records,
+station presets, app code or deployed proxies were changed.
+
 ## Abuse protection
 
 All proxies share the same abuse-protection semantics (the three source files —
