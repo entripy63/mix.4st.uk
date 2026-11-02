@@ -64,7 +64,7 @@ arsort($events);
 arsort($streams);
 arsort($mixes);
 arsort($sources);
-ksort($days);
+krsort($days);
 $searches = array_slice(array_reverse($searches), 0, 30);
 
 // Date range
