@@ -7,6 +7,44 @@ const muteBtn = document.getElementById('muteBtn');
 const volumeSlider = document.getElementById('volumeSlider');
 const timeDisplay = document.getElementById('timeDisplay');
 
+// Listening time belongs to the station, not a decoder or proxy connection.
+// Keep it in memory only; the media clock remains untouched for diagnostics.
+const streamListeningTime = {
+  session: null,
+  previous: null,
+  confirming: false,
+
+  sample() {
+    if (!state.isStream) {
+      this.session = this.previous = null;
+      return null;
+    }
+    const url = new URL(state.streamM3u || state.streamUrl, window.location.href);
+    const station = state.streamM3u ? url.href : url.searchParams.get('url') || url.href;
+    if (this.session?.station !== station) {
+      this.session = { station, seconds: 0 };
+      this.previous = null;
+    }
+    const current = {
+      source: aud.srcObject || aud.currentSrc || aud.src,
+      time: aud.currentTime,
+      at: performance.now(),
+      playing: !state.userPausedStream && streamIsActive() && !aud.paused &&
+        !aud.ended && !aud.seeking && (aud.srcObject || !aud.currentSrc.startsWith('data:'))
+    };
+    const previous = this.previous;
+    if (previous?.playing && current.playing && previous.source === current.source) {
+      const delta = current.time - previous.time;
+      // A backward reset or forward seek/handoff is not listening progress.
+      // Allow normal scheduling/clock jitter without counting large timeline jumps.
+      const maximum = (current.at - previous.at) / 1000 * aud.playbackRate + 1;
+      if (delta > 0 && delta <= maximum) this.session.seconds += delta;
+    }
+    this.previous = current;
+    return this.session;
+  }
+};
+
 // Restore volume slider from persisted level (actual gain applied in ensureAudioContext)
 volumeSlider.value = volume.get() * 100;
 
@@ -19,17 +57,57 @@ function isPlaybackPaused() {
 
 // Update time display
 function updateTimeDisplay() {
-  const current = formatTime(aud.currentTime);
+  const session = streamListeningTime.sample();
   if (state.isStream) {
     const isPaused = isPlaybackPaused();
-    timeDisplay.textContent = isPaused ? 'PAUSED' : `LIVE  ${current}`;
+    const days = Math.floor(session.seconds / 86400);
+    const hours = Math.floor(session.seconds % 86400 / 3600);
+    const current = days
+      ? `${days}d ${String(hours).padStart(2, '0')}:${formatTime(session.seconds % 3600).padStart(5, '0')}`
+      : formatTime(session.seconds);
+    timeDisplay.textContent = `${isPaused ? 'PAUSED' : 'LIVE'}  ${current}`;
     timeDisplay.classList.toggle('live', !isPaused);
+    timeDisplay.setAttribute('role', 'button');
+    timeDisplay.tabIndex = 0;
+    timeDisplay.setAttribute('aria-label', `Listening time ${current}. Reset listening time`);
+    timeDisplay.title = `Listening time — click to reset\n${safeDecodeURIComponent(state.streamUrl)}`;
   } else {
+    const current = formatTime(aud.currentTime);
     const duration = formatTime(aud.duration);
     timeDisplay.textContent = `${current} / ${duration}`;
     timeDisplay.classList.remove('live');
+    timeDisplay.removeAttribute('role');
+    timeDisplay.removeAttribute('tabindex');
+    timeDisplay.removeAttribute('aria-label');
   }
 }
+
+timeDisplay.addEventListener('click', async () => {
+  if (!state.isStream || streamListeningTime.confirming) return;
+  const session = streamListeningTime.sample();
+  streamListeningTime.confirming = true;
+  const confirmed = await showConfirmDialog('Reset listening time?',
+    'Start counting from zero without interrupting playback.', 'Reset time');
+  streamListeningTime.confirming = false;
+  // A station change while the dialog is open must not reset the new station.
+  if (confirmed && streamListeningTime.sample() === session) {
+    session.seconds = 0;
+    streamListeningTime.previous = null;
+  }
+  updateTimeDisplay();
+  timeDisplay.focus();
+});
+timeDisplay.addEventListener('keydown', event => {
+  if (state.isStream && event.key === 'Enter') {
+    event.preventDefault();
+    event.stopPropagation();
+    timeDisplay.click();
+  }
+});
+// Source replacement and seeks establish a new baseline, never a new session.
+['loadstart', 'emptied', 'seeking'].forEach(type => {
+  aud.addEventListener(type, () => { streamListeningTime.previous = null; });
+});
 
 // Update play/pause button icon
 function updatePlayPauseBtn() {
@@ -52,6 +130,7 @@ function updateMuteBtn() {
 
 // Stream pause: stop MSE player (stops downloading)
 async function pauseStream() {
+  streamListeningTime.sample();
   state.userPausedStream = true;
   await declick.fadeOut();
   streamStop();
@@ -137,6 +216,8 @@ function stopStream() {
 
 // Space bar toggles play/pause globally (except when typing in inputs)
 window.addEventListener('keydown', function(e) {
+  // Within confirmation, Space activates the dialog button, not playback.
+  if (e.target.closest('#confirmDialog')) return;
   if (e.code === 'Space' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) && !e.target.isContentEditable) {
     e.preventDefault();
     e.stopPropagation();
@@ -649,6 +730,7 @@ aud.addEventListener('play', () => {
 
 // Keyboard shortcuts
 document.addEventListener('keydown', function(e) {
+  if (e.target.closest('#confirmDialog')) return;
   if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) || e.target.isContentEditable) return;
   if (e.code === 'Space') {
     e.preventDefault();

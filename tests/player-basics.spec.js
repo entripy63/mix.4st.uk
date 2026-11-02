@@ -241,11 +241,165 @@ test('stream playback enters live mode and supports pause/resume', async ({ page
   expect(end).toBeGreaterThan(start + 0.75);
 
   await page.click('#playPauseBtn');
-  await expect(page.locator('#timeDisplay')).toHaveText('PAUSED');
+  await expect(page.locator('#timeDisplay')).toHaveText(/^PAUSED\s+0:0[12]$/);
 
   await page.click('#playPauseBtn');
   await expect(page.locator('#timeDisplay')).toContainText('LIVE');
   await expect(page.locator('#playPauseBtn')).toHaveClass(/playing/);
+});
+
+test('listening time accumulates across clock resets, pauses and proxy changes, not stalls or placeholders', async ({ page }) => {
+  await page.waitForFunction(() => liveProbeReady);
+  await page.clock.install();
+  await page.evaluate(() => {
+    setCurrentStream('https://proxy.example/?url=https%3A%2F%2Fradio.example%2Flive', 'Station', 'https://radio.example/station.pls');
+    playStream(state.streamUrl, 'Station', true);
+  });
+  await page.clock.runFor(6000);
+  await expect(page.locator('#timeDisplay')).toHaveText('LIVE  0:06');
+  await page.evaluate(() => {
+    // A reconnect replaces the decoder timeline without changing the station.
+    aud.currentTime = 0;
+    aud.dispatchEvent(new Event('emptied'));
+  });
+  await page.clock.runFor(3250);
+  await expect(page.locator('#timeDisplay')).toHaveText('LIVE  0:09');
+  await page.click('#playPauseBtn');
+  await page.clock.runFor(60000);
+  await expect(page.locator('#timeDisplay')).toHaveText('PAUSED  0:09');
+  await page.click('#playPauseBtn');
+  await page.clock.runFor(2000);
+  await expect(page.locator('#timeDisplay')).toHaveText('LIVE  0:11');
+
+  await page.evaluate(() => {
+    // Same playlist through another proxy is still the same listening session.
+    setCurrentStream('https://other-proxy.example/?url=https%3A%2F%2Fradio.example%2Fnew-endpoint', 'Renamed station', 'https://radio.example/station.pls');
+    playStream(state.streamUrl, 'Renamed station', true);
+  });
+  await page.clock.runFor(1000);
+  await expect(page.locator('#timeDisplay')).toHaveText('LIVE  0:12');
+  await page.evaluate(() => {
+    // Real library startup loops a silent data URL. Its clock must not count.
+    Object.defineProperty(aud, 'currentSrc', { configurable: true, value: 'data:audio/mpeg;base64,placeholder' });
+  });
+  await page.clock.runFor(10000);
+  await expect(page.locator('#timeDisplay')).toHaveText('LIVE  0:12');
+  await page.evaluate(() => {
+    Object.defineProperty(aud, 'currentSrc', { configurable: true, value: 'blob:decoded-stream' });
+    aud.currentTime = 0;
+  });
+  await page.clock.runFor(3250);
+  await expect(page.locator('#timeDisplay')).toHaveText('LIVE  0:15');
+  await page.evaluate(() => { aud.currentTime += 7200; });
+  await page.clock.runFor(1000);
+  await expect(page.locator('#timeDisplay')).toHaveText('LIVE  0:15');
+  await page.evaluate(() => aud.pause()); // Unexpected stall, not user Pause.
+  await page.clock.runFor(60000);
+  await expect(page.locator('#timeDisplay')).toHaveText('LIVE  0:15');
+  await page.evaluate(() => aud.play());
+  await page.click('#muteBtn');
+  await page.clock.runFor(2000);
+  await expect(page.locator('#timeDisplay')).toHaveText('LIVE  0:17');
+
+  await page.evaluate(() => {
+    setCurrentStream('https://radio.example/second', 'Different station');
+    playStream(state.streamUrl, 'Different station', true);
+  });
+  await page.clock.runFor(2000);
+  await expect(page.locator('#timeDisplay')).toHaveText('LIVE  0:02');
+  await page.evaluate(() => {
+    setCurrentStream('https://radio.example/live', 'Original station', 'https://radio.example/station.pls');
+    playStream(state.streamUrl, 'Original station', true);
+  });
+  await expect(page.locator('#timeDisplay')).toHaveText('LIVE  0:00');
+  await page.clock.runFor(2000);
+  await page.reload();
+  await page.waitForFunction(() => liveProbeReady);
+  await page.evaluate(() => playStream('https://radio.example/live', 'Original station', true));
+  await expect(page.locator('#timeDisplay')).toHaveText('LIVE  0:00');
+});
+
+test('listening time shows days across midnight without overflowing into media timing', async ({ page }) => {
+  await page.waitForFunction(() => liveProbeReady);
+  await page.clock.install();
+  await page.evaluate(() => playStream('https://radio.example/live', 'Long session', true));
+  // Advance both independent inputs: elapsed wall time and decoded media time.
+  // fastForward fires the mock's 250ms media timer once, not once per interval.
+  await page.evaluate(() => { aud.currentTime = 86399 - 0.25; });
+  await page.clock.fastForward(86399000);
+  await expect(page.locator('#timeDisplay')).toHaveText('LIVE  23:59:59');
+  await page.clock.runFor(1000);
+  await expect(page.locator('#timeDisplay')).toHaveText('LIVE  1d 00:00:00');
+  const total = 23 * 86400 + 17 * 3600 + 23 * 60 + 4;
+  await page.evaluate(total => { aud.currentTime = total - 0.25; }, total);
+  await page.clock.fastForward((total - 86400) * 1000);
+  await expect(page.locator('#timeDisplay')).toHaveText('LIVE  23d 17:23:04');
+  await page.click('#playPauseBtn');
+  await expect(page.locator('#timeDisplay')).toHaveText('PAUSED  23d 17:23:04');
+});
+
+test('listening time reset requires confirmation and never restarts playback', async ({ page }) => {
+  await page.waitForFunction(() => liveProbeReady);
+  await page.clock.install();
+  await page.evaluate(() => playStream('https://radio.example/live', 'Station', true));
+  await page.clock.runFor(7000);
+  const timer = page.locator('#timeDisplay');
+  const dialog = page.getByRole('dialog', { name: 'Reset listening time?' });
+  await expect(timer).toHaveAttribute('title', /click to reset\nhttps:\/\/radio.example\/live/);
+  // Enter must open the dialog, not also confirm it in the same key event.
+  await timer.focus();
+  await page.keyboard.press('Enter');
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', { name: 'Cancel' }).press('Enter');
+  await expect(timer).toHaveText('LIVE  0:07');
+  await expect(timer).toBeFocused();
+  await page.keyboard.press('Space');
+  await expect(dialog).toBeHidden();
+  await expect(timer).toHaveText('PAUSED  0:07');
+  await expect(page.locator('#playPauseBtn')).toHaveClass(/paused/);
+  await expect(timer).toBeFocused();
+  await page.keyboard.press('Space');
+  await expect(page.locator('#playPauseBtn')).toHaveClass(/playing/);
+  await expect(dialog).toBeHidden();
+  await page.keyboard.press('Enter');
+  await expect(dialog).toBeVisible();
+  await expect(page.locator('#playPauseBtn')).toHaveClass(/playing/);
+  await dialog.getByRole('button', { name: 'Reset time' }).press('Space');
+  await expect(dialog).toBeHidden();
+  await expect(timer).toHaveText('LIVE  0:00');
+  expect(await page.evaluate(() => aud.currentTime)).toBe(7);
+  await expect(timer).toBeFocused();
+  await page.keyboard.press('Space');
+  await expect(timer).toHaveText('PAUSED  0:00');
+  await expect(dialog).toBeHidden();
+  await page.keyboard.press('Space');
+  await page.clock.runFor(3000);
+  await expect(timer).toHaveText('LIVE  0:03');
+  expect(await page.evaluate(() => aud.currentTime)).toBe(10);
+  await page.click('#playPauseBtn');
+  await timer.click();
+  await dialog.getByRole('button', { name: 'Reset time' }).click();
+  await expect(timer).toHaveText('PAUSED  0:00');
+  await page.clock.runFor(60000);
+  await expect(timer).toHaveText('PAUSED  0:00');
+
+  await page.click('#playPauseBtn');
+  await page.clock.runFor(4000);
+  await timer.click();
+  await page.evaluate(() => {
+    setCurrentStream('https://radio.example/new', 'New station');
+    playStream(state.streamUrl, 'New station', true);
+  });
+  await page.clock.runFor(2000);
+  await dialog.getByRole('button', { name: 'Reset time' }).click();
+  await expect(timer).toHaveText('LIVE  0:02');
+  await page.evaluate(async () => {
+    await playMix({ name: 'Mix', isLocal: true, audioSrc: '/__test__/mix.wav' });
+  });
+  await expect(timer).not.toHaveAttribute('role');
+  await timer.click();
+  await expect(dialog).toBeHidden();
+  await expect(timer).toContainText('/');
 });
 
 test('playback diagnostics retain a redacted fault through switching and reload, with explicit attachment', async ({ page }) => {

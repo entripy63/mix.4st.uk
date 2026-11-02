@@ -7,6 +7,29 @@ The vendored Icecast player includes a local retry/handoff fix. See
 [STREAM-RECOVERY.md](docs/STREAM-RECOVERY.md) for its recovery policy,
 reproducible patch, regression tests and narrow deployment/rollback boundaries.
 
+## Live listening time
+
+The live timer accumulates media-clock progress for the loaded station, retaining
+the total across pauses, reconnections and decoder handoffs. Paused/stalled time
+and the library's silent startup placeholder do not count; mute does not stop it.
+Different stations, leaving live playback and page reloads start a new session.
+There is no persistence or per-station history. Long sessions display days.
+
+Click/tap the elapsed time, or focus it and press Enter, to confirm a reset
+without interrupting playback. Space still toggles Play/Pause with the timer
+focused; inside confirmation it activates the focused dialog button instead.
+Cancel preserves the total. A station change while
+confirmation is open cannot reset the new station. The hover hint retains the
+stream URL; Help explains the rules and What's New announces the feature.
+
+The total is approximate, not evidence of uninterrupted audio. Source changes,
+seeks and clock resets establish a new sampling baseline without resetting the
+total. Large forward jumps are rejected against elapsed wall time; small amounts
+around timeline boundaries may be lost. Playback/retry policy and the underlying
+media clock used by diagnostics are unchanged. Tests cover controlled long
+durations and full-app reconnections with real local MP3/ICY decoding in Chromium
+and Firefox; this is not a claim of weeks-long endurance testing.
+
 ## Playback diagnostics
 
 Open **Settings → Playback diagnostics / Report an issue**, or **Help → Report an Issue**.

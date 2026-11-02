@@ -1170,6 +1170,22 @@ td:last-child {
 /* Audio controls styled in common.css - override for player.html */
 #audioControls {
   width: 100%;
+  flex-wrap: wrap;
+}
+
+#timeDisplay[role="button"] {
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+#timeDisplay[role="button"]:hover {
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+
+#timeDisplay[role="button"]:focus-visible {
+  outline: 2px solid var(--text-secondary);
+  outline-offset: 4px;
 }
 
 #volumeSlider {

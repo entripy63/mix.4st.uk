@@ -481,7 +481,7 @@ function showAlertDialog(title, message) {
   });
 }
 
-function showConfirmDialog(title, message) {
+function showConfirmDialog(title, message, confirmLabel = 'Delete') {
   return new Promise((resolve) => {
     const modal = document.getElementById('confirmDialog');
     if (!modal) {
@@ -503,6 +503,7 @@ function showConfirmDialog(title, message) {
     
     titleEl.textContent = title;
     messageEl.textContent = message;
+    confirmBtn.textContent = confirmLabel;
     
     const content = modal.querySelector('.confirm-content');
     
@@ -531,7 +532,7 @@ function showConfirmDialog(title, message) {
     const onKeydown = (e) => {
       if (e.key === 'Escape') {
         onCancel();
-      } else if (e.key === 'Enter') {
+      } else if (e.key === 'Enter' && e.target.tagName !== 'BUTTON') {
         onConfirm();
       }
     };

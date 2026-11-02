@@ -103,7 +103,7 @@ test('stream playback with real media shows live state and advances', async ({ p
   expect(end).toBeGreaterThan(start + 0.3);
 
   await page.click('#playPauseBtn');
-  await expect(page.locator('#timeDisplay')).toHaveText('PAUSED');
+  await expect(page.locator('#timeDisplay')).toHaveText(/^PAUSED\s+\d+:\d{2}$/);
 
   // Model an AudioContext left suspended by blocked startup. Playback must not
   // depend on optional visualiser or tempo features resuming it for us.

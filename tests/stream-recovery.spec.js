@@ -32,6 +32,10 @@ test.beforeAll(async () => {
   server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://localhost');
     const id = url.searchParams.get('id');
+    if (req.method === 'OPTIONS') {
+      res.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': '*' });
+      res.end(); return;
+    }
     if (url.pathname === '/') {
       res.writeHead(200, { 'Content-Type': 'text/html' });
       res.end('<button id="start">Start</button>'); return;
@@ -48,19 +52,40 @@ test.beforeAll(async () => {
     const previous = sessions.get(id);
     const kind = url.searchParams.get('kind');
     if (previous) previous.response = res;
-    res.writeHead(200, { 'Content-Type': 'audio/mpeg' });
+    // The full app requests ICY metadata. Supply valid empty metadata blocks,
+    // rather than leaving its detector waiting for more bytes indefinitely.
+    const icy = id.includes('-app-');
+    let untilMetadata = 16384;
+    const write = data => {
+      if (!icy) return res.write(data);
+      while (data.length) {
+        const size = Math.min(untilMetadata, data.length);
+        res.write(data.subarray(0, size));
+        data = data.subarray(size);
+        untilMetadata -= size;
+        if (!untilMetadata) {
+          res.write(Buffer.from([0]));
+          untilMetadata = 16384;
+        }
+      }
+    };
+    if (icy) {
+      res.setHeader('icy-metaint', '16384');
+      res.setHeader('Access-Control-Expose-Headers', 'icy-metaint');
+    }
+    res.writeHead(200, { 'Content-Type': 'audio/mpeg', 'Access-Control-Allow-Origin': '*' });
     if (!previous) {
       sessions.set(id, { response: res });
-      res.write(Buffer.concat(original.slice(0, count(kind === 'outage' ? 2 : 12))));
+      write(Buffer.concat(original.slice(0, count(kind === 'outage' ? 2 : 12))));
     } else if (kind === 'outage' || previous.unavailable) {
       res.flushHeaders();
     } else {
       const data = kind === 'crc' ? original : alternate;
       let offset = count(8);
-      res.write(Buffer.concat(data.slice(offset, offset + count(3))));
+      write(Buffer.concat(data.slice(offset, offset + count(3))));
       offset += count(3);
       const timer = setInterval(() => {
-        res.write(Buffer.concat(data.slice(offset, offset + count(1))));
+        write(Buffer.concat(data.slice(offset, offset + count(1))));
         offset += count(1);
       }, 1000);
       res.on('close', () => clearInterval(timer));
@@ -194,3 +219,50 @@ test('identical-frame reconnection continues without resetting the clock', async
   });
   expect(delay).toBeGreaterThanOrEqual(950);
 });
+
+for (const kind of ['pcm', 'crc']) {
+  test(`app listening time survives a real ${kind} reconnection`, async ({ page, baseURL }) => {
+    test.setTimeout(45000);
+    const id = `${Date.now()}-app-${kind}`;
+    await page.addInitScript(() => {
+      localStorage.clear();
+      localStorage.setItem('streamsEverInitialized', 'true');
+      localStorage.setItem('bpmEnabled', 'false');
+      localStorage.setItem('visualiserEnabled', 'false');
+    });
+    await page.route('**/*', route => {
+      const url = route.request().url();
+      if (url.startsWith(origin + '/') || url.startsWith(baseURL + '/')) return route.continue();
+      return route.abort();
+    });
+    await page.goto('/player.html');
+    await page.waitForFunction(() => liveProbeReady);
+    // Mute output, not decoding: this uses the real app, library and media stack.
+    await page.mouse.click(1, 1);
+    await page.evaluate(async url => {
+      volume.mute();
+      playStream(url, 'Synthetic recovery station', true);
+      await Promise.resolve();
+      window.handoffs = [];
+      streamPlayer.addEventListener('warn', event => handoffs.push(event.detail.map(String).join(' ')));
+    }, `${origin}/stream?id=${id}&kind=${kind}`);
+    await expect.poll(() => page.evaluate(() => aud.currentTime), { timeout: 15000 }).toBeGreaterThan(4);
+    const before = await page.evaluate(() => ({ source: aud.currentSrc, clock: aud.currentTime }));
+    await expect(page.locator('#timeDisplay')).toHaveText(/LIVE\s+0:0[34]/);
+    await page.request.get(`${origin}/break?id=${id}`);
+    await expect.poll(() => page.evaluate(kind => handoffs.some(message =>
+      message.includes(kind === 'pcm' ? '% confidence' : 'overlapping audio')), kind), { timeout: 15000 }).toBe(true);
+    if (kind === 'pcm') {
+      await expect.poll(() => page.evaluate(() => aud.currentSrc), { timeout: 15000 }).not.toBe(before.source);
+      await expect.poll(() => page.evaluate(() => aud.currentTime)).toBeGreaterThan(0.7);
+      expect(await page.evaluate(() => aud.currentTime)).toBeLessThan(before.clock);
+    }
+    // The old media clock would now show under 4s after PCM replacement.
+    // The session clock must preserve at least the original four seconds.
+    const displayed = await page.locator('#timeDisplay').innerText();
+    expect(Number(displayed.match(/0:(\d+)/)[1])).toBeGreaterThanOrEqual(3);
+    const current = await page.evaluate(() => aud.currentTime);
+    await expect.poll(() => page.evaluate(() => aud.currentTime)).toBeGreaterThan(current + 1.2);
+    await expect(page.locator('#timeDisplay')).not.toHaveText(displayed);
+  });
+}

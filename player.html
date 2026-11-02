@@ -166,11 +166,11 @@
     </div>
   </div>
 
-  <div id="confirmDialog" class="modal" style="display: none;">
+  <div id="confirmDialog" class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmMessage" style="display: none;">
     <div class="confirm-content modal-content" onclick="event.stopPropagation()"
       style="background: #252542; border-radius: 10px; padding: 24px; max-width: 320px;">
-      <h2 class="confirm-title" style="margin-top: 0; margin-bottom: 12px; font-size: 16px;"></h2>
-      <p class="confirm-message" style="margin: 0 0 20px 0; color: #ccc; font-size: 14px;"></p>
+      <h2 id="confirmTitle" class="confirm-title" style="margin-top: 0; margin-bottom: 12px; font-size: 16px;"></h2>
+      <p id="confirmMessage" class="confirm-message" style="margin: 0 0 20px 0; color: #ccc; font-size: 14px;"></p>
       <div style="display: flex; gap: 10px; justify-content: flex-end;">
         <button class="confirm-cancel"
           style="padding: 10px 16px; background: #3d3d5c; border: none; border-radius: 6px; color: #e0e0e0; cursor: pointer; transition: background 0.2s; font-size: 14px;">Cancel</button>
@@ -412,8 +412,20 @@
           </tr>
         </table>
       </div>
+      <h2>Live listening time</h2>
+      <p>The live timer accumulates listening time for the loaded station. Pause freezes it;
+        Resume and automatic reconnections keep the total. Loading a different station,
+        leaving live playback or reloading the page starts a new session. Muting does not stop the timer.</p>
+      <p>Click or tap the elapsed time to reset it, then confirm <strong>Reset time</strong>.
+        With the timer focused, Enter opens the same confirmation; Space still plays/pauses. Reset does not
+        interrupt playback. Days are shown for long sessions. The total is approximate,
+        excludes stalled playback and is not evidence of uninterrupted audio.</p>
       <h2>What's New</h2>
       <div class="whats-new">
+        <h3>November 2026</h3>
+        <ul>
+          <li><strong>Live listening time</strong> — The timer now keeps your accumulated listening time across pauses and reconnections. Click or tap it to reset, with confirmation and no interruption to playback.</li>
+        </ul>
         <h3>May 2026</h3>
         <ul>
           <li><strong>Volume Ceiling</strong> — Automatically reduces volume when loudness exceeds your chosen level. Set it from your current listening level in ⚙️ Settings.</li>
