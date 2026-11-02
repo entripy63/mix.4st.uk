@@ -45,9 +45,31 @@ mixes index, cache-busts player.html, and mirrors changed site files to the home
 bookmark's `html/` directory. Local `.amp/` artifacts are excluded. The home
 target preserves its separately managed, candidate-first
 `streams/proxy-config.json`; production continues to use the repository list.
+On 19 October, Deno was removed from the test-only list to rehearse its
+retirement. The existing Cloudflare Worker was subsequently removed from that
+list to avoid a second failure delay for the known exceptions. Both named and
+raw-IP URLs then tried candidate → home. Production and overnight-scanner lists
+are unchanged. Reload the test player to pick up the new list; existing playback
+does not switch proxies merely because the configuration file changed.
+Deployed Firefox/Chromium checks verified Deno is absent and saved Deno URLs
+are detected as stale and can be re-probed through the current list. They also
+reproduced a pre-existing startup race with both the old and new lists: eager
+loading and restoration can fetch concurrently and append the list twice.
+That app issue was left unchanged; evidence is in the local review artifacts.
 After the owner's testing passes, commit the intended changes, then deploy with
 `./tools/deploy.sh prod` (full lint/playback checks). Do not promote to production
 just because the home deployment's automated checks pass.
+
+**US placement experiment, 24 October 2026:** home-test now tries candidate →
+US-placement clone → home. The clone uses identical deployed JavaScript with
+the explicit hint `placement.region = "aws:us-east-1"`; neither existing Worker
+was modified. Responses reported `cf-placement: remote-IAD` despite London
+ingress. Monkey Radio returned 401 through the original and 200 audio through
+the clone. Real-player Chromium and Firefox checks each decoded audio for about
+30 seconds after automatically selecting the clone, without home fallback.
+This verifies a working short-test route, not the station-facing IP, a specific
+licensing explanation, long-duration reliability or suitability for every
+listener. See the [US experiment and rollback notes](../tools/cloudflare-candidate/README.md#us-placement-experiment--24-october-2026).
 
 ### Listening-test issue register
 
@@ -62,12 +84,181 @@ daily-use stations while they are being listened to.
 | **Deepvibes Radio** (daily use) | Owner reports roughly ten hours of playback; two reconnections, with seamless recovery reported for the first. | No controlled comparison for the later interruption. | Separate interruption around 01:14 BST on 19 Oct: stopped/stuttered after reconnect. Old request ended with client-abort and no Worker exception; cause unresolved. Correlate browser warnings and proxy logs if repeated. |
 | **Jungletrain** (daily use) | Verified playback, metadata and raw-TCP/ICY handling on port 8000; short controlled tests passed. | Production Cloudflare returned 520 in the initial comparison. | No outstanding candidate fault established; continue normal listening. |
 | **Sleepbot** (daily use) | Verified playback and metadata, including raw-IP endpoints on ports 8096/8218; owner also reports a short listening session. | Existing fallback paths previously worked. | No outstanding candidate fault established; continue normal listening. |
-| **Monkey Radio** — `https://streaming.live365.com/a52904` (daily use) | Upstream 401 after redirect to `das-edge15-live365-dal02.cdnstream.com`; native fetch path. Isolated Worker fetch-to-redirect then raw TLS to the CDN also returns empty 401, Server DAS. | Production Cloudflare: 401. Home: empty 401 on 19 Oct. Deno control seconds later: 200, `audio/mpeg`, “Monkey Radio Archive”, audio bytes received. An earlier direct request also returned 401. | **Currently depends on Deno among tested routes.** TLS alone does not solve this one. Live365 supports country/IP restrictions, but their application to this station is unverified; no signed query or token appeared in the observed redirect. Home is not yet a verified post-Deno fallback. |
-| **Soul City** — `https://sirius.nucast.co.uk/listen/soul_city_radio/radio.mp3` | Native fetch receives empty upstream 401 with `text/html`; content-type guard exposes this as 415. | Home decodes successfully. Experimental Worker TLS-by-hostname also returned decodable audio, but is not a deployed fallback. | Confirmed transport/path difference; underlying cause unresolved. Retain home fallback and existing destination safeguards. |
+| **Monkey Radio** — `https://streaming.live365.com/a52904` (daily use) | UK controls return upstream 401 after redirect; raw TLS also returns 401. On 20 Oct, candidate logs show 200 `audio/mpeg` for short probes and an `icy=1` playback-shaped GET from the Netherlands Starlink client whose listener reports successful playback. | Deno and axc receive audio. Home, Hostmedia and production Cloudflare controls return 401. | **Candidate success varies by request path/client; not universally Deno-dependent.** The successful client's probes/preflight record FRA, but station-facing egress and rejection policy remain unverified. See the 17:10 BST log correlation below. Home is not yet a verified fallback. |
+| **Soul City** — `https://sirius.nucast.co.uk/listen/soul_city_radio/radio.mp3` | Native fetch returns an empty upstream 401; the content-type guard exposes this as 415. | Header replay isolates `X-Forwarded-For: 2a06:98c0:3600::103`: adding it alone produces 401; removing it restores decodable MP3. Fixed-source HTTPS requests from player.opt9 independently repeat 200/401/200/401 with only this header toggled. Earlier HTTP/raw-IP candidate playback also worked. | **Upstream header/value-triggered rejection reproduced.** The address is Cloudflare's shared cross-zone Worker client address. Why the upstream rejects it remains unknown. Omitting the header or setting it empty does not remove Cloudflare's automatic value. No DNS, preset or deployed Worker change; no HTTPS downgrade. |
 | **Abacus FM Smooth Jazz** — `https://s20.reliastream.com/stream/8174/stream` | Owner corrected the station URL to 8174 and reports clean candidate playback. The previous 8100 endpoint returned `audio/mpeg; charset=UTF-8` and identified an airport ATC stream. | Earlier home checks also reached that wrong station. | **Resolved in owner's testing.** Corrected Jazz preset and regenerated search index first deployed to m.4st.uk on 19 Oct. Audio charset normalization remains useful for other incorrectly labelled streams. |
-| **SileX.live** — `https://stream.silex.live/opus/2.ogg?type=http&nocache=1792332865828` | Native fetch receives nginx HTML 403, Server cloudflare; guard translates to 415. Isolated Worker raw TLS by hostname receives 200, `audio/ogg; codecs=opus`, stream bytes. | Home receives Ogg/Opus audio. App MIME fix quotes the existing codec parameter; deployed playback verified through home in Firefox and Chromium, using WebAudio after a user gesture. Owner then reported volume/mute bypass. | **App playback and volume issues resolved; native-fetch access failure remains.** Owner confirmed live SileX volume control after the MIME and MediaStream routing fixes on m.4st.uk. The nonfatal MSE capability warning remains because the library selects its software Opus decoder. TCP/TLS difference resembles Soul City, but provider-side reason is unknown. No proxy changes deployed. |
+| **SileX.live** — saved URL `https://stream.silex.live/opus/2.ogg?type=http&nocache=1792332865828` | Intermittent historical success, but at 18:31 BST native fetch twice returns 403 HTML for the clean URL too; the proxy guard exposes this as 415. Owner also confirmed clean-URL 415s through both Cloudflare proxies and Deno before home succeeds. | Hostname TLS returns decodable Ogg/Opus both without and with the entire Cloudflare header replay. Direct player.opt9 controls return audio over both HTTP/1.1 and HTTP/2 to the same IPv4 address. Home playback works after the app MIME and MediaStream routing fixes. | **Unresolved fetch-path rejection.** Neither removing the query, replaying the observed added headers, nor an ordinary HTTP-version incompatibility explains all observations. Source-address policy, address-family differences and other path/TLS differences remain unverified possibilities. Preset unchanged; app volume/mute fix confirmed; nonfatal MSE warning remains. |
 | **Radio Paradise** (all streams tested by owner) | Owner reports successful playback. | No new controlled comparison. | No outstanding issue reported. |
 | **SomaFM** (PLS presets) | Baseline decoded all 18 preset entries. Owner's code 4 failures probe the playlist itself. Full app reproduced the playlist-read failure in Firefox and Chromium; fixed version resolves and plays Groove Salad through candidate in both browsers. | Candidate, Deno and home deliver the PLS intact. Earlier resolver-only checks omitted the app's global fetch wrapper and therefore missed the cause. | **Confirmed app bug, fixed and first deployed to m.4st.uk on 19 Oct.** Global fetch wrapper incorrectly treated finite `audio/x-scpls` playlists without Content-Length as live audio and threw on normal EOF. PLS/M3U types now excluded from synthetic EOF errors. Both-format regression tests pass in both browsers; genuine audio EOF still errors for reconnection. Deployed Firefox playback verified; production and test proxy configuration unchanged. |
+
+**Monkey Radio follow-up, 20 October 2026:** with the owner having paused
+playback, short sequential probes repeated Deno 200 with MP3 bytes and ICY
+station name “Monkey Radio Archive”, versus home/candidate empty 401 responses.
+The [station's current listening page](https://monkeyrad.io/groove/) still
+publishes the exact preset URL, explicitly for external radio players.
+Addressing each of `das-edge15-live365-dal02.cdnstream.com/a52904` and
+`das-edge16-live365-dal02.cdnstream.com/a52904` directly over HTTPS produced
+the same Deno 200 / home 401 / candidate 401 split. Redirect hostname selection
+alone therefore does not explain the failure; differing DNS answers or egress
+paths behind those hostnames remain possible.
+
+Direct player.opt9 controls remained 401 with browser-style User-Agent,
+Origin/Referer, with and without Range, and with ICY metadata enabled/disabled.
+Our finite diagnostic endpoint captured Deno's ordinary Accept,
+Accept-Language and Accept-Encoding headers; replaying those from player.opt9
+also returned 401. Offering HTTP/2 still negotiated HTTP/1.1, so that was not
+a successful HTTP/2 comparison. Forcing TLS 1.3 AES-256-GCM, the cipher observed
+for Deno at our endpoint, did not restore playback; this does not reproduce
+Deno's whole TLS fingerprint or prove its station-side negotiation.
+The upstream 401 had no body or WWW-Authenticate challenge. Live365 documents
+[country restrictions and IP bans](https://help.live365.com/en/support/solutions/articles/43000533260-stream-restrictions),
+but neither their application here nor the exact rejection reason is verified.
+No preset, proxy deployment or routing configuration changed. The next useful
+step is station/provider confirmation of restrictions or inspection of their
+CDN rejection logs, rather than an unproven app/header workaround.
+
+**Netherlands listener, 20 October 2026 at 17:10 BST:** the owner relays Izmar's
+report that Monkey Radio plays on m.4st.uk, using Brave/macOS through Starlink,
+without a VPN. Historical candidate logs independently show a matching
+Netherlands Starlink client receiving 200 `audio/mpeg` on short Monkey Radio
+probes at 17:10:15, 17:10:17 and 17:10:36 BST. At 17:10:36.435 a preflight for
+the `icy=1` URL returned 204; the corresponding GET logged 200 `audio/mpeg`
+at 17:10:37.292, using native fetch to das-edge15-live365-dal02.cdnstream.com.
+The preceding probes/preflight identify FRA and the same client address; this
+does not identify the station-facing exit address. Both CDN hostnames have
+successful probe results. Nearby SomaFM requests are from the owner's separate
+UK connection, not this Starlink client.
+
+Querying the playback request ID through 18:27 UTC found its successful proxy
+log but no invocation-completion record. That is not proof of uninterrupted
+playback for the intervening period. The logs and listener report together
+support candidate playback on this route, not universal compatibility or a
+specific geographical policy. The separately supplied API token
+successfully permits historical queries; these were dry queries with no Worker
+configuration changes or new station requests. Private raw evidence is retained
+locally in `.amp/in/artifacts/monkey-amsterdam-candidate/`.
+
+**axc control, 20 October 2026 at 11:38 UTC:** with the owner's permission,
+uploaded a temporary token-protected PHP diagnostic through the existing axc
+FTP bookmark. A fixed-destination, certificate-verified HTTPS request followed
+the official URL's 302 to `das-edge16-live365-dal02.cdnstream.com/a52904`
+(`216.235.83.21`) and received 200, `audio/mpeg`, ICY name “Monkey Radio Archive”
+and bitrate 192. It captured only 4096 bytes, found an MPEG audio frame header,
+and closed the connection. This is a successful short access/sample test, not
+a decoded playback or long-duration relay test. Unauthenticated access returned
+404; the PHP file was removed immediately afterwards and FTP confirmed absence.
+The private JSON result is retained locally in `.amp/in/artifacts/axc-monkey/`.
+axc is therefore another verified working outbound route, not evidence that
+Deno-specific code is required. Neither a Dutch egress address nor a geographic
+cause was established. The endpoint ran PHP 7.0.33; no PHP settings changed.
+No permanent relay was installed and app/preset/proxy routing is unchanged.
+
+**Bounded axc relay trial, 20 October 2026, 11:58–12:12 UTC:** two isolated
+Chromium sessions used the real m.4st.uk player and a temporary, token-protected,
+fixed-destination PHP relay. Each decoded Monkey Radio for about 5½ minutes,
+with advancing playback clocks and nonzero decoded audio samples. Both requests
+ended at approximately five minutes; automatic reconnection obtained another
+200 response and PCM synchronization reported 99.11% and 97.74% confidence.
+The cause of that repeatable connection boundary is not established. These were
+automated playback checks, not confirmation of an audibly gapless transition.
+The first harness incorrectly classified the decoder clock reset during PCM
+handoff as a stall; the second checked advancement within each sampling window.
+
+The relay rejected missing credentials/origin with 404 and a second concurrent
+listener with 503. It streamed without saving media, verified upstream TLS,
+restricted redirects, and imposed a ten-minute connection cap and absolute
+expiry without overriding the host's execution limit. However, after the second
+session called streamStop(), the relay's listener lock remained held throughout
+five seconds of polling. This does not distinguish browser/library cancellation
+from delayed hosting disconnect notification; prompt server-side cleanup is
+therefore unverified. The browser was closed and the endpoint removed; FTP and
+HTTP 404 checks confirmed removal. Redacted evidence is retained locally in
+`.amp/in/artifacts/axc-relay/`. Playback feasibility is established, but reliable
+disconnect cleanup and extended listening remain prerequisites for a lasting
+relay. No permanent endpoint or app/preset/proxy routing change was made.
+
+**axc disconnect investigation, 20 October 2026, 15:03–15:09 UTC:** bounded
+single-listener controls separated browser cancellation from PHP shutdown.
+Chromium reported net::ERR_ABORTED within 8–11 ms of cancelling a plain fetch
+or calling the real m.4st.uk app's streamStop(). Nevertheless, PHP continued
+writing synthetic data until its 20-second test cap, and continued receiving
+and forwarding Monkey Radio until its 60-second test cap. Closing the page
+after five seconds did not release the slot. PHP's connection_aborted() stayed
+zero, despite subsequent writes/flushes. Repeating the synthetic control with
+the original ignore_user_abort(false) setting gave the same result. This
+demonstrates a disconnect-notification limitation in this hosting path without
+requiring the audio library; the exact web-server configuration is unknown.
+The app test stopped initial playback, not a post-PCM-handoff player, so it is
+not a blanket exclusion of library lifecycle bugs.
+
+A separate token-authenticated cancellation request set a private temporary
+flag, checked by the relay's write/progress callbacks. The live upstream
+request then terminated and its listener slot was observed free within about
+1.2 seconds, rather than at the 60-second cap. This verifies a possible control
+mechanism, not a production implementation: a lasting relay would need
+per-listener cancellation identities and a hard lifetime/expiry for clients
+that disappear without sending a stop request. No server execution limits were
+overridden. Private status/flag files were cleaned, the PHP endpoint removed,
+and FTP/HTTP checks confirmed removal. Evidence is retained locally in
+`.amp/in/artifacts/axc-disconnect/`. Normal app routing remains unchanged.
+The owner also reports that Live365's own Monkey Radio player returns 401;
+that independent observation was not reproduced as part of these tests.
+
+**Hostmedia access attempt, 20 October 2026, approximately 13:41 UTC:** the
+owner supplied an FTP bookmark rooted at 4st.uk's otherwise empty public_html.
+Verified FTPS access required the certificate hostname
+`darwin.dnshostnetwork.com` and supplying missing certificate-chain links,
+validated against the workstation's existing trust roots; verification was not
+disabled and the saved bookmark was not changed. A temporary protected finite
+probe was uploaded, but its unauthenticated check did not return the required
+404, so no authenticated station probe was attempted. The file was removed and
+FTP listing confirmed that only the original .htaccess remained. Subsequent
+HTTP/HTTPS requests were reset from both the workstation and player.opt9;
+the cause is unverified. This is an inconclusive hosting-access test, not a
+Monkey Radio rejection or success. No runtime, DNS or app configuration changed.
+
+**Hostmedia retry, 20 October 2026 at 14:08 UTC:** after certificate work and
+a persistent verified-FTPS workaround, HTTPS to the empty root returned the
+expected 403. A newly uploaded protected probe instead received a generic
+LiteSpeed 403 on its unauthenticated check, not its own 404. No authenticated
+station request was made. Subsequent HTTPS connections were reset, including
+Chromium navigation and a request for a temporary, normally readable text file.
+The text-file test is inconclusive because TLS failed before an HTTP response.
+Both temporary files were removed through FTP; only the original .htaccess
+remained and its contents were verified unchanged. A hosting security filter is
+a hypothesis, not a demonstrated cause; inspect hosting access/security logs
+before further retries. Local evidence: `.amp/in/artifacts/hostmedia-monkey/`.
+
+**Hostmedia completed probe, 20 October 2026 at 14:22 UTC:** the owner supplied
+ModSecurity log entries for both earlier attempts: rule 913114 explicitly
+rejected the Python-urllib User-Agent. Those entries establish request rejection,
+not the mechanism or duration of the subsequent connection resets. Retrying
+through an actual Chromium page avoided that rejection, without disabling any
+security rule. The protected endpoint correctly returned 404 without its token
+and executed with PHP 7.3.33 when authenticated. The official Monkey Radio URL
+returned 302 to `das-edge16-live365-dal02.cdnstream.com/a52904`; that host at
+`216.235.83.21` returned empty 401, Server DAS, with TLS verification successful
+and no cURL error. axc previously received audio from the same destination IP;
+this narrows the comparison but does not establish the upstream rejection policy
+or identical internal backend routing. Hostmedia is not a working fallback in
+this test. The probe was removed, FTP and browser 404 checks confirmed removal,
+and .htaccess was byte-for-byte unchanged. No relay was installed or hosting/app
+settings changed. Evidence: `.amp/in/artifacts/hostmedia-monkey/browser-result.json`.
+
+The 16:51–16:55 BST follow-up used short, sequential samples from an isolated
+remote preview and the unchanged candidate, with no direct upstream stream
+requests from the workstation. Workers DNS, Cloudflare DNS and Google DNS agreed
+on the public IPv4 addresses for both stations. This does not reveal native
+fetch's internal routing. Numeric-IP TLS still failed; an experimental
+`startTls({ expectedServerHostname })` control also failed its handshake. That
+override is not a supported API contract, so it is not a verified secure fallback.
+No DNS aliases were created. A new HTTPS alias alone would also need a valid TLS
+identity; it is not a transparent replacement for the station's hostname.
+
+Subsequent owner testing supersedes the clean-SileX-URL suggestion in the table:
+after switching away from SileX to Monkey Radio and adding the clean URL again,
+candidate, production Cloudflare and Deno all returned 415 before home succeeded.
+Removing the query is therefore not a reliable fix.
 
 The candidate is not yet a universal replacement for the existing proxies.
 Update this table as reports arrive, recording the station, approximate time

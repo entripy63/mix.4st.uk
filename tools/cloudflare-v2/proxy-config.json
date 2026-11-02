@@ -1,0 +1,19 @@
+[
+  {
+    "url": "https://c2.proxy.4st.uk",
+    "backupUrl": "https://stream-proxy-v2.round-bar-e93e.workers.dev",
+    "streams": "all",
+    "note": "Cloudflare TCP v2 — normal placement, named and raw-IP streams"
+  },
+  {
+    "url": "https://us.proxy.4st.uk",
+    "backupUrl": "https://stream-proxy-v2-us.round-bar-e93e.workers.dev",
+    "streams": "all",
+    "note": "Cloudflare TCP v2 — US placement hint, named and raw-IP streams"
+  },
+  {
+    "url": "https://h.proxy.4st.uk",
+    "streams": "all",
+    "note": "Existing home fallback"
+  }
+]

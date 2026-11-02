@@ -1,0 +1,17 @@
+[
+  {
+    "url": "https://stream-proxy-candidate.round-bar-e93e.workers.dev",
+    "streams": "all",
+    "note": "TEST ONLY: Cloudflare TCP candidate, accepts m.4st.uk"
+  },
+  {
+    "url": "https://stream-proxy-candidate-us.round-bar-e93e.workers.dev",
+    "streams": "all",
+    "note": "TEST ONLY: identical candidate with US placement hint; accepts m.4st.uk"
+  },
+  {
+    "url": "https://h.proxy.4st.uk",
+    "streams": "all",
+    "note": "Existing home fallback"
+  }
+]
