@@ -36,6 +36,16 @@
       "name": "Future Drumz",
       "m3u": "https://futuredr.radioca.st/;",
       "genre": "Jungle, Drum & Bass"
+    },
+    {
+      "name": "hearMe.FM Liquid Drum & Bass",
+      "m3u": "https://radio.hearme.fm:8430/stream",
+      "genre": "Drum & Bass"
+    },
+    {
+      "name": "hearMe.FM Dark Drum & Bass",
+      "m3u": "https://radio.hearme.fm:8276/stream",
+      "genre": "Drum & Bass"
     }
   ]
 }

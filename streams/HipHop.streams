@@ -1,0 +1,16 @@
+{
+  "name": "Hip Hop",
+  "category": "genre",
+  "streams": [
+    {
+      "name": "hearMe.FM Very Best of Hip Hop",
+      "m3u": "https://radio.hearme.fm:9220/stream",
+      "genre": "Hip Hop"
+    },
+    {
+      "name": "hearMe.FM Jazz Hop",
+      "m3u": "https://radio.hearme.fm:9670/stream",
+      "genre": "Hip Hop, Jazz"
+    }
+  ]
+}
