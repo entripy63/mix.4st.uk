@@ -69,6 +69,7 @@ async function pauseStream() {
 function resumeStream() {
   state.userPausedStream = false;
   if (state.streamUrl) {
+    playbackDiagnostics.begin();
     ensureAudioContext();
     streamPlay(state.streamUrl, state.streamDisplayText);
     declick.fadeIn();
@@ -91,6 +92,7 @@ function playStream(url, displayText, autoplay = false) {
   timeDisplay.title = safeDecodeURIComponent(url);
   state.userPausedStream = false;
   setCurrentStream(url, displayText, state.streamM3u);
+  playbackDiagnostics.begin();
   
   // Update now playing display
   const nowPlaying = document.getElementById('nowPlaying');
@@ -331,6 +333,7 @@ async function load(url) {
 
 async function playAt(url, position = 0) {
   await load(url);
+  playbackDiagnostics.begin();
 
   if (position > 0) {
     if (aud.readyState < 1) {

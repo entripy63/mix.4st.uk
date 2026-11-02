@@ -1,6 +1,74 @@
 # mix.4st.uk
 website
 
+## Playback diagnostics
+
+Open **Settings → Playback diagnostics / Report an issue**, or **Help → Report an Issue**.
+Errors are captured before recovery, with a bounded history of playback events and
+five-second state samples. Thirty seconds without media-clock progress, or with
+apparently silent input while the clock advances, also saves a snapshot. These
+checks do not restart or otherwise change playback; genuine station silence can
+therefore appear as a suspected silent-audio problem.
+
+Saved problems survive pause/resume, station changes and reloads in the same tab.
+The recorder retains the first failed playback attempt and up to five recent ones,
+including each attempt's first error, distinct error counts and any HTTP failure
+status observed by the stream fetch path. Late callbacks retain their original
+attempt identity. Repetitive seek events are grouped, and a compact station/control
+timeline preserves the beginning and latest steps of a recovery attempt. The
+stream library's looping silent startup clip does not count as playback progress.
+Browser-saved evidence expires after 24 hours, or can be removed with **Clear saved
+data**. Storage is optional: if session storage is unavailable, capture still works
+in memory. Exports are capped at 128 KiB and include up to 60 recent events. Under
+size pressure, frozen fault-event histories are trimmed before the recent timeline;
+the first and primary failure snapshots are preserved. A sustained problem
+takes precedence over routine retry errors within its own playback attempt, not
+over failures on another station. Capturing HTTP status adds no network requests.
+
+Stream startup timings record the first occurrence of each stage: stopping the
+previous player, starting the new player, requesting the stream, receiving headers,
+passing the first response bytes to the reader, receiving parsed audio, buffering
+and actual playback. A retry is also marked. Timings are milliseconds since that
+attempt was selected, not evidence that every retry reached the same stage. The
+first startup and up to five recent startups are retained, including across reloads
+after a fault. Completed same-origin Icecast player script loads include their
+start time, duration and transfer size to help distinguish network waits from
+optional player-module loading. These observations reuse existing requests; no
+audio or response body is retained, and playback/retry policy is unchanged.
+
+A separate timeline retains up to 48 recent library/media transitions and stream
+fetch stages, including repeated reconnections hours after startup. It records
+library state, playback method, player-instance identity, stops, retry timeouts
+and playback errors even when the library suppresses its ordinary error callback.
+Synchronisation warnings retain only the matching method (encoded frames or
+decoded audio) and any confidence percentage, never their raw messages. State
+event names identify the new state; the library's state getter still reports the
+previous state during that event. Five-second samples do not displace this timeline.
+When a retry escalates into a sustained problem, up to 24 relevant transitions
+are frozen alongside it, while the original first error remains preserved. This
+evidence survives reloads after a fault. The same 128 KiB export limit applies;
+under size pressure, older transition entries may also be trimmed.
+
+Use **Copy diagnostics** (with a selectable-text fallback), or check **Include
+diagnostics with this report** before sending an issue. Both sharing options can
+be reviewed first. **Automatically send persistent playback problems** is a separate,
+persistent, per-browser opt-in, off by default. Automatic attempts are limited to
+one per hour, including failed attempts; short recovered errors are not uploaded
+automatically. The existing server limit of three reports per IP per hour applies
+to manual and automatic reports combined. Failures leave the local data intact.
+
+Diagnostics contain playback/buffer/context/gain state, input level (not audio),
+timestamps, browser information and asset versions. Stream/proxy server names and
+paths are included, but URL credentials, query strings and fragments are removed;
+local-file and blob URLs are reduced to their scheme. Track metadata, console
+messages and audio samples are not saved. Server paths can still identify a private
+stream, so review the data before sharing. Submitted reports use the existing
+`report.php` endpoint, include its usual nickname/browser information, and are
+stored in the private report log and emailed to the site operator. Submitted reports
+have no built-in expiry and are not removed by clearing local data or disabling
+automatic sending. The endpoint accepts up to 192 KiB of diagnostics in a 256 KiB
+request body, allowing headroom around the browser's export limit.
+
 ## Automated Playback Basics Tests
 
 This repository includes Playwright end-to-end tests for core player behavior.

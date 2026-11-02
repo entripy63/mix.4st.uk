@@ -609,6 +609,46 @@ button:active {
    display: flex;
    align-items: center;
    gap: 12px;
+   flex-wrap: wrap;
+}
+
+.report-modal-content {
+   width: 480px;
+   max-width: calc(100vw - 24px);
+   max-height: 90vh;
+   box-sizing: border-box;
+   overflow-y: auto;
+}
+
+.report-diagnostics {
+   border-top: 1px solid var(--border-color);
+   padding-top: 12px;
+   margin: 12px 0;
+}
+
+.report-diagnostics h3 {
+   font-size: 15px;
+   margin: 0 0 8px;
+}
+
+.report-diagnostics .checkbox-label {
+   margin: 10px 0;
+   align-items: flex-start;
+}
+
+.report-diagnostics details {
+   margin: 10px 0;
+   font-size: 13px;
+}
+
+.report-diagnostics summary {
+   cursor: pointer;
+   margin-bottom: 8px;
+}
+
+#diagnosticsText {
+   font: 11px monospace;
+   white-space: pre;
 }
 
 .report-status {

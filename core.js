@@ -202,6 +202,11 @@ let audioSourceNode = null;
 let mediaStreamSourceNode = null;
 
 function ensureAudioContext() {
+    // A restored player may have created the context before a user gesture.
+    // Retry resume from the next Play action, independently of optional tools.
+    if (audioCtx?.state === 'suspended') {
+        audioCtx.resume().catch(error => console.warn('AudioContext resume failed:', error));
+    }
     if (audioCtx) return;
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     analyserNode = audioCtx.createAnalyser();

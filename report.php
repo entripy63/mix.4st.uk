@@ -6,6 +6,8 @@ define('REPORT_EMAIL', 'reports@4st.uk');
 define('REPORT_MIN_ELAPSED_MS', 3000);   // reject submissions faster than this
 define('REPORT_RATE_MAX', 3);            // max reports per IP ...
 define('REPORT_RATE_WINDOW', 3600);      // ... within this many seconds
+define('REPORT_MAX_BODY_BYTES', 262144);
+define('REPORT_MAX_DIAGNOSTIC_BYTES', 196608);
 
 // CORS — only allow *.4st.uk origins
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
@@ -25,7 +27,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$input = json_decode(file_get_contents('php://input'), true);
+$body = file_get_contents('php://input', false, null, 0, REPORT_MAX_BODY_BYTES + 1);
+if (strlen($body) > REPORT_MAX_BODY_BYTES) {
+    http_response_code(413);
+    exit;
+}
+$input = json_decode($body, true);
 if (!is_array($input)) {
     http_response_code(400);
     exit;
@@ -43,6 +50,17 @@ $nick    = trim($input['nick'] ?? '');
 $ua      = trim($input['ua'] ?? '');
 $ts      = trim($input['ts'] ?? '');
 $elapsed = (int)($input['elapsed'] ?? 0);
+$diagnostics = $input['diagnostics'] ?? null;
+$automatic = ($input['automatic'] ?? false) === true;
+
+// Optional, versioned diagnostics; old clients still send plain issue reports.
+if (($diagnostics !== null && (!is_array($diagnostics) ||
+        ($diagnostics['schemaVersion'] ?? null) !== 1 ||
+        strlen(json_encode($diagnostics, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) > REPORT_MAX_DIAGNOSTIC_BYTES)) ||
+    ($automatic && $diagnostics === null)) {
+    http_response_code(422);
+    exit;
+}
 
 // Time trap + length validation
 if ($elapsed < REPORT_MIN_ELAPSED_MS ||
@@ -82,9 +100,14 @@ $record = json_encode([
     'ts'        => $ts,
     'server_ts' => date('c'),
     'ip'        => $ip,
+    'automatic' => $automatic,
+    'diagnostics' => $diagnostics,
 ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
 
-file_put_contents(__DIR__ . '/reports.log', $record, FILE_APPEND | LOCK_EX);
+if (file_put_contents(__DIR__ . '/reports.log', $record, FILE_APPEND | LOCK_EX) !== strlen($record)) {
+    http_response_code(500);
+    exit;
+}
 
 // The request hostname is an informational label, not a trusted installation ID.
 $reportHost = strtolower($_SERVER['HTTP_HOST'] ?? '');
@@ -99,6 +122,10 @@ $mailBody = $message . "\n\n"
     . 'When: '    . date('c') . "\n"
     . 'IP: '      . $ip . "\n"
     . 'UA: '      . $ua . "\n";
+if ($diagnostics !== null) {
+    $mailBody .= "\nPlayback diagnostics (" . ($automatic ? 'automatic' : 'attached') . "):\n"
+        . json_encode($diagnostics, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
+}
 $headers = 'From: noreply@4st.uk' . "\r\n"
     . 'Content-Type: text/plain; charset=UTF-8';
 @mail(REPORT_EMAIL, $subject, $mailBody, $headers);

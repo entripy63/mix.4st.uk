@@ -1,8 +1,9 @@
 import { expect, test } from '@playwright/test';
 
 const icecastPlayerStub = `
-class IcecastMetadataPlayer {
+class IcecastMetadataPlayer extends EventTarget {
   constructor(url, options = {}) {
+    super();
     this.url = url;
     this.options = options;
     this.audioElement = options.audioElement || null;
@@ -104,8 +105,64 @@ test('stream playback with real media shows live state and advances', async ({ p
   await page.click('#playPauseBtn');
   await expect(page.locator('#timeDisplay')).toHaveText('PAUSED');
 
+  // Model an AudioContext left suspended by blocked startup. Playback must not
+  // depend on optional visualiser or tempo features resuming it for us.
+  await page.evaluate(() => audioCtx.suspend());
   await page.click('#playPauseBtn');
   await expect(page.locator('#timeDisplay')).toContainText('LIVE');
+  await expect.poll(() => page.evaluate(() => aud.currentTime)).toBeGreaterThan(0.3);
+});
+
+test('stream playback tolerates a cached recorder without the new observer hook', async ({ page }) => {
+  await page.goto('/player.html');
+  await page.evaluate(() => {
+    // A browser can retain the old recorder while fetching the updated wrapper.
+    delete playbackDiagnostics.watchPlayer;
+    playStream('/__test__/stream.wav', 'Mixed-cache stream', true);
+  });
+  await expect.poll(() => page.evaluate(() => aud.currentTime)).toBeGreaterThan(0.3);
+  await expect(page.locator('#timeDisplay')).toContainText('LIVE');
+});
+
+test('stream teardown errors do not reconnect while the page unloads', async ({ page }) => {
+  // The real library can report a decoder error when navigation closes its input.
+  // Use finite local audio to count connections without contacting a radio station.
+  await page.route('**/vendor/icecast-metadata-player-1.17.13.main.min.js', route => route.fulfill({
+    contentType: 'application/javascript',
+    body: icecastPlayerStub + `
+      IcecastMetadataPlayer = class extends IcecastMetadataPlayer {
+        constructor(url, options) {
+          super(url, options);
+          window.addEventListener('beforeunload', () => {
+            options.onError('Error in input stream', new TypeError('Input closed during navigation'));
+          });
+        }
+        async play() {
+          const response = await fetch(this.url);
+          this.audioElement.src = URL.createObjectURL(await response.blob());
+          await this.audioElement.play();
+          this.options.onPlay();
+        }
+      };
+    `
+  }));
+  let connections = 0;
+  page.on('request', request => {
+    if (new URL(request.url()).pathname === '/__test__/mix.wav') connections++;
+  });
+  await page.goto('/player.html');
+  await page.mouse.click(1, 1);
+  await page.evaluate(() => {
+    playStream('/__test__/mix.wav', 'Reload test', true);
+  });
+  await page.waitForFunction(() => aud.currentTime > 0.1);
+  expect(connections).toBe(1);
+
+  // Keep the document alive to observe any connection started by its teardown.
+  await page.evaluate(() => window.dispatchEvent(new Event('beforeunload')));
+  await page.waitForFunction(() => aud.currentTime > 0.8);
+  await expect(page.locator('#timeDisplay')).toContainText('LIVE');
+  expect(connections).toBe(1);
 });
 
 test('decoded MediaStream audio follows volume, mute, pause and source changes', async ({ page }) => {

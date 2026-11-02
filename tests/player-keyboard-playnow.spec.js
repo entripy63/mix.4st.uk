@@ -1,8 +1,9 @@
 import { expect, test } from '@playwright/test';
 
 const icecastPlayerStub = `
-class IcecastMetadataPlayer {
+class IcecastMetadataPlayer extends EventTarget {
   constructor(url, options = {}) {
+    super();
     this.url = url;
     this.options = options;
     this.audioElement = options.audioElement || null;

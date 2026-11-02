@@ -248,6 +248,9 @@
           <div class="settings-group">
             <button class="tf-settings-link" onclick="hideSettings(); showTimedFadesModal();">🕐 Timed Fades...</button>
           </div>
+          <div class="settings-group">
+            <button class="tf-settings-link" onclick="hideSettings(); showReport();">Playback diagnostics / Report an issue...</button>
+          </div>
           <hr class="settings-separator">
           <div class="settings-group" data-tip="nickname">
             <label class="setting-label">Nickname:</label>
@@ -430,17 +433,39 @@
   </div>
 
   <div id="reportModal" class="modal" style="display: none;">
-    <div class="modal-content">
-      <button class="modal-close" onclick="hideReport()">×</button>
-      <h2>Report an Issue</h2>
+    <div class="modal-content report-modal-content" role="dialog" aria-modal="true" aria-labelledby="reportTitle">
+      <button class="modal-close" aria-label="Close report" onclick="hideReport()">×</button>
+      <h2 id="reportTitle">Report an Issue</h2>
       <div class="report-form">
         <p>Found a bug or have a suggestion? Let me know below.</p>
-        <textarea id="reportMessage" rows="5" maxlength="2000" placeholder="Describe the issue or suggestion…"></textarea>
-        <input type="text" id="reportContact" maxlength="200" placeholder="How to reach you (optional)">
+        <textarea id="reportMessage" aria-label="Issue or suggestion" rows="4" maxlength="2000" placeholder="Describe the issue or suggestion…"></textarea>
+        <input type="text" id="reportContact" aria-label="Contact (optional)" maxlength="200" placeholder="How to reach you (optional)">
         <input type="text" id="reportWebsite" class="report-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <section class="report-diagnostics" aria-labelledby="diagnosticsTitle">
+          <h3 id="diagnosticsTitle">Playback diagnostics</h3>
+          <p id="diagnosticsSummary" aria-live="polite"></p>
+          <p>A small local record survives playback restarts and page reloads in this tab for up to 24 hours. No audio or track metadata is saved. URLs include server names and paths, but not credentials or query strings.</p>
+          <div class="report-actions">
+            <button type="button" onclick="copyPlaybackDiagnostics()">Copy diagnostics</button>
+            <button type="button" onclick="playbackDiagnostics.clear()">Clear saved data</button>
+          </div>
+          <p id="diagnosticsCopyStatus" class="report-status" role="status"></p>
+          <details id="diagnosticsPreview">
+            <summary>Review diagnostic data</summary>
+            <textarea id="diagnosticsText" aria-label="Diagnostic data" readonly rows="7" spellcheck="false"></textarea>
+          </details>
+          <label class="checkbox-label">
+            <input type="checkbox" id="reportIncludeDiagnostics"> Include diagnostics with this report
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="autoPlaybackReports" onchange="storage.set('autoPlaybackReports', this.checked)"> Automatically send persistent playback problems
+          </label>
+          <p>Automatic sending is optional and off by default: at most one report per hour to the site operator, including the usual report nickname and browser information. Brief recovered errors stay local. Turning this off stops future automatic reports.</p>
+          <p id="diagnosticsAutoStatus" class="report-status" role="status"></p>
+        </section>
         <div class="report-actions">
           <button type="button" id="reportSend" onclick="sendReport()">Send report</button>
-          <span id="reportStatus" class="report-status"></span>
+          <span id="reportStatus" class="report-status" role="status"></span>
         </div>
       </div>
     </div>
@@ -459,6 +484,7 @@
   </div>
 
   <script src="core.js?v=2"></script>
+  <script src="playback-diagnostics.js?v=1"></script>
   <script src="ping.js?v=2"></script>
   <script src="mixes.js?v=2"></script>
   <script src="queue.js?v=2"></script>

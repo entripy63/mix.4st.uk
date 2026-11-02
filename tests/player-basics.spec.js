@@ -1,8 +1,9 @@
 import { expect, test } from '@playwright/test';
 
 const icecastPlayerStub = `
-class IcecastMetadataPlayer {
+class IcecastMetadataPlayer extends EventTarget {
   constructor(url, options = {}) {
+    super();
     this.url = url;
     this.options = options;
     this.audioElement = options.audioElement || null;
@@ -245,6 +246,389 @@ test('stream playback enters live mode and supports pause/resume', async ({ page
   await page.click('#playPauseBtn');
   await expect(page.locator('#timeDisplay')).toContainText('LIVE');
   await expect(page.locator('#playPauseBtn')).toHaveClass(/playing/);
+});
+
+test('playback diagnostics retain a redacted fault through switching and reload, with explicit attachment', async ({ page }) => {
+  const reports = [];
+  await page.route('**/report.php', route => {
+    reports.push(route.request().postDataJSON());
+    return route.fulfill({ status: 204 });
+  });
+  await page.evaluate(() => {
+    const upstream = 'https://alice:secret-password@radio.example/live?token=secret-token#secret-fragment';
+    playStream(`/__test__/stream.wav?url=${encodeURIComponent(upstream)}&auth=secret-outer`, 'Station', true);
+  });
+  await expect(page.locator('#timeDisplay')).toContainText('LIVE');
+  await page.evaluate(() => {
+    const oldStreamError = streamPlayer.options.onError;
+    oldStreamError('network error: secret-error-text', new TypeError('secret-error-text'));
+    playStream('/__test__/mix.wav', 'Next station', true);
+    // An old player's late callback must retain its own source identity.
+    oldStreamError('network error: secret-error-text', new TypeError('secret-error-text'));
+  });
+  await page.reload();
+  await page.evaluate(() => showReport());
+  await expect(page.locator('#diagnosticsSummary')).toContainText('stream error');
+  const diagnosticText = await page.locator('#diagnosticsText').inputValue();
+  const diagnostics = JSON.parse(diagnosticText);
+  expect(diagnostics.incident.category).toBe('network');
+  expect(diagnostics.incident.source.upstream).toBe('https://radio.example/live');
+  expect(diagnostics.incident.firstError.playback.requested.upstream).toBe('https://radio.example/live');
+  expect(diagnostics.incident.errors[0].count).toBe(2);
+  expect(diagnostics.incidents).toHaveLength(1);
+  expect(diagnostics.incident.events.some(event => event.type === 'source-selected')).toBe(true);
+  expect(diagnostics.recent.some(event => event.playback.requested?.address.endsWith('/__test__/mix.wav'))).toBe(true);
+  expect(diagnosticText).not.toMatch(/alice|secret-/);
+  expect(Buffer.byteLength(JSON.stringify(diagnostics))).toBeLessThanOrEqual(131072);
+  await expect(page.locator('#autoPlaybackReports')).not.toBeChecked();
+  await expect(page.locator('#reportIncludeDiagnostics')).not.toBeChecked();
+  expect(reports).toHaveLength(0);
+
+  // Clipboard denial must leave a usable manual-copy path.
+  await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', {
+    configurable: true, value: { writeText: () => Promise.reject(new Error('denied')) }
+  }));
+  await page.getByRole('button', { name: 'Copy diagnostics' }).click();
+  await expect(page.locator('#diagnosticsText')).toBeVisible();
+  await expect(page.locator('#diagnosticsCopyStatus')).toContainText('Copy the selected text');
+
+  await page.getByLabel('Issue or suggestion').fill('The stream stopped playing.');
+  await page.getByRole('button', { name: 'Send report', exact: true }).click();
+  await expect(page.locator('#reportStatus')).toContainText('your report was sent');
+  expect(reports[0]).not.toHaveProperty('diagnostics');
+  await page.getByLabel('Include diagnostics with this report').check();
+  await page.getByLabel('Issue or suggestion').fill('Attaching the saved playback fault.');
+  await page.getByRole('button', { name: 'Send report', exact: true }).click();
+  await expect.poll(() => reports.length).toBe(2);
+  expect(reports[1].diagnostics).toEqual(diagnostics);
+  await page.getByRole('button', { name: 'Clear saved data' }).click();
+  await expect(page.locator('#diagnosticsSummary')).toContainText('No saved playback problem');
+  await page.reload();
+  await page.evaluate(() => showReport());
+  await expect(page.locator('#diagnosticsSummary')).toContainText('No saved playback problem');
+});
+
+test('diagnostics preserve separate HTTP failures and the first fault through placeholder seeks and retries', async ({ page }) => {
+  await page.route('**/__test__/failure*', route => route.fulfill({
+    status: route.request().url().includes('first') ? 503 : 415,
+    contentType: 'text/plain', body: 'secret-response-body'
+  }));
+  await page.clock.install();
+  await page.reload();
+  await page.evaluate(async () => {
+    // Unrelated failed requests must not be attributed to the playing station.
+    await fetch('/__test__/failure-unrelated');
+    showReport();
+  });
+  await expect(page.locator('#diagnosticsSummary')).toContainText('No saved playback problem');
+  await page.evaluate(async () => {
+    playStream('/__test__/failure-first?secret=hidden', 'First station');
+    await streamPlay(state.streamUrl, 'First station');
+    await fetch(new Request(streamPlayer.url));
+    window.firstStreamError = streamPlayer.options.onError;
+    aud.pause();
+    Object.defineProperty(aud, 'currentSrc', { configurable: true, value: 'data:audio/mpeg;base64,secret-audio' });
+  });
+  // The real library loops a short silent placeholder during startup. Its seeks
+  // must neither flood the report nor postpone detection of stalled playback.
+  for (let i = 0; i < 7; i++) {
+    await page.evaluate(round => {
+      for (let j = 0; j < 100; j++) {
+        aud.currentTime = j % 2 ? 0.01 : 0.04;
+        aud.dispatchEvent(new Event('seeking'));
+        aud.dispatchEvent(new Event('seeked'));
+      }
+      // A different position in the 52ms loop is not actual stream progress.
+      aud.currentTime = round % 2 ? 0 : 0.052;
+    }, i);
+    await page.clock.runFor(5000);
+  }
+  await page.evaluate(() => showReport());
+  await expect(page.locator('#diagnosticsSummary')).toContainText('stalled playback');
+  const stalled = JSON.parse(await page.locator('#diagnosticsText').inputValue());
+  expect(stalled.incident.firstError.httpStatus).toBe(503);
+  expect(stalled.incident.events.some(event => event.type === 'source-selected')).toBe(true);
+  expect(stalled.recent.filter(event => event.type === 'seek').length).toBeLessThanOrEqual(7);
+  expect(stalled.recent.some(event => event.type === 'seek' && event.count >= 200)).toBe(true);
+
+  await page.evaluate(async () => {
+    playStream('/__test__/failure-second?secret=hidden', 'Second station');
+    await streamPlay(state.streamUrl, 'Second station');
+    const response = await fetch(new URL(streamPlayer.url, location.href));
+    if (response.status !== 415 || await response.text() !== 'secret-response-body') throw new Error('Fetch behavior changed');
+    firstStreamError('network error: secret-message', new TypeError('secret-message'));
+    showReport();
+  });
+  await expect(page.locator('#diagnosticsSummary')).toContainText('2 saved problems');
+  const separate = JSON.parse(await page.locator('#diagnosticsText').inputValue());
+  expect(separate.incidents.map(item => item.firstError.httpStatus)).toEqual([503, 415]);
+  expect(separate.incidents[0].errors.some(error => error.category === 'network')).toBe(true);
+  expect(separate.incident.httpStatus).toBe(415);
+  expect(separate.actions.filter(action => action.type === 'source-selected').map(action => action.source.address))
+    .toEqual(['http://127.0.0.1:4173/__test__/failure-first', 'http://127.0.0.1:4173/__test__/failure-second']);
+
+  await page.evaluate(async () => {
+    for (let i = 0; i < 9; i++) {
+      const path = `/__test__/failure-${'long-path-'.repeat(40)}${i}?secret=hidden`;
+      playStream(path, 'Retry station');
+      await streamPlay(state.streamUrl, 'Retry station');
+      await fetch(streamPlayer.url);
+    }
+    // Model the real stream finally replacing the looping startup placeholder.
+    Object.defineProperty(aud, 'currentSrc', { configurable: true, value: 'blob:recovered-stream' });
+    aud.dispatchEvent(new Event('playing'));
+  });
+  // A report prepared two minutes after recovery must not lose that transition
+  // just because twenty subsequent five-second samples have been collected.
+  await page.clock.runFor(125000);
+  await page.evaluate(() => showReport());
+  const recovered = JSON.parse(await page.locator('#diagnosticsText').inputValue());
+  expect(recovered.recent.some(event => event.type === 'playing' && event.playback.media.address === 'blob:')).toBe(true);
+  expect(recovered.recent.filter(event => event.type === 'sample').length).toBeGreaterThan(20);
+  await page.reload();
+  await page.evaluate(() => showReport());
+  const text = await page.locator('#diagnosticsText').inputValue();
+  const retained = JSON.parse(text);
+  expect(retained.incidents.length).toBeLessThanOrEqual(6);
+  expect(retained.startups.length).toBeLessThanOrEqual(6);
+  expect(retained.startups[0].source.address).toBe('http://127.0.0.1:4173/__test__/failure-first');
+  expect(retained.incidents[0].firstError).toEqual(stalled.incident.firstError);
+  expect(retained.incident.firstError.httpStatus).toBe(415);
+  expect(retained.recent.some(event => event.type === 'playing' && event.playback.media.address === 'blob:')).toBe(true);
+  expect(Buffer.byteLength(JSON.stringify(retained))).toBeLessThanOrEqual(131072);
+  expect(text).not.toMatch(/secret-|secret=/);
+});
+
+test('startup diagnostics distinguish delayed headers from delayed decoding and survive reload', async ({ page }) => {
+  let pendingResponse;
+  await page.route('**/__test__/startup*', route => { pendingResponse = route; });
+  // Playwright's virtual clock replaces the Resource Timing API with empty lists.
+  await page.evaluate(() => showReport());
+  const initial = JSON.parse(await page.locator('#diagnosticsText').inputValue());
+  expect(initial.playerResources.some(item => item.path.endsWith('.main.min.js'))).toBe(true);
+  await page.clock.install();
+  await page.reload();
+  await page.evaluate(() => {
+    window.decoderGate = new Promise(resolve => { window.releaseDecoder = resolve; });
+    IcecastMetadataPlayer.prototype.play = async function() {
+      window.startupCallbacks = this.options;
+      this.options.onLoad();
+      const response = await fetch(this.url);
+      this.options.onStreamStart();
+      window.startupBody = await response.text();
+      this.options.onStream(new TextEncoder().encode(startupBody));
+      this.options.onBuffer(1.25);
+      window.fixtureBuffered = true;
+      await decoderGate;
+      await this.audioElement.play();
+      this.options.onPlay();
+    };
+    playStream('/__test__/startup?token=secret-url', 'Delayed station', true);
+  });
+  await expect.poll(() => Boolean(pendingResponse)).toBe(true);
+  await page.clock.runFor(40000);
+  await page.evaluate(() => showReport());
+  const waiting = JSON.parse(await page.locator('#diagnosticsText').inputValue());
+  expect(waiting.incident.reason).toBe('stalled-playback');
+  expect(waiting.startups[0].milestones.map(item => item.phase)).toContain('fetch-start');
+  expect(waiting.startups[0].milestones.map(item => item.phase)).not.toContain('fetch-headers');
+
+  await pendingResponse.fulfill({
+    status: 200, headers: { 'Content-Type': 'audio/mpeg; private=secret-header', 'Content-Length': '17' },
+    body: 'secret-audio-body'
+  });
+  await expect.poll(() => page.evaluate(() => window.fixtureBuffered)).toBe(true);
+  expect(await page.evaluate(() => startupBody)).toBe('secret-audio-body');
+  const buffering = JSON.parse(await page.locator('#diagnosticsText').inputValue());
+  const phases = buffering.startups[0].milestones;
+  const headers = phases.find(item => item.phase === 'fetch-headers');
+  expect(headers).toMatchObject({ httpStatus: 200, mediaType: 'audio/mpeg' });
+  expect(headers.elapsedMs - phases.find(item => item.phase === 'fetch-start').elapsedMs).toBeGreaterThanOrEqual(40000);
+  expect(phases.find(item => item.phase === 'fetch-first-byte').elapsedMs).toBeGreaterThanOrEqual(headers.elapsedMs);
+  expect(phases.find(item => item.phase === 'buffering').bufferSeconds).toBe(1.25);
+  expect(phases.map(item => item.phase)).not.toContain('playback-start');
+
+  await page.clock.runFor(20000);
+  await page.evaluate(() => releaseDecoder());
+  await expect.poll(async () => JSON.parse(await page.locator('#diagnosticsText').inputValue())
+    .startups[0].milestones.some(item => item.phase === 'playback-start')).toBe(true);
+  await page.evaluate(() => {
+    playStream('/__test__/mix.wav', 'Next station');
+    startupCallbacks.onRetry(); // Late callback still belongs to the first attempt.
+    showReport();
+  });
+  const completed = JSON.parse(await page.locator('#diagnosticsText').inputValue());
+  const startup = completed.startups[0];
+  expect(startup.milestones.find(item => item.phase === 'playback-start').elapsedMs - headers.elapsedMs).toBeGreaterThanOrEqual(20000);
+  expect(startup.milestones.map(item => item.phase)).toContain('retry');
+  expect(completed.startups[1].milestones).toEqual([]);
+  await page.reload();
+  await page.evaluate(() => showReport());
+  const text = await page.locator('#diagnosticsText').inputValue();
+  expect(JSON.parse(text).startups[0]).toEqual(startup);
+  expect(text).not.toMatch(/secret-|"clock"/);
+});
+
+test('diagnostics retain a later reconnection handoff through samples, event floods and reload', async ({ page }) => {
+  await page.clock.install();
+  await page.reload();
+  await page.waitForFunction(() => liveProbeReady);
+  await page.evaluate(async () => {
+    playStream('https://radio.example/live?token=secret-url', 'Reconnecting station', true);
+    await Promise.resolve();
+    window.originalPlayer = streamPlayer;
+    streamPlayer.state = 'playing';
+    streamPlayer.playbackMethod = 'mediasource';
+    streamPlayer.options.onError('network error', new Error('secret-error'));
+    streamPlayer.dispatchEvent(new Event('retry'));
+    streamPlayer.dispatchEvent(new CustomEvent('warn', { detail: [
+      'Synchronized old and new request.', 'secret-warning'
+    ] }));
+    streamPlayer.dispatchEvent(new Event('playing'));
+  });
+  // A second reconnection hours later must not be discarded as a duplicate
+  // startup milestone, or retain only the first network error's old context.
+  await page.clock.fastForward(5 * 3600000);
+  await page.evaluate(() => {
+    streamPlayer.state = 'retrying';
+    streamPlayer.dispatchEvent(new Event('retry'));
+    streamPlayer.dispatchEvent(new Event('streamstart'));
+    streamPlayer.dispatchEvent(new CustomEvent('warn', { detail: [
+      'Reconnected successfully after retrying.',
+      'Synchronized old and new request with 98.76% confidence.', 'secret-warning'
+    ] }));
+    // The real library may emit this without calling the application's onError.
+    streamPlayer.dispatchEvent(new CustomEvent('playbackerror', { detail: ['secret-error'] }));
+    streamPlayer.dispatchEvent(new Event('stopping'));
+    streamPlayer.state = 'stopping';
+    aud.pause();
+    Object.defineProperty(aud, 'currentSrc', { configurable: true, value: 'data:audio/mpeg;base64,secret-audio' });
+    streamPlayer.dispatchEvent(new Event('stop'));
+    streamPlayer.dispatchEvent(new Event('stopped'));
+    streamPlayer.state = 'stopped';
+  });
+  await page.clock.runFor(40000);
+  await page.evaluate(() => showReport());
+  const stalled = JSON.parse(await page.locator('#diagnosticsText').inputValue());
+  expect(stalled.incident.reason).toBe('stalled-playback');
+  expect(stalled.incident.firstError.reason).toBe('stream-error');
+  expect(stalled.current).toMatchObject({ libraryState: 'stopped', playbackMethod: 'mediasource', userPaused: false });
+  expect(stalled.transitions.filter(item => item.type === 'library:retry')).toHaveLength(2);
+  expect(stalled.incident.recovery.find(item => item.sync === 'pcm')).toMatchObject({ confidence: 98.76 });
+  expect(stalled.incident.recovery.map(item => item.type)).toEqual(expect.arrayContaining([
+    'library:playbackerror', 'library:stopping', 'media:pause', 'library:stop', 'library:stopped'
+  ]));
+  const retries = stalled.transitions.filter(item => item.type === 'library:retry');
+  expect(Date.parse(retries[1].at) - Date.parse(retries[0].at)).toBeGreaterThanOrEqual(5 * 3600000);
+  expect(await page.evaluate(() => streamPlayer === originalPlayer && streamPlayer.state === 'stopped')).toBe(true);
+
+  await page.clock.runFor(8 * 60000);
+  await page.evaluate(async () => {
+    for (let i = 0; i < 80; i++) originalPlayer.dispatchEvent(new CustomEvent('warn', { detail: ['secret-warning'] }));
+    playStream('/__test__/stream.wav', 'Next station', true);
+    await Promise.resolve();
+    originalPlayer.dispatchEvent(new Event('retrytimeout')); // Late event belongs to the old player/attempt.
+    showReport();
+  });
+  const later = JSON.parse(await page.locator('#diagnosticsText').inputValue());
+  expect(later.incidents[0].recovery).toEqual(stalled.incident.recovery);
+  expect(later.transitions.length).toBeLessThanOrEqual(48);
+  const late = later.transitions.find(item => item.type === 'library:retrytimeout');
+  expect(late.attempt).toBe(stalled.attempt);
+  expect(late.playerId).toBe(retries[0].playerId);
+  expect(later.attempt).toBeGreaterThan(late.attempt);
+  await page.reload();
+  await page.evaluate(() => showReport());
+  const text = await page.locator('#diagnosticsText').inputValue();
+  const restored = JSON.parse(text);
+  expect(restored.incidents[0].recovery).toEqual(stalled.incident.recovery);
+  expect(restored.transitions.some(item => item.type === 'library:retrytimeout')).toBe(true);
+  expect(Buffer.byteLength(JSON.stringify(restored))).toBeLessThanOrEqual(131072);
+  expect(text).not.toMatch(/secret-/);
+});
+
+test('persistent playback diagnostics respect pause, opt-in and the automatic report cooldown', async ({ page }) => {
+  const reports = [];
+  await page.route('**/report.php', route => {
+    reports.push(route.request().postDataJSON());
+    // Failed uploads must also be throttled, without deleting the evidence.
+    return route.fulfill({ status: 503 });
+  });
+  await page.clock.install();
+  await page.reload();
+  await page.evaluate(() => playStream('/__test__/stream.wav', 'Test stream', true));
+  await page.click('#playPauseBtn');
+  await page.clock.runFor(40000);
+  await page.evaluate(() => showReport());
+  await expect(page.locator('#diagnosticsSummary')).toContainText('No saved playback problem');
+  await page.evaluate(() => hideReport());
+  await page.click('#playPauseBtn');
+  // Model an unexpected stop while the user still intends to listen.
+  await page.evaluate(() => aud.pause());
+  await page.clock.runFor(25000);
+  await page.evaluate(() => showReport());
+  await expect(page.locator('#diagnosticsSummary')).toContainText('No saved playback problem');
+  await page.clock.runFor(10000);
+  await expect(page.locator('#diagnosticsSummary')).toContainText('stalled playback');
+  expect(reports).toHaveLength(0);
+  await page.getByLabel('Automatically send persistent playback problems').check();
+  await page.clock.runFor(5000);
+  await expect.poll(() => reports.length).toBe(1);
+  expect(reports[0].automatic).toBe(true);
+  expect(reports[0].diagnostics.incident.reason).toBe('stalled-playback');
+  await expect(page.locator('#diagnosticsAutoStatus')).toContainText('did not send');
+  await page.clock.runFor(65000);
+  expect(reports).toHaveLength(1);
+  await page.getByLabel('Automatically send persistent playback problems').uncheck();
+  await page.clock.fastForward(3600000);
+  await page.clock.runFor(40000);
+  expect(reports).toHaveLength(1);
+  await expect(page.locator('#diagnosticsSummary')).toContainText('stalled playback');
+});
+
+test('silent-audio diagnostics are bounded, preserve the original fault and expire', async ({ page }) => {
+  await page.clock.install();
+  await page.reload();
+  // Let initial restoration finish before selecting the test stream.
+  await page.waitForFunction(() => liveProbeReady);
+  await page.evaluate(() => {
+    playStream('/__test__/stream.wav', 'Silent stream', true);
+    // Only the diagnostic level probe is controlled; the media clock advances.
+    window.testInputLevel = 0.02;
+    analyserNode.getFloatTimeDomainData = samples => samples.fill(testInputLevel);
+  });
+  await page.clock.runFor(40000);
+  await page.evaluate(() => showReport());
+  await expect(page.locator('#diagnosticsSummary')).toContainText('No saved playback problem');
+  await page.evaluate(() => { testInputLevel = 0; volume.mute(); });
+  await page.clock.runFor(40000);
+  await page.evaluate(() => showReport());
+  await expect(page.locator('#diagnosticsSummary')).toContainText('No saved playback problem');
+  await page.evaluate(() => volume.unmute());
+  await page.clock.runFor(45000);
+  await page.evaluate(() => {
+    showReport();
+    streamPlayer.options.onError('network error', new TypeError('fetch failed'));
+  });
+  await expect(page.locator('#diagnosticsSummary')).toContainText('silent audio');
+  const initial = JSON.parse(await page.locator('#diagnosticsText').inputValue());
+  expect(initial.incident.playback.currentTime).toBeGreaterThan(20);
+  expect(initial.incident.playback.inputRms).toBe(0);
+  // Plenty of subsequent events must not displace the saved fault or grow it without bound.
+  await page.evaluate(() => {
+    for (let i = 0; i < 100; i++) {
+      playStream(`https://radio.example/${'long-path-'.repeat(50)}${i}?secret=hidden`, 'Station');
+    }
+    showReport();
+  });
+  const later = JSON.parse(await page.locator('#diagnosticsText').inputValue());
+  expect(later.incident.at).toBe(initial.incident.at);
+  expect(Buffer.byteLength(JSON.stringify(later))).toBeLessThanOrEqual(131072);
+  expect(JSON.stringify(later)).not.toContain('secret=hidden');
+  await page.clock.fastForward(24 * 3600000);
+  await page.reload();
+  await page.evaluate(() => showReport());
+  await expect(page.locator('#diagnosticsSummary')).toContainText('No saved playback problem');
 });
 
 test('search jungletrain stream uses proxy fallback and not direct http playback', async ({ page }) => {
