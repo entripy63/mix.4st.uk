@@ -6,3 +6,6 @@ compatibility_date = "2025-05-22"
 # fetch() in cloudflare-worker.js is inert. CF already tears down subrequests on
 # disconnect natively, so this is belt-and-suspenders parity with the Deno proxy.
 compatibility_flags = ["enable_request_signal"]
+
+[observability.logs]
+enabled = true
