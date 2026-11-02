@@ -1,4 +1,6 @@
 *.mp3
+!tests/fixtures/recovery-128.mp3
+!tests/fixtures/recovery-160.mp3
 *.m4a
 *.flac
 *.wav

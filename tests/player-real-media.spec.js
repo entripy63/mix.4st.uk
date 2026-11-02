@@ -58,7 +58,7 @@ function installRealMediaTestSetup() {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.route('**/vendor/icecast-metadata-player-1.17.13.main.min.js', route => {
+  await page.route(/\/vendor\/icecast-metadata-player-1\.17\.13\.main\.min\.js(?:\?.*)?$/, route => {
     route.fulfill({
       status: 200,
       contentType: 'application/javascript; charset=utf-8',
@@ -127,7 +127,7 @@ test('stream playback tolerates a cached recorder without the new observer hook'
 test('stream teardown errors do not reconnect while the page unloads', async ({ page }) => {
   // The real library can report a decoder error when navigation closes its input.
   // Use finite local audio to count connections without contacting a radio station.
-  await page.route('**/vendor/icecast-metadata-player-1.17.13.main.min.js', route => route.fulfill({
+  await page.route(/\/vendor\/icecast-metadata-player-1\.17\.13\.main\.min\.js(?:\?.*)?$/, route => route.fulfill({
     contentType: 'application/javascript',
     body: icecastPlayerStub + `
       IcecastMetadataPlayer = class extends IcecastMetadataPlayer {

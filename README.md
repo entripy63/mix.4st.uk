@@ -1,6 +1,12 @@
 # mix.4st.uk
 website
 
+## Stream recovery
+
+The vendored Icecast player includes a local retry/handoff fix. See
+[STREAM-RECOVERY.md](docs/STREAM-RECOVERY.md) for its recovery policy,
+reproducible patch, regression tests and narrow deployment/rollback boundaries.
+
 ## Playback diagnostics
 
 Open **Settings → Playback diagnostics / Report an issue**, or **Help → Report an Issue**.

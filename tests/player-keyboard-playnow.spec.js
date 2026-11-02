@@ -161,7 +161,7 @@ function installMediaAndAudioContextMocks() {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.route('**/vendor/icecast-metadata-player-1.17.13.main.min.js', route => {
+  await page.route(/\/vendor\/icecast-metadata-player-1\.17\.13\.main\.min\.js(?:\?.*)?$/, route => {
     route.fulfill({
       status: 200,
       contentType: 'application/javascript; charset=utf-8',
