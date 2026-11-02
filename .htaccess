@@ -12,6 +12,10 @@ AddType application/json .streams .mixes
 <FilesMatch "^report_rate_">
     Require all denied
 </FilesMatch>
+# Never serve the secrets file as a static download
+<Files "secret-config.php">
+    Require all denied
+</Files>
 # Correct MIME types for audio playback (downloads use HTML download attribute)
 AddType audio/mpeg .mp3
 AddType audio/mp4 .m4a

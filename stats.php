@@ -1,10 +1,10 @@
 <?php
 // stats.php – beacon.log analytics dashboard
 
-// Simple auth — change this password before deploying
-define('STATS_PASSWORD', 'ST201210');
-
-if (!isset($_SERVER['PHP_AUTH_PW']) || $_SERVER['PHP_AUTH_PW'] !== STATS_PASSWORD) {
+// Auth — bcrypt hash lives in secret-config.php (not committed, not deployed)
+$secrets = @include __DIR__ . '/secret-config.php';
+$hash = is_array($secrets) ? ($secrets['stats'] ?? '') : '';
+if ($hash === '' || !isset($_SERVER['PHP_AUTH_PW']) || !password_verify($_SERVER['PHP_AUTH_PW'], $hash)) {
     header('WWW-Authenticate: Basic realm="Stats"');
     http_response_code(401);
     exit('Unauthorized');

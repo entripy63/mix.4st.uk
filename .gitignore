@@ -28,3 +28,4 @@ beacon.log
 reports.log
 reports-*.bak
 report_rate_*
+secret-config.php
