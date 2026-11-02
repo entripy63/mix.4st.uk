@@ -123,3 +123,35 @@ Notes:
 5. GitHub Actions runs `npm run verify:full:ci` and `npm run verify:sensitivity:ci` (full browser matrix including WebKit + iPhone WebKit).
 6. `./tools/deploy.sh` now enforces checks before deploy: test targets run quick checks, production runs full checks.
 7. Emergency bypass for deploy checks is available with `SKIP_DEPLOY_CHECKS=1 ./tools/deploy.sh <target>`.
+
+## NameCrane backup candidate
+
+The explicit deployment target `namecrane` serves `https://player.4st.uk` through
+an alias pointer to toot.org.uk. It uses key-authenticated SFTP on
+uk-shared02.dapanel.net:53667 as tootorgu78, with remote directory
+`domains/toot.org.uk/public_html` relative to the account home. No lftp bookmark
+or stored password is required. The default target remains `home-test`, and
+`all-prod` still selects only AXC production; neither includes NameCrane.
+
+Once deployment is separately approved, `./tools/deploy.sh namecrane` runs quick
+verification and the existing manifest/cache-busting steps before mirroring.
+It preserves the separately managed remote `streams/proxy-config.json`, as
+home-test does. An initial or changed proxy list needs an explicit upload.
+NameCrane uses the separately deployed v2 list: `https://c2.proxy.4st.uk` →
+`https://us.proxy.4st.uk` → `https://h.proxy.4st.uk`. The v2 Workers permit
+HTTPS apex/subdomain origins under 4st.uk, including player.4st.uk. See
+`tools/cloudflare-v2/README.md` for the list, deployment verification and rollback
+instructions. Home-test and production routing remain separate and unchanged.
+Existing media, logs and `secret-config.php` are excluded from
+replacement/deletion, as is NameCrane's `.well-known/` directory
+for ACME. Other remote-only files, including the provider's default index.html,
+can be deleted by the mirror. Do not run it merely to test the connection.
+
+Before first deployment, verify DNS and HTTPS for player.4st.uk, confirm its HTTPS
+document root matches the SFTP directory, and review the intended checkout (the
+script deploys working files, not just committed files). Check PHP/.htaccess
+compatibility, configure the per-site `secret-config.php` separately, and decide
+the report-mail setup before exercising reports: deployment never provisions
+credentials or sends a test report. Verify the live proxies accept the new
+origin, then test playback after an approved deployment. No automatic failover
+or synchronisation with production is provided.

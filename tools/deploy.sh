@@ -1,7 +1,7 @@
 #!/bin/bash
 # Deployment script for mix.4st.uk
 # Usage: ./tools/deploy.sh [target]
-# Targets: prod, home-test, all-prod
+# Targets: prod, home-test, namecrane, all-prod
 
 set -e
 
@@ -17,7 +17,7 @@ if [ ! -f "$CONFIG" ]; then
 fi
 
 # Valid targets
-VALID_TARGETS=("prod" "home-test" "all-prod")
+VALID_TARGETS=("prod" "home-test" "namecrane" "all-prod")
 TARGET="${1:-home-test}"
 
 # Safety gates (set SKIP_DEPLOY_CHECKS=1 to bypass in emergencies)
@@ -29,7 +29,7 @@ if [ "${SKIP_DEPLOY_CHECKS:-0}" != "1" ]; then
     echo "🧪 Target is production; running full verification (lint + e2e)..."
     npm run verify:full
   else
-    echo "🧪 Target is home-test; running quick verification (lint)..."
+    echo "🧪 Target is $TARGET; running quick verification (lint)..."
     npm run verify:quick
   fi
 else
