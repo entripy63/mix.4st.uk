@@ -1,9 +1,13 @@
 # Permanent TCP Workers
 
 Separate successors to the two [candidate Workers](../cloudflare-candidate/README.md).
-Both were deployed on 30 October 2026. No app is routed to them yet. Do not
-rename, overwrite or delete either candidate. App proxy lists, existing Workers
-and Custom Domain attachments were verified unchanged by this deployment.
+Both were deployed on 30 October 2026. The canonical application list is now
+[`streams/proxy-config.json`](../../streams/proxy-config.json): normal v2 → US v2
+→ home, uploaded by every normal site deployment. m, t and player already use
+this order; production promotion remains separately approved work. This change
+to the repository does not deploy anything. Do not rename, overwrite or delete
+either candidate. The original Worker deployment left app proxy lists, existing
+Workers and Custom Domain attachments unchanged; the rollout history follows.
 
 | Configuration | Deployed Worker | Placement |
 | --- | --- | --- |

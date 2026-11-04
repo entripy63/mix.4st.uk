@@ -4,6 +4,27 @@
 
 The site runs on HTTPS, but many internet radio streams are HTTP-only or use raw IP addresses, causing mixed-content and CORS issues. We solve this with stream proxies that fetch upstream audio and relay it to the browser with proper CORS headers.
 
+### Current repository routing policy
+
+The canonical `streams/proxy-config.json` uses **normal TCP v2
+(`c2.proxy.4st.uk`) → US TCP v2 (`us.proxy.4st.uk`) → home (`h.proxy.4st.uk`)**.
+All three support named and raw-IP streams. Every normal site deployment uploads
+this same file; temporary site-specific experiments are replaced by the next
+deployment. A local change is not a deployment: production still retains its
+old Cloudflare → Deno → home list pending separately approved promotion.
+The v2 transport/policy and verification are documented in
+[`tools/cloudflare-v2/README.md`](../tools/cloudflare-v2/README.md).
+
+The existing `localStorage.preferProxy` browser preference only prioritises a
+configured proxy for raw-IP streams, after reload. It does not change named-URL
+routing or provide a general override. No broader browser override is implemented.
+The `backupUrl` fields are manual recovery references, not automatic failover.
+
+### Original production architecture and trial history
+
+The descriptions below record the original fetch-only Cloudflare/Deno pipeline
+and subsequent experiments, not the new repository default.
+
 We use **multiple proxies** to split load and provide redundancy:
 
 | Proxy | Platform | Handles | Timeout | Notes |
@@ -43,8 +64,8 @@ Deploy application and preset changes for testing with `./tools/deploy.sh home-t
 It runs lint, regenerates the stream manifest/search index without rewriting the
 mixes index, cache-busts player.html, and mirrors changed site files to the home
 bookmark's `html/` directory. Local `.amp/` artifacts are excluded. The home
-target preserves its separately managed, candidate-first
-`streams/proxy-config.json`; production continues to use the repository list.
+target now uploads the shared `streams/proxy-config.json`, as all targets do.
+During the candidate trial, its proxy list was separately managed instead.
 On 19 October, Deno was removed from the test-only list to rehearse its
 retirement. The existing Cloudflare Worker was subsequently removed from that
 list to avoid a second failure delay for the known exceptions. Both named and

@@ -147,6 +147,20 @@ Notes:
 6. `./tools/deploy.sh` now enforces checks before deploy: test targets run quick checks, production runs full checks.
 7. Emergency bypass for deploy checks is available with `SKIP_DEPLOY_CHECKS=1 ./tools/deploy.sh <target>`.
 
+## Shared proxy routing
+
+All deployment targets upload the canonical `streams/proxy-config.json`:
+`https://c2.proxy.4st.uk` → `https://us.proxy.4st.uk` → `https://h.proxy.4st.uk`,
+each supporting named and raw-IP streams. A site-specific list can be uploaded
+for an explicitly approved experiment; the next normal deployment replaces it
+with the repository default. Changing this file locally does not change any site
+until that site is deployed. The workers.dev `backupUrl` fields are manual
+recovery references, not automatic failover.
+
+An existing per-browser console preference, `localStorage.preferProxy`, can
+prioritise a configured proxy for **raw-IP streams only** after reload; it does
+not override named-stream routing or add a proxy. See `livedata.js`.
+
 ## NameCrane backup candidate
 
 The explicit deployment target `namecrane` serves `https://player.4st.uk` through
@@ -157,14 +171,11 @@ or stored password is required. The default target remains `home-test`, and
 `all-prod` still selects only AXC production; neither includes NameCrane.
 
 Once deployment is separately approved, `./tools/deploy.sh namecrane` runs quick
-verification and the existing manifest/cache-busting steps before mirroring.
-It preserves the separately managed remote `streams/proxy-config.json`, as
-home-test does. An initial or changed proxy list needs an explicit upload.
-NameCrane uses the separately deployed v2 list: `https://c2.proxy.4st.uk` →
-`https://us.proxy.4st.uk` → `https://h.proxy.4st.uk`. The v2 Workers permit
+verification and the existing manifest/cache-busting steps before mirroring,
+including the shared repository proxy list. The v2 Workers permit
 HTTPS apex/subdomain origins under 4st.uk, including player.4st.uk. See
 `tools/cloudflare-v2/README.md` for the list, deployment verification and rollback
-instructions. Home-test and production routing remain separate and unchanged.
+instructions. Deployment selects only the requested site.
 Existing media, logs and `secret-config.php` are excluded from
 replacement/deletion, as is NameCrane's `.well-known/` directory
 for ACME. Other remote-only files, including the provider's default index.html,
@@ -176,8 +187,8 @@ script deploys working files, not just committed files). Check PHP/.htaccess
 compatibility, configure the per-site `secret-config.php` separately, and decide
 the report-mail setup before exercising reports: deployment never provisions
 credentials or sends a test report. Verify the live proxies accept the new
-origin, then test playback after an approved deployment. No automatic failover
-or synchronisation with production is provided.
+origin, then test playback after an approved deployment. Sites are deployed
+individually; there is no automatic deployment synchronisation with production.
 
 ## Isolated home test site: t.4st.uk
 
@@ -197,11 +208,10 @@ access alone does not authorise sudo. Completion must be verified, not inferred
 from the uploaded script. Port 80 is deliberately not opened; the new HTTP
 redirect only applies where port 80 is already reachable.
 
-The new site's separately managed `streams/proxy-config.json` uses
+The shared repository `streams/proxy-config.json` uses
 `https://c2.proxy.4st.uk` → `https://us.proxy.4st.uk` → `https://h.proxy.4st.uk`.
-These accept the t origin without changing any proxy. Do not copy m's live list:
-its two candidate Workers only accept m.4st.uk. The t target excludes its proxy
-list and `.well-known/` from replacement/deletion, alongside the shared
+These accept the t origin without changing any proxy. The t target deploys this
+list and excludes `.well-known/` from replacement/deletion, alongside the shared
 media/log/secret exclusions. Other remote-only files can be deleted by a mirror.
 Future explicit deployment is `./tools/deploy.sh home-test-t`; review the working
 tree first because this script mirrors working files, not just a commit.
@@ -209,7 +219,7 @@ tree first because this script mirrors working files, not just a commit.
 Initial setup must use a reviewed isolated payload, not mirror a dirty shared
 checkout wholesale: export the intended committed app, add its required ignored
 vendor/data/metadata assets (without audio/logs/secrets), cache-bust that copy,
-and upload only into `test-t/`. Provision the t proxy list separately. Do not
+and upload only into `test-t/`, including the canonical proxy list. Do not
 copy another site's `secret-config.php`; the protected statistics/report viewers
 remain unavailable until a separate per-site configuration is provisioned.
 No test reports/mail are part of setup. Existing browser sessions, site routing
