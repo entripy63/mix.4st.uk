@@ -199,12 +199,17 @@ test('decoded MediaStream audio follows volume, mute, pause and source changes',
     await playMix({ name: 'Routing test', isLocal: true, audioSrc: '/__test__/mix.wav' });
   }));
   await test.step('Play the decoded MediaStream', () => page.evaluate(async () => {
+    window.receivedSignalProbe = audioCtx.createAnalyser();
+    analyserNode.connect(receivedSignalProbe);
     window.replaceDecodedStream = async () => {
       const source = decoderContext.createOscillator();
       const level = decoderContext.createGain();
       level.gain.value = 0.04;
       const destination = decoderContext.createMediaStreamDestination();
       source.connect(level).connect(destination);
+      // Side taps leave the signal path and assertion values unchanged.
+      window.generatedSignalProbe = decoderContext.createAnalyser();
+      level.connect(generatedSignalProbe);
       source.start();
       aud.srcObject = destination.stream;
       await aud.play();
@@ -217,9 +222,24 @@ test('decoded MediaStream audio follows volume, mute, pause and source changes',
     const sample = await page.evaluate(() => {
       const input = new Float32Array(analyserNode.fftSize);
       analyserNode.getFloatTimeDomainData(input);
+      const signal = probe => {
+        const values = new Float32Array(probe.fftSize);
+        probe.getFloatTimeDomainData(values);
+        return {
+          rms: Math.sqrt(values.reduce((sum, value) => sum + value * value, 0) / values.length),
+          peak: values.reduce((peak, value) => Math.max(peak, Math.abs(value)), 0),
+          zeroSamples: values.filter(value => value === 0).length,
+          sampleCount: values.length
+        };
+      };
       return {
         ms: performance.now(), outputRms: readOutputRms(),
         inputRms: Math.sqrt(input.reduce((sum, value) => sum + value * value, 0) / input.length),
+        generatedSignal: signal(generatedSignalProbe), receivedSignal: signal(receivedSignalProbe),
+        decodedTrack: aud.srcObject?.getAudioTracks().map(track => ({
+          enabled: track.enabled, muted: track.muted, readyState: track.readyState,
+          settings: track.getSettings()
+        })),
         slider: volumeSlider.value, volume: volume.get(), volumeMuted: volume.isMuted(),
         gain: gainNode.gain.value, declickGain: declickNode.gain.value,
         elementVolume: aud.volume, elementMuted: aud.muted, paused: aud.paused,
