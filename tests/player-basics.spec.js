@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { createHash } from 'node:crypto';
 
 const icecastPlayerStub = `
 class IcecastMetadataPlayer extends EventTarget {
@@ -36,7 +37,9 @@ window.IcecastMetadataPlayer = IcecastMetadataPlayer;
 `;
 
 function installMediaAndAudioContextMocks() {
+  const automaticReports = localStorage.getItem('autoPlaybackReports');
   localStorage.clear();
+  if (automaticReports !== null) localStorage.setItem('autoPlaybackReports', automaticReports);
   localStorage.setItem('streamsEverInitialized', 'true');
   localStorage.setItem('bpmEnabled', 'false');
   localStorage.setItem('visualiserEnabled', 'false');
@@ -440,9 +443,20 @@ test('playback diagnostics retain a redacted fault through switching and reload,
   expect(diagnostics.recent.some(event => event.playback.requested?.address.endsWith('/__test__/mix.wav'))).toBe(true);
   expect(diagnosticText).not.toMatch(/alice|secret-/);
   expect(Buffer.byteLength(JSON.stringify(diagnostics))).toBeLessThanOrEqual(131072);
-  await expect(page.locator('#autoPlaybackReports')).not.toBeChecked();
+  await expect(page.locator('#autoPlaybackReports')).toBeChecked();
   await expect(page.locator('#reportIncludeDiagnostics')).not.toBeChecked();
   expect(reports).toHaveLength(0);
+
+  const [guide] = await Promise.all([
+    page.waitForEvent('popup'),
+    page.getByRole('link', { name: 'Reporting & privacy details (new tab)' }).click()
+  ]);
+  await expect(guide.getByRole('heading', { level: 1 })).toHaveText('Playback reporting & privacy');
+  await expect(guide.locator('#exampleReport')).toBeHidden();
+  await guide.getByText('See an example automatic report', { exact: true }).click();
+  await expect(guide.locator('#exampleReport')).toBeVisible();
+  await expect(page.locator('#reportModal')).toBeVisible();
+  await guide.close();
 
   // Clipboard denial must leave a usable manual-copy path.
   await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', {
@@ -707,16 +721,22 @@ test('diagnostics retain a later reconnection handoff through samples, event flo
   expect(text).not.toMatch(/secret-/);
 });
 
-test('persistent playback diagnostics respect pause, opt-in and the automatic report cooldown', async ({ page }) => {
+test('minimal automatic reports default on, respect pause, opt-out and the cooldown', async ({ page }) => {
   const reports = [];
-  await page.route('**/report.php', route => {
+  const reportHeaders = [];
+  await page.context().addCookies([{ name: 'privateSession', value: 'secret-cookie', url: 'http://127.0.0.1:4173' }]);
+  await page.route('**/report.php', async route => {
+    reportHeaders.push(await route.request().allHeaders());
     reports.push(route.request().postDataJSON());
     // Failed uploads must also be throttled, without deleting the evidence.
     return route.fulfill({ status: 503 });
   });
   await page.clock.install();
   await page.reload();
-  await page.evaluate(() => playStream('/__test__/stream.wav', 'Test stream', true));
+  await page.evaluate(() => {
+    setBeaconNick('secret-nickname');
+    playStream('/__test__/stream.wav?private=secret-stream', 'secret-station', true);
+  });
   await page.click('#playPauseBtn');
   await page.clock.runFor(40000);
   await page.evaluate(() => showReport());
@@ -728,22 +748,101 @@ test('persistent playback diagnostics respect pause, opt-in and the automatic re
   await page.clock.runFor(25000);
   await page.evaluate(() => showReport());
   await expect(page.locator('#diagnosticsSummary')).toContainText('No saved playback problem');
+  expect(reports).toHaveLength(0);
   await page.clock.runFor(10000);
   await expect(page.locator('#diagnosticsSummary')).toContainText('stalled playback');
-  expect(reports).toHaveLength(0);
-  await page.getByLabel('Automatically send persistent playback problems').check();
-  await page.clock.runFor(5000);
   await expect.poll(() => reports.length).toBe(1);
-  expect(reports[0].automatic).toBe(true);
-  expect(reports[0].diagnostics.incident.reason).toBe('stalled-playback');
+  expect(Object.keys(reports[0]).sort()).toEqual(['automatic', 'elapsed', 'fault']);
+  expect(JSON.stringify(reports[0])).not.toContain('secret-');
+  expect(reportHeaders[0].cookie).toBeUndefined();
+  expect(reportHeaders[0].referer).toBeUndefined();
+  expect(reports[0].fault.reason).toBe('stalled-playback');
+  expect(Object.keys(reports[0].fault).sort()).toEqual([
+    'assets', 'browser', 'current', 'failure', 'httpStatuses', 'reason', 'schemaVersion', 'sessionId', 'streamFingerprint'
+  ]);
+  expect(Object.keys(reports[0].fault.failure).sort()).toEqual([
+    'bufferSeconds', 'contextState', 'errorCode', 'hidden', 'inputSilent', 'libraryState',
+    'mode', 'muted', 'networkState', 'online', 'paused', 'playbackMethod', 'readyState'
+  ]);
+  expect(Object.keys(reports[0].fault.current).sort()).toEqual(Object.keys(reports[0].fault.failure).sort());
+  const guideResponse = await page.request.get('/reporting.html');
+  const example = JSON.parse((await guideResponse.text()).match(/id="exampleReport">([\s\S]*?)<\/code>/)[1]);
+  expect(Object.keys(example).sort()).toEqual(Object.keys(reports[0]).sort());
+  expect(Object.keys(example.fault).sort()).toEqual(Object.keys(reports[0].fault).sort());
+  for (const phase of ['failure', 'current']) {
+    expect(Object.keys(example.fault[phase]).sort()).toEqual(Object.keys(reports[0].fault[phase]).sort());
+  }
+  expect(reports[0].fault.browser).toMatch(/^(Firefox|Chrome|Safari) \d+$|^Other$/);
+  expect(reports[0].fault.failure.mode).toBe('stream');
+  expect(reports[0].fault.failure.paused).toBe(true);
+  expect(reports[0].fault.current.paused).toBe(true);
   await expect(page.locator('#diagnosticsAutoStatus')).toContainText('did not send');
   await page.clock.runFor(65000);
   expect(reports).toHaveLength(1);
-  await page.getByLabel('Automatically send persistent playback problems').uncheck();
+  await page.getByLabel('Automatically send minimal persistent-fault reports').uncheck();
   await page.clock.fastForward(3600000);
   await page.clock.runFor(40000);
   expect(reports).toHaveLength(1);
   await expect(page.locator('#diagnosticsSummary')).toContainText('stalled playback');
+  await page.reload();
+  await page.evaluate(() => showReport());
+  await expect(page.getByLabel('Automatically send minimal persistent-fault reports')).not.toBeChecked();
+});
+
+test('fault reports correlate upstream streams and page sessions without saving listener identifiers', async ({ page }) => {
+  const reports = [];
+  await page.route('**/report.php', route => {
+    reports.push(route.request().postDataJSON().fault);
+    return route.fulfill({ status: 204 });
+  });
+  // No remote stream request is needed to exercise the recorder's public fault API.
+  await page.route('https://*.example/**', route => route.fulfill({ body: '' }));
+  await page.clock.install();
+  await page.reload();
+  await page.clock.runFor(4000);
+  const emit = source => page.evaluate(url => {
+    playStream(url, 'secret-station', true);
+    playbackDiagnostics.problem('http-error', { source: url, httpStatus: 401 });
+    playbackDiagnostics.problem('restart-limit', { source: url, priority: 2, persistent: true });
+  }, source);
+  const upstream = 'https://radio.example/live';
+  const expected = createHash('sha256').update(upstream).digest('hex');
+  await emit(`https://proxy-a.example/?url=${encodeURIComponent('https://alice:secret@RADIO.example:443/live?token=secret#private')}`);
+  await expect.poll(() => reports.length).toBe(1);
+  expect(reports[0].streamFingerprint).toBe(expected);
+  expect(reports[0].sessionId).toMatch(/^[a-f0-9]{32}$/);
+  expect(reports[0].httpStatuses).toEqual([401]);
+  await page.clock.fastForward(3600001);
+  await emit(`https://proxy-b.example/?url=${encodeURIComponent(upstream + '?token=different')}`);
+  await expect.poll(() => reports.length).toBe(2);
+  expect(reports[1].streamFingerprint).toBe(expected);
+  expect(reports[1].sessionId).toBe(reports[0].sessionId);
+  await page.clock.fastForward(3600001);
+  await emit('https://radio.example/another-stream');
+  await expect.poll(() => reports.length).toBe(3);
+  expect(reports[2].streamFingerprint).toBe(createHash('sha256').update('https://radio.example/another-stream').digest('hex'));
+  expect(reports[2].sessionId).toBe(reports[0].sessionId);
+  const saved = await page.evaluate(() => JSON.stringify([localStorage, sessionStorage]));
+  expect(saved).not.toContain(reports[0].sessionId);
+  await page.reload();
+  await page.clock.runFor(4000);
+  await emit(upstream);
+  await expect.poll(() => reports.length).toBe(4);
+  expect(reports[3].streamFingerprint).toBe(expected);
+  expect(reports[3].sessionId).not.toBe(reports[0].sessionId);
+  expect(JSON.stringify(reports)).not.toMatch(/secret|radio\.example|proxy-[ab]\.example/);
+  await page.clock.fastForward(3600001);
+  await page.evaluate(() => {
+    const digest = crypto.subtle.digest.bind(crypto.subtle);
+    crypto.subtle.digest = (...args) => digest(...args).then(value => new Promise(resolve => {
+      window.finishReportHash = () => resolve(value);
+    }));
+  });
+  await emit(upstream);
+  await page.waitForFunction(() => typeof finishReportHash === 'function');
+  await page.evaluate(() => { storage.set('autoPlaybackReports', false); finishReportHash(); });
+  await expect(page.locator('#diagnosticsAutoStatus')).toHaveText('Automatic reporting is off.');
+  expect(reports).toHaveLength(4);
 });
 
 test('silent-audio diagnostics are bounded, preserve the original fault and expire', async ({ page }) => {

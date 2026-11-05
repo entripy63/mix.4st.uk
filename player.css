@@ -631,6 +631,10 @@ button:active {
    margin: 0 0 8px;
 }
 
+.report-diagnostics a {
+   color: #aab4ff;
+}
+
 .report-diagnostics .checkbox-label {
    margin: 10px 0;
    align-items: flex-start;

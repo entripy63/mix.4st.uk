@@ -250,6 +250,7 @@
           </div>
           <div class="settings-group">
             <button class="tf-settings-link" onclick="hideSettings(); showReport();">Playback diagnostics / Report an issue...</button>
+            <p>Automatic fault reports are on by default; change this in Playback diagnostics.</p>
           </div>
           <hr class="settings-separator">
           <div class="settings-group" data-tip="nickname">
@@ -455,8 +456,13 @@
         <input type="text" id="reportWebsite" class="report-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
         <section class="report-diagnostics" aria-labelledby="diagnosticsTitle">
           <h3 id="diagnosticsTitle">Playback diagnostics</h3>
+          <label class="checkbox-label">
+            <input type="checkbox" id="autoPlaybackReports" onchange="storage.set('autoPlaybackReports', this.checked)"> Automatically send minimal persistent-fault reports
+          </label>
+          <p>On by default; uncheck to opt out for this browser and site. At most one attempt per hour. No nickname, raw stream URL or audio. <a href="reporting.html" target="_blank" rel="noopener noreferrer">Reporting &amp; privacy details (new tab)</a>.</p>
+          <p id="diagnosticsAutoStatus" class="report-status" role="status"></p>
           <p id="diagnosticsSummary" aria-live="polite"></p>
-          <p>A small local record survives playback restarts and page reloads in this tab for up to 24 hours. No audio or track metadata is saved. URLs include server names and paths, but not credentials or query strings.</p>
+          <p>Detailed diagnostics stay local unless you copy or attach them below.</p>
           <div class="report-actions">
             <button type="button" onclick="copyPlaybackDiagnostics()">Copy diagnostics</button>
             <button type="button" onclick="playbackDiagnostics.clear()">Clear saved data</button>
@@ -469,11 +475,6 @@
           <label class="checkbox-label">
             <input type="checkbox" id="reportIncludeDiagnostics"> Include diagnostics with this report
           </label>
-          <label class="checkbox-label">
-            <input type="checkbox" id="autoPlaybackReports" onchange="storage.set('autoPlaybackReports', this.checked)"> Automatically send persistent playback problems
-          </label>
-          <p>Automatic sending is optional and off by default: at most one report per hour to the site operator, including the usual report nickname and browser information. Brief recovered errors stay local. Turning this off stops future automatic reports.</p>
-          <p id="diagnosticsAutoStatus" class="report-status" role="status"></p>
         </section>
         <div class="report-actions">
           <button type="button" id="reportSend" onclick="sendReport()">Send report</button>

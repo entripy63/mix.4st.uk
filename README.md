@@ -7,6 +7,12 @@ The vendored Icecast player includes a local retry/handoff fix. See
 [STREAM-RECOVERY.md](docs/STREAM-RECOVERY.md) for its recovery policy,
 reproducible patch, regression tests and narrow deployment/rollback boundaries.
 
+For controlled real-stream tests, player.opt9 has an isolated synthetic MP3
+source at `https://t.4st.uk/test-radio/tone.mp3`, disabled between tests. Its
+SSH-only tone/silence/hold controls and safety limits are documented in
+[tools/test-radio/README.md](tools/test-radio/README.md). It uses the ordinary
+Add stream path without app or live-proxy modifications.
+
 ## Live listening time
 
 The live timer accumulates media-clock progress for the loaded station, retaining
@@ -33,6 +39,8 @@ and Firefox; this is not a claim of weeks-long endurance testing.
 ## Playback diagnostics
 
 Open **Settings → Playback diagnostics / Report an issue**, or **Help → Report an Issue**.
+The dialog links to the public [reporting and privacy guide](reporting.html) in a
+new tab, keeping the controls brief without navigating away from playback.
 Errors are captured before recovery, with a bounded history of playback events and
 five-second state samples. Thirty seconds without media-clock progress, or with
 apparently silent input while the clock advances, also saves a snapshot. These
@@ -80,19 +88,48 @@ under size pressure, older transition entries may also be trimmed.
 
 Use **Copy diagnostics** (with a selectable-text fallback), or check **Include
 diagnostics with this report** before sending an issue. Both sharing options can
-be reviewed first. **Automatically send persistent playback problems** is a separate,
-persistent, per-browser opt-in, off by default. Automatic attempts are limited to
+be reviewed first. **Automatically send minimal persistent-fault reports** is a
+separate preference, on by default. Uncheck it to opt out for this browser profile
+and site; an existing explicit choice is preserved. Automatic attempts are limited to
 one per hour, including failed attempts; short recovered errors are not uploaded
 automatically. The existing server limit of three reports per IP per hour applies
 to manual and automatic reports combined. Failures leave the local data intact.
 
-Diagnostics contain playback/buffer/context/gain state, input level (not audio),
+Automatic reports use a separate, server-validated allowlist: fault type (stall,
+suspected silence or exhausted decoder restarts), browser family/major version,
+app asset versions, observed HTTP failure codes and compact playback state at detection
+and sending (mode, pause/mute, connectivity/visibility, media/context/library state,
+playback method, rounded remaining buffer and suspected input silence). They omit
+nicknames, contact details, full user agents, URLs, audio, track metadata, playback
+positions and listening/event timelines. Correlation uses two additional fields:
+
+- A SHA-256 stream fingerprint of the recorder's bounded upstream origin/path,
+  not the proxy address. Credentials, queries and fragments are excluded. It is
+  null for non-stream sources or unavailable hashing. Query-selected variants
+  can therefore group together; aliases for the same stream can remain separate.
+  This is not encryption: known station addresses can be matched to fingerprints.
+- A cryptographically random 128-bit page-session ID, held only in memory. It
+  links fault reports across reconnections/station changes in that page, but is
+  replaced on reload/new pages and is never saved to browser storage. Distinct
+  IDs count page sessions, not unique people, devices or IPs.
+
+The report log and email omit IPs too;
+the server still sees IPs for the existing rate limiter (whose filenames contain
+an IP hash), and ordinary hosting access logs may retain connection information.
+Automatic requests omit cookies and referrers. This is data minimisation and
+temporary session correlation, not a guarantee of anonymity. The pre-existing
+nickname-based usage beacon is separate and unchanged by this reporting setting.
+Old detailed automatic uploads are rejected; deploy the endpoint before or with
+the updated client. The local recorder and manual attachment remain unchanged.
+
+Detailed manual diagnostics contain playback/buffer/context/gain state, input level (not audio),
 timestamps, browser information and asset versions. Stream/proxy server names and
 paths are included, but URL credentials, query strings and fragments are removed;
 local-file and blob URLs are reduced to their scheme. Track metadata, console
 messages and audio samples are not saved. Server paths can still identify a private
-stream, so review the data before sharing. Submitted reports use the existing
-`report.php` endpoint, include its usual nickname/browser information, and are
+stream, so review the data before sharing. Manual reports include the usual
+nickname/browser information and connection IP. Both report types use the existing
+`report.php` endpoint and are
 stored in the private report log and emailed to the site operator. Submitted reports
 have no built-in expiry and are not removed by clearing local data or disabling
 automatic sending. The endpoint accepts up to 192 KiB of diagnostics in a 256 KiB

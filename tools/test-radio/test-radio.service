@@ -1,0 +1,22 @@
+[Unit]
+Description=Isolated controllable synthetic test radio
+After=network.target
+
+[Service]
+DynamicUser=yes
+WorkingDirectory=/opt/test-radio
+ExecStart=/usr/bin/node /opt/test-radio/server.mjs
+RuntimeDirectory=test-radio
+RuntimeDirectoryMode=0700
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+RestrictAddressFamilies=AF_INET AF_UNIX
+MemoryMax=128M
+TasksMax=32
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

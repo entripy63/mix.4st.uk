@@ -52,12 +52,64 @@ $ts      = trim($input['ts'] ?? '');
 $elapsed = (int)($input['elapsed'] ?? 0);
 $diagnostics = $input['diagnostics'] ?? null;
 $automatic = ($input['automatic'] ?? false) === true;
+$fault = null;
+
+// Automatic reports have a separate, strictly bounded schema. Never persist
+// arbitrary client fields or accept the old detailed automatic upload format.
+if ($automatic) {
+    $fault = $input['fault'] ?? null;
+    $valid = is_array($fault) && count($fault) === 9 &&
+        ($fault['schemaVersion'] ?? null) === 1 &&
+        in_array($fault['reason'] ?? null, ['stalled-playback', 'silent-audio', 'restart-limit'], true) &&
+        is_string($fault['sessionId'] ?? null) && preg_match('/^[a-f0-9]{32}$/D', $fault['sessionId']) &&
+        array_key_exists('streamFingerprint', $fault) && ($fault['streamFingerprint'] === null ||
+            (is_string($fault['streamFingerprint']) && preg_match('/^[a-f0-9]{64}$/D', $fault['streamFingerprint']))) &&
+        is_array($fault['httpStatuses'] ?? null) && array_values($fault['httpStatuses']) === $fault['httpStatuses'] && count($fault['httpStatuses']) <= 8 &&
+        is_string($fault['browser'] ?? null) &&
+        preg_match('/^(Other|(Firefox|Chrome|Safari) [0-9]{1,4})$/D', $fault['browser']) &&
+        is_array($fault['assets'] ?? null) && array_values($fault['assets']) === $fault['assets'] && count($fault['assets']) <= 4;
+    if ($valid) {
+        foreach ($fault['httpStatuses'] as $status) {
+            if (!is_int($status) || $status < 400 || $status > 599) $valid = false;
+        }
+        foreach ($fault['assets'] as $asset) {
+            if (!is_array($asset) || count($asset) !== 2 ||
+                !in_array($asset['path'] ?? null, ['/core.js', '/player.js', '/stream-player.js', '/playback-diagnostics.js'], true) ||
+                !(array_key_exists('version', $asset) && ($asset['version'] === null ||
+                  (is_string($asset['version']) && preg_match('/^[a-f0-9]{1,64}$/D', $asset['version']))))) $valid = false;
+        }
+        foreach (['failure', 'current'] as $phase) {
+            $sample = $fault[$phase] ?? null;
+            if (!is_array($sample) || count($sample) !== 13) { $valid = false; continue; }
+            foreach (['paused', 'muted', 'online', 'hidden'] as $key) {
+                if (!is_bool($sample[$key] ?? null)) $valid = false;
+            }
+            foreach (['readyState' => 4, 'networkState' => 3] as $key => $max) {
+                if (!isset($sample[$key]) || !is_int($sample[$key]) || $sample[$key] < 0 || $sample[$key] > $max) $valid = false;
+            }
+            if (!array_key_exists('errorCode', $sample) || !in_array($sample['errorCode'], [null, 1, 2, 3, 4], true) ||
+                !array_key_exists('inputSilent', $sample) || !in_array($sample['inputSilent'], [null, true, false], true) ||
+                !isset($sample['bufferSeconds']) || !is_int($sample['bufferSeconds']) || $sample['bufferSeconds'] < 0 || $sample['bufferSeconds'] > 86400) $valid = false;
+            foreach ([
+                'mode' => ['stream', 'mix'],
+                'contextState' => [null, 'running', 'suspended', 'interrupted', 'closed'],
+                'libraryState' => [null, 'loading', 'playing', 'retrying', 'stopping', 'stopped'],
+                'playbackMethod' => [null, 'mediasource', 'webaudio', 'html5']
+            ] as $key => $values) {
+                if (!array_key_exists($key, $sample) || !in_array($sample[$key], $values, true)) $valid = false;
+            }
+        }
+    }
+    if (!$valid || $diagnostics !== null) { http_response_code(422); exit; }
+    $message = 'Automatic playback report: ' . $fault['reason'] . '.';
+    $contact = $nick = $ua = $ts = '';
+}
 
 // Optional, versioned diagnostics; old clients still send plain issue reports.
 if (($diagnostics !== null && (!is_array($diagnostics) ||
         ($diagnostics['schemaVersion'] ?? null) !== 1 ||
         strlen(json_encode($diagnostics, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) > REPORT_MAX_DIAGNOSTIC_BYTES)) ||
-    ($automatic && $diagnostics === null)) {
+    (!$automatic && isset($input['fault']))) {
     http_response_code(422);
     exit;
 }
@@ -92,7 +144,11 @@ $recent[] = $now;
 file_put_contents($rlFile, implode("\n", $recent), LOCK_EX);
 
 // Persist to log (JSON line)
-$record = json_encode([
+$record = json_encode($automatic ? [
+    'server_ts' => date('c'),
+    'automatic' => true,
+    'fault' => $fault,
+] : [
     'message'   => $message,
     'contact'   => $contact,
     'nick'      => $nick,
@@ -115,7 +171,9 @@ if (strlen($reportHost) > 253 || !filter_var($reportHost, FILTER_VALIDATE_DOMAIN
     $reportHost = 'Website';
 }
 $subject = '[' . $reportHost . '] Issue report';
-$mailBody = $message . "\n\n"
+$mailBody = $automatic
+    ? $message . "\n\nMinimal fault data:\n" . json_encode($fault, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n"
+    : $message . "\n\n"
     . '---' . "\n"
     . 'Contact: ' . ($contact !== '' ? $contact : '(none)') . "\n"
     . 'Nick: '    . ($nick !== '' ? $nick : '(none)') . "\n"

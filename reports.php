@@ -88,6 +88,11 @@ function h($s) { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
 <?php else: ?>
   <?php foreach ($entries as $e): ?>
     <div class="report">
+      <?php if (isset($e['fault'])): ?>
+      <p class="msg">Automatic playback report: <?= h($e['fault']['reason'] ?? '') ?></p>
+      <div class="fields">Received: <?= h(substr($e['server_ts'] ?? '', 0, 19)) ?> · Browser: <?= h($e['fault']['browser'] ?? '') ?></div>
+      <details><summary>Minimal fault data</summary><pre class="msg"><?= h(json_encode($e['fault'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) ?></pre></details>
+      <?php else: ?>
       <p class="msg"><?= h($e['message'] ?? '') ?></p>
       <div class="fields">
         <b>Contact:</b> <?= h(($e['contact'] ?? '') !== '' ? $e['contact'] : '(none)') ?><br>
@@ -96,6 +101,7 @@ function h($s) { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
         · <b>IP:</b> <?= h($e['ip'] ?? '') ?><br>
         <b>UA:</b> <?= h($e['ua'] ?? '') ?>
       </div>
+      <?php endif; ?>
     </div>
   <?php endforeach; ?>
 <?php endif; ?>

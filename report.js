@@ -3,12 +3,14 @@
 
 let reportDiagnosticData = null;
 let automaticReportAttemptAt = storage.getNum('automaticPlaybackReportAt', 0);
+// Deliberately memory-only: neither an IP fingerprint nor a saved browser ID.
+let automaticReportSessionId = null;
 
 function showReport() {
   window.reportModalOpenedAt = Date.now();
   setReportStatus('', '');
   document.getElementById('reportIncludeDiagnostics').checked = false;
-  document.getElementById('autoPlaybackReports').checked = storage.getBool('autoPlaybackReports');
+  document.getElementById('autoPlaybackReports').checked = storage.getBool('autoPlaybackReports', true);
   document.getElementById('diagnosticsCopyStatus').textContent = '';
   refreshPlaybackDiagnostics();
   document.getElementById('reportModal').style.display = 'flex';
@@ -59,13 +61,16 @@ async function copyPlaybackDiagnostics() {
 function submitIssueReport(fields) {
   return fetch('/report.php', {
     method: 'POST',
+    ...(fields.automatic ? { referrerPolicy: 'no-referrer', credentials: 'omit' } : {}),
     headers: { 'Content-Type': 'text/plain' },
     signal: AbortSignal.timeout(15000),
     body: JSON.stringify({
       ...fields,
-      nick: (typeof beaconNick === 'function') ? beaconNick() : '',
-      ua: navigator.userAgent,
-      ts: new Date().toISOString()
+      ...(!fields.automatic ? {
+        nick: (typeof beaconNick === 'function') ? beaconNick() : '',
+        ua: navigator.userAgent,
+        ts: new Date().toISOString()
+      } : {})
     })
   });
 }
@@ -73,19 +78,67 @@ function submitIssueReport(fields) {
 window.addEventListener('playbackpersistentproblem', async event => {
   const now = Date.now();
   const lastAttempt = Math.max(automaticReportAttemptAt, storage.getNum('automaticPlaybackReportAt', 0));
-  if (!storage.getBool('autoPlaybackReports') || now - lastAttempt < 3600000 || performance.now() < 3000) return;
+  if (!storage.getBool('autoPlaybackReports', true) || now - lastAttempt < 3600000 || performance.now() < 3000) return;
   // Reserve before sending, including failed attempts, to prevent retry storms.
   automaticReportAttemptAt = now;
   storage.set('automaticPlaybackReportAt', now);
   const diagnostics = playbackDiagnostics.report(event.detail.attempt);
+  // Deliberate allowlist: never send the detailed recorder by default.
+  const compactState = sample => ({
+    mode: sample.mode,
+    paused: sample.paused,
+    muted: sample.muted,
+    online: sample.online,
+    hidden: sample.hidden,
+    readyState: sample.readyState,
+    networkState: sample.networkState,
+    errorCode: sample.errorCode,
+    contextState: sample.contextState,
+    libraryState: sample.libraryState,
+    playbackMethod: sample.playbackMethod,
+    bufferSeconds: Math.round(Math.max(0, ...sample.buffered.map(range => range[1] - sample.currentTime))),
+    inputSilent: sample.inputRms === null ? null : sample.inputRms < 0.00001
+  });
+  const browser = navigator.userAgent.match(/(Firefox|Chrome|Version)\/(\d+)/);
+  const fault = {
+    schemaVersion: 1,
+    reason: event.detail.reason,
+    browser: browser ? `${browser[1] === 'Version' ? 'Safari' : browser[1]} ${browser[2]}` : 'Other',
+    assets: diagnostics.assets,
+    httpStatuses: [...new Set(diagnostics.incident.errors.map(error => error.httpStatus).filter(Number.isInteger))],
+    failure: compactState(diagnostics.incident.playback),
+    current: compactState(diagnostics.current)
+  };
   const status = document.getElementById('diagnosticsAutoStatus');
   status.textContent = 'Sending automatic playback report…';
   try {
+    if (automaticReportSessionId === null) {
+      automaticReportSessionId = [...crypto.getRandomValues(new Uint8Array(16))]
+        .map(byte => byte.toString(16).padStart(2, '0')).join('');
+    }
+    fault.sessionId = automaticReportSessionId;
+    fault.streamFingerprint = null;
+    const source = diagnostics.incident.source || diagnostics.incident.playback.requested;
+    const address = source?.upstream || source?.address;
+    if (fault.failure.mode === 'stream' && address && crypto.subtle) {
+      const url = new URL(address, location.href);
+      if (['http:', 'https:'].includes(url.protocol)) {
+        // Group upstream endpoints across proxies, never tokens or credentials.
+        const canonical = url.origin + url.pathname;
+        const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(canonical));
+        fault.streamFingerprint = [...new Uint8Array(digest)]
+          .map(byte => byte.toString(16).padStart(2, '0')).join('');
+      }
+    }
+    // Opting out while hashing must prevent the pending upload too.
+    if (!storage.getBool('autoPlaybackReports', true)) {
+      status.textContent = 'Automatic reporting is off.';
+      return;
+    }
     const response = await submitIssueReport({
-      message: `Automatic playback report: ${diagnostics.incident.reason}.`,
       automatic: true,
-      elapsed: Math.floor(performance.now()),
-      diagnostics
+      elapsed: 3000,
+      fault
     });
     status.textContent = response.ok ? 'Automatic playback report sent.' :
       'Automatic report did not send. Diagnostics remain available to copy or send manually.';
