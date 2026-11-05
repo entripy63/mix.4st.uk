@@ -341,6 +341,8 @@ test('listening time shows days across midnight without overflowing into media t
 test('listening time reset requires confirmation and never restarts playback', async ({ page }) => {
   await page.waitForFunction(() => liveProbeReady);
   await page.clock.install();
+  // Only explicit runFor calls should advance playback during UI interactions.
+  await page.clock.pauseAt(await page.evaluate(() => Date.now() + 1000));
   await page.evaluate(() => playStream('https://radio.example/live', 'Station', true));
   await page.clock.runFor(7000);
   const timer = page.locator('#timeDisplay');
@@ -354,6 +356,7 @@ test('listening time reset requires confirmation and never restarts playback', a
   await expect(timer).toHaveText('LIVE  0:07');
   await expect(timer).toBeFocused();
   await page.keyboard.press('Space');
+  await page.clock.runFor(20); // Let the pause declick fade settle.
   await expect(dialog).toBeHidden();
   await expect(timer).toHaveText('PAUSED  0:07');
   await expect(page.locator('#playPauseBtn')).toHaveClass(/paused/);
@@ -370,6 +373,7 @@ test('listening time reset requires confirmation and never restarts playback', a
   expect(await page.evaluate(() => aud.currentTime)).toBe(7);
   await expect(timer).toBeFocused();
   await page.keyboard.press('Space');
+  await page.clock.runFor(20);
   await expect(timer).toHaveText('PAUSED  0:00');
   await expect(dialog).toBeHidden();
   await page.keyboard.press('Space');
@@ -377,6 +381,7 @@ test('listening time reset requires confirmation and never restarts playback', a
   await expect(timer).toHaveText('LIVE  0:03');
   expect(await page.evaluate(() => aud.currentTime)).toBe(10);
   await page.click('#playPauseBtn');
+  await page.clock.runFor(20);
   await timer.click();
   await dialog.getByRole('button', { name: 'Reset time' }).click();
   await expect(timer).toHaveText('PAUSED  0:00');
@@ -396,6 +401,7 @@ test('listening time reset requires confirmation and never restarts playback', a
   await page.evaluate(async () => {
     await playMix({ name: 'Mix', isLocal: true, audioSrc: '/__test__/mix.wav' });
   });
+  await page.clock.runFor(20); // Loading ordinary media also waits for declick.
   await expect(timer).not.toHaveAttribute('role');
   await timer.click();
   await expect(dialog).toBeHidden();
