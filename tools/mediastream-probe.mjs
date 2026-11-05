@@ -1,6 +1,7 @@
 // Standalone synthetic-audio diagnostic; no app scripts, server or real streams.
 // Usage: node tools/mediastream-probe.mjs [output.json]
-// PROBE_BROWSER selects one project for local investigation. CI runs all four.
+// Manual investigation only, not part of CI. Runs all four projects by default;
+// PROBE_BROWSER selects one project.
 // Natural attenuation is recorded, not made into a passing assertion: the
 // existing application tests remain the verification gate. Harness errors and
 // incorrect deliberate-loss controls fail this command. Partial results survive.

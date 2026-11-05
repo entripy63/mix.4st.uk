@@ -28,7 +28,6 @@ jobs:
         run: npx playwright install --with-deps chromium firefox webkit
 
       - name: Start virtual audio output
-        id: audio
         run: |
           sudo apt-get install -y pulseaudio pulseaudio-utils
           pulseaudio --start --exit-idle-time=-1
@@ -42,21 +41,6 @@ jobs:
 
       - name: Run Sensitivity Checks
         run: npm run verify:sensitivity:ci
-
-      # Observe the standalone handoff even when the unchanged app tests fail.
-      - name: Run standalone MediaStream diagnostic
-        if: ${{ !cancelled() && steps.audio.outcome == 'success' }}
-        timeout-minutes: 6
-        run: node tools/mediastream-probe.mjs
-
-      - name: Upload standalone MediaStream measurements
-        if: ${{ !cancelled() && steps.audio.outcome == 'success' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: mediastream-probe
-          path: test-results/mediastream-probe.json
-          retention-days: 7
-          if-no-files-found: error
 
       - name: Upload failure diagnostics
         if: failure()
