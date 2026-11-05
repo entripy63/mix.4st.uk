@@ -21,7 +21,7 @@ export default defineConfig({
   use: {
     baseURL: 'http://127.0.0.1:4173',
     headless: true,
-    trace: 'on-first-retry'
+    trace: 'retain-on-failure'
   },
   projects: [
     {

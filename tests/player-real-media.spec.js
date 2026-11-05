@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { writeFile } from 'node:fs/promises';
 
 const icecastPlayerStub = `
 class IcecastMetadataPlayer extends EventTarget {
@@ -165,7 +166,7 @@ test('stream teardown errors do not reconnect while the page unloads', async ({ 
   expect(connections).toBe(1);
 });
 
-test('decoded MediaStream audio follows volume, mute, pause and source changes', async ({ page }) => {
+test('decoded MediaStream audio follows volume, mute, pause and source changes', async ({ page }, testInfo) => {
   // Tap audio sent to Web Audio's output, rather than just checking gain values.
   await page.addInitScript(() => {
     const connect = AudioNode.prototype.connect;
@@ -210,29 +211,60 @@ test('decoded MediaStream audio follows volume, mute, pause and source changes',
     };
     await replaceDecodedStream();
   }));
-  const output = () => page.evaluate(() => readOutputRms());
-  await page.locator('#volumeSlider').fill('100');
-  await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2), 3);
-  await page.locator('#volumeSlider').fill('20');
-  await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2) * 0.14, 4);
-  await page.click('#muteBtn');
-  await expect.poll(output).toBeLessThan(0.00001);
-  await page.click('#muteBtn');
-  await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2) * 0.14, 4);
-  await page.click('#playPauseBtn');
-  await expect.poll(output).toBeLessThan(0.00001);
-  await page.click('#playPauseBtn');
-  await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2) * 0.14, 4);
-  await page.evaluate(() => replaceDecodedStream());
-  await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2) * 0.14, 4);
-  await page.evaluate(async () => {
-    aud.srcObject = null;
-    await playMix({ name: 'Ordinary media again', isLocal: true, audioSrc: '/__test__/mix.wav' });
-    await decoderContext.close();
-  });
-  await expect.poll(output).toBeGreaterThan(0.02);
-  await page.click('#muteBtn');
-  await expect.poll(output).toBeLessThan(0.00001);
+  const samples = [];
+  const output = async () => {
+    // Sample only when the existing assertions poll; no extra timer or wait.
+    const sample = await page.evaluate(() => {
+      const input = new Float32Array(analyserNode.fftSize);
+      analyserNode.getFloatTimeDomainData(input);
+      return {
+        ms: performance.now(), outputRms: readOutputRms(),
+        inputRms: Math.sqrt(input.reduce((sum, value) => sum + value * value, 0) / input.length),
+        slider: volumeSlider.value, volume: volume.get(), volumeMuted: volume.isMuted(),
+        gain: gainNode.gain.value, declickGain: declickNode.gain.value,
+        elementVolume: aud.volume, elementMuted: aud.muted, paused: aud.paused,
+        readyState: aud.readyState, mediaTime: aud.currentTime,
+        hasDecodedStream: Boolean(aud.srcObject),
+        context: { state: audioCtx.state, time: audioCtx.currentTime, sampleRate: audioCtx.sampleRate },
+        decoder: { state: decoderContext.state, time: decoderContext.currentTime, sampleRate: decoderContext.sampleRate }
+      };
+    });
+    samples.push(sample);
+    if (samples.length > 120) samples.shift();
+    return sample.outputRms;
+  };
+  try {
+    await page.locator('#volumeSlider').fill('100');
+    await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2), 3);
+    await page.locator('#volumeSlider').fill('20');
+    await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2) * 0.14, 4);
+    await page.click('#muteBtn');
+    await expect.poll(output).toBeLessThan(0.00001);
+    await page.click('#muteBtn');
+    await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2) * 0.14, 4);
+    await page.click('#playPauseBtn');
+    await expect.poll(output).toBeLessThan(0.00001);
+    await page.click('#playPauseBtn');
+    await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2) * 0.14, 4);
+    await page.evaluate(() => replaceDecodedStream());
+    await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2) * 0.14, 4);
+    await page.evaluate(async () => {
+      aud.srcObject = null;
+      await playMix({ name: 'Ordinary media again', isLocal: true, audioSrc: '/__test__/mix.wav' });
+      await decoderContext.close();
+    });
+    await expect.poll(output).toBeGreaterThan(0.02);
+    await page.click('#muteBtn');
+    await expect.poll(output).toBeLessThan(0.00001);
+  } catch (error) {
+    const path = testInfo.outputPath('decoded-audio-state.json');
+    await writeFile(path, JSON.stringify({ project: testInfo.project.name, samples }, null, 2));
+    await testInfo.attach('decoded-audio-state', {
+      path,
+      contentType: 'application/json'
+    });
+    throw error;
+  }
 });
 
 for (const format of ['pls', 'm3u']) {

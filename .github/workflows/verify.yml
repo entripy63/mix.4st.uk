@@ -41,3 +41,12 @@ jobs:
 
       - name: Run Sensitivity Checks
         run: npm run verify:sensitivity:ci
+
+      - name: Upload failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-failures
+          path: test-results/
+          retention-days: 7
+          if-no-files-found: ignore
