@@ -173,13 +173,20 @@ test('decoded MediaStream audio follows volume, mute, pause and source changes',
     AudioNode.prototype.connect = function(destination, ...args) {
       const result = connect.call(this, destination, ...args);
       if (destination === this.context.destination) {
-        const analyser = this.context.createAnalyser();
-        connect.call(this, analyser);
-        window.readOutputRms = () => {
+        // A single analyser downmixes stereo, conflating level with phase
+        // cancellation. Check each channel without summing their waveforms.
+        const splitter = this.context.createChannelSplitter(2);
+        connect.call(this, splitter);
+        const analysers = [0, 1].map(channel => {
+          const analyser = this.context.createAnalyser();
+          connect.call(splitter, analyser, channel);
+          return analyser;
+        });
+        window.readOutputRms = () => analysers.map(analyser => {
           const samples = new Float32Array(analyser.fftSize);
           analyser.getFloatTimeDomainData(samples);
           return Math.sqrt(samples.reduce((sum, sample) => sum + sample * sample, 0) / samples.length);
-        };
+        });
       }
       return result;
     };
@@ -201,10 +208,10 @@ test('decoded MediaStream audio follows volume, mute, pause and source changes',
   await test.step('Play the decoded MediaStream', () => page.evaluate(async () => {
     window.receivedSignalProbe = audioCtx.createAnalyser();
     analyserNode.connect(receivedSignalProbe);
-    window.replaceDecodedStream = async () => {
+    window.replaceDecodedStream = async (amplitude = 0.04) => {
       const source = decoderContext.createOscillator();
       const level = decoderContext.createGain();
-      level.gain.value = 0.04;
+      level.gain.value = amplitude;
       const destination = decoderContext.createMediaStreamDestination();
       source.connect(level).connect(destination);
       // Side taps leave the signal path and assertion values unchanged.
@@ -253,29 +260,34 @@ test('decoded MediaStream audio follows volume, mute, pause and source changes',
     if (samples.length > 120) samples.shift();
     return sample.outputRms;
   };
+  const expectStereoLevel = (level, precision) => expect.poll(output).toEqual([
+    expect.closeTo(level, precision), expect.closeTo(level, precision)
+  ]);
+  const loudestChannel = async () => Math.max(...await output());
   try {
     await page.locator('#volumeSlider').fill('100');
-    await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2), 3);
+    await expectStereoLevel(0.04 / Math.sqrt(2), 3);
     await page.locator('#volumeSlider').fill('20');
-    await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2) * 0.14, 4);
+    await expectStereoLevel(0.04 / Math.sqrt(2) * 0.14, 4);
     await page.click('#muteBtn');
-    await expect.poll(output).toBeLessThan(0.00001);
+    await expect.poll(loudestChannel).toBeLessThan(0.00001);
     await page.click('#muteBtn');
-    await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2) * 0.14, 4);
+    await expectStereoLevel(0.04 / Math.sqrt(2) * 0.14, 4);
     await page.click('#playPauseBtn');
-    await expect.poll(output).toBeLessThan(0.00001);
+    await expect.poll(loudestChannel).toBeLessThan(0.00001);
     await page.click('#playPauseBtn');
-    await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2) * 0.14, 4);
-    await page.evaluate(() => replaceDecodedStream());
-    await expect.poll(output).toBeCloseTo(0.04 / Math.sqrt(2) * 0.14, 4);
+    await expectStereoLevel(0.04 / Math.sqrt(2) * 0.14, 4);
+    // A distinct level proves we hear the replacement, not the old stream.
+    await page.evaluate(() => replaceDecodedStream(0.06));
+    await expectStereoLevel(0.06 / Math.sqrt(2) * 0.14, 4);
     await page.evaluate(async () => {
       aud.srcObject = null;
       await playMix({ name: 'Ordinary media again', isLocal: true, audioSrc: '/__test__/mix.wav' });
       await decoderContext.close();
     });
-    await expect.poll(output).toBeGreaterThan(0.02);
+    await expect.poll(loudestChannel).toBeGreaterThan(0.02);
     await page.click('#muteBtn');
-    await expect.poll(output).toBeLessThan(0.00001);
+    await expect.poll(loudestChannel).toBeLessThan(0.00001);
   } catch (error) {
     const path = testInfo.outputPath('decoded-audio-state.json');
     await writeFile(path, JSON.stringify({ project: testInfo.project.name, samples }, null, 2));
