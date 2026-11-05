@@ -31,6 +31,7 @@ async function runCase({ mode, attenuation }) {
   const received = receiver.createAnalyser();
   received.connect(receiver.destination);
   const generated = decoder.createAnalyser();
+  const transmitted = decoder.createAnalyser();
   const audio = mode.startsWith('cross-') && mode !== 'cross-context' ? new Audio() : null;
   let elementSource;
   let streamSource;
@@ -78,11 +79,13 @@ async function runCase({ mode, attenuation }) {
     source.start();
     if (mode === 'direct') {
       level.connect(received);
+      level.connect(transmitted);
     } else {
       const destination = decoder.createMediaStreamDestination();
       const loss = decoder.createGain();
       loss.gain.value = attenuation;
       level.connect(loss).connect(destination);
+      loss.connect(transmitted);
       streamSource = receiver.createMediaStreamSource(destination.stream);
       if (!elementSource) streamSource.connect(received);
       if (audio) {
@@ -107,7 +110,7 @@ async function runCase({ mode, attenuation }) {
       await new Promise(resolve => setTimeout(resolve, Math.max(0, target - (performance.now() - started))));
       samples.push({
         ms: performance.now() - started,
-        generated: signal(generated), received: signal(received),
+        generated: signal(generated), transmitted: signal(transmitted), received: signal(received),
         decoder: { state: decoder.state, rate: decoder.sampleRate, time: decoder.currentTime },
         receiver: { state: receiver.state, rate: receiver.sampleRate, time: receiver.currentTime },
         audio: audio ? { paused: audio.paused, muted: audio.muted, volume: audio.volume, time: audio.currentTime } : null
@@ -158,8 +161,10 @@ try {
           }
           row.expectedRms = 0.04 / Math.sqrt(2) * specification.attenuation;
           row.finalWithinTolerance = Math.abs(row.samples.at(-1).received.rms - row.expectedRms) < 0.0005;
-          if (specification.attenuation === 0.5 && !row.finalWithinTolerance) {
-            throw new Error('Deliberate half-gain control did not match expected RMS');
+          // Validate the injected control before the transfer under investigation.
+          row.controlWithinTolerance = Math.abs(row.samples.at(-1).transmitted.rms - row.expectedRms) < 0.0005;
+          if (specification.attenuation === 0.5 && !row.controlWithinTolerance) {
+            throw new Error('Deliberate half-gain control did not match expected RMS before transfer');
           }
         } catch (error) {
           row.error = String(error);
