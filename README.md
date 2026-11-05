@@ -145,6 +145,14 @@ Run the suite with:
 npm run test:e2e
 ```
 
+On Linux, Playwright creates a temporary virtual audio output and routes only
+its test browsers there, so generated tones and sweeps are inaudible. Real
+decoding and audio-level assertions remain enabled; existing music sessions,
+volumes and the default output are unchanged. This requires `pactl` and a running
+PulseAudio/PipeWire audio server. Setup fails rather than falling back to speakers
+if that output cannot be created, and removes it when the run finishes. This also
+applies to direct `npx playwright test` runs and the Git hooks.
+
 Quick/full verification commands:
 
 ```bash

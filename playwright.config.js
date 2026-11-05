@@ -11,6 +11,7 @@ const firefoxExecutable = envFirefoxExecutable || null;
 
 export default defineConfig({
   testDir: './tests',
+  globalSetup: './tools/playwright-audio.js',
   timeout: 30_000,
   expect: {
     timeout: 5_000
