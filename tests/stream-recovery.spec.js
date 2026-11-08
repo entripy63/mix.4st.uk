@@ -49,6 +49,18 @@ test.beforeAll(async () => {
       if (url.searchParams.get('unavailable') === 'true') session.unavailable = true;
       session.response.end(); res.end(); return;
     }
+    if (url.pathname === '/timing') {
+      res.writeHead(200, { 'Content-Type': 'audio/mpeg' });
+      // Many small appends expose cumulative rounding, unlike one large file.
+      // Skip the encoder's metadata frame and keep the response open at the end.
+      let sent = 0;
+      const timer = setInterval(() => {
+        res.write(original[1 + sent % (original.length - 1)]);
+        if (++sent === 1960) clearInterval(timer);
+      }, 2);
+      res.on('close', () => clearInterval(timer));
+      return;
+    }
     const previous = sessions.get(id);
     const kind = url.searchParams.get('kind');
     if (previous) previous.response = res;
@@ -152,6 +164,54 @@ async function start(page, kind = 'pcm', holdPlay = false) {
 
 test.beforeEach(({ browserName }) => {
   test.skip(browserName !== 'chromium' && browserName !== 'firefox', 'Native recovery coverage is Chromium and Firefox');
+});
+
+test('MP3 append boundaries do not accumulate timestamp drift', async ({ page }) => {
+  await page.route('**/*', route => route.request().url().startsWith(origin + '/')
+    && !route.request().url().endsWith('/favicon.ico') ? route.continue() : route.abort());
+  await page.goto(origin);
+  await page.evaluate(() => {
+    window.appended = [];
+    const append = SourceBuffer.prototype.appendBuffer;
+    SourceBuffer.prototype.appendBuffer = function(data) {
+      // Observe the actual bytes passed to native MSE; do not fake its timing.
+      appended.push(Array.from(new Uint8Array(data)));
+      return append.call(this, data);
+    };
+  });
+  await page.addScriptTag({ url: `${origin}/vendor/icecast-metadata-player-1.17.13.main.min.js` });
+  await page.evaluate(url => {
+    window.audio = new Audio(); audio.muted = true;
+    window.player = new IcecastMetadataPlayer(url, { audioElement: audio, metadataTypes: [] });
+    document.querySelector('#start').onclick = () => player.play();
+  }, `${origin}/timing`);
+  await page.click('#start');
+  await expect.poll(() => page.evaluate(() => audio.buffered.length ? audio.buffered.end(0) : 0),
+    { timeout: 15000 }).toBeGreaterThan(51);
+  // Finish the last few writes before comparing the completed append sequence.
+  await page.waitForTimeout(250);
+  // The parser may retain its last frames awaiting more input. Count samples
+  // actually appended, independently of the browser's reported timestamps.
+  const chunks = (await page.evaluate(() => appended)).map(data => Buffer.from(data));
+  function samples(data) {
+    if (!data.length) return 0;
+    if (data.readUInt32BE(0) >>> 21 === 0x7ff) return frames(data).length * 1152;
+    let count = 0;
+    for (let offset = 0; offset + 8 <= data.length;) {
+      const size = data.readUInt32BE(offset);
+      const type = data.toString('ascii', offset + 4, offset + 8);
+      if (size < 8 || offset + size > data.length) throw new Error('Invalid MP4 box');
+      if (type === 'moof' || type === 'traf') count += samples(data.subarray(offset + 8, offset + size));
+      if (type === 'trun') count += data.readUInt32BE(offset + 12) * 1152;
+      offset += size;
+    }
+    return count;
+  }
+  const expected = chunks.reduce((total, data) => total + samples(data), 0) / 44100;
+  const actual = await page.evaluate(() => audio.buffered.end(audio.buffered.length - 1));
+  expect(expected).toBeGreaterThan(51);
+  expect(Math.abs(actual - expected)).toBeLessThan(0.00001);
+  await expect.poll(() => page.evaluate(() => audio.currentTime)).toBeGreaterThan(1);
 });
 
 test('delayed PCM handoff resumes decoded audio after the old retry deadline', async ({ page }) => {

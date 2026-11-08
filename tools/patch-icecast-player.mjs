@@ -7,8 +7,35 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 
 const upstreamHash = '56eebcf6564576a8fe312f0efbfcf08280d848131f615f5248e073dc021246dc';
-const patchedHash = '65e0f9685d3c5553be105ac06eda8c6d3197a06246a3c1a0442bffbf9f11f908';
+const recoveryHash = '65e0f9685d3c5553be105ac06eda8c6d3197a06246a3c1a0442bffbf9f11f908';
+const patchedHash = '88ee30a7b00056761ad6abcb90d50f90283dd2c4a95284c99efcedcf23bef352';
 const hash = source => createHash('sha256').update(source).digest('hex');
+
+function patchTiming(source) {
+  const before = 'async t=>this.Gi(B(t.map(t=>t.data)))';
+  assert.equal(source.split(before).length, 2, 'Raw append patch must match exactly once');
+  // Ni's s = codec; Ii = MediaSource; Yi = waitForSourceBuffer;
+  // Gi = appendSourceBuffer; B = concatBuffers. Other raw codecs stay unchanged.
+  return source.replace(before, `(s === "mpeg" ? (() => {
+  let sampleRate = 0, samples = 0, baseTime = 0;
+  return async frames => {
+    const start = baseTime + (sampleRate ? samples / sampleRate : 0);
+    for (const frame of frames) {
+      if (frame.header.sampleRate !== sampleRate) {
+        baseTime += sampleRate ? samples / sampleRate : 0;
+        sampleRate = frame.header.sampleRate;
+        samples = 0;
+      }
+      samples += frame.samples;
+    }
+    await this.Yi();
+    const buffer = this.Ii.sourceBuffers[0];
+    // Anchor each append to the sample clock, not the rounded previous end.
+    if (buffer) buffer.timestampOffset = start;
+    await this.Gi(B(frames.map(frame => frame.data)));
+  };
+})() : async frames => this.Gi(B(frames.map(frame => frame.data))))`);
+}
 
 export function patchIcecastPlayer(source) {
   assert.equal(hash(source), upstreamHash, 'Expected the pristine checked-in IcecastMetadataPlayer 1.17.13 bundle');
@@ -55,7 +82,7 @@ export function patchIcecastPlayer(source) {
 })(),s.get(this)[pt]=0`);
   // The upstream mapping no longer describes this modified file.
   source = source.replace(/\/\/# sourceMappingURL=icecast-metadata-player-1\.17\.13\.main\.min\.js\.map\s*$/, '');
-  return '// Local recovery patch: see tools/patch-icecast-player.mjs and docs/STREAM-RECOVERY.md\n' + source;
+  return patchTiming('// Local recovery patch: see tools/patch-icecast-player.mjs and docs/STREAM-RECOVERY.md\n' + source);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
@@ -65,7 +92,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     console.log('Icecast recovery patch verified; no changes');
   } else {
     assert.ok(!process.argv.includes('--check'), 'Bundle is not the reviewed patched version');
-    const result = patchIcecastPlayer(source);
+    const result = hash(source) === recoveryHash ? patchTiming(source) : patchIcecastPlayer(source);
     assert.equal(hash(result), patchedHash, 'Generated patch must match the reviewed bundle');
     await writeFile(file, result);
     console.log(`Patched IcecastMetadataPlayer: ${hash(result)}`);
